@@ -1,0 +1,200 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+
+<taglib xmlns="http://java.sun.com/xml/ns/j2ee"
+  xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+  xsi:schemaLocation="http://java.sun.com/xml/ns/j2ee http://java.sun.com/xml/ns/j2ee/web-jsptaglibrary_2_0.xsd"
+  version="2.0">
+    
+  <description>JSTL 1.1 functions library</description>
+  <display-name>JSTL functions</display-name>
+  <tlib-version>1.1</tlib-version>
+  <short-name>fn</short-name>
+  <uri>NumberFunctions</uri>
+
+ 
+
+  <function>
+    <description>
+      Returns the smallest (closest to negative infinity) int value 
+    </description>
+    <name>ceil</name>
+    <function-class>egovframework.com.tag.CustomFnTag</function-class>
+    <function-signature>int ceil(java.lang.String)</function-signature>
+    <example>
+      You have ${fn:ceil(shoppingCart.products)} in your shopping cart.
+    </example>
+  </function>
+
+
+  <function>
+    <description>
+      Returns the largest (closest to positive infinity) int value 
+    </description>
+    <name>floor</name>
+    <function-class>egovframework.com.tag.CustomFnTag</function-class>
+    <function-signature>int floor(java.lang.String)</function-signature>
+    <example>
+      You have ${fn:floor(shoppingCart.products)} in your shopping cart.
+    </example>
+  </function>
+
+ 
+
+  <function>
+    <description>
+      Returns the closest int to the argument
+    </description>
+    <name>round</name>
+    <function-class>egovframework.com.tag.CustomFnTag</function-class>
+    <function-signature>int round(java.lang.String)</function-signature>
+    <example>
+      You have ${fn:round(shoppingCart.products)} in your shopping cart.
+    </example>
+  </function>
+  
+  <function>
+    <description>
+      Returns the smallest (closest to negative infinity) int value 
+    </description>
+    <name>egovFileScrtyEncoder</name>
+    <function-class>egovframework.com.tag.CustomFnTag</function-class>
+    <function-signature>java.lang.String egovFileScrtyEncoder(java.lang.String)</function-signature>
+    <example>
+      You have ${fn2:egovFileScrtyEncoder(shoppingCart.products)} in your shopping cart.
+    </example>
+  </function>
+  
+  <function>
+    <description>
+      Returns the smallest (closest to negative infinity) int value 
+    </description>
+    <name>toStudyTimeConvert</name>
+    <function-class>egovframework.com.tag.CustomFnTag</function-class>
+    <function-signature>java.lang.String toStudyTimeConvert(java.lang.String)</function-signature>
+    <example>
+      You have ${fn:toStudyTimeConvert(shoppingCart.products)} in your shopping cart.
+    </example>
+  </function>
+  
+    <function>
+    <description>
+      Returns the smallest (closest to negative infinity) int value 
+    </description>
+    <name>toScormTimeConvert</name>
+    <function-class>egovframework.com.tag.CustomFnTag</function-class>
+    <function-signature>java.lang.String toScormTimeConvert(java.lang.String)</function-signature>
+    <example>
+      You have ${fn:toScormTimeConvert(shoppingCart.products)} in your shopping cart.
+    </example>
+  </function>
+
+  <function>
+    <description>
+      Returns the smallest (closest to negative infinity) int value 
+    </description>
+    <name>toNumber</name>
+    <function-class>egovframework.com.tag.CustomFnTag</function-class>
+    <function-signature>java.lang.Integer toNumber(java.lang.String)</function-signature>
+    <example>
+      You have ${fn:toNumber(shoppingCart.products)} in your shopping cart.
+    </example>
+  </function>
+  
+  <function>
+    <description>
+      Returns the smallest (closest to negative infinity) int value 
+    </description>
+    <name>getFormatDate</name>
+    <function-class>egovframework.com.tag.CustomFnTag</function-class>
+    <function-signature>java.lang.String getFormatDate(java.lang.String, java.lang.String)</function-signature>
+    <example>
+      You have ${fn:getFormatDate(shoppingCart.products, shoppingCart.products)} in your shopping cart.
+    </example>
+  </function>
+  
+  <function>
+    <description>
+      Returns the smallest (closest to negative infinity) int value 
+    </description>
+    <name>getFormatDateNow</name>
+    <function-class>egovframework.com.tag.CustomFnTag</function-class>
+    <function-signature>java.lang.String getFormatDateNow(java.lang.String)</function-signature>
+    <example>
+      You have ${fn:getFormatDateNow(shoppingCart.products)} in your shopping cart.
+    </example>
+  </function>
+  
+  <function>
+    <description>
+      Returns the smallest (closest to negative infinity) int value 
+    </description>
+    <name>com_Decode</name>
+    <function-class>com.ziaan.library.Encrypt</function-class>
+    <function-signature>java.lang.String com_Decode(java.lang.String)</function-signature>
+    <example>
+      You have ${fn:com_Decodee(shoppingCart.products)} in your shopping cart.
+    </example>
+  </function>
+  
+  
+  <function>
+    <description>
+      Returns the smallest (closest to negative infinity) int value 
+    </description>
+    <name>getDateOptions</name>
+    <function-class>egovframework.com.tag.CustomFnTag</function-class>
+    <function-signature>java.lang.String getDateOptions(java.lang.String, java.lang.String, java.lang.String)</function-signature>
+    <example>
+      You have ${fn2:getDateOptions(shoppingCart.products, shoppingCart.products, shoppingCart.products)} in your shopping cart.
+    </example>
+  </function>
+  
+  <function>
+    <description>
+      Returns the smallest (closest to negative infinity) int value 
+    </description>
+    <name>getMinDifference</name>
+    <function-class>egovframework.com.tag.CustomFnTag</function-class>
+    <function-signature>java.lang.String getMinDifference(java.lang.String, java.lang.String)</function-signature>
+    <example>
+      You have ${fn2:getMinDifference(shoppingCart.products, shoppingCart.products)} in your shopping cart.
+    </example>
+  </function>
+  
+  <function>
+    <description>
+      Returns the smallest (closest to negative infinity) int value 
+    </description>
+    <name>getFixTitle</name>
+    <function-class>egovframework.com.tag.CustomFnTag</function-class>
+    <function-signature>java.lang.String getFixTitle(java.lang.String, java.lang.String)</function-signature>
+    <example>
+      You have ${fn2:getFixTitle(shoppingCart.products, shoppingCart.products)} in your shopping cart.
+    </example>
+  </function>
+  
+  <function>
+    <description>
+      1자리의 숫자를 2자리의 문자로 변화한여 출력한다.
+    </description>
+    <name>getNumberToString</name>
+    <function-class>egovframework.com.tag.CustomFnTag</function-class>
+    <function-signature>java.lang.String getNumberToString(java.lang.String)</function-signature>
+    <example>
+      ${fn2:getNumberToString(String s)}
+    </example>
+  </function>
+  
+  <function>
+    <description>
+      1자리의 숫자를 2자리의 문자로 변화한여 출력한다.
+    </description>
+    <name>toPercent</name>
+    <function-class>egovframework.com.tag.CustomFnTag</function-class>
+    <function-signature>java.lang.String toPercent(java.lang.Object, java.lang.Object)</function-signature>
+    <example>
+      ${fn2:toPercent(BigDecimal a, BigDecimal b)}
+    </example>
+  </function>
+  
+</taglib>
