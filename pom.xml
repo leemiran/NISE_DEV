@@ -174,7 +174,7 @@
         <finalName>${artifactId}-${version}</finalName>
         <pluginManagement>
             <plugins>
-                <!--
+                
                 <plugin>
 
 <groupId>org.apache.maven.plugins</groupId>
@@ -210,7 +210,7 @@
 </configuration>
 
 </plugin>
-  -->
+  
                 
                 <plugin>
 	                <groupId>org.apache.tomcat.maven</groupId>
@@ -224,7 +224,7 @@
 	                    </systemProperties>
 	                </configuration>
 	            </plugin>
-                <!-- <plugin>
+                <plugin>
                     <groupId>org.apache.maven.plugins</groupId>
                     <artifactId>maven-compiler-plugin</artifactId>
                     <configuration>
@@ -232,7 +232,7 @@
                         <target>1.6</target>
                         <encoding>UTF-8</encoding>
                     </configuration>
-                </plugin> -->
+                </plugin>
                 <plugin>
                     <groupId>org.codehaus.mojo</groupId>
                     <artifactId>hibernate3-maven-plugin</artifactId>
@@ -389,7 +389,7 @@
                 </reportSets>
             </plugin>
             <!-- PMD manven plugin -->
-            <!--
+            
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-pmd-plugin</artifactId>
@@ -411,7 +411,7 @@
                     </reportSet>
                 </reportSets>
             </plugin>
-             -->
+            
             <!-- Generating JavaDoc Report -->
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
