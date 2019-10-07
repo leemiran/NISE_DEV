@@ -1,0 +1,1167 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE sqlMap PUBLIC "-//iBATIS.com//DTD SQL Map 2.0//EN" "http://ibatis.apache.org/dtd/sql-map-2.dtd">
+
+<sqlMap namespace="GrSeq">
+<typeAlias  alias="egovMap" type="egovframework.rte.psl.dataaccess.util.EgovMap"/>
+
+
+	<select id="grSeqDAO.selectGrSeqEmptyList" parameterClass="map" resultClass="egovMap">
+	<![CDATA[
+		select gyear, grseq, grseqnm  
+		from tz_grseq
+		where grcode = #grcode#
+		and ( 
+		gyear||grseq not in (select distinct gyear||grseq from tz_subjseq where grcode = #grcode# )
+		)
+		
+		And gyear = #ses_search_gyear#
+		]]>
+		<isNotEmpty property="ses_search_grseq">
+			and grseq = #ses_search_grseq#
+		</isNotEmpty>
+		
+		order by gyear, grseq desc
+	</select>
+<!-- 지정된 과정/코스가 없는 교육차수Record Add -->
+
+	<select id="grSeqDAO.selectGrSeqName" parameterClass="map" resultClass="egovMap">
+		select  a.grseqnm  ,b.course, b.cyear, b.courseseq
+        from tz_grseq a left outer join tz_courseseq b 
+        on a.grcode=b.grcode and a.grseq=b.grseq and a.gyear=b.gyear
+		where 	a.grcode 	= #p_grcode#
+		and 	a.grseq 	= #p_grseq#
+        and 	a.gyear 	= #p_gyear#
+	</select>
+	
+<!--	기수목록 -->
+	<select id="grSeqDAO.selectGrSeqList" parameterClass="map" resultClass="egovMap">
+  SELECT   b.gyear,
+           b.grseq,
+           (select  grseqnm  from tz_grseq where grcode=b.grcode and grseq=b.grseq and gyear=b.gyear) grseqnm,
+           b.subj,
+           b.subjnm,
+           b.[year],
+           b.subjseq,
+           b.propstart,
+           b.propend,
+           b.edustart,
+           b.eduend,
+           c.course,
+           c.coursenm,
+           c.cyear,
+           c.courseseq,
+           d.isonoff,
+           get_name (b.muserid) musername,
+           d.isuse,
+           get_codenm ('0004', d.isonoff) isonoffnm,
+           (SELECT   COUNT (0)
+              FROM   vz_scsubjseq
+             WHERE   grcode = b.grcode AND gyear = b.gyear AND grseq = b.grseq)
+              grseq_cnt,
+           (SELECT   COUNT (0)
+              FROM   TZ_PROPOSE
+             WHERE   SUBJ = B.SUBJ AND [year] = B.[year] AND SUBJSEQ = B.SUBJSEQ)
+              AS PROPOSECNT,
+           (SELECT   COUNT (0)
+              FROM   TZ_CANCEL
+             WHERE   SUBJ = B.SUBJ AND [year] = B.[year] AND SUBJSEQ = B.SUBJSEQ)
+              AS CANCELCNT,
+           (SELECT   COUNT (0)
+              FROM   TZ_STUDENT
+             WHERE   SUBJ = B.SUBJ AND [year] = B.[year] AND SUBJSEQ = B.SUBJSEQ)
+              AS STUDENTCNT,
+           (SELECT   COUNT (0)
+              FROM   TZ_STOLD
+             WHERE       SUBJ = B.SUBJ
+                     AND [year] = B.[year]
+                     AND SUBJSEQ = B.SUBJSEQ
+                     AND ISGRADUATED = 'Y')
+              AS STOLDCNT
+			,Nvl((
+			    select count(0) CNTS 												
+			    from vz_scsubjseq bb, tz_courseseq cc, tz_subj dd						
+			    where ((bb.grcode=cc.grcode and bb.gyear=cc.gyear and bb.grseq=cc.grseq)	
+			    or (cc.gyear='0000'))													
+			    and bb.course = cc.course												
+			    and bb.cyear = cc.cyear												
+			    and bb.courseseq = cc.courseseq										
+			    and bb.subj = dd.subj
+			    AND bb.grcode = b.grcode         
+			    And bb.gyear = b.gyear		
+			    and bb.grseq= b.grseq
+			    
+			<isNotEmpty property="ses_search_att">
+				and dd.upperclass= #ses_search_att#
+			</isNotEmpty>
+			
+			<isNotEmpty property="ses_search_subj">
+				and bb.scsubj= #ses_search_subj#
+			</isNotEmpty>
+			
+			<isEqual compareValue="M" property="gadminFirstString">	
+	   		   AND dd.cp in (select cpseq from tz_cpinfo where userid = #userid#)
+	   		</isEqual>
+			    
+			), 0)  rowspan_grseq
+              
+    FROM   vz_scsubjseq b, tz_courseseq c, tz_subj d
+   WHERE   ( 
+   			(b.grcode = c.grcode AND b.gyear = c.gyear AND b.grseq = c.grseq) OR (c.gyear = '0000')
+   			)
+   			
+           AND b.course = c.course
+           AND b.cyear = c.cyear
+           AND b.courseseq = c.courseseq
+           AND b.subj = d.subj
+           AND b.grcode = #grcode#
+           
+		   And b.gyear = #ses_search_gyear#
+		
+		<isNotEmpty property="ses_search_grseq">
+           AND b.grseq= #ses_search_grseq#
+        </isNotEmpty>
+		<isNotEmpty property="ses_search_att">
+			and d.upperclass= #ses_search_att#
+		</isNotEmpty>
+		
+		<isNotEmpty property="ses_search_subj">
+			and b.scsubj= #ses_search_subj#
+		</isNotEmpty>
+		
+		<isEqual compareValue="M" property="gadminFirstString">	
+   		   AND d.cp in (select cpseq from tz_cpinfo where userid = #userid#)
+   		</isEqual> 
+   		
+   		
+	ORDER BY   b.gyear,
+	           b.grseq,
+	           c.course,
+	           c.cyear,
+	           c.courseseq DESC,
+	           c.coursenm ASC
+	           
+	        <isNotEmpty property="search_orderColumn">
+		 		,$search_orderColumn$ $search_orderType$ 
+		 	</isNotEmpty>
+	        <isEmpty property="search_orderColumn">
+	           ,b.subj
+	           ,b.subjseq ASC
+	           ,b.edustart DESC
+	       </isEmpty>
+	</select>
+	
+	
+	
+<!--	교육기수 수정화면-->
+	<select id="grSeqDAO.selectGrSeqView" parameterClass="map" resultClass="egovMap">
+		 select  grseqnm
+		     ,   props  
+		     ,   prope  
+		     ,   luserid
+		     ,   ldate  
+		     ,   gmonth
+		 from    tz_grseq
+		 where   grcode  = #grcode#
+		 and     grseq   = #p_grseq#
+		 and     gyear   = #p_gyear#  
+	</select>
+	
+	
+	
+	
+<!--	// 교육기수 테이블에 등록-->
+	<insert id="grSeqDAO.insertGrSeq">
+		<selectKey keyProperty="p_grseq" resultClass="String">
+			select  nvl(ltrim(rtrim(to_char(to_number(max(grseq)) +1,'0000'))),'0001') GRS from    tz_grseq  
+			where   grcode  = #p_grcode#
+			and gyear = #p_gyear#
+		</selectKey>
+		
+		insert into tz_grseq
+		 (             
+		         grcode
+		     ,   gyear 
+		     ,   grseq 
+		     ,   grseqnm
+		     ,   luserid
+		     ,   ldate 
+		     ,   isblended
+		     ,   isexpert 
+		     ,  gmonth
+		 ) values (    
+		         #p_grcode#   
+		     ,   #p_gyear#    
+		     ,   #p_grseq#    
+		     ,   #p_grseqnm#    
+		     ,   #userid#    
+		     ,   to_char(sysdatetime,'yyyymmddhh24miss')
+		     ,   #p_isblendedc#    
+		     ,   #p_isexpert# 
+		     ,   #p_gmonth#
+		        )
+	</insert>
+	
+	<!-- 기수를 어떤 과정을 생성할것인가를 결정한다. -->
+	<select id="grSeqDAO.selectGrSeqMakeOption" parameterClass="map" resultClass="egovMap">
+		<isEqual compareValue="MAKE_ALL" property="p_makeoption">
+		select   subjcourse  
+		from     tz_grsubj       
+		where    grcode = #p_grcode#
+		</isEqual>
+		
+		<isEqual compareValue="SELECT_ALL" property="p_makeoption">
+		select  subj    subjcourse
+		from    tz_subjseq
+		where   grcode  = #p_grcode#
+		and 	gyear 	= #p_copy_gyear#
+		and 	grseq 	= #p_copy_grseq#
+		</isEqual>
+	</select>
+	
+	
+<!--	기수등록-->
+	<insert id="grSeqDAO.insertSubjSeq">
+	<selectKey keyProperty="p_subjseq" resultClass="String">
+		select  ltrim(rtrim(to_char(to_number(nvl(max(subjseq),'0000')) +1, '0000'))) GRS
+		from    tz_subjseq 
+		where   subj    = 	#p_subj#
+		and     [year]    =	#p_gyear#
+	</selectKey>
+		 insert into tz_subjseq                                                                                           
+		(                                                                                                                
+			  subj                , [year]              , subjseq           , grcode                                     
+		  ,   gyear               , grseq             , isbelongcourse    , course                                     
+		  ,   cyear               , courseseq         , isclosed          , subjnm                                     
+		  ,   studentlimit        , point             , biyong            , edulimit                                   
+		  ,   ismultipaper        , warndays          , stopdays          , gradscore                                  
+		  ,   gradstep            , wstep             , wmtest            , wftest                                     
+		  ,   wreport             , wact              , wetc1             , wetc2                                      
+		  ,   luserid             , ldate             , proposetype       , subjseqgr                                  
+		  ,   usesubjseqapproval  , useproposeapproval, usemanagerapproval, score                                      
+		  ,   rndcreditreq        , rndcreditchoice   , rndcreditadd      , rndcreditdeduct                            
+		  ,   rndjijung           , isablereview      , gradexam          , gradreport                                 
+		  ,   whtest              , isessential       , gradftest         , gradhtest                                  
+		  ,   place               , placejh           , bookname          , bookprice                                  
+		  ,   sulpapernum         , propstart         , propend           , edustart                                   
+		  ,   eduend              , canceldays        , ischarge          , isopenedu                                  
+		  ,   maleassignrate      , isblended         , isexpert         			                             	    
+		  ,   isgoyong            , goyongpricemajor  , goyongpriceminor  , usebook				     				
+		  ,   reviewdays          , study_count       , study_time						                                
+		  ,   muserid             , musertel,   test_day,  test_day_time  ,   isyearedustatus 
+		  ,   biyong2
+		  ,   neweroom
+		  
+		)
+		select 
+		#p_subj#,
+		#p_gyear#,
+		#p_subjseq#,
+		#p_grcode#,
+		#p_gyear#,
+		#p_grseq#,
+		'N',
+		
+		<isNotEmpty property="p_course">
+			<isNotEqual property="p_course" compareValue="000000">
+				#p_course#,
+				#p_cyear#,
+				#p_courseseq#,
+			</isNotEqual>
+			<isEqual property="p_course" compareValue="000000">
+				'000000',
+				'0000',
+				'0000',
+			</isEqual>
+		
+		</isNotEmpty>
+		<isEmpty property="p_course">
+			'000000',
+			'0000',
+			'0000',
+		</isEmpty>
+		
+		
+		'N',
+		subjnm,
+		studentlimit,
+		point,
+		biyong,
+		edulimit,
+		'N',
+		warndays,
+		stopdays,
+		gradscore,
+		gradstep,
+		wstep,
+		wmtest,
+		wftest,
+		wreport,
+		wact,
+		wetc1,
+		wetc2,
+		#userid#,
+		to_char(sysdatetime,'YYYYMMDDHH24MISS'),
+		proposetype,
+		(
+			select  ltrim(rtrim(to_char(to_number(nvl(max(subjseqgr),'0000')) +1, '0000'))) GRS 
+			from    tz_subjseq 
+			where   subj    =	#p_subj# 
+			and     [year]    =	#p_gyear# 
+			and     grcode  =	#p_grcode# 
+		),
+		'',
+		'',
+		'',
+		score,
+		'',
+		'',
+		'',
+		'',
+		'',
+		isablereview,
+		gradexam,
+		gradreport,
+		whtest,
+		isessential,
+		gradftest,
+		gradhtest,
+		place,
+		'',
+		bookname,
+		bookprice,
+		#p_sulpapernum#,                        
+        #p_propstart#,                       
+        #p_propend#,                      
+        #p_edustart#,                        
+        #p_eduend#,                          
+        #p_canceldays#,            
+        ischarge,
+        isopenedu,
+        0,
+        #p_isblended#,
+		#p_isexpert#,
+        isgoyong,
+        goyongpricemajor,
+        goyongpriceminor,
+		usebook,
+		reviewdays,
+		study_count,
+		study_time,
+		muserid,
+		musertel,
+		#testday#,
+		#testdaytime#,
+		#p_isyearedustatus#,
+		#p_biyong2#,
+		
+<isGreaterThan property="p_subjseqcnt" compareValue="0">		
+	<isEmpty property="p_copy_gyear">
+			neweroom
+			from    tz_subjseq
+			where   subj        = #p_subj#
+			and     [year]        = #p_gyear#
+			and     grcode      = #p_grcode#
+			and     subjseq     = (
+			select  max(subjseq)
+			from    tz_subjseq  
+			where   subj    = #p_subj#
+			and     [year]    = #p_gyear#
+			 )
+	</isEmpty>		 
+		 
+	<isNotEmpty property="p_copy_gyear">
+			neweroom
+			from    tz_subjseq
+			where   subj        = #p_subj#
+			and     [year]        = #p_copy_gyear#
+			and     grcode      = #p_grcode#
+			and     grseq	    = #p_copy_grseq#
+	</isNotEmpty>		
+	
+</isGreaterThan>
+
+
+<isEqual property="p_subjseqcnt" compareValue="0">
+			'' as neweroom
+			from    tz_subj
+			where   subj        = #p_subj#
+</isEqual>
+		and rownum = 1
+		
+		
+		 
+	</insert>
+	
+<!--	게시판 등록-->
+	<insert id="grSeqDAO.insertSubjBbs">
+	insert into tz_bds
+	(                                                
+	  tabseq  , type  , grcode    , comp       
+	  ,   subj    , [year]  , subjseq   , sdesc      
+	  ,   ldesc   , status, luserid   , ldate      
+	) values ( 
+		nvl((select nvl(max(tabseq), 0) + 1 from tz_bds), 1),   
+		#p_type#,
+		'0000000',
+		'0000000000',
+		#p_subj#,
+		#p_gyear#,
+		#p_subjseq#,
+		#p_subj# || #p_subj_bbs_title#,
+		'',
+		'A',
+		#userid#,
+		to_char(sysdatetime,'YYYYMMDDHH24MISS')
+	)
+	</insert>
+<!--	게시판 삭제-->
+	<delete id="grSeqDAO.deleteSubjBbs">
+		delete from tz_bds
+		where type = #p_type#
+		and grcode = '0000000'
+		and comp = '0000000000'
+		and subj = #p_subj#
+		and [year] = #p_gyear#
+		and subjseq = #p_subjseq#
+	</delete>
+	
+<!--	Report 출제정보 Copy-->
+	<insert id="grSeqDAO.insertProjGrp">
+	insert into tz_projgrp                           
+	(                                                
+		subj      , [year]     , subjseq  , grpseq  
+		, projgubun , sdate    , edate    , luserid 
+		, ldate     , grpseqnm , reptype  , grptotalscore 
+	)                                                
+	select subj                                      
+		, #p_gyear#
+		, #p_subjseq#     
+		, grpseq                                
+		, projgubun                                 
+		, sdate                                     
+		, #p_expiredate#   
+		, #userid#   
+		, to_char(sysdatetime,'yyyymmddhh24miss')       
+		, grpseqnm                                  
+		, reptype                                   
+		, grptotalscore                             
+		from   tz_projgrp                                
+		where  subj = #p_subj#
+		and    [year] || subjseq = (                                         
+		select  max([year] || subjseq)                   
+		from    tz_projgrp                             
+		where   subj = #p_subj#
+	)
+	
+	</insert>
+<!--	Report 출제정보 삭제-->
+	<delete id="grSeqDAO.deleteProjGrp">
+	delete from tz_projgrp                            
+		where subj = #p_subj#
+		and [year] = #p_gyear#
+		and subjseq = #p_subjseq#
+
+	</delete>
+	
+	
+	
+<!--	Report 출제정보 Copy-->
+	<insert id="grSeqDAO.insertProjMap">
+	 insert into tz_projmap                           
+	 (                                                
+	        subj      , [year]     , subjseq    		
+	      , grpseq    , ordseq  					
+	      , luserid   ,ldate                			
+	 )                                                
+	 select subj                                      
+	      , #p_gyear#     
+	      , #p_subjseq#
+	      , grpseq                                    
+	      , ordseq                                    
+	      , #userid#
+	      , to_char(sysdatetime,'yyyymmddhh24miss')       
+	 from   tz_projmap                                
+	 where  subj = #p_subj#   
+	 and    [year] || subjseq = (                                                   
+	   select  max([year] || subjseq)                   
+	   from    tz_projmap                             
+	   where   subj = #p_subj#
+	  ) 
+	</insert>
+	
+<!--	Report 출제정보 삭제-->
+	<delete id="grSeqDAO.deleteProjMap">
+	delete from tz_projmap                            
+		where subj = #p_subj#
+		and [year] = #p_gyear#
+		and subjseq = #p_subjseq#
+	</delete>	
+	
+<!--	시험지정보등록-->
+	<insert id="grSeqDAO.insertExamPaper">
+	insert into TZ_EXAMPAPER 
+	             (
+	             subj
+	             ,   [year]
+	             ,   subjseq
+	             ,   lesson
+	             ,   examtype,  papernum,   lessonstart, lessonend, examtime,  exampoint,  examcnt,  totalscore, 
+	              cntlevel1, cntlevel2, cntlevel3, level1text, level2text, level3text, isopenanswer,  isopenexp, 
+	              retrycnt, progress, luserid,   ldate, startdt, enddt   
+	             ) 
+	select 
+	  #p_subj#
+	, #p_gyear#
+	, #p_subjseq#
+	, a.lesson
+	, a.examtype
+	, rownum
+	, a.lessonstart
+	, a.lessonend
+	, a.examtime
+	, a.exampoint
+	, a.examcnt
+	, a.totalscore
+	, a.cntlevel1
+	, a.cntlevel2
+	, a.cntlevel3
+	, a.level1text
+	, a.level2text
+	, a.level3text
+	, a.isopenanswer
+	, a.isopenexp
+	, a.retrycnt
+	, a.progress
+	, #userid#
+	, to_char(sysdatetime,'yyyymmddhh24miss')
+	, a.startdt
+	, a.enddt 
+	from tz_exammaster a 
+	where a.subj    = #p_subj#
+	</insert>
+	
+<!--	시험지정보 삭제-->
+	<delete id="grSeqDAO.deleteExamPaper">
+	delete from TZ_EXAMPAPER                            
+		where subj = #p_subj#
+		and [year] = #p_gyear#
+		and subjseq = #p_subjseq#
+	</delete>	
+	
+	
+	
+<!--	기수가 존재하는지를 체크하기 위하여 -->
+	<select id="grSeqDAO.selectSubjSeqCnt" parameterClass="map"  remapResults="true" resultClass="int">
+		select NVL(
+		nvl((
+			select count(*) from    tz_subjseq
+			where   subj        = #p_subj#
+			and     [year]        = #p_gyear#
+			and     grcode      = #p_grcode#
+			and     subjseq     = (
+				select max(subjseq) from tz_subjseq
+				where   subj        = #p_subj#
+				and     [year]        = #p_gyear#
+			)
+		), 0) +
+		nvl((
+			select count(*) from    tz_subjseq
+			where   subj        = #p_subj#
+			and     [year]        = #p_copy_gyear#
+			and     grcode      = #p_grcode#
+			and     grseq     = #p_copy_grseq#
+		), 0)		
+		, 0) cnt From DB_ROOT
+	</select>
+	
+	
+	
+<!--	교육기수수정-->
+	<update id="grSeqDAO.updateGrSeq">
+		UPDATE  tz_grseq set                                                 
+		  GRSEQNM     	= #p_grseqnm#                                 
+		,   PROPS       = #p_props#                                  
+		,   PROPE       = #p_prope#                                  
+		,   Luserid     = #userid#                                 
+		,   LDATE       = to_char(sysdatetime,'YYYYMMDDHH24MISS')
+		,   gmonth = #p_gmonth# 
+		where   grcode      = #p_grcode#                                  
+		and     gyear       = #p_gyear#                                  
+		and     grseq       = #p_grseq#
+	</update>
+	
+<!--	교육기수의 해당하는 수강생이 있는지를 체크-->
+	<select id="grSeqDAO.selectProposeCnt" parameterClass="map"  remapResults="true" resultClass="int">
+		select count(*) cnt
+		from   tz_subjseq a, tz_propose b
+		where  1=1
+		and    a.subj    =b.subj
+		and    a.subjseq =b.subjseq
+		and    a.[year]    =b.[year]
+		and    grcode 	= #p_grcode#
+		and    gyear  	= #p_gyear#
+		and    grseq	= #p_grseq#
+	</select>
+	
+<!--	교육기수삭제-->
+	<delete id="grSeqDAO.deleteGrSeq">
+		delete from tz_grseq
+		where    grcode 	= #p_grcode#
+		and    gyear  	= #p_gyear#
+		and    grseq	= #p_grseq#
+	</delete>
+	
+	
+<!--	패키지과정삭제-->
+	<delete id="grSeqDAO.deleteCourseSeq">
+		delete from tz_courseseq 
+		where course || '||' || cyear || '||' || courseseq  in  
+		(
+			select 
+			course || '||' || cyear || '||' || courseseq 
+			from tz_courseseq
+			where   grcode 	= #p_grcode#
+			and    gyear  	= #p_gyear#
+			and    grseq	= #p_grseq#
+		)
+	</delete>
+	
+	
+	<!--	패키지과정등록-->
+	<insert id="grSeqDAO.insertCourseSeq">
+		<selectKey keyProperty="p_course" resultClass="String">
+			select  
+			nvl(ltrim(rtrim(to_char(to_number(max(course)) +1, '000000'))), '000001') as course
+			from    tz_courseseq  
+			where   grcode  = #p_grcode#
+		</selectKey>
+		insert into tz_courseseq (course, cyear, courseseq, grcode, gyear, grseq, coursenm) values (
+			#p_course#,
+			#p_gyear#,
+			(select  
+			nvl(ltrim(rtrim(to_char(to_number(max(courseseq)) +1, '0000'))), '0001') as course
+			from    tz_courseseq  
+			where   grcode  = #p_grcode#),
+			#p_grcode#,
+			#p_gyear#,
+			#p_grseq#,
+			#p_grseqnm#
+		)
+	</insert>
+	
+<!--	기수 관련 전체 테이블 삭제-->
+	<delete id="grSeqDAO.deleteSubjSeqAll">
+	
+		<isEqual property="p_dynamic_table_name" compareValue="TZ_MASTERSUBJ">
+			delete from  TZ_MASTERSUBJ
+			
+			<isNotEmpty property="p_subjseq">
+				where subjcourse = #p_subj#
+				and [year] = #p_gyear#
+				and subjseq = #p_subjseq#
+			</isNotEmpty>
+			
+			<isEmpty property="p_subjseq">
+			where subjcourse || '||' || [year] || '||' || subjseq In 
+			(
+				select subj || '||' || [year] || '||' || subjseq  
+				from   tz_subjseq
+				where   grcode 	= #p_grcode#
+				and    gyear  	= #p_gyear#
+				and    grseq	= #p_grseq#
+			)
+			</isEmpty>
+		</isEqual>	
+		<isNotEqual property="p_dynamic_table_name" compareValue="TZ_MASTERSUBJ">
+			delete  from $p_dynamic_table_name$
+			
+			<isNotEmpty property="p_subjseq">
+				where subj = #p_subj#
+				and [year] = #p_gyear#
+				and subjseq = #p_subjseq#
+			</isNotEmpty>
+			<isEmpty property="p_subjseq">
+			where subj || '||' || [year] || '||' || subjseq in 
+			(
+				select subj || '||' || [year] || '||' || subjseq  
+				from   tz_subjseq
+				where   grcode 	= #p_grcode#
+				and    gyear  	= #p_gyear#
+				and    grseq	= #p_grseq#
+			)
+			</isEmpty>
+		</isNotEqual>
+	</delete>
+	
+<!--	수강신청  정보 리스트-->
+	<select id="grSeqDAO.selectGrSeqStudentProposeList" parameterClass="map" resultClass="egovMap">
+			select get_codenm('0004', b.isonoff) isonoffnm, b.subj, b.subjnm, b.subjseq, userid, 
+			get_name(userid) name, biyong, goyongpricemajor, goyongpriceminor, get_compnm(comp) company 
+			from tz_propose a, vz_scsubjseq b  
+			where  a.subj = b.subj  
+			and  a.[year] = b.[year]  
+			and  a.subjseq = b.subjseq  
+			and  a.subjseq = #p_subjseq#
+			and  a.[year] = #p_gyear#
+			and  a.subj = #p_subj#
+			and  b.grcode = #p_grcode#
+	</select>
+	
+	
+<!--		취소-->
+	<select id="grSeqDAO.selectGrSeqStudentCancelList" parameterClass="map" resultClass="egovMap">
+			select get_codenm('0004', b.isonoff) isonoffnm, b.subj, b.subjnm, b.subjseq, userid, reason, decode(a.cancelkind, 'P', '반려','취소') as cancelkind, 
+			get_name(userid) name, biyong, goyongpricemajor, goyongpriceminor, get_compnm((select comp from tz_member where userid=a.userid)) company 
+			from tz_cancel a, vz_scsubjseq b  
+			where  a.subj = b.subj  
+			and  a.[year] = b.[year]  
+			and  a.subjseq = b.subjseq  
+			and  a.subjseq = #p_subjseq#
+			and  a.[year] = #p_gyear#
+			and  a.subj = #p_subj#
+			and  b.grcode = #p_grcode#
+	</select>
+	
+<!--		승인-->	
+	<select id="grSeqDAO.selectGrSeqStudentStudentList" parameterClass="map" resultClass="egovMap">
+			select get_codenm('0004', b.isonoff) isonoffnm, b.subj, b.subjnm, b.subjseq, userid, 
+			get_name(userid) name, biyong, goyongpricemajor, goyongpriceminor, get_compnm(comp) company 
+			from tz_student a, vz_scsubjseq b  
+			where  a.subj = b.subj  
+			and  a.[year] = b.[year]  
+			and  a.subjseq = b.subjseq  
+			and  a.subjseq = #p_subjseq#
+			and  a.[year] = #p_gyear#
+			and  a.subj = #p_subj#
+			and  b.grcode = #p_grcode#
+	</select>
+	
+<!--		수료-->	
+	<select id="grSeqDAO.selectGrSeqStudentStoldList" parameterClass="map" resultClass="egovMap">
+			select get_codenm('0004', b.isonoff) isonoffnm, b.subj, b.subjnm, b.subjseq, userid, 
+			get_name(userid) name, biyong, goyongpricemajor, goyongpriceminor, get_compnm(comp) company 
+			from tz_stold a, vz_scsubjseq b  
+			where  a.subj = b.subj  
+			and  a.[year] = b.[year]  
+			and  a.subjseq = b.subjseq  
+			and  a.subjseq = #p_subjseq#
+			and  a.[year] = #p_gyear#
+			and  a.subj = #p_subj#
+			and  b.grcode = #p_grcode#
+	</select>
+	
+<!--	기수상세리스트화면-->
+	<select id="grSeqDAO.selectGrSeqDetailList" parameterClass="map" resultClass="egovMap">
+	<![CDATA[
+			select distinct 
+			a.subj, a.subjnm, a.subjseq, a.subjseqgr, a.[year], a.propstart, a.propend  
+			, a.edustart, a.eduend, a.studentlimit 
+			, (select isonoff from tz_subj where subj=a.subj) isonoff 
+			, (select count(*) from tz_propose where subj = a.subj and [year] = a.[year] and subjseq=a.subjseq) proposecnt 
+			, (select count(*) from tz_cancel  where subj = a.subj and [year] = a.[year] and subjseq=a.subjseq) cancelcnt 
+			, (select count(*) from tz_student where subj = a.subj and [year] = a.[year] and subjseq=a.subjseq) studentcnt 
+			, (select count(*) from tz_stold   where subj = a.subj and [year] = a.[year] and subjseq=a.subjseq and isgraduated = 'Y' ) stoldcnt 
+			, a.isdeleted 	-- 폐강여부
+			, a.muserid 	-- 담당자
+			, get_name(a.muserid) as musernm --담당자명
+			, case 
+			when a.edustart <= to_char(sysdatetime,'yyyymmddhh') and a.eduend  > to_char(sysdatetime,'yyyymmddhh') then 
+			'4' 
+			when a.eduend <= to_char(sysdatetime,'yyyymmddhh') then 
+			'5' 
+			when to_char(sysdatetime,'yyyymmddhh') < a.propstart then 
+			'1' 
+			when a.propstart <= to_char(sysdatetime,'yyyymmddhh') and a.propend  > to_char(sysdatetime,'yyyymmddhh') then 
+			'2' 
+			when a.propend <= to_char(sysdatetime,'yyyymmddhh') and a.edustart  > to_char(sysdatetime,'yyyymmddhh') then 
+			'3' 
+			when a.propstart is null and a.propend is null then 
+			'0' 
+			end as eduterm 
+			from tz_subjseq a  
+			where a.grcode 	= #p_grcode# 
+			and a.subj   	= #p_subj#
+			and a.[year]   	= #ses_search_gyear#
+			and a.grseq  	= #p_grseq#
+	]]>
+			<isEmpty property="search_orderColumn">
+			order by 1,4
+			</isEmpty>
+			
+		 	<isNotEmpty property="search_orderColumn">
+		 	order by $search_orderColumn$ $search_orderType$
+		 	</isNotEmpty>
+	</select>
+	
+<!--	기수 수정화면 - 기수상세 정보 보기 -->
+	<select id="grSeqDAO.selectGrSeqDetailView" parameterClass="map" resultClass="egovMap">
+	<![CDATA[
+			select a.subj            , a.[year]          , a.subjseq           , a.subjseqgr          
+			,   a.grcode          , a.gyear         , a.grseq             , a.isbelongcourse     
+			,   a.course          , a.cyear         , a.courseseq         , a.propstart          
+			,   a.propend         , a.edustart      , a.eduend            , a.isclosed           
+			,   a.ismultipaper    , a.subjnm        , a.luserid           , a.ldate              
+			,   a.studentlimit    , a.point         , a.biyong            , a.ischarge           
+			,   a.edulimit        , a.warndays      , a.stopdays          , a.gradscore          
+			,   a.gradstep        , a.wstep         , a.wmtest            , a.wftest             
+			,   a.wreport         , a.wact          , a.wetc1             , a.wetc2              
+			,   a.endfirst        , a.endfinal      , a.proposetype       , a.whtest             
+			,   a.score           , a.gradreport    , a.gradexam          , a.rndcreditreq       
+			,   a.rndcreditchoice , a.rndcreditadd  , a.rndcreditdeduct   , a.isablereview       
+			,   a.tsubjbudget     , a.rndjijung     , a.isusebudget       , a.isessential        
+			,   a.gradftest       , a.gradhtest     , a.isvisible         , a.place              
+			,   a.placejh         , a.bookname      , a.bookprice         , a.sulpapernum        
+			,   a.canceldays      , a.isopenedu     , a.maleassignrate                           
+			,   a.gradftest_flag  , a.gradexam_flag , a.gradhtest_flag    , a.gradreport_flag    
+			,   a.isattendchk     , a.attstime      , a.attetime          , a.isgoyong		   
+			,   a.goyongpricemajor, a.goyongpriceminor, a.usebook							       
+			,   a.presulpapernum  , a.presulsdate     , a.presuledate						       
+			,   a.aftersulpapernum, a.aftersulsdate   , a.aftersuledate					       
+			,   a.reviewdays      , a.study_count		, a.study_time							   
+			,   a.muserid         , get_name(a.muserid) as musernm        , a.musertel		   
+			,   a.mtest_start     , a.mtest_end     , a.ftest_start       , a.ftest_end          
+			,   a.mreport_start   , a.mreport_end   , a.freport_start     , a.freport_end        
+			,   a.goyongpricestand ,a.neweroom
+			, ( select  grseqnm  from tz_grseq where grcode = #p_grcode# and grseq = #p_grseq# and gyear = #p_gyear# ) grcodenm
+			, ( select  grcodenm  from tz_grcode where grcode = #p_grcode# ) grseqnm
+			, a.test_day, a.test_day_time
+			, a.isyearedustatus
+			, a.biyong2
+			, a.license_yn
+			, a.duty_yn
+			from    tz_subjseq a, tz_subj b                                                          
+			where   a.subj = b.subj                                                                  
+			and a.subj   	= #p_subj#
+			and a.[year]   	= #p_year#
+			and a.subjseq  	= #p_subjseq#
+	]]>
+	</select>
+	
+<!--	출석고사장 학교 리스트-->
+	<select id="grSeqDAO.selectGrSeqSchoolList" parameterClass="map" resultClass="egovMap">
+		select seq,'['||low_edumin||']'||school_nm as snm from TZ_ATTEND_CD where isuse='Y'
+	</select>
+	
+<!--	새로운기수로 수정시 존재하는지를 체크한다.-->
+	<select id="grSeqDAO.selectCheckSubjseq" parameterClass="map"  remapResults="true" resultClass="int">
+	SELECT COUNT(1) AS CNT FROM TZ_SUBJSEQ WHERE [year] = #p_year# AND SUBJ = #p_subj# AND SUBJSEQ = LPAD(#p_newsubjseq#, 4, '0')
+	</select>
+	
+	
+	
+	
+	<!--	단일 기수 수정-->
+	<update id="grSeqDAO.updateSubjseq">
+		update  tz_subjseq set                                                  
+		    propstart           = #p_propstart#                                         
+		,   propend             = #p_propend#                                         
+		,   edustart            = #p_edustart#                                         
+		,   eduend              = #p_eduend#                                         
+		,   endfirst            = #p_endfirst#                                         
+		,   endfinal            = #p_endfinal#                        
+		                 
+<isNotEmpty property="p_ismultipaper">,   ismultipaper        = #p_ismultipaper#</isNotEmpty>
+<isEmpty property="p_ismultipaper">,   ismultipaper        = 'N'</isEmpty>		
+		                                         
+		,   subjnm              = #p_subjnm#                                         
+		,   luserid             = #userid#                                         
+		,   ldate               = to_char(sysdatetime,'yyyymmddhh24miss')       
+		,   studentlimit        = #p_studentlimit#                                         
+		,   point               = #p_point#                                         
+		,   biyong              = #p_biyong#                                         
+		,   biyong2              = #p_biyong2#
+		,   edulimit            = #p_edulimit#                                         
+		,   warndays            = #p_warndays#                                         
+		,   stopdays            = #p_stopdays#                                         
+		,   gradscore           = #p_gradscore#                                         
+		,   gradstep            = #p_gradstep#                                         
+		,   wstep               = #p_wstep#                                         
+		,   wmtest              = #p_wmtest#                                         
+		,   wftest              = #p_wftest#                                         
+		,   wreport             = #p_wreport#                                         
+		,   wact                = #p_wact#                                         
+		,   wetc1               = #p_wetc1#                                         
+		,   wetc2               = #p_wetc2#                                         
+		,   proposetype         = #p_proposetype#                                         
+		,   gradexam            = #p_gradexam#                                         
+		,   gradreport          = #p_gradreport#                                         
+		,   whtest              = #p_whtest#                                         
+		,   rndcreditreq        = #p_rndcreditreq#                                         
+		,   rndcreditchoice     = #p_rndcreditchoice#                                         
+		,   rndcreditadd        = #p_rndcreditadd#                                         
+		,   rndcreditdeduct     = #p_rndcreditdeduct#                                         
+		,   isablereview        = #p_isablereview#                                         
+		,   score               = #p_score#                                         
+		,   tsubjbudget         = #p_tsubjbudget#   
+		
+<isNotEmpty property="p_isessential">,   isessential        = #p_isessential#</isNotEmpty>
+<isEmpty property="p_isessential">,   isessential        = '0'</isEmpty>	
+	
+<isNotEmpty property="p_rndjijung">,   rndjijung        = #p_rndjijung#</isNotEmpty>
+<isEmpty property="p_rndjijung">,   rndjijung        = 'N'</isEmpty>		
+		                                      
+		                                      
+		,   gradftest           = #p_gradftest#                                         
+		,   gradhtest           = #p_gradhtest#   
+		
+<isNotEmpty property="p_isvisible">,   isvisible        = #p_isvisible#</isNotEmpty>
+<isEmpty property="p_isvisible">,   isvisible        = 'Y'</isEmpty>	
+		                                      
+		,   place               = #p_place#                                         
+		,   placejh             = #p_placejh#                                         
+		,   sulpapernum         = #p_sulpapernum#                                         
+		,   canceldays          = #p_canceldays#   
+		
+<isNotEmpty property="p_ischarge">,   ischarge        = #p_ischarge#</isNotEmpty>
+<isEmpty property="p_ischarge">,   ischarge        = 'N'</isEmpty>                             
+		                                        
+		,   isopenedu           = #p_isopenedu#                                         
+		,   maleassignrate      = #p_maleassignrate#                                         
+		,   gradftest_flag      = #p_gradftest_flag#                                         
+		,   gradexam_flag       = #p_gradexam_flag#                                         
+		,   gradhtest_flag      = #p_gradhtest_flag#                                         
+		,   gradreport_flag     = #p_gradreport_flag#                                         
+		,   isattendchk         = #p_isattendchk#                                         
+		,   attstime            = #p_attstime#                                         
+		,   attetime            = #p_attetime#                                         
+		
+		,   isgoyong			= #p_isgoyong#	
+		,   goyongpricemajor    = #p_goyongpricemajor#                                         
+		,   goyongpriceminor    = #p_goyongpriceminor#                                         
+		,   usebook             = #p_usebook#                                         
+		,   bookname            = #p_bookname#                                         
+		,   bookprice           = #p_bookprice#                                         
+		
+		,   reviewdays          = #p_reviewdays#                                         
+		,   study_count         = #p_study_count#                                         
+		,   study_time          = #p_study_time#                                         
+		,   muserid      	   	= #p_muserid#                                         
+		,   musertel		    = #p_musertel#                                         
+		,   aftersulsdate      	= Replace(#p_aftersdate#, '-', '')                                     
+		,   aftersuledate		= Replace(#p_afteredate#, '-', '')                                
+
+		<isNotEmpty property="p_newsubjseq">
+		,   subjseq		       = LPAD(#p_newsubjseq#,4,'0')                                        
+		</isNotEmpty>
+		  
+		,   neweroom		   = #p_neweroom#                                        
+		,   test_day	 	   = #testday#
+		,   test_day_time	   = #testdaytime#
+		,	isyearedustatus    = #p_isyearedustatus#
+		<isNotEmpty property="licenseYn">, license_yn = #licenseYn#</isNotEmpty>
+		<isEmpty property="licenseYn">, license_yn = 'N'</isEmpty>
+		<isNotEmpty property="dutyYn">, duty_yn = #dutyYn#</isNotEmpty>
+		<isEmpty property="dutyYn">, duty_yn = 'N'</isEmpty>
+		 where   subj          = #p_subj#                                         
+		 and     [year]          = #p_year#                                         
+		 and     subjseq       = #p_subjseq# 
+	</update>
+	
+	
+	<!--	과정기수 일괄 수정페이지.-->
+	<select id="grSeqDAO.selectUpdateSubjCourseList" parameterClass="map" resultClass="egovMap">
+	 select  a.subj                                               
+		,   a.[year]                                               
+		,   a.subjseq                                            
+		,   a.subjnm                                             
+		,   get_codenm('0004',a.isonoff) isonoff                                  
+		,   a.propstart                                          
+		,   a.propend                                            
+		,   a.edustart                                           
+		,   a.eduend                                             
+		,   a.edulimit                                           
+		,   a.isblended                                          
+		,   a.isexpert                                           
+		,   DECODE(a.isblended, 'Y', '블랜디드', DECODE(a.isexpert, 'Y', '전문가', '기본교육')) gubun_name 
+		,   a.edulimit                                           
+		,   a.isuse                                              
+		,   a.isclosed                                           
+		,   (                                                    
+			select  classname                                
+			from    tz_subjatt                               
+			where   upperclass  = a.oriupperclass             
+			and     subjclass   = a.scsubjclass              
+		) as classname                            
+		from    vz_scsubjseq    a                                    
+		where   a.grcode = #p_grcode#
+		and     a.gyear  = #p_gyear#
+		and     a.grseq  = #p_grseq#
+		
+		<isNotEmpty property="p_subj">
+			and a.subj = #p_subj#
+		</isNotEmpty>
+		
+		<isNotEmpty property="search_orderColumn">
+		 		order by  $search_orderColumn$ $search_orderType$ 
+	 	</isNotEmpty>
+        <isEmpty property="search_orderColumn">
+           order by a.[year] desc, a.subj, a.subjnm
+       </isEmpty>
+	</select>
+	
+	
+	<!--	과정기수 일괄 지정페이지.-->
+	<select id="grSeqDAO.selectAssignSubjCourseList" parameterClass="map" resultClass="egovMap">
+		select 
+		a.subj, a.subjnm, a.upperclass, b.classname, a.isonoff, substr(a.ldate,1,4)     ldateyear,   get_name(a.muserid) as musernm, a.isuse,
+		c.subjcourse, c.coursenm, c.isnew, c.disseq, 
+		(
+		select count(*) cnts from tz_subjseq
+		where   grcode = #p_grcode#
+		and     gyear  = #p_gyear#
+		and     grseq  = #p_grseq#
+		and subj=a.subj
+		)  cnts
+		
+		from tz_subj a, tz_subjatt b,
+		(
+				select 
+					subjcourse, subjnm coursenm, isnew, disseq, 'S' subjtype, substr(aa.ldate,1,4) ldateyear 
+				from tz_grsubj aa, tz_subj bb 
+				where aa.subjcourse=bb.subj 
+				and bb.isuse  = 'Y' 
+				and grcode = #p_grcode#
+				<isNotEmpty property="p_subj">
+					and bb.subj = #p_subj#
+				</isNotEmpty>
+		) c
+		where a.upperclass=b.upperclass 
+		and b.middleclass = '000' 
+		and b.lowerclass = '000'
+		and a.subj =  c.subjcourse
+		-- 2017 추가
+		and a.final_content_yn = 'Y'
+		-- 2017 추가 끝
+		
+		<isNotEmpty property="search_orderColumn">
+		 		order by  $search_orderColumn$ $search_orderType$ 
+	 	</isNotEmpty>
+        <isEmpty property="search_orderColumn">
+           order by ldateyear desc, c.subjcourse
+       </isEmpty>
+       
+		
+	</select>
+	
+	
+	<!--	기수 일일학습제한 수정-->
+	<update id="grSeqDAO.updateEdulimit">
+		update tz_subjseq set 
+		edulimit = #p_edulimit#, 
+		luserid = #userid#, 
+		ldate = to_char(sysdatetime,'yyyymmddhh24miss')
+		where subj = #p_subj#
+		and [year] = #p_year#
+		and subjseq = #p_subjseq#
+	</update>
+	
+	
+	<!--	기수 수강신청일자 수정-->
+	<update id="grSeqDAO.updatePropose">
+		update tz_subjseq set 
+		propstart = #p_propstart#, 
+		propend = #p_propend#, 
+		luserid = #userid#, 
+		ldate = to_char(sysdatetime,'yyyymmddhh24miss')
+		where subj = #p_subj#
+		and [year] = #p_year#
+		and subjseq = #p_subjseq#
+	</update>
+	
+	<!--	기수 학습기간 수정-->
+	<update id="grSeqDAO.updateEdu">
+		update tz_subjseq set 
+		edustart = #p_edustart#, 
+		eduend = #p_eduend#, 
+		luserid = #userid#, 
+		ldate = to_char(sysdatetime,'yyyymmddhh24miss')
+		where subj = #p_subj#
+		and [year] = #p_year#
+		and subjseq = #p_subjseq#
+	</update>
+	
+	<!--	기수 일일학습제한 교육기수 전체 수정-->
+	<update id="grSeqDAO.updateGrSeqEdulimit">
+		update tz_subjseq set 
+		edulimit = #p_edulimit#, 
+		luserid = #userid#, 
+		ldate = to_char(sysdatetime,'yyyymmddhh24miss')
+		where grcode = #p_grcode#
+		and gyear = #p_gyear#
+		and grseq = #p_grseq#
+	</update>
+	
+	
+	<!-- 2017 추가 -->
+	<select id="grSeqDAO.selectAreaCodeList" resultClass="egovMap">
+		select 
+			code
+			, codenm
+			, [upper] org_code
+		from 
+			tz_code
+		where 
+			gubun = '0118'
+			and use_yn = 'Y'
+		order by orders
+	</select>
+	
+	<delete id="grSeqDAO.deleteSubjseqArea" parameterClass="map">
+		delete 
+		from 
+			tz_subjseq_area
+		where
+			subj = #p_subj#
+			and [year] = #p_year#
+			and subjseq = #p_subjseq#
+	</delete>
+	
+	<insert id="grSeqDAO.insertSubjseqArea" parameterClass="map">
+		insert into tz_subjseq_area
+		(
+			subj
+			, [year]
+			, subjseq
+			, area_code
+		) values
+		(
+			#p_subj#
+			, #p_year#
+			, #p_subjseq#
+			, upper(#areaCode#)
+		)
+	</insert>
+	
+	<select id="grSeqDAO.selectSubjseqAreaCodeConcat" parameterClass="map" resultClass="string">
+		select
+			group_concat(nvl(area_code,'')) 
+		from 
+			tz_subjseq_area
+		where
+			subj = #p_subj#
+			and [year] = #p_year#
+			and subjseq = #p_subjseq#
+	</select>
+	<!-- 2017 추가 끝 -->
+	
+	<update id="grSeqDAO.updateSubjseqReviewIsclosed">
+		update tz_subjseq  
+			set isablereview = #p_isablereview#
+			   ,reviewdays = #p_reviewdays# 
+			   ,isclosed = #p_isclosed#
+			where subj = #p_subj#
+			and [year] = #p_year#
+			and subjseq = #p_subjseq#
+			
+	</update>
+	
+	<update id="grSeqDAO.deleteStudentSerno">
+		update tz_student
+			set serno = ''
+			where subj = #p_subj#
+			and [year] = #p_year#
+			and subjseq = #p_subjseq#
+			
+	</update>
+	
+</sqlMap>

@@ -1,0 +1,72 @@
+<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en" lang="en">
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=euc-kr" />
+<title>러닝맵</title>
+<script language="javascript">AC_FL_RunContent = 0;</script>
+<script src="AC_RunActiveContent.js" language="javascript"></script>
+</head>
+<style>
+body{
+	margin:0px;
+}
+</style>
+<script language="JavaScript">
+//////////2012.09.19///////////////////////////////////
+var Request = function()
+{
+    this.getParameter = function( name )
+    {
+        var rtnval = '';
+        var nowAddress = unescape(location.href);
+        var parameters = (nowAddress.slice(nowAddress.indexOf('?')+1,nowAddress.length)).split('&');
+
+        for(var i = 0 ; i < parameters.length ; i++)
+        {
+            var varName = parameters[i].split('=')[0];
+            if(varName.toUpperCase() == name.toUpperCase())
+            {
+                rtnval = parameters[i].split('=')[1];
+                break;
+            }
+        }
+        return rtnval;
+    }
+}
+
+var request = new Request();
+var chap = request.getParameter('chap');
+//////////2012.09.19///////////////////////////////////
+</script>
+
+<body bgcolor="#ffffff">
+<script language="javascript">
+	if (AC_FL_RunContent == 0) {
+		alert("This page requires AC_RunActiveContent.js.");
+	} else {
+		AC_FL_RunContent(
+			'codebase', 'http://download.macromedia.com/pub/shockwave/cabs/flash/swflash.cab#version=9,0,0,0',
+			'width', '1000',
+			'height', '640',
+			'src', 'img/swf/map',
+			'quality', 'high',
+			'pluginspage', 'http://www.macromedia.com/go/getflashplayer',
+			'align', 'middle',
+			'play', 'true',
+			'loop', 'true',
+			'scale', 'showall',
+			'wmode', 'window',
+			'FlashVars', 'chap='+chap,
+			'devicefont', 'false',
+			'id', 'map',
+			'bgcolor', '#ffffff',
+			'name', 'map',
+			'menu', 'true',
+			'allowFullScreen', 'false',
+			'allowScriptAccess','always',
+			'movie', 'img/swf/map',
+			'salign', ''
+			); //end AC code
+	}
+</script>
+</body>
+</html>

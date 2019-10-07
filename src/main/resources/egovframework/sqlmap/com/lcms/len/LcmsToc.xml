@@ -1,0 +1,157 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE sqlMap PUBLIC "-//iBATIS.com//DTD SQL Map 2.0//EN" "http://ibatis.apache.org/dtd/sql-map-2.dtd">
+
+<sqlMap namespace="LcmsToc">
+
+
+<typeAlias  alias="egovMap" type="egovframework.rte.psl.dataaccess.util.EgovMap"/>
+
+
+<resultMap id="tocResult" class="egovframework.rte.psl.dataaccess.util.EgovMap">
+   <result property="tocIdx"       column="TOC_IDX" />
+   <result property="userId"       column="USERID" />
+   <result property="courseMapSeq" column="COURSE_MAP_SEQ" />
+   <result property="idx"          column="IDX" />
+   <result property="serializer"   column="SERIALIZER" jdbcType="BLOB"/>
+</resultMap>
+
+
+<resultMap id="LcmsToctest" class="egovframework.com.lcms.len.domain.LcmsToc">
+   <result property="tocIdx"       column="TOC_IDX" columnIndex="1"/>
+   <result property="userId"       column="USERID" columnIndex="2"/>
+   <result property="courseMapSeq" column="COURSE_MAP_SEQ" columnIndex="3"/>
+   <result property="idx"          column="IDX" columnIndex="4" />
+   <result property="serializer"   column="SERIALIZER" columnIndex="5"/>
+</resultMap>
+
+    <select id="lcmsTocDAO.selectLcmsTocPageList" parameterClass="map" resultClass="egovMap">
+        SELECT * 
+        FROM
+               (
+                SELECT TEMP.*, 
+                <isNotEmpty property="rowsPerPage">
+                       CEIL(ROWNUM / #rowsPerPage#) AS PAGE 
+                </isNotEmpty>
+                <isEmpty property="rowsPerPage">
+                       CEIL(ROWNUM / 10) AS PAGE 
+                </isEmpty>
+                FROM
+                      (
+                       SELECT 
+	        	              TOC_IDX,
+	        	              USERID,
+	        	              COURSE_MAP_SEQ,
+	        	              IDX,
+	        	               SERIALIZER
+        		       FROM   TB_LCMS_TOC$nowYear$
+        		       <!--  APPEND WHERE CONDITION START  -->
+
+        		       <!--  APPEND WHERE CONDITION END    -->
+        		       <isNotEmpty property="orderBy">
+        			       $orderBy$
+        		       </isNotEmpty>
+        	          ) TEMP 
+               )
+        <isNotEmpty property="page">
+        WHERE PAGE = #page#
+        </isNotEmpty>
+        <isEmpty property="page">
+        WHERE PAGE = 1
+        </isEmpty>
+    </select>
+
+    <select id="lcmsTocDAO.selectLcmsTocList" parameterClass="map" resultClass="egovMap">
+        SELECT TOC_IDX,
+               USERID,
+               COURSE_MAP_SEQ,
+               IDX,
+               SERIALIZER
+        FROM   TB_LCMS_TOC$nowYear$
+    </select>
+
+    <select id="lcmsTocDAO.selectLcmsTocPageListTotCnt" parameterClass="map" resultClass="int">
+        SELECT COUNT(ROWNUM) AS [COUNT]
+        FROM   TB_LCMS_TOC$nowYear$
+    </select>
+
+    <select id="lcmsTocDAO.selectLcmsToc" parameterClass="map" resultMap="LcmsToctest">    
+        SELECT TOC_IDX, 
+               IDX, 
+               USERID, 
+               SERIALIZER, 
+               COURSE_MAP_SEQ
+		FROM   TB_LCMS_TOC$nowYear$ 
+	    WHERE  USERID=#userid#
+	    AND    COURSE_MAP_SEQ=#courseMapSeq#
+	    AND    ORG_SEQ =#orgSeq#
+    </select>
+
+    <insert id="lcmsTocDAO.insertLcmsToc">
+        <selectKey resultClass="long" keyProperty="tocIdx">
+         SELECT SQ_LCMS_TOC_SEQ.NEXTVAL FROM DB_ROOT
+        </selectKey>
+        INSERT INTO TB_LCMS_TOC$nowYear$
+        (
+            TOC_IDX,
+            USERID,
+            COURSE_MAP_SEQ,
+            IDX,
+            SERIALIZER,
+            ORG_SEQ
+        )
+        VALUES
+        (
+            #tocIdx#,
+            #userId#,
+            #courseMapSeq#,
+            #idx#,
+            #serializer:BLOB#,
+            #orgSeq#
+        )
+    </insert>
+
+    <update id="lcmsTocDAO.updateLcmsToc"> 
+        UPDATE TB_LCMS_TOC$nowYear$
+        SET    USERID = #userId#,
+               COURSE_MAP_SEQ = #courseMapSeq#,
+               IDX = #idx#,
+               SERIALIZER = #serializer:BLOB#
+        WHERE  TOC_IDX = #tocIdx#
+        AND    USERID = #userid#
+        AND    COURSE_MAP_SEQ = #courseMapSeq# 
+        AND    ORG_SEQ = #orgSeq#
+        
+    </update>
+
+    <delete id="lcmsTocDAO.deleteLcmsToc">
+        DELETE TB_LCMS_TOC$nowYear$
+        WHERE  COURSE_MAP_SEQ = #courseMapSeq# 
+		AND    USERID = #userid#
+		AND    ORG_SEQ = #orgSeq#
+		AND    IDX=(SELECT IDX 
+		            FROM  TB_LCMS_SERIALIZER 
+					WHERE ORG_SEQ = #orgSeq#)
+    </delete>
+
+    <delete id="lcmsTocDAO.deleteLcmsTocAll">
+        DELETE FROM TB_LCMS_TOC$nowYear$
+        <dynamic prepend="WHERE TOC_IDX IN ">
+            <isNotEmpty property="tocIdx">
+                <iterate property="tocIdx" open="(" close=")" conjunction=",">
+                    #tocIdx[]#
+                </iterate>
+            </isNotEmpty>
+            <isEmpty property="tocIdx">
+                ('')
+            </isEmpty>
+        </dynamic>
+    </delete>
+
+    <select id="lcmsTocDAO.existLcmsToc" resultClass="long">
+        SELECT COUNT(ROWNUM) 
+        FROM   TB_LCMS_TOC$nowYear$
+        WHERE  TOC_IDX = #tocIdx#
+    </select>
+
+</sqlMap>
+

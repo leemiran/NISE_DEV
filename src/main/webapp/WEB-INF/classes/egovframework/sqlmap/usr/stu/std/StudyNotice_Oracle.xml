@@ -1,0 +1,87 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE sqlMap PUBLIC "-//iBATIS.com//DTD SQL Map 2.0//EN" "http://ibatis.apache.org/dtd/sql-map-2.dtd">
+
+<sqlMap namespace="StudyNotice">
+<typeAlias  alias="egovMap" type="egovframework.rte.psl.dataaccess.util.EgovMap"/>
+
+	<resultMap id="boardResult" class="egovframework.rte.psl.dataaccess.util.EgovMap">
+		<result property="seq"      	column="seq" />
+	   	<result property="types"  		column="types" />
+	   	<result property="title"      	column="title" />
+	   	<result property="userid"       column="userid" />
+	   	<result property="addate"       column="addate" />
+	   	<result property="name"         column="name" />
+	   	<result property="gadmin"       column="gadmin" />
+	   	<result property="isimport"     column="isimport" />
+	   	<result property="upfile"       column="upfile" />
+	   	<result property="realfile"     column="realfile" />
+	   	<result property="cnt"          column="cnt" />
+	   	<result property="adcontent"    column="adcontent"  jdbcType="CLOB" javaType="java.lang.String"/>
+	</resultMap>
+	
+
+	<select id="studyNoticeDAO.selectListGong" parameterClass="map" resultClass="egovMap">
+		select tg.seq , tg.types, tg.addate, tg.title , tg.userid, tg.adcontent, tm.name, decode(tg.gadmin, 'ZZ', 'ZZ', 'P1', '강사',  '운영자') gadmin, tg.isimport,tg.cnt
+		  from tz_gong   tg, Tz_member tm
+		 where tg.subj    = #p_subj#
+		   and tg.[year]    = #p_year#
+		   and tg.subjseq = #p_subjseq#
+		   and tg.userid  = tm.userid
+		   and tg.types  != 'H'
+		<isNotEmpty property="p_searchtext">
+		<isEqual property="p_search" compareValue="title">
+		   and tg.title like '%' || #p_searchtext# || '%'
+		</isEqual>
+		<isEqual property="p_search" compareValue="content">
+		   and tg.adcontent like '%' || #p_searchtext# || '%'
+		</isEqual>
+		</isNotEmpty>
+		 order by tg.addate desc
+	</select>
+	
+	<select id="studyNoticeDAO.selectListGongAll_H" parameterClass="map" resultClass="egovMap">
+		select seq , types, typesnm, addate,title, userid, adcontent, gadmin, rownum
+		  from (
+		  		 select a.seq seq , a.types types, b.codenm typesnm, a.addate addate,
+		  		        a.title title, a.userid userid, a.adcontent adcontent ,a.cnt,
+		  		        decode(a.gadmin, 'ZZ', 'ZZ', 'P1', '강사',  '운영자') gadmin
+		  		   from TZ_GONG a, TZ_CODE b
+		  		   where a.types   = b.code
+		  		     and b.gubun   = '0008'
+		  		     and b.levels  = 1
+		  		     and a.types   = 'H'
+		  		     and a.subj    = #p_subj#
+		  		     and a.[year]    = #p_year#
+		  		     and a.subjseq = #p_subjseq#
+					<isNotEmpty property="p_searchtext">
+					<isEqual property="p_search" compareValue="title">
+					   and a.title like '%' || #p_searchtext# || '%'
+					</isEqual>
+					<isEqual property="p_search" compareValue="content">
+					   and a.adcontent like '%' || #p_searchtext# || '%'
+					</isEqual>
+					</isNotEmpty>
+		  		   order by a.addate desc
+		       )
+	</select>
+	
+	<update id="studyNoticeDAO.updateViewCount">
+		update tz_gong
+		   set cnt = cnt + 1
+		 where subj    = #p_subj#
+		   and [year]    = #p_year#
+		   and subjseq = #p_subjseq#
+		   and seq     = #p_seq#
+	</update>
+	
+	<!-- <select id="studyNoticeDAO.selectViewGong" parameterClass="map" resultMap="boardResult"> -->
+	<select id="studyNoticeDAO.selectViewGong" parameterClass="map" resultClass="egovMap">
+		select tg.seq , tg.types, tg.addate, tg.title, tg.userid userid, tg.adcontent, tm.name, decode(tg.gadmin, 'ZZ', 'ZZ', 'P1', '강사',  '운영자') gadmin, isimport,upfile,realfile,cnt
+		  from TZ_GONG   tg ,    TZ_Member tm
+		 where tg.subj    = #p_subj#
+		   and tg.[year]    = #p_year#
+		   and tg.subjseq = #p_subjseq#
+		   and tg.seq     = #p_seq#
+		   and tg.userid  = tm.userid
+	</select>
+</sqlMap>

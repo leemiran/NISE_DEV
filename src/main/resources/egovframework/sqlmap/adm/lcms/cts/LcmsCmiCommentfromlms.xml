@@ -1,0 +1,163 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE sqlMap PUBLIC "-//iBATIS.com//DTD SQL Map 2.0//EN" "http://ibatis.apache.org/dtd/sql-map-2.dtd">
+
+<sqlMap namespace="LcmsCmiCommentfromlms">
+
+
+<typeAlias  alias="egovMap" type="egovframework.rte.psl.dataaccess.util.EgovMap"/>
+
+    <select id="lcmsCmiCommentfromlmsDAO.selectLcmsCmiCommentfromlmsPageList" parameterClass="map" resultClass="egovMap">
+        SELECT * 
+        FROM
+               (
+                SELECT TEMP.*, 
+                <isNotEmpty property="rowsPerPage">
+                       CEIL(ROWNUM / #rowsPerPage#) AS PAGE 
+                </isNotEmpty>
+                <isEmpty property="rowsPerPage">
+                       CEIL(ROWNUM / 10) AS PAGE 
+                </isEmpty>
+                FROM
+                      (
+                       SELECT 
+	        	              COMMENTS_LMS_COMMENT_SEQ,
+	        	              COMMENTS_LMS_COUNT,
+	        	              COMMENTS_LMS_COMMENT,
+	        	              COMMENTS_LMS_LOCATION,
+	        	              COMMENTS_LMS_TIMESTAMP,
+	        	              USERID,
+	        	              UPDATE_DT,
+	        	              COURSE_MAP_SEQ,
+	        	              ORG_SEQ,
+	        	              ITEM_ID,
+	        	               LEARNER_ID
+        		       FROM   TB_LCMS_CMI_COMMENTFROMLMS
+        		       <!--  APPEND WHERE CONDITION START  -->
+
+        		       <!--  APPEND WHERE CONDITION END    -->
+        		       <isNotEmpty property="orderBy">
+        			       $orderBy$
+        		       </isNotEmpty>
+        	          ) TEMP 
+               )
+        <isNotEmpty property="page">
+        WHERE PAGE = #page#
+        </isNotEmpty>
+        <isEmpty property="page">
+        WHERE PAGE = 1
+        </isEmpty>
+    </select>
+
+    <select id="lcmsCmiCommentfromlmsDAO.selectLcmsCmiCommentfromlmsList" parameterClass="map" resultClass="egovMap">
+        SELECT COMMENTS_LMS_COMMENT_SEQ,
+               COMMENTS_LMS_COUNT,
+               COMMENTS_LMS_COMMENT,
+               COMMENTS_LMS_LOCATION,
+               COMMENTS_LMS_TIMESTAMP,
+               USERID,
+               UPDATE_DT,
+               COURSE_MAP_SEQ,
+               ORG_SEQ,
+               ITEM_ID,
+               LEARNER_ID
+        FROM   TB_LCMS_CMI_COMMENTFROMLMS
+    </select>
+
+    <select id="lcmsCmiCommentfromlmsDAO.selectLcmsCmiCommentfromlmsPageListTotCnt" parameterClass="map" resultClass="int">
+        SELECT COUNT(ROWNUM) AS [COUNT]
+        FROM   TB_LCMS_CMI_COMMENTFROMLMS
+    </select>
+
+    <select id="lcmsCmiCommentfromlmsDAO.selectLcmsCmiCommentfromlms" parameterClass="map" resultClass="egovMap">
+        SELECT COMMENTS_LMS_COMMENT_SEQ,
+               COMMENTS_LMS_COUNT,
+               COMMENTS_LMS_COMMENT,
+               COMMENTS_LMS_LOCATION,
+               COMMENTS_LMS_TIMESTAMP,
+               USERID,
+               UPDATE_DT,
+               COURSE_MAP_SEQ,
+               ORG_SEQ,
+               ITEM_ID,
+               LEARNER_ID
+        FROM   TB_LCMS_CMI_COMMENTFROMLMS
+        WHERE  COMMENTS_LMS_COMMENT_SEQ = #commentsLmsCommentSeq#
+    </select>
+
+    <insert id="lcmsCmiCommentfromlmsDAO.insertLcmsCmiCommentfromlms">
+        <selectKey resultClass="long" keyProperty="commentsLmsCommentSeq">
+            SELECT NVL(MAX(COMMENTS_LMS_COMMENT_SEQ)+1, 1)
+            FROM   TB_LCMS_CMI_COMMENTFROMLMS
+        </selectKey>
+        INSERT INTO TB_LCMS_CMI_COMMENTFROMLMS
+        (
+            COMMENTS_LMS_COMMENT_SEQ,
+            COMMENTS_LMS_COUNT,
+            COMMENTS_LMS_COMMENT,
+            COMMENTS_LMS_LOCATION,
+            COMMENTS_LMS_TIMESTAMP,
+            USERID,
+            UPDATE_DT,
+            COURSE_MAP_SEQ,
+            ORG_SEQ,
+            ITEM_ID,
+            LEARNER_ID
+        )
+        VALUES
+        (
+            #commentsLmsCommentSeq#,
+            #commentsLmsCount#,
+            #commentsLmsComment#,
+            #commentsLmsLocation#,
+            #commentsLmsTimestamp#,
+            #userId#,
+            #updateDt#,
+            #courseMapSeq#,
+            #orgSeq#,
+            #itemId#,
+            #learnerId#
+        )
+    </insert>
+
+    <update id="lcmsCmiCommentfromlmsDAO.updateLcmsCmiCommentfromlms">
+        UPDATE TB_LCMS_CMI_COMMENTFROMLMS
+        SET    COMMENTS_LMS_COUNT = #commentsLmsCount#,
+               COMMENTS_LMS_COMMENT = #commentsLmsComment#,
+               COMMENTS_LMS_LOCATION = #commentsLmsLocation#,
+               COMMENTS_LMS_TIMESTAMP = #commentsLmsTimestamp#,
+               USERID = #userId#,
+               UPDATE_DT = #updateDt#,
+               COURSE_MAP_SEQ = #courseMapSeq#,
+               ORG_SEQ = #orgSeq#,
+               ITEM_ID = #itemId#,
+               LEARNER_ID = #learnerId#
+        WHERE  COMMENTS_LMS_COMMENT_SEQ = #commentsLmsCommentSeq#
+    </update>
+
+    <delete id="lcmsCmiCommentfromlmsDAO.deleteLcmsCmiCommentfromlms">
+        DELETE FROM TB_LCMS_CMI_COMMENTFROMLMS
+        WHERE  COMMENTS_LMS_COMMENT_SEQ = #commentsLmsCommentSeq#
+    </delete>
+
+    <delete id="lcmsCmiCommentfromlmsDAO.deleteLcmsCmiCommentfromlmsAll">
+        DELETE FROM TB_LCMS_CMI_COMMENTFROMLMS
+        <dynamic prepend="WHERE COMMENTS_LMS_COMMENT_SEQ IN ">
+            <isNotEmpty property="commentsLmsCommentSeq">
+                <iterate property="commentsLmsCommentSeq" open="(" close=")" conjunction=",">
+                    #commentsLmsCommentSeq[]#
+                </iterate>
+            </isNotEmpty>
+            <isEmpty property="commentsLmsCommentSeq">
+                ('')
+            </isEmpty>
+        </dynamic>
+    </delete>
+
+    <select id="lcmsCmiCommentfromlmsDAO.existLcmsCmiCommentfromlms" resultClass="long">
+        SELECT COUNT(ROWNUM) 
+        FROM   TB_LCMS_CMI_COMMENTFROMLMS
+        WHERE  COMMENTS_LMS_COMMENT_SEQ = #commentsLmsCommentSeq#
+    </select>
+
+</sqlMap>
+

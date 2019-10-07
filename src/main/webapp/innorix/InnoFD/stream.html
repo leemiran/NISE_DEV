@@ -1,0 +1,51 @@
+﻿<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+<meta http-equiv="content-type" content="text/html; charset=utf-8" />
+<head>
+<title>Innorix File Transfer Solution - Innofd Download</title>
+<script type="text/javascript" src="../common/innorix.js"></script>
+
+<script type="text/javascript">
+window.onload = function()
+{
+	innoInit({
+		ContainElementID : "innorix_component",	// 컴포넌트 출력 객체 ID
+		UseFileSizeQueryString : "true",		// 스트림 다운로드 get Param 전달설정		
+		TransferMode : "innofd"				// InnoEX 다운로드 모드 설정
+	},"DownloadObj1");
+}
+</script>
+</head>
+<body>
+
+<div id="innorix_component" style="border: 1px solid #97b4cc; width:500px; height:200px"></div><br />
+
+<input class="innoGreenBtn" type="button" value="선택 다운로드" onClick="File.SelectDownload('DownloadObj1');" />
+<input class="innoBlueBtn" type="button" value="전체 다운로드" onClick="File.Download('DownloadObj1');" />
+
+<script type="text/javascript">
+function innoOnEvent(msgEvent, arrParam, objName)
+{
+	var selfURL = location.href;
+	selfURL = selfURL.substring(0, selfURL.lastIndexOf("/")+1);	
+	
+	if (msgEvent == Event.msgLoadComplete) // 컴포넌트 로딩 완료 이벤트
+	{
+		// 다운로드 파일 구성
+		File.AddDownloadFile([
+			// ["http://다운로드 URL" [,"저장파일명" [,"파일용량"]]]
+            [selfURL + "download.jsp?fileID=111", "2015 이노릭스 솔루션 통합 소개자료(r2).pdf", "772760"],
+			[selfURL + "download.jsp?fileID=222", "2015 INNORIX Solution Brochure(r2).pdf", "772760"],
+			[selfURL + "download.jsp?fileID=333", "2015 INNORIX ソリューションパンフレット(r2).pdf", "772760"]
+		], "DownloadObj1");
+	}
+	
+	if (msgEvent == Event.msgItemDblClick) // 아이템 더블클릭 이벤트
+	{
+		File.DownloadAndOpen(objName);
+	}
+}
+</script>
+
+</body>
+</html>

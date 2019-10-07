@@ -1,0 +1,230 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE sqlMap PUBLIC "-//iBATIS.com//DTD SQL Map 2.0//EN" "http://ibatis.apache.org/dtd/sql-map-2.dtd">
+
+<sqlMap namespace="Permission">
+<typeAlias  alias="egovMap" type="egovframework.rte.psl.dataaccess.util.EgovMap"/>
+
+
+	<select id="permissionDAO.selectPermissionList" parameterClass="map" resultClass="egovMap">
+		select gadmin,
+		       gadminnm,
+		       comments,
+		       padmin,
+		       seq
+		  from tz_gadmin
+		 order by seq asc, gadminnm asc
+	</select>
+	
+	<select id="permissionDAO.selectPermissionInfo" parameterClass="map" resultClass="egovMap">
+		select gadmin,
+		       gadminnm,
+		       comments,
+		       padmin,
+		       seq
+		  from tz_gadmin
+		 where gadmin = #p_gadmin#
+		   and padmin = #p_padmin#
+	</select>
+	
+	<select id="permissionDAO.selectGadminList" parameterClass="map" resultClass="egovMap">
+		select gadmin,
+		       gadminnm,
+		       isneedgrcode,
+		       isneedsubj,
+		       isneedcomp,
+		       isneeddept,
+		       padmin
+		  from tz_gadmin
+		 where gadmin in ('A1', 'A2', 'C1', 'C2', 'F1', 'H1', 'K2', 'P1', 'M1')
+		 order by gadmin asc
+	</select>
+	
+	<select id="permissionDAO.getGadminCount" parameterClass="map" resultClass="int">
+		select count(0)
+		  from tz_gadmin
+		 where gadmin = #p_gadmin#
+		   and padmin = #p_gadminsel#
+	</select>
+	
+	<select id="permissionDAO.getGadminKey" parameterClass="map" resultClass="String">
+		select trim(to_char(max(nvl(substr(gadmin, 3, 4), 0) + 1), '00')) as [count]
+		  from tz_gadmin
+		 where substr(gadmin, 1, 2) = #p_gadminsel#
+	</select>
+	
+	<update id="permissionDAO.updatePermission">
+		update tz_gadmin
+		   set gadmin		= #i_gadmin#,
+		       gadminnm		= #p_gadminnm#,
+		       comments		= #p_comments#,
+		       isneedsubj	= #p_isneedsubj#,
+		       isneedcomp	= #p_isneedcomp#,
+		       isneeddept	= #p_isneeddept#,
+		       isneedgrcode = #p_isneedgrcode#,
+		       applevel		= 3,
+		       padmin		= #p_gadminsel#,
+		       seq			= #p_seq#,
+		       luserid		= #userid#,
+		       ldate		= to_char(sysdatetime, 'yyyyMMddhh24miss')
+		 where gadmin = #p_gadmin#
+	</update>
+	
+	<delete id="permissionDAO.deleteGrcodeMan">
+		delete tz_grcodeman
+		 where userid = #userid#
+		   and gadmin = #p_gadminsel#
+	</delete>
+	
+	<insert id="permissionDAO.insertGrcodeMan">
+		insert into tz_grcodeman(
+			userid,
+			gadmin,
+			grcode,
+			luserid,
+			ldate
+		)
+		values(
+			#userid#,
+			#p_gadminsel#,
+			#p_isneedgrcode#,
+			#userid#,
+			to_char(sysdatetime, 'yyyyMMddhh24miss')
+		)
+	</insert>
+	
+	<delete id="permissionDAO.deleteSubjMan">
+		delete tz_subjman
+		 where userid = #userid#
+		   and gadmin = #p_gadminsel#
+	</delete>
+	
+	<insert id="permissionDAO.insertSubjMan">
+		insert into tz_subjman(
+			userid,
+			gadmin,
+			subj,
+			luserid,
+			ldate
+		)
+		values(
+			#userid#,
+			#p_gadminsel#,
+			#p_isneedsubj#,
+			#userid#,
+			to_char(sysdatetime, 'yyyyMMddhh24miss')
+		)
+	</insert>
+	
+	<delete id="permissionDAO.deleteCompMan">
+		delete tz_compman
+		 where userid = #userid#
+		   and gadmin = #p_gadminsel#
+	</delete>
+	
+	<insert id="permissionDAO.insertCompMan">
+		insert into tz_compman(
+			userid,
+			gadmin,
+			comp,
+			luserid,
+			ldate
+		)
+		values(
+			#userid#,
+			#p_gadminsel#,
+			#p_isneedcomp#,
+			#userid#,
+			to_char(sysdatetime, 'yyyyMMddhh24miss')
+		)
+	</insert>
+	
+	<delete id="permissionDAO.deleteDeptMan">
+		delete tz_compman
+		 where userid = #userid#
+		   and gadmin = #p_gadminsel#
+	</delete>
+	
+	<insert id="permissionDAO.insertDeptMan">
+		insert into tz_compman(
+			userid,
+			gadmin,
+			comp,
+			luserid,
+			ldate
+		)
+		values(
+			#userid#,
+			#p_gadminsel#,
+			#p_isneeddept#,
+			#userid#,
+			to_char(sysdatetime, 'yyyyMMddhh24miss')
+		)
+	</insert>
+	
+	<delete id="permissionDAO.deletePermission">
+		delete tz_gadmin
+		 where gadmin = #p_gadmin#
+	</delete>
+	
+	<delete id="permissionDAO.deletePermissionAuth">
+		delete tz_menuauth
+		 where gadmin = #p_gadmin#
+	</delete>
+	
+	<select id="permissionDAO.getGadminCheck" parameterClass="map" resultClass="int">
+		select count(0)
+		  from tz_gadmin
+		 where gadminnm = #p_gadminnm#
+	</select>
+	<insert id="permissionDAO.insertGadmin">
+		insert into tz_gadmin(
+			gadmin,
+			control,
+			gadminnm,
+			comments,
+			isneedsubj,
+			isneedcomp,
+			isneeddept,
+			isneedgrcode,
+			isneedoutcomp,
+			applevel,
+			padmin,
+			seq,
+			luserid,
+			ldate,
+			isview
+		)
+		values(
+			#p_gadminsel#||#p_key#,
+			'rw',
+			#p_gadminnm#,
+			#p_comments#,
+			#p_isneedsubj#,
+			#p_isneedcomp#,
+			#p_isneeddept#,
+			#p_isneedgrcode#,
+			'N',
+			3,
+			#p_gadminsel#,
+			#p_seq#,
+			#userid#,
+			to_char(sysdatetime, 'yyyyMMddhh24miss'),
+			'Y'
+		)
+	</insert>
+	
+	<insert id="permissionDAO.insertMenuAuth">
+		insert into tz_menuauth
+		select grcode,
+		       menu,
+		       menusubseq,
+		       #p_gadminsel#||#p_key#,
+		       control,
+		       #userid#,
+		       to_char(sysdatetime, 'yyyyMMddhh24miss'),
+		       systemgubun
+		  from tz_menuauth
+		 where gadmin = #p_gadminsel#
+	</insert>
+</sqlMap>
+

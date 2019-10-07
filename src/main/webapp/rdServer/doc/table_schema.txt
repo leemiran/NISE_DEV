@@ -1,0 +1,286 @@
+////////////////////MYSQL/////////////////////
+create table schedule(
+scid int not null auto_increment,
+scname varchar(128),
+reportfilename varchar(255),
+parameters text,
+ocxhtmname varchar(255),
+refparaminx varchar(5),
+start_yyyy char(4),
+start_mm char(2),
+start_dd char(2),
+start_hh char(2),
+launch_type varchar(128),
+once_yyyy char(4),
+once_mm char(2),
+once_dd char(2),
+once_hh char(2),
+once_minute char(2),
+sdayofweek char(4),
+sdayofweek_hours varchar(4),
+sdayofweek_minute varchar(4),
+everymonth_type varchar(8),
+everymonth_dd char(4),
+everymonth_hh char(4),
+everymonth_minute char(4),
+everymonth_weekweek char(4),
+everymonth_dayofweekweek char(4),
+everymonth_hoursofweekweek char(4),
+everymonth_minuteofweekweek char(4),
+sendmail char(4),
+mailto text,
+refto text,
+send_type char(5),
+owner varchar(30),
+primary key(scid));
+
+create table schedulelist (
+scid int not null,
+scheduledate char(12),
+sccomplete int,completedate char(14),jobstartdate char(14),etc varchar(128),
+foreign key (scid) REFERENCES schedule(scid));
+
+create table scuser(
+  userid varchar(50) not null,
+  username varchar(50),
+  useremail varchar(50),
+  pass varchar(30),
+  usergroup varchar(30),
+  primary key(userid)
+)
+
+// 사용자별 mrd 목록을 관리하는 Directory 정보를 저장한다.
+// directory는 디렉토리 명
+// userid는 해당 디렉토리를 사용하는 사용자 id
+create table scdirectory(
+  directory varchar(200),
+  userid varchar(50)
+)
+
+// mrd 파일의 상세정보 또는 별명을 저장한다.
+// path는 mrd 파일 path
+// filedesc는 mrd 파일의 상세정보
+create table scfiledesc(
+  path varchar(200),
+  filedesc varchar(100)
+)
+
+//////////////////사용자 추가하기 예)
+insert into scuser values('user1','사용자1','user1@mail.co.kr','','Administrator');
+insert into scuser values('user2','사용자2','user2@mail.co.kr','2188','Users');
+insert into scuser values('user3','사용자3','user3@mail.co.kr','','Users');
+commit;
+
+//////////////////////////ORACLE/////////////////////////////////////
+create table schedule (
+scid number not null,
+scname varchar(128),
+reportfilename varchar(255),
+parameters varchar(1024),
+ocxhtmname varchar(255),
+refparaminx varchar(5),
+start_yyyy char(4),
+start_mm char(2),
+start_dd char(2),
+start_hh char(2),
+launch_type varchar(128),
+once_yyyy char(4),
+once_mm char(2),
+once_dd char(2),
+once_hh char(2),
+once_minute char(2),
+sdayofweek char(4),
+sdayofweek_hours varchar(4),
+sdayofweek_minute varchar(4),
+everymonth_type varchar(8),
+everymonth_dd char(4),
+everymonth_hh char(4),
+everymonth_minute char(4),
+everymonth_weekweek char(4),
+everymonth_dayofweekweek char(4),
+everymonth_hoursofweekweek char(4),
+everymonth_minuteofweekweek char(4),
+sendmail char(4),
+mailto varchar(2048),
+refto varchar(2048),
+send_type char(5),
+owner varchar(30),
+primary key(scid));
+
+create sequence schedule_SEQ
+			increment by 1
+			start with 1
+			maxvalue 9999999
+			nocache 
+			nocycle;
+
+CREATE OR REPLACE TRIGGER schedule_trigger BEFORE INSERT ON schedule FOR EACH ROW
+BEGIN
+SELECT schedule_SEQ.NEXTVAL INTO :new.scid FROM dual;
+END;
+/
+
+
+
+create table schedulelist (
+scid number not null,
+scheduledate char(14),
+sccomplete number,
+completedate char(14),jobstartdate char(14),etc varchar(128),foreign key (scid) REFERENCES schedule(scid));
+
+create table scuser(
+  userid varchar(50) not null,
+  username varchar(50),
+  useremail varchar(50),
+  pass varchar(30),
+  usergroup varchar(30),
+  primary key(userid)
+);
+
+create table scdirectory(
+  directory varchar(200),
+  userid varchar(50)
+);
+
+create table scfiledesc(
+  path varchar(200),
+  filedesc varchar(100)
+);
+
+//////////////////사용자 추가하기 예)
+insert into scuser values('user1','사용자1','user1@mail.co.kr','','Administrator');
+insert into scuser values('user2','사용자2','user2@mail.co.kr','2188','Users');
+insert into scuser values('user3','사용자3','user3@mail.co.kr','','Users');
+commit;
+
+//모니터링 로그 사용시 테이블 스킴(ORACLE)
+테이블 스킴
+create table rdmlog(
+id number,
+s_time date,
+e_time date,
+u_time number,
+j_flag number(3),
+ip varchar(20),
+hostname varchar(40),
+filename varchar(526),
+mquery varchar(3062),
+service varchar(50),
+param varchar(1024),
+description varchar(1024),
+sid number,
+etc varchar(512));
+
+CREATE INDEX IDX_RDMLOG ON RDMLOG (ID,S_TIME,U_TIME,J_FLAG,IP,FILENAME);
+
+//오라클 ERP-DBMS_APPLICATION_INFO.SET_MODULE 호출 procedure
+create or replace procedure setmodule
+(moduleName in varchar)
+IS
+BEGIN
+   DBMS_APPLICATION_INFO.SET_MODULE(moduleName,'');
+END setmodule;
+/
+
+
+///////////////////////MSSQL///////////////////////////////////
+create table schedule (
+scid int identity(1,1),
+scname varchar(128),
+reportfilename varchar(255),
+parameters varchar(512),
+ocxhtmname varchar(255),
+refparaminx varchar(5),
+start_yyyy char(4),
+start_mm char(2),
+start_dd char(2),
+start_hh char(2),
+launch_type varchar(128),
+once_yyyy char(4),
+once_mm char(2),
+once_dd char(2),
+once_hh char(2),
+once_minute char(2),
+sdayofweek char(4),
+sdayofweek_hours varchar(4),
+sdayofweek_minute varchar(4),
+everymonth_type varchar(8),
+everymonth_dd char(4),
+everymonth_hh char(4),
+everymonth_minute char(4),
+everymonth_weekweek char(4),
+everymonth_dayofweekweek char(4),
+everymonth_hoursofweekweek char(4),
+everymonth_minuteofweekweek char(4),
+sendmail char(4),
+mailto varchar(2048),
+refto varchar(2048),
+send_type char(5),
+owner varchar(30),primary key(scid));
+
+
+create table schedulelist (
+scid int not null,
+scheduledate char(14),
+sccomplete int,completedate char(14),jobstartdate char(14),etc varchar(128),
+foreign key (scid) REFERENCES schedule(scid));
+
+create table scuser(
+  userid varchar(50) not null,
+  username varchar(50),
+  useremail varchar(50),
+  pass varchar(30),
+  usergroup varchar(30),
+  primary key(userid)
+)
+
+create table scdirectory(
+  directory varchar(200),
+  userid varchar(50)
+)
+
+create table scfiledesc(
+  path varchar(200),
+  filedesc varchar(100)
+)
+
+insert into scuser values('admin','어드민','user2@mail.co.kr','2188','Administrator');
+
+///////////////////DB2////////////////////////////////////////////////
+create table schedule (scid integer not null generated always as identity(start with 1,increment by 1,no cache),scname varchar(128),reportfilename varchar(255),parameters varchar(512),ocxhtmname varchar(255),refparaminx varchar(5),start_yyyy char(4),start_mm char(2),start_dd char(2),start_hh char(2),launch_type varchar(128),once_yyyy char(4),once_mm char(2),once_dd char(2),once_hh char(2),once_minute char(4),sdayofweek char(4),sdayofweek_hours varchar(4),sdayofweek_minute varchar(4),everymonth_type varchar(8),everymonth_dd char(4),everymonth_hh char(4),everymonth_minute char(4),everymonth_weekweek char(4),everymonth_dayofweekweek char(4),everymonth_hoursofweekweek char(4),everymonth_minuteofweekweek char(4),sendmail char(4),mailto varchar(1024),refto varchar(1024),send_type char(5),owner varchar(30),primary key(scid))
+//as400--DB25.1: create table schedule (scid integer not null,scname varchar(128),reportfilename varchar(255),parameters varchar(512),ocxhtmname varchar(255),refparaminx varchar(5),start_yyyy char(4),start_mm char(2),start_dd char(2),start_hh char(2),launch_type varchar(128),once_yyyy char(4),once_mm char(2),once_dd char(2),once_hh char(2),once_minute char(4),sdayofweek char(4),sdayofweek_hours varchar(4),sdayofweek_minute varchar(4),everymonth_type varchar(8),everymonth_dd char(4),everymonth_hh char(4),everymonth_minute char(4),everymonth_weekweek char(4),everymonth_dayofweekweek char(4),everymonth_hoursofweekweek char(4),everymonth_minuteofweekweek char(4),sendmail char(4),mailto varchar(1024),refto varchar(1024),send_type char(5),primary key(scid))
+create table schedulelist (scid integer not null,scheduledate char(14),sccomplete integer,foreign key (scid) REFERENCES schedule(scid))
+create table scuser( userid varchar(50) not null, username varchar(50), useremail varchar(50),  pass varchar(30),  primary key(userid))
+insert into scuser values('admin','admin','admin2@mail.co.kr','admin')
+
+create table scdirectory(
+  directory varchar(200),
+  userid varchar(50)
+)
+
+create table scfiledesc(
+  path varchar(200),
+  filedesc varchar(100)
+)
+
+////////////////SYBASE/////////////////////
+create table rdschedule (scid numeric(5) identity,scname varchar(128),reportfilename varchar(255),parameters varchar(512),ocxhtmname varchar(255),refparaminx varchar(5),start_yyyy char(4),start_mm char(2),start_dd char(2),start_hh char(2),launch_type varchar(128),once_yyyy char(4),once_mm char(2),once_dd char(2),once_hh char(2),once_minute char(4),sdayofweek char(4),sdayofweek_hours varchar(4),sdayofweek_minute varchar(4),everymonth_type varchar(8),everymonth_dd char(4),everymonth_hh char(4),everymonth_minute char(4),everymonth_weekweek char(4),everymonth_dayofweekweek char(4),everymonth_hoursofweekweek char(4),everymonth_minuteofweekweek char(4),sendmail char(4),mailto varchar(1024),refto varchar(1024),send_type char(5),owner varchar(30),primary key(scid))
+
+create table schedulelist (scid numeric(5),scheduledate char(14) default '',sccomplete int,completedate char(14) default '',jobstartdate char(14) default '' ,etc char(128) default '',foreign key (scid) REFERENCES rdschedule(scid))
+
+create table scuser( userid varchar(50) not null, username varchar(50), useremail varchar(50),  pass varchar(30), usergroup varchar(30),primary key(userid))
+create table scdirectory(
+  directory varchar(200),
+  userid varchar(50)
+)
+
+create table scfiledesc(
+  path varchar(200),
+  filedesc varchar(100)
+)
+
+
+
+
+
+    

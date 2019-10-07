@@ -1,0 +1,453 @@
+/* common */
+input, textarea, select{border:1px solid #D1D1D1;font-size:11px;color:#787882;}
+input{height:16px;}
+select{height:20px;}
+table{border-collapse:collapse;}
+caption{display:none;}
+
+a:hover,a:active{color:#f55303;}
+.txtPoint{color:#f55303;}
+.txtPointO{color:#0487D9; font-weight:bold}
+.txtPointA{color:#117820; font-weight:bold}
+.txtPointX{color:#F55303; font-weight:bold}
+.colorPoint{background:#fee7dc;}
+.txtBold{font-weight:bold;}
+.btn_space_l8{margin-left:8px;}
+.btnBorder{border:none;}
+
+
+/* 독서통신 메인 */
+.mainVisual {width:780px; }
+.mainVisual .boardNotice {float:left; position:relative; width:330px;}
+.mainVisual .boardNotice h2 {height:23px; background:url(../images/user/k/bg_lineSolid.gif) repeat-x;}
+.mainVisual .boardNotice h2 img {vertical-align:top;}
+.mainVisual .boardNotice .more{position:absolute; top:0; right:0; display:block; width:45px; height:19px; font-size:10px; text-indent:7px; padding-top:2px; background:url(../images/user/k/bg_more.gif) 0 0 no-repeat;}
+.mainVisual .boardNotice ul{clear:both;}
+.mainVisual .boardNotice li{position:relative; height:24px; line-height:24px; text-indent:14px; background:url(../images/user/k/icon_listDot01.gif) 5px 8px no-repeat; }
+.mainVisual .boardNotice .boardDate{position:absolute; top:0; right:0;}
+.mainVisual .boardData {float:right; width:390px;}
+.mainVisual .boardData .boardDatatop {height:4px; background:url(../images/user/k/bg_braceTop.gif) no-repeat; font-size:0;}
+.mainVisual .boardData .boardDatamiddle{float:left; width:370px; padding-left:20px; background:url(../images/user/k/bg_braceMiddle.gif) repeat-y;}
+/*.mainVisual .boardData h2{float:left;width:115px;height:86px; padding-left:35px; border-right:1px solid #c5c5c5; background:url(../images/user/k/bg_dateTable.gif) 10px 15px no-repeat;2008-11-12}*/
+.mainVisual .boardData ul{float:left; padding-top:3px; margin-top:5px;}
+.mainVisual .boardData li{width:190px; height:18px; text-indent:30px;  background: url(../images/user/k/icon_listDot01.gif) 20px 8px no-repeat;}
+.mainVisual .boardData .boardDatabottom {clear:both; height:4px; background:url(../images/user/k/bg_braceTop.gif) no-repeat; font-size:0;margin-bottom:13px;}
+.mainVisual .boardData h2{font-weight:bold; font-size:12px;}
+.mainVisual .boardData .course3 {width:390px;line-height:22px; border-top:1px solid #bdbcc1;}
+.mainVisual .boardData .course3 th{height:22px; color:#fff; background:#b0b0b0;border-bottom:1px solid #fff; text-align:center;}
+.mainVisual .boardData .course3 .thEnd{border-bottom:1px solid #bdbcc1;}
+.mainVisual .boardData .course3 td{text-indent:10px; border-bottom:1px solid #bdbcc1;}
+.mainVisual .boardStudy {clear:both; padding-top:38px;}
+.mainVisual .boardStudy h2 img {vertical-align:top; margin-bottom:10px;}
+.mainVisual .boardStudy .boardStudy01{height:56px; margin-bottom:10px; background:url(../images/user/k/bg_studyTitle.gif) no-repeat;}
+.mainVisual .boardStudy .boardStudy01{padding:20px 0 0 120px; font-size:12px;}
+.mainVisual .boardStudy .boardStudy01 dt.dtLeft{float:left; font-weight:bold; margin-right:4px;}
+.mainVisual .boardStudy .boardStudy01 dd.ddLeft{float:left; width:250px;}
+.mainVisual .boardStudy .boardStudy01 .pop_lecturer{width:357px;font-size:11px; display:none; }
+.mainVisual .boardStudy .boardStudy01 .pop_lecturer .bg_lecturer_top{width:357px;height:20px;background:url(../images/user/c/bg_lecturer_top.gif) 0 0 no-repeat;}
+.mainVisual .boardStudy .boardStudy01 .pop_lecturer .bg_lecturer_mid{width:357px;background:url(../images/user/c/bg_lecturer_mid.gif) 0 0 repeat-y;}
+.mainVisual .boardStudy .boardStudy01 .pop_lecturer .bg_lecturer_btm{width:357px;height:9px;background:url(../images/user/c/bg_lecturer_btm.gif) 0 0 no-repeat;}
+.mainVisual .boardStudy .boardStudy01 .pop_lecturer dl{padding-left:30px;width:300px;}
+.mainVisual .boardStudy .boardStudy01 .pop_lecturer dl dt{clear:left; float:left; font-weight:bold;}
+.mainVisual .boardStudy .boardStudy01 .pop_lecturer dl dd{position:relative; text-align:left;}
+.mainVisual .boardStudy .boardStudy01 .pop_lecturer dl .close{text-align:right;}
+.mainVisual .boardStudy table{width:780px;}
+.mainVisual .boardStudy col#colK0101{width:80px;}
+.mainVisual .boardStudy col#colK0102{width:475px;}
+.mainVisual .boardStudy col#colK0103{width:75px;}
+.mainVisual .boardStudy col#colK0104{width:75px;}
+.mainVisual .boardStudy col#colK0105{width:71px;}
+.mainVisual .boardStudy col#colK0106{width:150px;}
+.mainVisual .boardStudy th{height:28px;background:#b0b0b0;color:#fff;border-right:1px solid #FFF;text-align:center;}
+.mainVisual .boardStudy td{border-bottom:1px solid #bdbcc1; border-right:1px solid #bdbcc1;text-align:center; }
+.mainVisual .boardStudy th.thEnd{border-right:0;}
+.mainVisual .boardStudy td.tdEnd{height:50px;line-height:200%;border-right:0;}
+.mainVisual .boardStudy td.tdSubject{text-align:left; text-indent:10px; padding:5px 0;}
+.mainVisual .boardStudy td.tdSubject p{padding-bottom:5px;color:#FE5E06;font-weight:bold;}
+.mainVisual .boardStudy td dt{float:left;}
+
+/* 팝업레이아웃 */
+#popup {background:#617ec2;}
+
+.popupVisual{width:780px;}
+.popupTop{position:relative; height:90px; background:url(../images/user/k/bg_popupHeader02.gif) no-repeat;}
+.popupTop h1{padding:30px 0 0 20px;}
+.popupTop .closeBtn{position:absolute; top:40px; right:10px;}
+.popupMiddle{float:left; min-height:480px; padding:2px 30px; background:url(../images/user/k/bg_popupMiddle02.gif) repeat;}
+.popupBottom{float:left; width:780px; height:30px; background:url(../images/user/k/bg_popupFooter02.gif) no-repeat;}
+
+* html .popupMiddle{height:480px;}
+
+.popupVisual2{width:840px;}
+.popupTop2{position:relative; height:90px; background:url(../images/user/k/bg_popupHeader.gif) no-repeat;}
+.popupTop2 h1{padding:30px 0 0 20px;}
+.popupTop2 .closeBtn{position:absolute; top:40px; right:10px;}
+.popupMiddle2{float:left; width:780px; min-height:580px; padding:2px 30px; background:url(../images/user/k/bg_popupMiddle.gif) repeat;}
+.popupMiddle3{float:left; width:780px; min-height:280px; padding:2px 30px; background:url(../images/user/k/bg_popupMiddle.gif) repeat;}
+.popupBottom2{float:left; width:840px; height:30px; background:url(../images/user/k/bg_popupFooter.gif) no-repeat;}
+
+* html .popupMiddle2{height:580px;}
+
+/* 게시판형 리스트 */
+.searchForm {float:left;width:720px; margin-bottom:8px; text-align:center; background:url(../images/user/k/bg_searchBoardBottom.gif) left bottom no-repeat;}
+.searchForm fieldset{padding:8px 0; background:url(../images/user/k/bg_searchBoardTop.gif) left top no-repeat;}
+.searchForm .btnSearch{width:41px; height:18px;}
+.boardList {width:720px; margin-bottom:10px;}
+.boardList th{height:28px; color:#6d83ba; border-top:3px solid #92a5d3; border-bottom:1px solid #92a5d3; background:url(../images/user/k/bg_thLine.gif) center right no-repeat;}
+.boardList .thcolPoint{height:28px; border-top:3px solid #c5d0ea;}
+.boardList .thEnd{background:none;}
+.boardList td{height:27px; text-align:center; border-bottom:1px solid #caccd1;}
+.boardList .tdSubject{text-align:left; text-indent:5px;}
+
+
+/* 게시판형 쓰기 */
+.boardWrite table{border-top:3px solid #92A5D3; margin-top:2px;}
+.boardWrite th{height:22px; color:#6d83ba; padding-top:5px; vertical-align:top; text-align:left; text-indent:10px; border-bottom:1px solid #92A5D3; background:#eff2f9;}
+.boardWrite td{height:27px; padding:0 10px; border-bottom:1px solid #92A5D3;}
+.btnGroup01 {margin-top:12px; text-align:right;}
+.boardWrite .inputTitle{width:600px;}
+.boardWrite p{width:600px; margin-bottom:5px; height:22px; padding-top:5px; border-bottom:1px solid #d1d1d1;}
+.boardWrite .iconGroup{padding-right:1px; background:url(../images/user/k/bg_lineIcon.gif) center right no-repeat;}
+.boardWrite .debateText{width:600px; height:280px; margin:5px 0;}
+
+/* 게시판형 읽기 */
+.boardRead .contentView{border-top:3px solid #92A5D3;}
+.boardRead .contentView th{height:27px; font-weight:normal; color:#6d83ba; border-bottom:1px solid #92A5D3; background:url(../images/user/k/bg_thLine.gif) center right no-repeat;}
+.boardRead .contentView .tdLine{background:url(../images/user/k/bg_thLine.gif) center right no-repeat;}
+.boardRead .contentView td{height:27px; text-indent:8px; border-bottom:1px solid #92A5D3;}
+.boardRead .contentView .contentViewR{padding:13px; text-align:justify; background:#eff2f9;}
+.boardRead .boardList{margin-top:12px;}
+
+/* 파일첨부 */
+.boardWrite .myPicUpLoad {float:left;position:relative; height:90px; padding-top:5px;}
+.boardWrite .myPicUpLoad2 {float:left;position:relative; height:30px; padding-top:5px;}
+.boardWrite .myPicUp {width:220px; height:100px; margin-top: -50px;  margin-left:-158px;filter:alpha(opacity=0); -moz-opacity:0;  cursor:pointer;}
+.boardWrite .filebox {display: block; overflow:hidden;position: absolute; left:422px;top:1px;z-index:1000;width:60px; height:18px;}
+.boardWrite .upfile {width: 414px; float: left;font-size: 11px; padding-top: 2px;height: 13px;}
+.boardWrite .upfile2 {width: 414px; float: left;font-size: 11px; padding-top: 2px;height: 20px;}
+.boardWrite .upfileBtn {position: absolute;left:422px;top:5px;z-index:10; cursor:pointer;}
+
+/* 페이지 */
+.pageNavi{float:right; margin-top:-17px;}
+.pageNavi ul li{float:left; vertical-align:middle;vertical-align:middle;padding:0 5px;text-decoration:none;}
+.pageNavi li.nowPg{color:#FC6817;}
+.pageNavi li.nowPg a{color:#FC6817;}
+
+.pageNavi2{float:right;}
+.pageNavi2 ul li{float:left; vertical-align:middle;vertical-align:middle;padding:0 5px;text-decoration:none;}
+.pageNavi2 li.nowPg{color:#FC6817;}
+.pageNavi2 li.nowPg a{color:#FC6817;}
+
+/* 용어사전 */
+.searchForm2 {width:720px; background:url(../images/user/k/bg_searchBoardBottom02.gif) left bottom no-repeat;}
+.searchForm2 fieldset{padding:10px 0; background:url(../images/user/k/bg_searchBoardTop02.gif) left top no-repeat;}
+.searchForm2 span{display:block;}
+.searchForm2 .btnSearch02{width:38px; height:18px;}
+.searchFormWd{float:left; display:inline;width:190px; margin:10px 0 0 40px;}
+.searchFormWdSel{float:left; width:450px; padding-left:20px;  border-left:1px solid #d7d7d7;}
+.searchFormWdSel dt{float:left;}
+.searchFormWdSel dd{float:left; width: 395px;}
+.searchFormWdSel dd img{margin-left:4px; margin-bottom:4px; line-height:30px;}
+.searchFormWdKor {float:left; border-bottom:1px solid #d7d7d7;}
+.searchFormWdEng {padding-top:5px;}
+.dicList {width:720px; margin-bottom:10px; border-bottom:1px solid #caccd1;}
+.dicList p{ padding-top:13px;}
+.dicList dt{height:27px; line-height:27px; text-indent:20px; font-weight:bold; border-top:1px solid #caccd1; border-bottom:1px solid #caccd1; background:#efefef url(../images/user/k/icon_dicPoint.gif) 10px 10px no-repeat;}
+.dicList dd{text-align:justify; padding:8px 15px;}
+
+/* 평가 */
+.valTitle{width:720px; background:url(../images/user/k/bg_searchBoardBottom02.gif) left bottom no-repeat;}
+.valTitle dl{padding:10px 0 0 20px; font-weight:bold; color:#6d83ba; font-size:12px; background:url(../images/user/k/bg_searchBoardTop02.gif) left top no-repeat;}
+.valTitle dt{float:left;}
+.valTitle p{padding:0 0 5px 20px;}
+.valList{width:720px; margin-top:10px; margin-bottom:10px; border-bottom:1px solid #bdbcc1;}
+.valList p{line-height:30px; text-indent:20px; color:#6d83ba; font-weight:bold; background:#e3e9f5;}
+.valList ul{margin-left:40px;}
+.valList ul li{padding-top:4px;}
+			/*문제 타이틀*/
+.popupMiddle .course3 table{width:720px; margin:15px 0 12px 0;text-align:center; border-top:2px solid #92a5d3;}
+.popupMiddle .course3 .thTitle{height:28px; color:#6d83ba; background:#c5d0ea;}
+.popupMiddle .course3 .thTitle2{height:28px; background:#fff;}
+.popupMiddle .course3 th{border-right:1px solid #fff;}
+.popupMiddle .course3 .thFirst{border-right:1px solid #bdbcc1; border-bottom:1px solid #bdbcc1;}
+.popupMiddle .course3 .thEnd{border-right:0;}
+.popupMiddle .course3 td{border-right:1px solid #bdbcc1; border-bottom:1px solid #bdbcc1;}
+.popupMiddle .course3 .tdEnd{border-right:0;}
+
+.popupMiddle .course4 tr{height:30px;}
+.popupMiddle .course4 table{width:720px;clear:left; border-top:2px solid #92a5d3;}
+.popupMiddle .course4 tr.course4_02{height:28px;border-bottom:1px solid #fff;}
+.popupMiddle .course4 .course4_02 th{background:#c5d0ea;color:#6d83ba; border-right:1px solid #fff;}
+.popupMiddle .course4 .course4_02 .thEnd{border-right:none;}
+.popupMiddle .course4 .course4_02 td{text-align:center;border-bottom:1px solid #bdbcc1; border-right:1px solid #bdbcc1;}
+			/*문제부분 */
+.popupMiddle .course4 .course4_03 th{color:#6d83ba; border-right:1px solid #fff;background:#E3E9F5;border-bottom:1px solid #bdbcc1;}
+.popupMiddle .course4 .course4_03 .thEnd{border-right:none;}
+.popupMiddle .course4 .course4_03 td{text-align:center;border-bottom:1px solid #bdbcc1; border-right:1px solid #bdbcc1;}
+.popupMiddle .course4 .course4_03 .tdSubject{text-align:left; text-indent:15px;}
+			/*답과 해설 부분
+.popupMiddle .course4 .course4_04 dt{float:left;position:relative;width:64px;height:28px;line-height:28px;text-align:center;border-right:1px solid #000000;border-bottom:1px solid #bdbcc1;}
+.popupMiddle .course4 .course4_04 dd{float:left;width:654px;height:28px;line-height:28px;border-bottom:1px solid #bdbcc1;text-indent:15px;}
+.popupMiddle .course4 .course4_04 .explain01{background:#E5E7E8;border-bottom:1px solid #BDBCC1;}
+.popupMiddle .course4 .course4_04 .explain02{background:#E5E7E8;}
+.popupMiddle .course4 .quePic{display:block; padding:5px 0;border-bottom:1px solid #BDBCC1;}
+.popupMiddle .course4 .quePic img{vertical-align:top;}
+.popupMiddle .course4 .course4_04 .chack{position:absolute; left:25px; top:8px;}*/
+	/*답과 해설 부분 1216 */
+.popupMiddle .course4 table tbody tr td.th{width:64px;height:28px;line-height:28px;vertical-align:top;border-right:1px solid #bdbcc1;text-align:center;}   /* 1216 */
+.popupMiddle .course4 table tbody tr td{border-bottom:1px solid #bdbcc1;text-indent:15px;}   /* 1216 */
+.chack_posi{position:relative;}   /* 1216 */
+.popupMiddle .course4 table tbody tr td.th .chack{position:absolute;}  /* 1216 */
+.popupMiddle .course4 .quePic{display:block; padding:5px 0;}/* 1216 */
+.popupMiddle .course4 .quePic img{vertical-align:top;}/* 1216 */
+.popupMiddle .course4 .explain01{width:64px;height:28px;line-height:28px;vertical-align:top;border-right:1px solid #bdbcc1;text-align:center;background:#E5E7E8;}/* 1216 */
+.popupMiddle .course4 .explain02{background:#E5E7E8;}/* 1216 */
+
+			/*합계 부분*/
+.popupMiddle .course4 tr.course4_05{height:30px;}
+.popupMiddle .course4 .course4_05 th{background:#c5d0ea;color:#6d83ba; border-right:1px solid #fff;}
+.popupMiddle .course4 .course4_05 .thEnd{border-right:none;}
+
+.questionPic{padding: 5px 10px;text-align:left;}
+
+/* 설문 */
+.queTitle{width:720px; background:url(../images/user/k/bg_searchBoardBottom02.gif) left bottom no-repeat;}
+.queTitle p{padding:10px 0 10px 20px; font-weight:bold; color:#6d83ba; font-size:12px; background:url(../images/user/k/bg_searchBoardTop02.gif) left top no-repeat;}
+.valList textarea{width:670px; height:100px; margin:10px 5px 10px 40px;}
+
+/* 레포트 */
+.report1{width:720px; height:180px; margin-bottom:12px; background:#f3f1f1 url(../images/user/k/img_pencil.gif) 30px 10px no-repeat;}
+.report1 h2{width:595px; margin:13px 0 0 100px; height:24px; font-size:12px; font-weight:bold; border-bottom:1px solid #b7b6b6;}
+.report1 p{margin:10px 30px 0 100px; text-align:justify;}
+.report2 h3{float:left; height:26px; padding-top:2px; line-height:28px; font-size:12px; font-weight:bold; color:#6d83ba; text-indent:20px; background:url(../images/user/k/ico_bulletSubtitle.gif) left center no-repeat;}
+.report2 ul{float:right; margin-top:3px;}
+.report2 ul li{float:left; margin-left:5px;}
+.report2 table{clear:both;margin-bottom:20px; border-top:2px solid #92a5d3;}
+.report2 th{height:22px; color:#6d83ba; padding-top:5px; vertical-align:top; text-align:left; text-indent:10px; background:#c5d0ea; border-bottom:1px solid #fff; border-right:1px solid #bdbcc1;}
+.report2 td{height:27px; padding:0 10px; text-align:justify; border-bottom:1px solid #bdbcc1;}
+.report2 .thEnd{border-bottom:1px solid #bdbcc1;}
+.boardWrite h3{float:left; height:26px; padding-top:2px; line-height:28px; font-size:12px; font-weight:bold; color:#6d83ba; text-indent:20px; background:url(../images/user/k/ico_bulletSubtitle.gif) left center no-repeat;}
+.boardWrite ul{float:right; margin-top:3px;}
+.boardWrite ul li{float:left; margin-left:5px;}
+.boardWrite .report3{clear:both; margin-bottom:20px;}
+
+/* 과정상세정보 */
+.popupMiddle2 .course{position:relative; width:780px; font-size:12px; background:url(../images/user/k/bg_searchBoardBottom03.gif) left bottom no-repeat;}
+.popupMiddle2 .course .course_01{padding:20px 0 0 30px; background:url(../images/user/k/bg_searchBoardTop03.gif) left top no-repeat;}
+.popupMiddle2 .course .course_01 dt{float:left; color:#6d83ba; font-weight:bold;}
+.popupMiddle2 .course .course_01 dd{position:relative; height:25px;}
+.popupMiddle2 .course .course_01 .grap01Color{float:left;font-weight:bold; color:#f55303;}
+.popupMiddle2 .course .course_01 .grap02Color{float:left;font-weight:bold; color:#75a721;}
+.popupMiddle2 .course .course_01 ul{position:absolute; left:135px;top:3px;width:247px; height:13px; font-size:0; background:#e1e1e1;}
+*html .popupMiddle2 .course .course_01 ul{position:absolute; left:50px; width:247px; height:13px; font-size:0; background:#e1e1e1;}
+*+html .popupMiddle2 .course .course_01 ul{position:absolute; left:60px; width:247px; height:13px; font-size:0; background:#e1e1e1;}
+.popupMiddle2 .course .course_01 ul li{text-align:left;display:inline;}
+.popupMiddle2 .course .course_02{clear:left; width:390px; margin:8px 0 0 30px; padding:10px 0 15px 0; border-top:1px dotted #616161;}
+.popupMiddle2 .course .course_02 dt{float:left; color:#6d83ba; font-weight:bold;}
+.popupMiddle2 .course .course_03{position:absolute; top:20px; right:0; width:290px; height:80px; padding-left:15px;padding-right:10px; line-height:20px; border-left:1px solid #c8c8c8;}
+.popupMiddle2 .course .course_03 dt{float:left; font-weight:bold;}
+.popupMiddle2 .course2{width:780px; height:67px; margin-top:15px; background:url(../images/user/k/bg_courseBook.gif) no-repeat;}
+.popupMiddle2 .course2 dl{font-weight:bold; font-size:12px; padding:13px 0 0 180px;}
+.popupMiddle2 .course2 dt{float:left;}
+.popupMiddle2 .course3 table{width:780px; margin:10px 0 12px 0;text-align:center; border-top:2px solid #92a5d3;}
+.popupMiddle2 .course3 .thTitle{height:28px; color:#6d83ba; background:#c5d0ea;}
+.popupMiddle2 .course3 .thTitle2{height:28px; background:#fff;}
+.popupMiddle2 .course3 .thTitle3{height:28px; font-weight:bold; background:#edf0f5;}
+.popupMiddle2 .course3 th{border-right:1px solid #fff;}
+.popupMiddle2 .course3 .thFirst{border-right:1px solid #bdbcc1; border-bottom:1px solid #bdbcc1;}
+.popupMiddle2 .course3 .thEnd{border-right:0;}
+.popupMiddle2 .course3 td{border-right:1px solid #bdbcc1; border-bottom:1px solid #bdbcc1;}
+.popupMiddle2 .course3 .tdEnd{border-right:0;}
+.popupMiddle2 .course4 h3{float:left; height:26px; padding-top:2px; line-height:28px; font-size:12px; font-weight:bold; color:#6d83ba; text-indent:20px; background:url(../images/user/k/ico_bulletSubtitle.gif) left center no-repeat;}
+.popupMiddle2 .course4 table{width:780px;clear:left; border-top:2px solid #92a5d3;}
+.popupMiddle2 .course4 tr{height:28px;}
+.popupMiddle2 .course4 th{background:#c5d0ea;}
+.popupMiddle2 .course4 .course4_01{margin-bottom:10px;}
+.popupMiddle2 .course4 .course4_01 th{color:#6d83ba; border-bottom:1px solid #fff; border-right:1px solid #bdbcc1;}
+.popupMiddle2 .course4 .course4_01 .thEnd{border-bottom:1px solid #bdbcc1;}
+.popupMiddle2 .course4 .course4_01 td{text-indent:10px; border-bottom:1px solid #bdbcc1; border-right:1px solid #bdbcc1;}
+.popupMiddle2 .course4 .course4_01 .tdEnd{border-right:none;}
+.popupMiddle2 .course4 .course4_02{margin-bottom:10px;}
+.popupMiddle2 .course4 .course4_02 th{color:#6d83ba; border-right:1px solid #fff;}
+.popupMiddle2 .course4 .course4_02 .thEnd{border-right:none;}
+.popupMiddle2 .course4 .course4_02 td{text-align:center;border-bottom:1px solid #bdbcc1; border-right:1px solid #bdbcc1;}
+.popupMiddle2 .course4 .course4_02 .tdSubject{text-align:left; text-indent:10px;}
+.popupMiddle2 .course4 .course4_02 .tdEnd{border-right:none;}
+
+.popupMiddle2 .course41 table{width:78px;clear:left; border-top:2px solid #92a5d3;}
+.popupMiddle2 .course41 tr{height:28px;}
+.popupMiddle2 .course41 th{background:#c5d0ea;}
+.popupMiddle2 .course41 .course4_01{margin-bottom:10px;}
+.popupMiddle2 .course41 .course4_01 th{color:#6d83ba; border-bottom:1px solid #fff; border-right:0px solid #bdbcc1;}
+.popupMiddle2 .course41 .course4_01 .thEnd{border-bottom:0px solid #bdbcc1;}
+.popupMiddle2 .course41 .course4_01 td{text-indent:10px; border-bottom:1px solid #bdbcc1; border-right:0px solid #bdbcc1;}
+.popupMiddle2 .course41 .course4_01 .tdEnd{border-right:none;}
+.popupMiddle2 .course41 .course4_02{margin-bottom:10px;}
+.popupMiddle2 .course41 .course4_02 th{color:#6d83ba; border-right:1px solid #fff;}
+.popupMiddle2 .course41 .course4_02 .thEnd{border-right:none;}
+.popupMiddle2 .course41 .course4_02 td{text-align:center;border-bottom:1px solid #bdbcc1; border-right:0px solid #bdbcc1;}
+.popupMiddle2 .course41 .course4_02 .tdSubject{text-align:left; text-indent:10px;}
+.popupMiddle2 .course41 .course4_02 .tdEnd{border-right:none;}
+
+/* 과정상세정보 */
+.popupMiddle3 .course{position:relative; width:780px; font-size:12px; background:url(../images/user/k/bg_searchBoardBottom03.gif) left bottom no-repeat;}
+.popupMiddle3 .course .course_01{padding:20px 0 0 30px; background:url(../images/user/k/bg_searchBoardTop03.gif) left top no-repeat;}
+.popupMiddle3 .course .course_01 dt{float:left; color:#6d83ba; font-weight:bold;}
+.popupMiddle3 .course .course_01 dd{position:relative; height:25px;}
+.popupMiddle3 .course .course_01 .grap01Color{float:left;font-weight:bold; color:#f55303;}
+.popupMiddle3 .course .course_01 .grap02Color{float:left;font-weight:bold; color:#75a721;}
+.popupMiddle3 .course .course_01 ul{position:absolute; left:135px;top:3px;width:247px; height:13px; font-size:0; background:#e1e1e1;}
+*html .popupMiddle3 .course .course_01 ul{position:absolute; left:50px; width:247px; height:13px; font-size:0; background:#e1e1e1;}
+*+html .popupMiddle3 .course .course_01 ul{position:absolute; left:60px; width:247px; height:13px; font-size:0; background:#e1e1e1;}
+.popupMiddle3 .course .course_01 ul li{text-align:left;display:inline;}
+.popupMiddle3 .course .course_02{clear:left; width:390px; margin:8px 0 0 30px; padding:10px 0 15px 0; border-top:1px dotted #616161;}
+.popupMiddle3 .course .course_02 dt{float:left; color:#6d83ba; font-weight:bold;}
+.popupMiddle3 .course .course_03{position:absolute; top:20px; right:0; width:290px; height:80px; padding-left:15px;padding-right:10px; line-height:20px; border-left:1px solid #c8c8c8;}
+.popupMiddle3 .course .course_03 dt{float:left; font-weight:bold;}
+.popupMiddle3 .course2{width:780px; height:67px; margin-top:15px; background:url(../images/user/k/bg_courseBook.gif) no-repeat;}
+.popupMiddle3 .course2 dl{font-weight:bold; font-size:12px; padding:13px 0 0 180px;}
+.popupMiddle3 .course2 dt{float:left;}
+.popupMiddle3 .course3 table{width:780px; margin:10px 0 12px 0;text-align:center; border-top:2px solid #92a5d3;}
+.popupMiddle3 .course3 .thTitle{height:28px; color:#6d83ba; background:#c5d0ea;}
+.popupMiddle3 .course3 .thTitle2{height:28px; background:#fff;}
+.popupMiddle3 .course3 .thTitle3{height:28px; font-weight:bold; background:#edf0f5;}
+.popupMiddle3 .course3 th{border-right:1px solid #fff;}
+.popupMiddle3 .course3 .thFirst{border-right:1px solid #bdbcc1; border-bottom:1px solid #bdbcc1;}
+.popupMiddle3 .course3 .thEnd{border-right:0;}
+.popupMiddle3 .course3 td{border-right:1px solid #bdbcc1; border-bottom:1px solid #bdbcc1;}
+.popupMiddle3 .course3 .tdEnd{border-right:0;}
+.popupMiddle3 .course4 h3{float:left; height:26px; padding-top:2px; line-height:28px; font-size:12px; font-weight:bold; color:#6d83ba; text-indent:20px; background:url(../images/user/k/ico_bulletSubtitle.gif) left center no-repeat;}
+.popupMiddle3 .course4 table{width:780px;clear:left; border-top:2px solid #92a5d3;}
+.popupMiddle3 .course4 tr{height:28px;}
+.popupMiddle3 .course4 th{background:#c5d0ea;}
+.popupMiddle3 .course4 .course4_01{margin-bottom:10px;}
+.popupMiddle3 .course4 .course4_01 th{color:#6d83ba; border-bottom:1px solid #fff; border-right:1px solid #bdbcc1;}
+.popupMiddle3 .course4 .course4_01 .thEnd{border-bottom:1px solid #bdbcc1;}
+.popupMiddle3 .course4 .course4_01 td{text-indent:10px; border-bottom:1px solid #bdbcc1; border-right:1px solid #bdbcc1;}
+.popupMiddle3 .course4 .course4_01 .tdEnd{border-right:none;}
+.popupMiddle3 .course4 .course4_02{margin-bottom:10px;}
+.popupMiddle3 .course4 .course4_02 th{color:#6d83ba; border-right:1px solid #fff;}
+.popupMiddle3 .course4 .course4_02 .thEnd{border-right:none;}
+.popupMiddle3 .course4 .course4_02 td{text-align:center;border-bottom:1px solid #bdbcc1; border-right:1px solid #bdbcc1;}
+.popupMiddle3 .course4 .course4_02 .tdSubject{text-align:left; text-indent:10px;}
+.popupMiddle3 .course4 .course4_02 .tdEnd{border-right:none;}
+
+
+/* 학습창 메인 */
+.mainAlign   {width:100%; text-align:center;}  
+.mainCenter  {margin:0 auto 0 auto; width:780px; text-align:left; padding-top:65px;}
+.mainVisual2 {width:780px;}
+.mainVisual2 .boardGroup{float:left; position:relative; width:298px;}
+.mainVisual2 .boardGroup2{float:left; clear:left; position:relative; width:316px; margin-top:0px; overflow-y:auto; height:430px; scrollbar-face-color: #FFFFFF; scrollbar-shadow-color: #C6C6C6; scrollbar-highlight-color: #C6C6C6; scrollbar-3dlight-color: #FFFFFF; scrollbar-darkshadow-color: #FFFFFF; scrollbar-track-color: #FFFFFF; scrollbar-arrow-color: #C6C6C6;}
+.mainVisual2 .boardNotice {float:left; position:relative; width:298px; margin-bottom:30px;}
+.mainVisual2 .boardNotice h2 {height:23px; background:url(../images/user/k/bg_lineSolid.gif) repeat-x;}
+.mainVisual2 .boardNotice h2 img {vertical-align:top;}
+.mainVisual2 .boardNotice .more{position:absolute; top:0; right:0; display:block; width:45px; height:19px; font-size:10px; text-indent:7px; padding-top:2px;}
+.mainVisual2 .boardNotice ul{clear:both; padding-top:5px;}
+.mainVisual2 .boardNotice li{position:relative; height:22px; line-height:22px; text-indent:14px; background:url(../images/user/k/icon_listDot01.gif) 5px 8px no-repeat; }
+.mainVisual2 .boardNotice .boardDate{position:absolute; top:0; right:0;}
+.mainVisual2 .boardDataTit{height:53px; padding:15px 0 0 70px; background:url(../images/user/k/bg_boardData.gif) no-repeat;}
+.mainVisual2 .boardData {clear:left; float:left; position:relative; width:298px;margin-bottom:30px;background:url(../images/user/k/t_back.gif) 0 0 no-repeat;}
+.mainVisual2 .boardData h2 {float:left; width:50px; height:23px;}
+.mainVisual2 .boardData h2 img {vertical-align:top;}
+.mainVisual2 .boardData .more{float:left;position:relative;display:block; width:45px; height:19px; font-size:10px; text-indent:7px; padding-top:2px; }
+.mainVisual2 .boardData .imgData{clear:left; margin-top:-5px;}
+.mainVisual2 .boardData ul{clear:both; padding-top:5px;}
+.mainVisual2 .boardData li{position:relative; height:22px; line-height:22px; text-indent:14px; border-bottom:1px solid #d1d0d3; background:url(../images/user/k/icon_listDot01.gif) 5px 8px no-repeat; }
+.mainVisual2 .boardData .boardDate{position:absolute; top:0; right:0;}
+.mainVisual2 .boardData .liEnd{border-bottom:none;}
+.mainVisual2 .boardQaTit{height:60px; padding:15px 0 0 70px; background:url(../images/user/k/bg_boardQa.gif) no-repeat 5px 5px;}
+.mainVisual2 .boardQa {clear:left; float:left; position:relative; width:298px; margin-bottom:30px;background:url(../images/user/k/t_back.gif) 0 0 no-repeat;}
+.mainVisual2 .boardQa h2 {float:left; width:50px; height:23px;}
+.mainVisual2 .boardQa h2 img {vertical-align:top;}
+.mainVisual2 .boardQa .more{float:left;position:relative;display:block; width:45px; height:19px; font-size:10px; text-indent:7px; padding-top:2px; }
+.mainVisual2 .boardQa .imgData{clear:left;margin-top:-5px;}
+.mainVisual2 .boardQa ul{clear:both; padding-top:5px;}
+.mainVisual2 .boardQa li{position:relative; height:22px; line-height:22px; text-indent:14px; border-bottom:1px solid #d1d0d3; background:url(../images/user/k/icon_listDot01.gif) 5px 8px no-repeat; }
+.mainVisual2 .boardQa .boardDate{position:absolute; top:0; right:0;}
+.mainVisual2 .boardQa .liEnd{border-bottom:none;}
+.mainVisual2 .boardGroup  table{width:298px;clear:left; border-top:2px solid #92a5d3;}
+.mainVisual2 .boardGroup .course4_02{}
+.mainVisual2 .boardGroup .course4_02 th{text-align:center;height:28px;color:#6d83ba;background:#c5d0ea; border-right:1px solid #fff;}
+.mainVisual2 .boardGroup .course4_02 .thEnd{border-right:none;}
+.mainVisual2 .boardGroup .course4_02 td{text-align:center;border-bottom:1px solid #bdbcc1; border-right:1px solid #bdbcc1;}
+.mainVisual2 .boardGroup .course4_02 .tdSubject{text-align:left; padding:4px 5px;}
+.mainVisual2 .boardGroup .course4_02 .tdChk{font-size:12px;}
+.mainVisual2 .boardGroup .course4_02 .tdEnd{border-right:none;}
+.mainVisual2 .boardGroup h2{font-weight:bold; font-size:12px;}
+.mainVisual2 .boardGroup .course{clear:both;position:relative; width:298px; margin-bottom:12px; font-size:12px; background:url(../images/user/k/bg_mainNoticebottom.gif) left bottom no-repeat;}
+.mainVisual2 .boardGroup .course .course_01{padding:10px; background:url(../images/user/k/bg_mainNoticetop.gif) left top no-repeat;}
+.mainVisual2 .boardGroup .course3 {width:298px;line-height:22px; border-top:1px solid #bdbcc1;}
+.Infodot {padding-left:12px; background:url(../images/user/k/icon_myInfo.gif) no-repeat 3px 5px;}
+.infoindent {padding-left:13px;}
+.infoex {color:#f55303;}
+.mainVisual2 .boardGroup2  table{width:298px; clear:left; border-top:2px;}
+.mainVisual2 .boardGroup2 .course4_02{margin-bottom:10px;}
+.mainVisual2 .boardGroup2 .course4_02 th{text-align:center;height:28px;color:#6d83ba;background:#c5d0ea; border-right:1px solid #fff;}
+.mainVisual2 .boardGroup2 .course4_02 .thEnd{border-right:none;}
+.mainVisual2 .boardGroup2 .course4_02 td{text-align:center;border-bottom:1px solid #bdbcc1; border-right:1px solid #bdbcc1;}
+.mainVisual2 .boardGroup2 .course4_02 .tdSubject{text-align:left; padding:4px 5px;}
+.mainVisual2 .boardGroup2 .course4_02 .tdChk{font-size:12px;}
+.mainVisual2 .boardGroup2 .course4_02 .tdEnd{border-right:none;}
+.mainVisual2 .boardGroup2 .course4_02 .trSubject{color:#f55303; background:#fee7dc;}
+.mainVisual2 .courseGroup{float:right; width:447px;}
+.mainVisual2 .courseGroup h2{float:left;}
+.mainVisual2 .courseGroup .courseStart{float:right; padding-bottom:5px;}
+.mainVisual2 .courseGroup .courseStart_01{position:absolute; width:200px; height:115px; z-index:1; left: 300px; top: 100px;}
+.mainVisual2 .courseGroup .course{clear:both;position:relative; width:447px;height:300px; margin-bottom:12px; font-size:12px; background:url(../images/user/k/bg_searchBoardBottom04n.gif) left bottom no-repeat;}
+.mainVisual2 .courseGroup .course .course_01{clear:left; width:390px; margin:0 0 0 30px; padding:10px 0 6px 0; border-top:1px dotted #616161;}
+.mainVisual2 .courseGroup .course .course_01 dt{float:left; color:#6d83ba; font-weight:bold; padding:10px 0 6px 0;}
+.mainVisual2 .courseGroup .course .course_01 dd{position:relative; height:23px;padding:10px 0 6px 0;}
+.mainVisual2 .courseGroup .course .course_01 .grap01Color{font-weight:bold; color:#f55303; padding:10px 0 6px 0;}
+.mainVisual2 .courseGroup .course .course_01 .grap02Color{font-weight:bold; color:#75a721; padding:10px 0 6px 0;}
+
+.mainVisual2 .courseGroup .course .course_01 ul{position:absolute; left:135px;top:10px; width:247px;  font-size:0; background:#e1e1e1;}
+*html .mainVisual2 .courseGroup .course .course_01 ul{position:absolute; left:50px; width:247px; height:13px; font-size:0; background:#e1e1e1;}
+*+html .mainVisual2 .courseGroup .course .course_01 ul{position:absolute; left:60px; width:247px; height:13px; font-size:0; background:#e1e1e1;}
+
+
+.mainVisual2 .courseGroup .course .course_01 ul li{text-align:left;display:inline;}
+.mainVisual2 .courseGroup .course .course_02{clear:left; width:390px; margin:0 0 0 30px; padding:10px 0 6px 0; border-top:1px dotted #616161;}
+.mainVisual2 .courseGroup .course .course_02 dt{float:left; color:#6d83ba; font-weight:bold;padding:10px 0 6px 0;}
+.mainVisual2 .courseGroup .course .course_02 dd{float:left; width:130px; height:23px; padding:10px 0 6px 0;}
+.mainVisual2 .courseGroup .course .course_03{clear:left; width:390px; margin:0 0 0 30px; padding:10px 0 6px 0; border-top:1px dotted #616161;}
+.mainVisual2 .courseGroup .course .course_03 dt{float:left; font-weight:bold;padding:10px 0 6px 0;}
+.mainVisual2 .courseGroup .course .course_03 dd{float:left; width:130px;padding:10px 0 6px 0;}
+
+.mainVisual2 .courseGroup .course .course_04{padding:30px 0 0 30px; background:url(../images/user/k/bg_searchBoardTop04.gif) left top no-repeat;}
+.mainVisual2 .courseGroup .course .course_04 dt{float:left; height:35px;}
+.mainVisual2 .courseGroup .course .course_04 .bold{text-decoration:none; color:#000000; font-weight:bold; }
+.mainVisual2 .courseGroup .course .course_04 .pop_lecturer{width:357px;font-size:11px; display:none; }
+.mainVisual2 .courseGroup .course .course_04 .pop_lecturer .bg_lecturer_top{width:357px;height:20px;background:url(../images/user/c/bg_lecturer_top.gif) 0 0 no-repeat;}
+.mainVisual2 .courseGroup .course .course_04 .pop_lecturer .bg_lecturer_mid{width:357px;background:url(../images/user/c/bg_lecturer_mid.gif) 0 0 repeat-y;}
+.mainVisual2 .courseGroup .course .course_04 .pop_lecturer .bg_lecturer_btm{width:357px;height:9px;background:url(../images/user/c/bg_lecturer_btm.gif) 0 0 no-repeat;}
+.mainVisual2 .courseGroup .course .course_04 .pop_lecturer dl{padding-left:30px;width:300px;}
+.mainVisual2 .courseGroup .course .course_04 .pop_lecturer dl dt{clear:left; float:left; font-weight:bold;}
+.mainVisual2 .courseGroup .course .course_04 .pop_lecturer dl dd{position:relative; text-align:left;}
+.mainVisual2 .courseGroup .course .course_04 .pop_lecturer dl .close{text-align:right;}
+
+.mainVisual2 .courseGroup .course2 {margin-bottom:15px; text-align:center;}
+.mainVisual2 .courseGroup .course2 th{height:22px; font-weight:normal; color:#fff; background:#9db4c4; border-right:1px solid #fff; border-bottom:1px solid #fff;}
+.mainVisual2 .courseGroup .course2 .thEnd{border-right:none;}
+.mainVisual2 .courseGroup .course2 .thEnd2{border-bottom:1px solid #bdbcc1;}
+.mainVisual2 .courseGroup .course2 .thHeight{height:26px; font-weight:bold;}
+.mainVisual2 .courseGroup .course2 td{line-height:22px; border-right:1px solid #bdbcc1; border-bottom:1px solid #bdbcc1;}
+.mainVisual2 .courseGroup h2{font-weight:bold; font-size:12px;}
+.mainVisual2 .courseGroup .course3 {width:447px;line-height:22px; border-top:1px solid #bdbcc1; margin-bottom:15px;}
+.mainVisual2 .courseGroup .course3 th{height:22px; color:#fff; background:#adb1b4;border-bottom:1px solid #fff; text-align:center;}
+.mainVisual2 .courseGroup .course3 .thEnd{border-bottom:1px solid #bdbcc1;}
+.mainVisual2 .courseGroup .course3 td{text-indent:10px; border-bottom:1px solid #bdbcc1;}
+.mainVisual2 .courseGroup .course4 {width:447px;line-height:22px; border-top:1px solid #bdbcc1;}
+.mainVisual2 .courseGroup .course4 th{height:22px;color:#6d83ba;background:#c5d0ea; border-right:1px solid #fff;border-bottom:1px solid #FFFFFF; padding-left:5px;}
+.mainVisual2 .courseGroup .course4 td{text-align:center;border-bottom:1px solid #bdbcc1; border-right:1px solid #bdbcc1;}
+.mainVisual2 .courseGroup .course4 .tdEnd{border-right:none;}
+
+.tb{font-size:12px; background:#c5d0ea; border-right:1px solid #FFFFFF;border-bottom:1px solid #FFFFFF; padding-left:5px;padding-top:5px;padding-right:5px;padding-bottom:5px;}
+/* 09/04/28 11:01 평가문제 유의사항 추가 css 시작*/
+.tb_r{font-size:12px; background:#dd9595; border-right:1px solid #FFFFFF;border-bottom:1px solid #FFFFFF; padding-left:5px;padding-top:5px;padding-right:5px;padding-bottom:5px;}
+/* 09/04/28 11:01 평가문제 유의사항 추가 css 끝*/
+/* c0_03_l 연간교육일정 목록 */
+.courseTabbar{clear:both;float:left;margin-bottom:8px;width:680px;height:32px;background:url(../images/user/c/bg_tabLine.gif) 0px 0px repeat-x;}
+.courseTabbar ul li{float:left;width:109px;height:26px;background:url(../images/user/c/bg_Tab_off.gif) 0 0px no-repeat;text-align:center;padding-top:6px;font-size:11px;font-weight:bold;color:#8c8c8d;}
+.courseTabbar ul li.selectTab{width:109px;height:24px;background:url(../images/user/c/bg_Tab_on.gif) 0 0 no-repeat;text-align:center;padding-top:8px;font-size:12px;font-weight:bold;color:#3366cc;}
+.courseTabbar ul li a:link,.courseTabbar ul li a:visited{color:#8c8c8d;}

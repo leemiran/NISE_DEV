@@ -1,0 +1,159 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE sqlMap PUBLIC "-//iBATIS.com//DTD SQL Map 2.0//EN" "http://ibatis.apache.org/dtd/sql-map-2.dtd">
+
+<sqlMap namespace="LcmsSeqObjectives">
+	<typeAlias  alias="egovMap" type="egovframework.rte.psl.dataaccess.util.EgovMap"/>
+
+    <select id="lcmsSeqObjectivesDAO.selectLcmsSeqObjectivesPageList" parameterClass="map" resultClass="egovMap">
+        SELECT * 
+        FROM
+               (
+                SELECT TEMP.*, 
+                <isNotEmpty property="rowsPerPage">
+                       CEIL(ROWNUM / #rowsPerPage#) AS PAGE 
+                </isNotEmpty>
+                <isEmpty property="rowsPerPage">
+                       CEIL(ROWNUM / 10) AS PAGE 
+                </isEmpty>
+                FROM
+                      (
+                       SELECT 
+	        	              OBJECTIVE_IDX_NUM,
+	        	              OBJ_ID,
+	        	              SATISFIED_MEASURE,
+	        	              MINNORMAL_MEASURE,
+	        	              OBJ_TYPE,
+	        	              userid,
+	        	              UPDATE_DT,
+	        	              SEQ_IDX_NUM,
+	        	               BEFORE_OBJECTIVE_IDX_NUM
+        		       FROM   TB_LCMS_SEQ_OBJECTIVES
+        		       <!--  APPEND WHERE CONDITION START  -->
+
+        		       <!--  APPEND WHERE CONDITION END    -->
+        		       <isNotEmpty property="orderBy">
+        			       $orderBy$
+        		       </isNotEmpty>
+        	          ) TEMP 
+               )
+        <isNotEmpty property="page">
+        WHERE PAGE = #page#
+        </isNotEmpty>
+        <isEmpty property="page">
+        WHERE PAGE = 1
+        </isEmpty>
+    </select>
+
+    <select id="lcmsSeqObjectivesDAO.selectLcmsSeqObjectivesList" parameterClass="map" resultClass="egovMap">
+        SELECT OBJECTIVE_IDX_NUM,
+               OBJ_ID,
+               SATISFIED_MEASURE,
+               MINNORMAL_MEASURE,
+               OBJ_TYPE,
+               userid,
+               UPDATE_DT,
+               SEQ_IDX_NUM,
+               BEFORE_OBJECTIVE_IDX_NUM
+        FROM   TB_LCMS_SEQ_OBJECTIVES
+    </select>
+
+    <select id="lcmsSeqObjectivesDAO.selectLcmsSeqObjectivesPageListTotCnt" parameterClass="map" resultClass="long">
+        SELECT COUNT(ROWNUM) AS [COUNT]
+        FROM   TB_LCMS_SEQ_OBJECTIVES
+    </select>
+
+    <select id="lcmsSeqObjectivesDAO.selectLcmsSeqObjectivesMaxNum" parameterClass="map" resultClass="int">
+        select nvl(max(objective_idx_num),0)+1 as seq from tb_lcms_seq_objectives
+    </select>
+
+    <select id="lcmsSeqObjectivesDAO.selectLcmsSeqObjectives" parameterClass="map" resultClass="egovMap">
+        SELECT OBJECTIVE_IDX_NUM,
+               OBJ_ID,
+               SATISFIED_MEASURE,
+               MINNORMAL_MEASURE,
+               OBJ_TYPE,
+               userid,
+               UPDATE_DT,
+               SEQ_IDX_NUM,
+               BEFORE_OBJECTIVE_IDX_NUM
+        FROM   TB_LCMS_SEQ_OBJECTIVES
+        WHERE  OBJECTIVE_IDX_NUM = #objectiveIdxNum#
+    </select>
+
+    <insert id="lcmsSeqObjectivesDAO.insertLcmsSeqObjectives">
+        INSERT INTO TB_LCMS_SEQ_OBJECTIVES
+        (
+            OBJECTIVE_IDX_NUM,
+            OBJ_ID,
+            SATISFIED_MEASURE,
+            MINNORMAL_MEASURE,
+            OBJ_TYPE,
+            userid,
+            UPDATE_DT,
+            SEQ_IDX_NUM,
+            BEFORE_OBJECTIVE_IDX_NUM
+        )
+        VALUES
+        (
+            #objectiveIdxNum#,
+            #objId#,
+            #satisfiedMeasure#,
+            #minnormalMeasure#,
+            #objType#,
+            #userid#,
+            sysdate,
+            #seqIdxNum#,
+            #beforeObjectiveIdxNum#
+        )
+    </insert>
+
+    <update id="lcmsSeqObjectivesDAO.updateLcmsSeqObjectives">
+        UPDATE TB_LCMS_SEQ_OBJECTIVES
+        SET    OBJ_ID = #objId#,
+               SATISFIED_MEASURE = #satisfiedMeasure#,
+               MINNORMAL_MEASURE = #minnormalMeasure#,
+               OBJ_TYPE = #objType#,
+               userid = #userId#,
+               UPDATE_DT = #updateDt#,
+               SEQ_IDX_NUM = #seqIdxNum#,
+               BEFORE_OBJECTIVE_IDX_NUM = #beforeObjectiveIdxNum#
+        WHERE  OBJECTIVE_IDX_NUM = #objectiveIdxNum#
+    </update>
+
+    <delete id="lcmsSeqObjectivesDAO.deleteLcmsSeqObjectives">
+		delete tb_lcms_seq_objectives
+		 where seq_idx_num in (
+		 	   select seq_idx_num from tb_lcms_scorm_sequence
+		 	    where org_seq in <iterate property="orgSeq" conjunction="," open="(" close=")">$orgSeq[]$</iterate>
+		 	   )
+    </delete>
+
+    <delete id="lcmsSeqObjectivesDAO.deleteLcmsSeqObjectivesAll">
+        DELETE FROM TB_LCMS_SEQ_OBJECTIVES
+        <dynamic prepend="WHERE OBJECTIVE_IDX_NUM IN ">
+            <isNotEmpty property="objectiveIdxNum">
+                <iterate property="objectiveIdxNum" open="(" close=")" conjunction=",">
+                    #objectiveIdxNum[]#
+                </iterate>
+            </isNotEmpty>
+            <isEmpty property="objectiveIdxNum">
+                ('')
+            </isEmpty>
+        </dynamic>
+    </delete>
+
+    <!--  학습창  -->
+    <select id="lcmsSeqObjectivesDAO.selectLcmsSeqObjectives01" parameterClass="map" resultClass="egovMap">
+		SELECT OBJECTIVE_IDX_NUM, 
+		       SEQ_IDX_NUM, 
+		       OBJ_ID, 
+		       SATISFIED_MEASURE, 
+		       MINNORMAL_MEASURE, 
+		       OBJ_TYPE, 
+		       userid, 
+		       UPDATE_DT
+		FROM   TB_LCMS_SEQ_OBJECTIVES 
+		WHERE  SEQ_IDX_NUM = #seqIdxNum#
+    </select>
+</sqlMap>
+

@@ -1,0 +1,242 @@
+@charset "utf-8";
+@import "common.css";
+
+/******************************************************************************
+	파일명   : class.css 
+	작성자   : Sook kyoung Jung
+	작성일   : 2010-03-08
+******************************************************************************/
+
+/* Layout */
+.topmenuWrap	{height:134px; background:url(../../../images/usr/KOREAN/common/bg_body.gif) repeat-x;  }
+.topmenuWrap .topmenu	{width:965px; margin:0 auto; color:#FFF;  height:134px;  position:relative;  }
+.contentWrap	{background:#FFF; padding:21px 0 70px 0; clear:both; width:100%; float:left; }
+.contentWrap .subCon	{width:965px; margin:0 auto; }
+
+
+/* classStyle */
+
+#classStyle	{ margin-left:3px; color:#626262; font:12px/1.6 돋움,Dotum,AppleGothic,sans-serif;  background:url(../../../images/usr/KOREAN/class/bg_class.gif) repeat-x #e5e5e5; padding-bottom:3px;  width:100%; float:left; }
+#classStyle th, td	{ font:12px/1.6 돋움,Dotum,AppleGothic,sans-serif; }
+#classStyle h1,h2,h3,h4,h5,h6,ul,li,dl,dt,dd	{ font-size:100%; padding:0; margin:0;  }
+#classStyle li	{ list-style:none; }
+#classStyle fieldset,img	{ border:none; }
+#classStyle a	{ color:#626262;text-decoration:none; selector-dummy : expression(this.hideFocus=true);}  
+#classStyle a:visited	{ color:#626262; text-decoration:none; }
+#classStyle a:active	 { color:#ff4200; text-decoration:none; }
+#classStyle a:hover	 { color:#ff4200; text-decoration:none; }
+#classStyle input,textarea,select	{ font-family:inherit; font-size:1em;}
+#classStyle textarea	{ border:1px solid #c6c4c4; }
+#classStyle button {border:0; padding:0; background:transparent; cursor:pointer; *overflow:visible; _cursor /**/:hand; font-family:'돋움'; }
+#classStyle table	 { border-collapse:collapse; border:0; } 
+#classStyle textarea	{ overflow:auto; }
+#classStyle .pointer	{cursor:pointer; }
+#classStyle .btStyle01	 {width:161px; height:18px; border:none; background:url(../../../images/usr/KOREAN/class/button01.gif) no-repeat; overflow:hidden; text-align:center; color:#FFF; font-size:11px;  line-height:11px; padding-top:2px;  }
+#classStyle .btStyle02	 {width:46px;  height:19px; border:none; background:url(../../../images/usr/KOREAN/class/button02.gif) no-repeat; overflow:hidden; color:#FFF; font-size:11px;  line-height:11px; padding:2px 0 0 17px;   letter-spacing:-1px;  }
+#classStyle .btStyle03	 {width:56px;  height:18px; border:none; background:url(../../../images/usr/KOREAN/class/button03.gif) no-repeat; overflow:hidden; color:#FFF; font-size:11px;  line-height:11px; padding:2px 0 0 0; text-align:center; }
+#classStyle .btStyle04	 {width:72px;  height:19px; border:none; background:url(../../../images/usr/KOREAN/class/button04.gif) no-repeat; overflow:hidden; color:#FFF; font-size:11px;  line-height:11px; padding:2px 0 0 17px;   letter-spacing:-1px;  }
+#classStyle .btStyle05	 {width:68px;  height:35px; border:none; background:url(../../../images/usr/KOREAN/class/btn_comm.gif) no-repeat; overflow:hidden; color:#FFF; font-size:11px;  line-height:11px; padding:2px 0 0 17px;   letter-spacing:-1px;  }
+
+
+
+#classStyle .orange	{color:#ff4200}
+#classStyle .fLeft	{float:left; }
+#classStyle .fRight	{float:right; }
+#classStyle .height49	 {height:49px; }
+#classStyle .subTitle	{font-size:14px; line-height:16px; padding:2px 0 4px 0; border-bottom:2px solid #bcbcbc; margin-bottom:8px; font-weight:bold;  }
+
+
+#classStyle .classWrap	{background:#FFF; border:1px solid #d5d6d8; padding:9px 20px 20px 20px; width:923px; margin-left:-3px; float:left; }
+*html #classStyle .classWrap	{background:url(../../../images/usr/KOREAN/class/bg_classbody.gif) repeat-y top 2px #FFF;}
+#classStyle .classWrap .closeBtn	{text-align:right;  margin-bottom:7px; }
+#classStyle .classWrap .myclassList	 {background:#e7e8ea; border:1px solid #d8d8d8; padding:8px 9px 7px 9px; margin:7px 0; height:18px; line-height:100%; text-align:right;  }
+#classStyle .classWrap .myclassList .otherClass	{margin:0 0 0 auto; width:382px; text-align:right; position:relative;  }
+#classStyle .classWrap .myclassList #otherClassHide	{}
+#classStyle .classWrap .myclassList #otherClassShow	{display:none; }
+
+#classStyle .classWrap .myclassList .otherList	{width:354px;  background:#FFF; border:1px solid #ff4200;  padding:13px 13px 5px 13px;  text-align:left;  position:absolute; top:20px; right:0; z-index:50; }
+#classStyle .classWrap .myclassList .otherList ul	{line-height:20px;  height:143px; overflow:auto; overflow-x:hidden ;}
+#classStyle .classWrap .myclassList .otherList a	{color:#626262; text-decoration:none; padding:2px; }
+#classStyle .classWrap .myclassList .otherList a:visited	{ color:#626262; text-decoration:none; padding:2px;  }
+#classStyle .classWrap .myclassList .otherList a:active	 { color:#626262; text-decoration:none;  background:#fbd5c8; padding:2px; }
+#classStyle .classWrap .myclassList .otherList a:hover	 { color:#626262; text-decoration:none; background:#fbd5c8;  padding:2px; }
+
+#classStyle .classWrap .classBody	{clear:both;  float:left; width:100%;   }
+
+/* sideBar */
+
+#classStyle .sideBar	{width:181px;  float:left; }
+#classStyle .sideBar #commTap01	{}
+#classStyle .sideBar #commTap02	{display:none; }
+#classStyle .sideBar .tabStyle01	{}
+#classStyle .sideBar .tabStyle01 dt	{height:30px; }
+#classStyle .sideBar .tabStyle01 dt span	{float:left; display:inline; width:90px; }
+#classStyle .sideBar .tabStyle01 dd	{clear:both;  background:url(../../../images/usr/KOREAN/class/bg_myinfo.gif) bottom left no-repeat; padding:9px;  }
+#classStyle .sideBar .tabStyle01 dd .list	{background:url(../../../images/usr/KOREAN/class/icon03.gif) 0 6px no-repeat; padding-left:9px; font-size:11px; }
+#classStyle .sideBar .tabStyle01 dd .bottomBtn	{border-top:1px solid #c6c4c4; margin-top:6px; padding-top:6px; }
+
+#classStyle .classSearch	{margin:10px 0;  width:180px; height:19px;}
+#classStyle .classSearch span	 {float:left; }
+#classStyle .classSearch input	{height:17px; width:127px; border:1px solid #c6c4c4; margin-right:5px;}
+
+#classStyle .category	{clear:both; }
+#classStyle .category .middle	 {background:url(../../../images/usr/KOREAN/class/bg_cate_middle.gif) repeat-y; }
+#classStyle .category .menuWrap	{line-height:100%; margin:0 10px;  }
+#classStyle .category .home	{background:url(../../../images/usr/KOREAN/class/icon_home.gif) no-repeat; padding-left:15px; font-weight:bold;  padding-bottom:5px; border-bottom:2px solid #c8c6c6; }
+*html #classStyle .category .home	 {padding-top:2px; }
+#classStyle .category .menu	{background:url(../../../images/usr/KOREAN/class/icon05.gif) 0 6px no-repeat; padding:6px 5px 6px 18px; border-bottom:1px solid #d8d8d8;  }
+#classStyle .category .subMenu	 { background:url(../../../images/usr/KOREAN/class/icon06.gif) 4px 4px no-repeat #e7e8ea ; padding:5px 5px 5px 18px; font-size:11px; border-bottom:1px solid #d8d8d8;}
+#classStyle .category .end	{border:none; }
+#classStyle .category .menu .select	{color:#ff4200;}
+#classStyle .category .subMenu .select	{color:#ff4200;}
+#classStyle .category .select	{color:#ff4200;}
+
+
+#classStyle .classfront	{margin-bottom:23px; }
+#classStyle .notice	 {padding-left:100px; background:url(../../../images/usr/KOREAN/class/bg_notice.gif) no-repeat; height:101px; }
+#classStyle .notice dt	 {background:url(../../../images/usr/KOREAN/class/icon02.gif) 0 0 no-repeat; padding-bottom:6px; padding-left:22px; font-weight:bold;  border-bottom:2px solid #c8c6c6; line-height:100%;  position:relative; }
+#classStyle .notice dt span	 {position:absolute; top:0 ; right:0; }
+
+#classStyle .content	{float:right; width:720px; }
+
+#classStyle .boardWrap	 {height:160px; width:100%; }
+#classStyle .board	 {width:340px; height:155px; }
+#classStyle .board dt	 {background:url(../../../images/usr/KOREAN/class/icon02.gif) 0 0 no-repeat; padding-bottom:6px; padding-left:22px; font-weight:bold;  border-bottom:2px solid #c8c6c6; line-height:100%;  position:relative; }
+#classStyle .board dt span	 {position:absolute; top:0 ; right:0; }
+
+#classStyle .tbStyle01	{width:100% ; }
+#classStyle .tbStyle01 .line	 {background:url(../../../images/usr/KOREAN/class/bg_tr.gif) bottom left repeat-x; }
+#classStyle .tbStyle01 .none	{background:none !important;  }
+#classStyle .tbStyle01 .tdStyle	{font-size:11px; padding:7px 0; vertical-align:middle !important; line-height:13px; }
+#classStyle .tbStyle01 .center	 {text-align:center !important; }
+
+
+#classStyle .tbStyle02	{width:100% ; }
+#classStyle .tbStyle02 .line	 {background:url(../../../images/usr/KOREAN/class/bg_tr2.gif) bottom left repeat-x; }
+#classStyle .tbStyle02 .none	{background:none !important;  }
+#classStyle .tbStyle02 .tdStyle	{font-size:11px; padding:7px 0; vertical-align:middle !important; line-height:13px; }
+#classStyle .tbStyle02 .center	 {text-align:center !important; }
+#classStyle .tbStyle02 .right	 {text-align:right !important; }
+
+#classStyle .tbStyle03	{width:100%; clear:both;  }
+#classStyle .tbStyle03 .thStyle	{background:#b0b0b0;  color:#FFF; height:30px; font-size:11px;   text-align:center;  }
+#classStyle .tbStyle03 .tdStyle	 {border-bottom:1px solid #bdbcc1; padding:5px 0 5px 0; text-align:center;  font-size:11px; line-height:14px; vertical-align:middle !important; }
+#classStyle .tbStyle03 .subject	{text-align:left;  padding:5px;   }
+#classStyle .tbStyle03 .history	{background:#f9eee7; }
+#classStyle .tbStyle03 .borderRight	 {border-right:1px solid #bdbcc1; }
+#classStyle .tbStyle03 .borderRight2	 {border-right:1px solid #FFF; }
+#classStyle .tbStyle03  a:hover	 { color:#ff4200; text-decoration:underline; }
+
+#classStyle .tbStyle04	{width:100%; clear:both; margin:5px 0 10px 0;  }
+#classStyle .tbStyle04 .orangeTh	{background:#f77433;  color:#FFF; height:26px; font-size:11px;  text-align:center;   }
+#classStyle .tbStyle04 .orangeTd	 {border-bottom:1px solid #fca479; padding:3px 0 3px 0; text-align:center;  font-size:11px; line-height:14px; vertical-align:middle !important; }
+#classStyle .tbStyle04 .subject	{text-align:left;  padding:5px;   }
+#classStyle .tbStyle04 .borderRight	 {border-right:1px solid #fca479; }
+#classStyle .tbStyle04 .borderRight2	 {border-right:1px solid #FFF; }
+#classStyle .tbStyle04  a:hover	 { color:#ff4200; text-decoration:underline; }
+
+#classStyle .tbStyle05	{width:100%; clear:both; margin:5px 0 10px 0;  }
+#classStyle .tbStyle05 .thStyle	{background:#b0b0b0;  color:#FFF; height:26px; font-size:11px;  text-align:center;  font-weight:bold;  }
+#classStyle .tbStyle05 .tdStyle	 {border-bottom:1px solid #bdbcc1; padding:6px 0 6px 0;  .padding:4px 0 2px 0; text-align:center;  font-size:11px; line-height:14px; vertical-align:middle !important; }
+#classStyle .tbStyle05 .left	{text-align:left; padding:5px;padding:6px 3px 6px 3px;}/*2010.03.26 leejoonsook*/
+#classStyle .tbStyle05 .subject	{text-align:left;  padding:5px;   }
+
+#classStyle .tabStyle02	{height:30px}
+#classStyle .tabStyle02 li	{float:left; margin-right:7px; height:30px line-height:13px; font-size:12px; font-weight:bold; overflow:hidden;  display:inline; color:#FFF; }
+#classStyle .tabStyle02 li a	 {float:left; cursor:pointer; padding:0 0 0 23px; color:#FFF; height:30px; background:url(../../../images/usr/KOREAN/class/bg_tableft.gif) top left no-repeat; overflow:hidden;  }
+#classStyle .tabStyle02 li a span	 {float:left; cursor:pointer; height:100%;   color:#FFF; padding:6px 23px 0 0; background:url(../../../images/usr/KOREAN/class/bg_tabright.gif) top right no-repeat; overflow:hidden; margin:0;  }
+#classStyle .tabStyle02 li a:hover	 {float:left; cursor:pointer;  padding:0 0 0 23px; color:#FFF; height:30px; background:url(../../../images/usr/KOREAN/class/bg_tableft_over.gif) top left no-repeat; overflow:hidden;  }
+#classStyle .tabStyle02 li a:hover span	 {float:left; cursor:pointer;  height:100%;  color:#FFF; padding:6px 23px 0 0; background:url(../../../images/usr/KOREAN/class/bg_tabright_over.gif) top right no-repeat; overflow:hidden; margin:0;  }
+
+#classStyle .tabStyle02 .select a	 {float:left; cursor:pointer; padding:0 0 0 23px; color:#FFF; height:30px; background:url(../../../images/usr/KOREAN/class/bg_tableft_over.gif) top left no-repeat; overflow:hidden;  }
+#classStyle .tabStyle02 .select a span	 {float:left; cursor:pointer; height:100%;  color:#FFF;  padding:6px 23px 0 0; background:url(../../../images/usr/KOREAN/class/bg_tabright_over.gif) top right no-repeat; overflow:hidden; margin:0;  }
+#classStyle .tabStyle02 .select a:hover	 {float:left; cursor:pointer; padding:0 0 0 23px; color:#FFF; height:30px; background:url(../../../images/usr/KOREAN/class/bg_tableft_over.gif) top left no-repeat; overflow:hidden;  }
+#classStyle .tabStyle02 .select a:hover span	 {float:left; cursor:pointer;  height:100%;  color:#FFF;  padding:6px 23px 0 0; background:url(../../../images/usr/KOREAN/class/bg_tabright_over.gif) top right no-repeat; overflow:hidden; margin:0;  }
+
+#classStyle .boardSearch	{text-align:right; clear:both; margin:5px 0 7px 0; }
+#classStyle .boardSearch table	{margin:0 0 0 auto;}
+#classStyle .boardSearch table td	{vertical-align:middle !important; }
+#classStyle .boardSearch .inputStyle	{border:1px solid #c6c4c4; height:18px; margin:0 6px; }
+
+#classStyle .pageBtn	{height:20px; position:relative; margin-top:12px;  }
+#classStyle .pageBtn table .pageNum	 {width:20px; vertical-align:middle !important; }
+#classStyle .pageBtn table .pageNum .select	{font-weight:bold; color:#ff4200; }
+#classStyle .pageBtn .boardBtn	{position:absolute; top:0; right:0; }
+#classStyle .pageBtn .boardBtn button	{margin-left:6px; }
+#classStyle .pageBtn .select	{color:#ff4200;}
+
+
+#classStyle .viewStyle	 {border-top:3px solid #b0b0b0; margin:10px 0 0 0; width:100%; table-layout:fixed; }
+#classStyle .viewStyle .tdStyle	{padding:6px 0; vertical-align:middle !important; font-size:11px; text-align:center; border-bottom:1px solid #bdbcc1; }
+#classStyle .viewStyle .tdStyle2	{font-size:11px; }
+#classStyle .viewStyle .subject	{font-size:12px; font-weight:bold; text-align:center; }
+#classStyle .viewStyle .txtLeft	 {text-align:left; padding-left:13px; }
+#classStyle .viewStyle .txtLeft2	 {text-align:left; }
+#classStyle .viewStyle .line	{background:url(../../../images/usr/KOREAN/class/img_line.gif) right 50% no-repeat; }
+#classStyle .viewStyle .orangeLine	{border-bottom:1px solid #fcab83; text-align:left;  }
+#classStyle .viewStyle .viewCon	{background:#f0f0f0; padding:16px;  line-height:19px; }
+#classStyle .viewStyle .viewCon2	{background:#fff; padding:16px; line-height:19px; }
+#classStyle .viewStyle .viewCon3	{background:#fff; padding:14px 16px;  line-height:19px; }
+#classStyle .viewStyle .prevCon	{background:url(../../../images/usr/KOREAN/class/bg_prev.gif) 7px 50% no-repeat; padding-left:77px; }
+#classStyle .viewStyle .nextCon	{background:url(../../../images/usr/KOREAN/class/bg_next.gif) 7px 50% no-repeat; padding-left:77px; }
+
+#classStyle .margin0	{margin:0 !important; }
+#classStyle .contentList 	{  border-top:1px solid #fcab83; margin:8px 0 0 0; font-size:11px; }
+#classStyle .contentList .prevCon	{background:url(../../../images/usr/KOREAN/class/bg_prev.gif) 7px 50% no-repeat; padding:6px 0 6px 77px;  border-bottom:1px solid #fcab83; text-align:left; }
+#classStyle .contentList .nextCon	{background:url(../../../images/usr/KOREAN/class/bg_next.gif) 7px 50% no-repeat; padding:6px 0 6px 77px;  border-bottom:1px solid #fcab83; text-align:left; }
+
+/*2010.04.05 kimjungdo*/
+.fileList   {width:100%; }
+.fileList th    {background:#ebeaea;  color:#4d4d4f; height:29px;  border-bottom:1px solid #c9c9ca; }
+.fileList td     {border-bottom:1px solid #c9c9ca; padding:5px 0 5px 0; text-align:center; }
+.fileList .subject  {text-align:left;  padding-left:5px; word-break:break-all;   }
+.borderRight     {border-right:1px solid #c9c9ca; }
+
+#classStyle .fileList	{width:100%; }
+#classStyle .fileList .thStyle	{background:#ebeaea;  color:#4d4d4f; height:29px;  border-bottom:1px solid #c9c9ca; font-size:11px;}
+#classStyle .fileList .tdStyle	 {border-bottom:1px solid #c9c9ca; padding:5px 0 5px 0; text-align:center; font-size:11px;}
+#classStyle .fileList .subject	{text-align:left;  padding-left:5px; word-break:break-all;   }
+#classStyle .borderRight	 {border-right:1px solid #c9c9ca; }
+
+
+#classStyle .commentWrap	{margin-top:12px;  border-top:1px solid #c9c9ca; padding-top:8px; }
+#classStyle .commentWrap .commentWrite	{height:45px; width:100%; }
+#classStyle .commentWrap .commentWrite .inputStyle	{float:left; width:635px; height:26px;  border:1px solid #c9c9ca;  padding:5px; }
+#classStyle .commentWrap .commentWrite button	{float:right;  margin-top:1px; }
+
+#classStyle .commentWrap .commentList	{ border-bottom:1px solid #c9c9ca; margin-top:2px; }
+#classStyle .commentWrap .comment {font-size:11px; padding:0 8px 0 8px; border-top:1px solid #c9c9ca;  }
+#classStyle .commentWrap .comment dd	 {line-height:18px; padding:0 0 4px 0;}
+#classStyle .commentWrap .comment dt	{padding:3px 0 2px 0; }
+#classStyle .commentWrap .comment span	{padding:0 10px 0 18px; }
+
+#classStyle .writeStyle	 {border-top:3px solid #b0b0b0; margin:10px 0; width:100%;  }
+#classStyle .writeStyle .thStyle	{width:94px; font-size:11px; background:#eae9e9; text-align:left; padding-left:15px; border-bottom:1px solid #bdbcc1; font-weight:bold; }
+#classStyle .writeStyle .writeItem{font-size:11px; text-align:left; padding:4px 0 4px 11px; border-bottom:1px solid #bdbcc1;}
+#classStyle .writeStyle .editor	 {border:1px solid #cccccc; width:588px; }
+#classStyle .writeStyle .txtTop	{vertical-align:top; padding-top:8px; }
+#classStyle .writeStyle .inputStyle	{border:1px solid #cbcbcb; height:16px;;}/*2010.03.25 leejoonsook*/
+
+/* img Board */
+
+#classStyle .cListiFixed ul	{margin:0; padding:0;  list-style:none; overflow:hidden; font-size:12px;}
+#classStyle .cListiFixed li	 { float:left; width:161px; height:188px; overflow:hidden;  background:#e2e2e2; margin-bottom:19px;  }
+#classStyle .cListiFixed .marginR25 { float:left; width:25px; height:188px; overflow:hidden; background:#FFF; }
+#classStyle .cListiFixed img{ display:block; border:0; width:150px; height:109px; margin:0 auto;}
+#classStyle .cListiFixed a strong{ display:inline-block; margin:8px 0 0 0; color:#333;}
+#classStyle .cListiFixed .imgNum {width:150px; margin:4px auto 0 auto; font-size:11px; position:relative; }
+#classStyle .cListiFixed .imgNum span	{position:absolute; top:0; right:0; }
+#classStyle .cListiFixed .imgInfo	{ width:142px; margin:0 auto; font-size:11px; color:#767676; background:#FFF; line-height:13px;  padding:5px 4px 2px 4px; }
+#classStyle .cListiFixed .imgInfo p	{height:20px; overflow:hidden ; line-height:12px; }
+*html #classStyle .cListiFixed .imgInfo p	{height:20px; overflow:hidden ; line-height:14px; }
+#classStyle .cListiFixed .imgInfo a	{color:#ff4200; }
+
+/* mediaPlayer */
+
+.mediaPlayer	 {width:1012px; height:534px; background:url(../../../images/usr/KOREAN/class/bg_mediaplayer.gif) no-repeat;  padding-top:150px; }
+.mediaPlayer .media	{width:660px; height:380px; margin:0 auto; background:#373737; color:#FFF; text-align:center; }
+
+/*2010.04.12 leejoonsook*/
+
+.roomBg {text-align:center; vertical-align:middle !important; height:120px; background-repeat: no-repeat;}
+.roomTitle {font-size:24px; font-weight:bold; }

@@ -1,0 +1,255 @@
+@charset "utf-8";
+@import url("common.css");
+body{background:none;color:#666}
+input[type=radio]{border:0}
+input[type=checkbox]{border:0}
+
+/* popup style */
+#popwrapper{padding:8px;background:#e4e4e4}
+#popwrapper .popIn{padding:18px 10px;border:1px solid #628423;background:#fafafa}
+#mystudy{width:780px;padding:10px;background:#e4e4e4}
+#money{width:580px;padding:10px;background:#e4e4e4}
+
+.popIn h2.bus{background:url(/images/user/sub/pop_titbg2.gif) no-repeat 2px top}
+.popIn h2.add{background:url(/images/user/sub/pop_titadd.gif) no-repeat 2px top}
+.popIn h2.id{background:url(/images/user/sub/pop_titid.gif) no-repeat 2px top}
+.popIn h2.pw{background:url(/images/user/sub/pop_titpw.gif) no-repeat 2px top}
+.popIn h3{margin-top:30px;padding-left:15px;padding-bottom:10px;background:url(/images/user/study/tit_sbullet01.gif) no-repeat left 2px;font-weight:normal;font-size:12px}
+.popIn .txtcen{text-align:center}
+.tgreen{color:#4A7100}
+.point{color:#ff0101;text-decoration:underline}
+.con1{overflow:hidden;padding:22px 35px;border:1px solid #c4c4c4;background:#fff;color:#333}
+.con2{overflow:hidden;padding:15px;border:1px solid #c4c4c4;background:#fff}
+.popCon .tit_bg{height:40px;border-bottom:2px solid #333}
+.popCon h2{height:32px;margin-bottom:5px;padding:5px 0 0 35px;background:url(/images/user/study/pop_tit.png) no-repeat 0 0;font-size:16px;font-weight:bold;color:#333;letter-spacing:-1px}
+
+.popCon .tbList1{margin-top:10px;border-top:2px solid #333}
+.popCon .tbList1 thead th{border:1px solid #d9d9d9;background:#f2f2f2;font-weight:bold;text-align:center}
+.popCon .tbList1 th,.popCon .tbList1 td{padding:6px 10px 4px;text-align:left}
+.popCon .tbList1 td{padding:5px 10px 3px;border-bottom:1px solid #d9d9d9;border:1px solid #d9d9d9;text-align:center}
+.popCon .tbList1 .boR{border-right:1px solid #ebebeb}
+.popCon .tbList1 .left{text-align:left}
+.popCon .tbList1 td a{color:#777}
+.popCon .tbList1 a:hover{font-weight:bold;color:#4b7000;letter-spacing:-1px}
+.popCon .tbList1 img{vertical-align:middle}
+
+.popCon .popTb thead th{font-weight:bold;text-align:center}
+.popCon .popTb th,.popCon .popTb td{padding:5px 10px;border:1px solid #dfdfdf;text-align:left}
+.popCon .popTb th{background:#858585;color:#fff}
+.popCon .popTb .style1 th{background:#fff;font-weight:bold;color:#333;text-align:center}
+.popCon .checkL2 li{display:inline;margin-right:20px}
+.popCon .busline li{display:inline-block;_display:inline;overflow:hidden;width:90px}
+
+.postsearch{overflow:hidden;width:548px;height:43px;margin-bottom:25px;padding-top:20px;background:url(/images/user/pop_searchBg.gif) no-repeat;text-align:center;_zoom:1}
+.searchWrap2{overflow:hidden;width:406px;height:43px;margin-bottom:25px;padding-top:20px;background:url(/images/user/pop_searchBg2.gif) no-repeat;text-align:center;_zoom:1}
+.postsearch .in{width:430px;margin:0 auto}
+.postsearch label{font-weight:bold;color:#477200}
+.postsearch label,.postsearch select{float:left;margin-right:10px}
+.postsearch label.bul{margin-left:50px;padding-left:10px;background:url(/images/user/bullet_down.gif) no-repeat 0 7px}
+.postsearch select{width:65px}
+.postsearch .input{overflow:hidden;float:left;width:400px;height:21px}
+.postsearch .input label{display:none}
+.postsearch .input input{float:left;width:300px;padding-left:3px;border-right:0;border-right:0}
+.postsearch .bsearch{float:left}
+.postsearch img{vertical-align:middle}
+
+.tbAuto{overflow-y:auto;overflow-x:hidden;width:547px;height:148px}
+.btnCen{padding:0;text-align:center}
+.btnCen li{display:inline}
+.btnR{padding:25px 0 0;text-align:right}
+.btnR li{display:inline}
+.tred{color:#fe0000}
+
+/* paging */
+.paging{margin-top:25px;margin-bottom:15px;text-align:center}
+.paging a{display:inline;width:20px;padding:3px 6px;vertical-align:middle}
+.paging a img{vertical-align:middle}
+.paging a:hover{margin:0;padding:2px 5px;border:1px solid #5a97e0;background:#7aaeed;color:#fff}
+.paging a.on{margin:0;padding:2px 5px;border:1px solid #5a97e0;background:#7aaeed;font-weight:bold;color:#fff}
+.paging .btn{margin:0 2px;padding:0;border:0;background:0}
+.paging .btn:hover{margin:0 2px;padding:0;border:0;background:0;font-size:0;line-height:0}
+.paging .btn img{font-size:0;line-height:0}
+
+/* 나의 강의실 */
+.myheader{overflow:hidden;border-bottom:4px solid #3c3c3c;*zoom:1}
+.myheader .mytit{float:left;line-height:0;font-size:0}
+.myheader .mytab{float:right;margin-right:23px}
+.myheader .mytab li{float:left;padding:0;line-height:0;font-size:0}
+.mycon{clear:both}
+.mybox{width:744px;height:143px;padding:0 15px;background:url(/images/user/study/mystudy_bg.gif) no-repeat left top}
+.mybox h3{height:41px;padding:10px 0 10px 80px;background:url(/images/user/study/mystudy_img01.gif) no-repeat left top;font-weight:bold;font-size:14px;color:#333;text-decoration:underline}
+.mybox dl{overflow:hidden;clear:both;width:610px}
+.mybox dt{float:left;padding:0 0 0 6px;background:url(/images/user/bullet_down.gif) no-repeat left 6px;font-weight:bold;color:#555}
+.mybox dd{display:block;float:left;font-weight:bold;color:#555}
+.mybox dd.left{padding-right:20px}
+.mybox dd.right{width:250px}
+.mybox dd.dot{display:block;float:none;clear:both;height:10px;background:url(/images/user/study/dot.gif) repeat-x left 3px}
+.mybox dd .graph_1{float:none;clear:both;height:15px;background:url(/images/user/graph01_bg.gif)}
+.mybox dd .graph_2{float:none;clear:both;height:15px;background:url(/images/user/graph02_bg.gif)}
+
+.myincon{overflow:hidden;width:740px;padding:10px 0}
+.myincon:after{display:block;visibility:hidden;clear:both;height:0;content:''}
+.myincon .left{float:left;width:355px}
+.myincon .right{float:right;width:355px}
+.myincon .homtab{overflow:hidden;height:25px;background:url(/images/user/study/line.gif) repeat-x left bottom}
+.myincon .homtab .homtit1{float:left;width:75px;height:25px;padding-right:5px;background:url(/images/user/study/mystudy_tab2bg.gif) no-repeat left top;line-height:25px;font-weight:bold;text-align:center}
+.myincon .homtab .homtit2{float:left;padding-left:10px;background:url(/images/user/ico/ball_gray3.gif) no-repeat left center;line-height:20px;font-weight:bold}
+.myincon .homtab a{float:right}
+.myincon .homList{margin-top:10px}
+.myincon .homList li{overflow:hidden;padding-left:7px;padding-right:5px;background:url(/images/user/ico/ball_gray2.gif) no-repeat left 5px}
+.myincon .homList li a{float:left}
+.myincon .homList li a:hover{text-decoration:underline}
+.myincon .homList li img{margin-left:5px;vertical-align:middle}
+.myincon .homList li .date{float:right;color:#888787}
+
+#mystudy h4.tit{margin:10px 0;padding-left:20px;background:url(/images/user/study/mystudy_titbg.gif) no-repeat left top;font-weight:bold;font-weight:bold;color:#333}
+#mystudy .mybox2{overflow:hidden;margin-bottom:20px;padding:15px;border:1px solid #ccc;background:#f0f0f0;_zoom:1}
+#mystudy .mybox2 dt{float:left;width:90px;padding-top:3px}
+#mystudy .mybox2 dd.per{float:left;width:70px;font-size:14px;font-weight:bold;color:#ff4900}
+#mystudy .mybox2 dd.bar{float:left}
+#mystudy .mybox2 dd.bar .grpout{float:left;width:465px;height:20px;background:#dcdbdb}
+#mystudy .mybox2 dd.bar .grpout .grpin{display:block;height:20px;background:url(/images/user/study/mystudyimages02.gif) repeat-x left top}
+#mystudy .mybox2 dd.bar a{float:left;margin-left:5px}
+#mystudy .txtblue{color:#0767c9}
+#mystudy .txtred{font-weight:bold;color:#ff4900}
+#mystudy .thscroll{overflow-y:auto;overflow-x:hidden;height:200px}
+
+#mystudy .searchWrap{float:right;width:290px;height:auto;margin-bottom:10px;padding:0;background:none;text-align:right}
+#mystudy .searchWrap select{float:left;width:100px}
+#mystudy .searchWrap .input{overflow:hidden;float:right;width:180px;text-align:right}
+#mystudy .searchWrap input{float:left;width:130px}
+
+#mystudy .searchWrap .btn_search{float:left;padding-left:0}
+
+#mystudy .popCon .tbList1 .reply{display:block;margin-left:10px;padding-left:30px;background:url(/images/user/ico/ico_reply.gif) no-repeat left 0}
+#mystudy .conbul{padding-left:10px;background:url(/images/user/ico/ico_gryicon.gif) no-repeat left center}
+
+.tbDetail{margin-bottom:15px;border-top:2px solid #333}
+.tbDetail th{font-weight:bold;color:#3f5e89}
+.tbDetail th,.tbDetail td{padding:5px 5px 5px 15px;border-bottom:1px solid #d9d9d9;text-align:left}
+.tbDetail td{border-left:1px solid #d9d9d9}
+.tbDetail td.noborderL{padding-left:0;border-left:0;text-align:center}
+.tbDetail td.noborderLB{padding:20px;border-left:none;border-bottom:0}
+.tbDetail .borderR{border-right:1px solid #d9d9d9}
+.tbDetail .borderB{border-bottom:1px solid #d9d9d9 !important}
+.tbDetail .borderL{border-left:1px solid #d9d9d9}
+.tbDetail th{background:#f0f0f0;color:#666}
+.tbDetail td{color:#777}
+
+#mystudy2{height:100%;min-height:100%;margin:0;padding:0 0 30px}
+#mystudy2 .con{clear:both;padding:15px 10px;background:url(/images/user/cyber/top_bg.gif) repeat-x left top}
+#mystudy2 .leftcon{float:left;width:191px}
+#mystudy2 .rightcon{margin-left:225px}
+#mystudy2 .year{width:191px;height:24px;padding-top:7px;background:url(/images/user/cyber/left_bg1.gif) no-repeat left top;font-weight:bold;color:#fff;text-align:center}
+#mystudy2 .time{overflow:hidden;clear:both;padding:10px 7px;border:1px solid #c2c0c0;border-top:none;background:#ffffe6;_zoom:1}
+#mystudy2 .time dt{float:left;width:50px;padding-left:20px;padding-top:5px;color:#333}
+#mystudy2 .time dd{float:right;width:95px;margin-bottom:5px;padding:1px 3px;border:1px solid 6000000px;background:#858585;color:#fff;text-align:left}
+#mystudy2 .time .tim1{background:url(/images/user/cyber/ico_plus.gif) no-repeat left 5px}
+#mystudy2 .time .tim2{background:url(/images/user/cyber/ico_minus.gif) no-repeat left 5px}
+#mystudy2 .time .tim3{background:url(/images/user/cyber/ico_time.gif) no-repeat left 5px}
+
+#mystudy2 .lefttit{padding:15px 0}
+#mystudy2 .leftcon table th{background:#f0f0f0;font-weight:bold}
+#mystudy2 .leftcon table th,#mystudy2 .leftcon table td{padding:2px 5px;border:1px solid #dad8d8;text-align:center}
+#mystudy2 .contit{padding:15px 15px 15px 25px;border:1px solid #c2c0c0;border-top:6px solid #333;background:#ffffe6 url(/images/user/cyber/ico_arrow.gif) no-repeat 15px 20px;font-weight:bold}
+#mystudy2 .contit .tred{font-weight:bold;color:#fe5310}
+#mystudy2 .conbox{border:1px solid #d1d1d1;background:#efefef}
+#mystudy2 .conbox .que1{padding:10px 15px;border-bottom:1px solid #d1d1d1}
+#mystudy2 .conbox .que2{padding:10px 15px;border-bottom:1px solid #d1d1d1;background:#fff;font-size:14px;font-weight:bold;color:#1b5acd}
+#mystudy2 .conbox .item{height:200px;padding:10px 15px;border-top:1px solid #fff}
+#mystudy2 .conbox .item .checklist li{display:block;padding:3px 0;color:#000}
+#mystudy2 .conbox .item .checklist li .chr{margin-top:2px;vertical-align:top}
+
+.pop_btn01{display:inline-block;height:29px;padding-left:9px;background:url(/images/user/pop_btn01.gif) no-repeat left top;line-height:24px}
+.pop_btn01 span{display:inline-block;height:29px;padding-right:13px;background:url(/images/user/pop_btn01.gif) no-repeat right top;line-height:24px;font-weight:bold;color:#333;letter-spacing:-1px}
+
+.sub_text h4{margin-top:20px;margin-bottom:10px;padding:1px 0 0 20px;background:url(/images/user/bullet01.gif) no-repeat left top;font-size:14px;font-weight:bold;color:#333;letter-spacing:-1px}
+
+/* comment */
+.commentWrite{padding:20px;border-bottom:1px solid #e2e2e2;border-top:1px solid #e2e2e2;background-color:#fbfbfb}
+.commentWrite span{padding-right:10px;font-weight:bold;vertical-align:top}
+.commentWrite input{vertical-align:top}
+
+.commentView{width:100%;border-bottom:1px solid #e2e2e2}
+.commentView li{padding:8px 18px;background:url(/images/user/commentView_bg.gif) no-repeat center top}
+.commentView li.first-child{background:none}
+.commentView .writer{padding:0 10px 0 0;font-weight:bold}
+.commentView .date{padding-left:20px;padding-right:5px;font-size:11px}
+.commentView .context{display:block;padding:5px 0 0;line-height:160%}
+.commentView input{border:0}
+
+/* list2 */
+.bbsList2{width:100%;border-top:1px solid #e2e2e2}
+.bbsList2 li{overflow:hidden;clear:both;padding:30px 0 10px}
+.bbsList2 dl{_zoom:1}
+.bbsList2 .thumbnail{float:left;width:225px;text-align:center}
+.bbsList2 .subject{float:right;width:420px;padding:8px 15px;border-top:2px solid #3d88e2;border-bottom:1px solid #e2e2e2;font-weight:bold}
+.bbsList2 .text{float:right;width:420px;padding:6px 15px}
+.bbsList2 .info{float:right;width:420px;padding:6px 15px;background:url(/images/user/list2_bg_bar2.gif) no-repeat left bottom}
+.bbsList2 .info_bg{float:right;width:420px;padding:9px 15px 6px}
+.bbsList2 .head{padding-right:5px;font-weight:bold}
+.bbsList2 .write{padding-left:70px;font-weight:bold}
+.bbsList2 .txt{padding-left:10px;background:url(/images/user/list2_bg_info.gif) no-repeat left 45%;font-size:11px}
+.bbsList2 .txt img{vertical-align:middle !important}
+.bbsList2 .count{padding-left:15px}
+
+/* list3 */
+.bbsList3{width:100%}
+.bbsList3 li{overflow:hidden;clear:both;padding:0 0 10px}
+.bbsList3 dl{_zoom:1}
+.bbsList3 .thumbnail{float:left;width:100%;text-align:center}
+.bbsList3 .subject{float:left;width:100%;padding:8px 15px;border-bottom:1px solid #e2e2e2;font-weight:bold}
+.bbsList3 .text{float:left;width:460px;padding:6px 10px 6px 15px}
+.bbsList3 .info{float:left;width:460px;padding:6px 10px 6px 15px;background:url(/images/user/list2_bg_bar2.gif) no-repeat left bottom}
+.bbsList3 .head{padding-right:5px;padding-left:5px;background:url(/images/user/bullet_down.gif) no-repeat 0 5px;font-weight:bold}
+.bbsList3 .write{padding-left:70px;font-weight:bold}
+.bbsList3 .txt{padding-left:10px;background:url(/images/user/list2_bg_info.gif) no-repeat left 45%;font-size:11px}
+.bbsList3 .txt_1{display:block;padding-left:10px;font-size:11px}
+
+.bbsList3 .txt img{vertical-align:middle !important}
+.bbsList3 .count{padding-left:15px}
+
+/* 메인탭 */
+.conwrap2{overflow:hidden;position:relative;width:100%;margin:0 0 20px;padding:0;border-left:1px solid #e6e6e6;border-right:1px solid #e6e6e6;border-top:0;background:url(/images/user/tab_bg01.gif) repeat-x left top;*zoom:1}
+.mtab2{height:37px;margin:0;padding:0}
+.mtab2:affter{display:block;clear:both;content:''}
+.mtab2 li{display:block;float:left;background:url(/images/user/tab_line.gif) no-repeat right center}
+.mtab2 li a{display:block;padding:0 15px;line-height:36px}
+.mtab2 li a:hover{text-decoration:underline}
+.mtab2 li .on{padding-left:32px;border:2px solid #265c98;border-bottom:0;background:#fff;background:#fff url(/images/user/ico_arrow1.gif) no-repeat 10px center;font-size:14px;font-weight:bold;color:#333;letter-spacing:-1px}
+.mtab2 li.end{background:none}
+.mtab2 li.last{float:right;padding-right:10px;background:none}
+.mtab2 li.last a{display:inline;padding:0}
+
+.conwrap2 .tbList2{border-top:0}
+.conwrap2 .tbList th{border:0}
+.conwrap2 .tbList td{border-bottom:0}
+.conwrap2 .tbList td.right{padding-right:15px;color:#4b7000}
+.conwrap2 .tbList .hover td{background:#ededed}
+
+.course ul{margin:0;padding:0}
+.course .title{padding:5px 0 0 24px;background:url(/images/user/bullet_pencil.gif) no-repeat 0 0;font-size:12px;font-weight:bold;color:#555}
+.course li{padding:5px 0 10px 30px;background:url(/images/user/bullet02.gif) no-repeat 18px 7px;font-size:12px;line-height:160%;color:#666}
+.course li.last{background:none}
+
+.course_1 ul{margin:0;padding:0;border-top:2px solid #265c98}
+.course_1 li{padding:5px 0 3px 30px;background:url(/images/user/bullet02.gif) no-repeat 18px 7px;font-size:12px;line-height:160%;color:#666}
+.course_1 li.last{padding:0 0 0 30px;background:none;font-weight:bold;color:#F00}
+.course_1 li.last_1{padding:0 0 0 30px;background:none}
+.course_1 li.last_2{padding:10px 0 10px 10px;background:none;font-weight:bold;color:#F00}
+
+.font_red{color:#F30 !important}
+
+/* poll */
+.poll{width:100%;margin:0;padding:0}
+.poll_tit{height:20px;padding:7px;border-top:1px solid #89b6ec;border-bottom:1px solid #d9d9d9;background:#F9F9F9;font-weight:bold;color:#333}
+.poll li{padding:5px;color:#555}
+.poll li input{padding:3px 5px 2px 15px;color:#555;vertical-align:middle}
+
+/* text */
+.sub_txt_1depth h5{margin-top:20px;margin-bottom:10px;padding:1px 0 0 20px;background:url(/images/user/bullet01.gif) no-repeat left top;font-size:14px;font-weight:bold;color:0;letter-spacing:-1px}
+.sub_txt_1depth ul{margin:0;padding:0}
+.sub_txt_1depth li{padding:0 0 2px 30px;background:url(/images/user/bullet02.gif) no-repeat 18px 5px;font-size:12px;line-height:200%;color:#555}
+.sub_txt_1depth .frist{background:none}
+.sub_txt_1depth span{margin:0;padding:4px 0 2px 18px;background:url(/images/user/bullet_check.gif) no-repeat left 0;line-height:180%;color:#ee5030}
+

@@ -1,0 +1,1150 @@
+﻿
+
+
+
+
+
+
+
+
+
+
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml"  xml:lang="ko" lang="ko">
+<head>
+
+
+
+
+
+
+
+
+
+
+    
+
+
+
+
+
+
+
+
+
+
+
+
+
+<meta http-equiv="Pragma" content="no-cache"/>
+<meta http-equiv="Expires" content="-1"/>
+<meta http-equiv="Expire-time" content="-1"/>
+<meta http-equiv="X-UA-Compatible" content="IE=edge"/>
+<meta http-equiv="Cache-Control" content="no-cache"/>
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8"/>
+<meta http-equiv="imagetoolbar" content="no"/>
+<meta name="Keywords" lang="utf-8" content="원격교육연수원 학습센터 [web24]" />
+<meta name="Description" content="원격교육연수원 학습센터 [web24]" />
+<meta name="robots" content="noindex,nofollow" />
+
+<!--title>원격교육연수원 학습센터 [web24]</title-->
+<title>
+	 
+    
+	연수관련문의 : 
+	 
+	
+	참여마당
+	 
+</title>
+
+
+<link rel="stylesheet" type="text/css" href="http://iedu.nise.go.kr/css/user/import.css"  />
+	
+
+<!--script type="text/javascript" src="http://iedu.nise.go.kr/js/user/jquery.js"></script-->
+<!--script type="text/javascript" src="http://iedu.nise.go.kr/script/jquery/jquery-ui-1.8.2.custom.min.js"></script-->
+<!--script type="text/javascript" src="http://iedu.nise.go.kr/script/jquery/jquery-1.4.2.min.js"></script-->
+<script type="text/javascript" src="http://iedu.nise.go.kr/script/jquery/jquery-1-9.1.js"></script>
+<script type="text/javascript" src="http://iedu.nise.go.kr/script/jquery/jquery-ui-1.10.3.custom.min.js"></script>
+<script type="text/javascript" src="http://iedu.nise.go.kr/script/common/json2.js"></script>
+<script type="text/javascript" src="http://iedu.nise.go.kr/script/jquery/jquery.dotimeout.js"></script>
+<script type="text/javascript" src="http://iedu.nise.go.kr/script/common/map.js"></script>
+<script type="text/javascript" src="http://iedu.nise.go.kr/script/common/message.js"></script>
+<script type="text/javascript" src="http://iedu.nise.go.kr/script/jquery/ui/jquery.effects.drop.min.js"></script>
+<script type="text/javascript" src="http://iedu.nise.go.kr/script/jquery/jquery.bpopup.min.js"></script>
+<script type="text/javascript" src="http://iedu.nise.go.kr/script/common/base_new.js"></script>
+<script type="text/javascript" src="http://iedu.nise.go.kr/js/user/common.js"></script>
+<script type="text/javascript" src="http://iedu.nise.go.kr/js/cresys_lib.js"></script>
+<script type="text/javascript" src="http://iedu.nise.go.kr/script/learning/studyPopup.js"></script>
+<script language="javascript" type="text/javascript">
+//<![CDATA[
+var context = 'http://iedu.nise.go.kr';
+//성적보기
+function fn_statusPopup(subj, year, subjseq, userid){
+	var url ="/com/pop/courseScoreListPopup.do"
+		+ "?p_subj=" + subj
+		+ "&p_year=" + year
+		+ "&p_subjseq=" + subjseq
+		+ "&p_userid=" + userid;
+
+	/*
+	$('.all_knise_modal_popup').bPopup({
+		content:'iframe', //'ajax', 'iframe' or 'image'
+       	contentContainer:'.all_knise_modal_popup_content',
+        iframeAttr : 'scrolling="auto" width="100%" height="600" frameborder="0"',
+        loadUrl: url //Uses jQuery.load()
+	});
+	*/
+	 
+	window.open(url,"searchSubjSeqInfoPopupWindowPop","width=820,height=650,scrollbars=yes");
+
+	/*
+	var frm = eval('document.kniseForm');
+	frm.p_subj.value = subj;
+	frm.p_year.value = year;
+	frm.p_subjseq.value = subjseq;
+	frm.p_userid.value = userid;
+	window.open('', 'eduListPop', 'width=820,height=740,scrollbars=yes');
+	frm.action = "/com/pop/courseScoreListPopup.do";
+	frm.target = "eduListPop";
+	frm.submit();
+	*/
+}
+
+var c_url   = this.location+"";
+/*
+//if (c_url.match("localhost")) {		
+if (c_url.match("http://iedu.nise.go.kr")) {
+	location.href="/temp_index/temp_index.jsp";
+}
+*/
+//]]>
+</script>
+</head> 
+<body>
+<div id="u_skip"> <a href="#gnb"><span>메뉴 영역으로 바로가기</span></a>  <a href="#contents"><span>본문 영역으로 바로가기</span></a> </div>  
+<!-- wrapper -->
+<div id="wrapper">
+
+	<!-- header -->
+	
+<div id="header">
+	<div id="header2">
+		<h1 class="logo">
+			<a href="/"><img src="/images/user/logo.gif" alt="국립특수교육원부설 원격교육연수원" /></a>
+		</h1>
+		
+		<!-- utilmenu -->
+		<ul class="utilmenu">
+			
+				<li class="top_login"><a href="/usr/mem/userLogin.do" onclick="changeMenu(7, 3);return false;"><img src="/images/user/btn_login.gif" alt="로그인" /></a></li>
+				<li><a href="/"><img src="/images/user/btn_home.gif" alt="HOME" /></a></li>
+				<li><a href="/usr/mem/memJoinStep01.do" onclick="changeMenu(7, 1);return false;"><img src="/images/user/top_btn_join.gif" alt="회원가입" /></a></li>
+			
+			
+			<li><a href="/usr/svc/faqList.do" onclick="changeMenu(4, 5);return false;"><img src="/images/user/btn_faq.gif" alt="FAQ" /></a></li>
+			<li class="last"><a href="/usr/sit/siteMap.do" onclick="changeMenu(8, 1);return false;"><img src="/images/user/btn_sitemap.gif" alt="사이트맵" /></a></li>
+		</ul>
+		<!-- //utilmenu -->
+		
+		<!-- gnb -->
+		<div id="gnb">
+			<ul class="topmenu" id="topmenu">
+				<li>
+					<a href="javascript:;" id="m1" onclick="changeMenu(1, 1);return false;"><img src="/images/user/gnb_menu01_out.gif" alt="연수안내" /></a>
+					<ul class="sub sub1">
+						<li><a href="javascript:;" onclick="changeMenu(1, 1);return false;"><img src="/images/user/top_m01_sub01_out.gif" alt="연수과정 안내" /></a></li>
+						<li><a href="javascript:;" onclick="changeMenu(1, 2);return false;"><img src="/images/user/top_m01_sub02_out.gif" alt="연수수강 절차" /></a></li>
+						<li><a href="javascript:;" onclick="changeMenu(1, 3);return false;"><img src="/images/user/top_m01_sub03_out.gif" alt="학습방법" /></a></li>
+						<li><a href="javascript:;" onclick="changeMenu(1, 4);return false;"><img src="/images/user/top_m01_sub04_out.gif" alt="평가방법" /></a></li>
+						<li><a href="javascript:;" onclick="changeMenu(1, 5);return false;"><img src="/images/user/top_m01_sub05_out.gif" alt="문의안내" /></a></li>
+						<li class="last"><a href="javascript:;" onclick="changeMenu(1, 6);return false;"><img src="/images/user/top_m01_sub06_out.gif" alt="모바일연수안내" /></a></li>
+						<!--<li><a href="javascript:;" onclick="changeMenu(1, 6);return false;"><img src="/images/user/top_m02_sub06_out.gif" alt="교과목 및 시간배당"/></a></li>-->
+					</ul>
+				</li>
+				<li>
+					<a href="javascript:;" id="m2" onclick="changeMenu(2, 1);return false;"><img src="/images/user/gnb_menu02_out.gif" alt="연수과정 안내 및 신청" /></a>
+					<ul class="sub sub2">
+						<li><a href="javascript:;" onclick="changeMenu(2, 1);return false;"><img src="/images/user/top_m02_sub02_out.gif" alt="신청 가능한 과정" /></a></li>
+						<li class="last"><a href="javascript:;" onclick="changeMenu(2, 2);return false;"><img src="/images/user/top_m02_sub01_out.gif" alt="개설교육과정검색" /></a></li>
+						<!--<li><a href="javascript:;" onclick="changeMenu(2, 1);return false;"><img src="/images/user/top_m03_sub01_out.gif" alt="수강신청안내"/></a></li>-->
+					</ul>
+				</li>
+				<li>
+					<a href="javascript:;" id="m3" onclick="changeMenu(3, 1);return false;"><img src="/images/user/gnb_menu03_out.gif" alt="나의강의실" /></a>
+					<ul class="sub sub3">
+						<li><a href="javascript:;" onclick="changeMenu(3, 1);return false;"><img src="/images/user/top_m03_sub01_out.gif" alt="나의학습과정" /></a></li>
+						<li><a href="javascript:;" onclick="changeMenu(3, 2);return false;"><img src="/images/user/top_m03_sub02_out.gif" alt="나의연수이력" /></a></li>
+						<li class="last"><a href="javascript:;" onclick="changeMenu(3, 6);return false;"><img src="/images/user/top_m03_sub06_out.gif" alt="나의질문방" /></a></li>
+						<!--<li><a href="javascript:;" onclick="changeMenu(3, 3);return false;"><img src="/images/user/top_m03_sub03_out.gif" alt="연수수강내역"/></a></li>-->
+						<!--<li><a href="javascript:;" onclick="changeMenu(3, 4);return false;"><img src="/images/user/top_m03_sub04_out.gif" alt="출석고사내역"/></a></li>-->
+	          			<!--<li><a href="javascript:;" onclick="changeMenu(3, 5);return false;"><img src="/images/user/top_m03_sub05_out.gif" alt="연수결제내역"/></a></li>-->
+					</ul>
+				</li>
+				<li>
+					<a href="javascript:;" id="m4" onclick="changeMenu(4, 1);return false;"><img src="/images/user/gnb_menu04_out.gif" alt="참여마당" /></a>
+					<ul class="sub sub4">
+						<li><a href="javascript:;" onclick="changeMenu(4, 1);return false;"><img src="/images/user/top_m04_sub01_out.gif" alt="공지사항" /></a></li>
+						<li><a href="javascript:;" onclick="changeMenu(4, 3);return false;"><img src="/images/user/top_m04_sub03_out.gif" alt="연수개선의견" /></a></li>
+						<li><a href="javascript:;" onclick="changeMenu(4, 5);return false;"><img src="/images/user/top_m04_sub05_out.gif" alt="자주묻는 질문" /></a></li>
+						<li class="last"><a href="javascript:;" onclick="changeMenu(4, 6);return false;"><img src="/images/user/top_m04_sub06_out.gif" alt="연수관련문의" /></a></li>
+						<!--<li><a href="javascript:;" onclick="changeMenu(4, 2);return false;"><img src="/images/user/top_m04_sub02_out.gif" alt="특수교육자료실" /></a></li>-->
+						<!--<li><a href="javascript:;" onclick="changeMenu(4, 4);return false;"><img src="/images/user/top_m04_sub04_out.gif" alt="연수후기"/></a></li>-->
+					</ul>
+				</li>
+				<li class="last">
+					<a href="javascript:;" id="m5" onclick="changeMenu(5, 1);return false;"><img src="/images/user/gnb_menu05_out.gif" alt="연수행정" /></a>
+					<ul class="sub sub5">
+						<li><a href="javascript:;" onclick="changeMenu(5, 1);return false;"><img src="/images/user/top_m05_sub01_out.gif" alt="연수지명번호입역" /></a></li>
+						<li><a href="javascript:;" onclick="changeMenu(5, 2);return false;"><img src="/images/user/top_m05_sub02_out.gif" alt="출석고사장입력" /></a></li>
+						<li><a href="javascript:;" onclick="changeMenu(5, 3);return false;"><img src="/images/user/top_m05_sub03_out.gif" alt="이수증출력" /></a></li>
+						<li><a href="javascript:;" onclick="changeMenu(5, 4);return false;"><img src="/images/user/top_m05_sub04_out.gif" alt="영수증출력" /></a></li>
+						<li><a href="javascript:;" onclick="changeMenu(5, 5);return false;"><img src="/images/user/top_m05_sub05_out.gif" alt="인가서 출력" /></a></li>
+						<li class="last"><a href="javascript:;" onclick="changeMenu(5, 6);return false;"><img src="/images/user/top_m05_sub06_out.gif" alt="입금 확인 및 환불 요청" /></a></li>
+					</ul>
+				</li>
+			</ul>
+		</div>
+		<!-- // gnb -->
+	</div>
+	<form id="menuForm" name="menuForm" method="post" action="">
+		<input type="hidden" name="menu_main" value="4" />
+		<input type="hidden" name="menu_sub" value="6" />
+		<input type="hidden" name="menu_tab_title" value="참여마당" />
+		<input type="hidden" name="menu_sub_title" value="연수관련문의" />
+	</form>
+	<h1 class="logo">&nbsp;</h1>
+</div>
+<script type="text/javascript">
+	//<![CDATA[
+	var nowMenu;
+	var keyNum = 1;
+
+	jQuery(document).ready(function () {
+		//글로벌 네비게이션 만들기
+		tabNmenu("topmenu", "m");
+		var menuFrm = document.getElementById("menuForm");
+		var main = menuFrm.menu_main.value;
+		var sub = menuFrm.menu_sub.value;
+		if (main != "") {
+			//자동 메뉴 부분  (서브에만 적용하세요)
+			function autoCall() {
+				preSel("topmenu", "m", main, sub);
+				nowMenu = setInterval(function() {
+					preSel("topmenu", "m", main, sub);
+				}, 100);
+			}
+			autoCall();
+		}		
+	});
+
+	function changeMenu(main, sub) {
+		//alert(main + " / " + sub);
+		var menuFrm = document.getElementById("menuForm");
+		menuFrm.menu_main.value = main;
+		menuFrm.menu_sub.value = sub;
+		menuFrm.action = getActionURL(main, sub);
+		menuFrm.target = "_self";
+		menuFrm.submit();
+	}
+
+	function getActionURL(p_main, p_sub) {
+		var menuFrm = document.getElementById("menuForm");
+		var url = "/usr/hom/portalActionMainPage.do"; //메인페이지
+		var tab = "";
+		var sub = "";
+		if (p_main == 1) { // 연수안내
+			tab = "연수안내";
+			switch (p_sub) {
+			case 1:
+				url = "/usr/info/eduSubjectList.do"; //연수과정안내
+				sub = "연수과정 안내";
+				break;
+			case 2:
+				url = "/usr/info/registerProcess.do"; //연수수강절차
+				sub = "연수수강 절차";
+				break;
+			case 3:
+				url = "/usr/info/studyMethod.do"; //학습방법
+				sub = "학습방법";
+				break;
+			case 4:
+				url = "/usr/info/evaluationMethod.do"; //평가방법
+				sub = "평가방법";
+				break;
+			case 5:
+				url = "/usr/info/inquiryGuide.do"; //문의안내
+				sub = "조직안내";
+				break;
+			//case 6:
+			//url = "/usr/info/courseSchedule.do";	//연수일정
+			//sub = "교과목 및 시간배당";
+			//break;
+			case 6:
+				url = "/usr/info/apguideView.do"; //모바일연수안내
+				sub = "모바일연수안내";
+				break;
+			default:
+				url = "/usr/info/eduSubjectList.do"; //연수과정 안내
+				sub = "연수과정 안내";
+				break;
+			}
+		} else if (p_main == 2) { // 연수과정/안내및신청
+			tab = "연수신청";
+			switch (p_sub) {
+			/*
+				case 1:
+				url = "/usr/subj/subjGuideList.do";	//수강신청안내
+				sub = "수강신청안내";
+				break;
+			 */
+			case 1:
+				url = "/usr/subj/subjInfoList.do"; //신청 가능한 과정
+				sub = "신청 가능한 과정";
+				break;
+			case 2:
+				url = "/usr/subj/subjInfoSearchList.do"; //개설교육과정검색
+				sub = "개설교육과정검색";
+				break;
+			/*
+			 case 2:
+			 url = "/usr/subj/propCancelList.do";	//수강신청 확인/취소
+			 sub = "수강신청 확인/취소";
+			 break;
+			 */
+			default:
+				url = "/usr/subj/subjInfoList.do"; //신청 가능한 과정
+				sub = "신청 가능한 과정";
+				break;
+			}
+		} else if (p_main == 3) { //나의강의실
+			tab = "나의강의실";
+			switch (p_sub) {
+			case 1:
+				url = "/usr/stu/cou/courseStudyList.do"; //나의 학습과정
+				sub = "나의 학습과정";
+				break;
+			case 2:
+				url = "/usr/myh/myStudyHisList.do"; //나의 연수 이력
+				sub = "나의 연수 이력";
+				break;
+			case 3:
+				url = "/usr/myh/celOfficeList01.do"; //연수수강 내역
+				sub = "연수수강 내역";
+				break;
+			case 4:
+				url = "/usr/myh/celOfficeList02.do"; //출석고사 내역
+				sub = "출석고사 내역";
+				break;
+			case 5:
+				url = "/usr/myh/celOfficeList03.do"; //연수결재내역
+				sub = "연수결재내역";
+				break;
+			case 6:
+				url = "/usr/myh/myCursQnaList.do"; //나의 질문방
+				sub = "나의 질문방";
+				break;
+			default:
+				url = "/usr/stu/cou/courseStudyList.do"; //나의 학습과정
+				sub = "나의 학습과정";
+				break;
+			}
+		} else if (p_main == 4) { //참여마당
+			tab = "참여마당";
+			switch (p_sub) {
+			case 1:
+				url = "/usr/bod/noticeList.do"; //공지사항
+				sub = "공지사항";
+				break;
+			//case 2:
+			//	url = "/usr/bod/dataList.do"; //특수교육자료실
+			//	sub = "특수교육자료실";
+			//	break;
+			case 3:
+				url = "/usr/bod/opinionUpgradeWrite.do"; //연수개선의견
+				sub = "연수개선의견";
+				break;
+			//case 4:
+			//	url = "/usr/bod/opinionUserList.do"; //연수후기
+			//	sub = "연수후기";
+			//	break;
+			case 5:
+				url = "/usr/svc/faqList.do"; //자주묻는 질문
+				sub = "자주묻는 질문";
+				break;
+			case 6:
+				url = "/usr/svc/qnaList01.do"; //연수관련상담
+				sub = "연수관련문의";
+				break;
+			default:
+				url = "/usr/bod/noticeList.do"; //공지사항
+				sub = "공지사항";
+				break;
+			}
+		} else if (p_main == 5) { //연수행정
+			tab = "연수행정";
+			switch (p_sub) {
+			case 1:
+				url = "/usr/svc/userService01.do"; //연수지명 번호 입력
+				sub = "연수지명 번호 입력";
+				break;
+			case 2:
+				url = "/usr/svc/userService02.do"; //출석고사장 입력
+				sub = "출석고사장 입력";
+				break;
+			case 3:
+				url = "/usr/svc/userService03.do"; //이수증 출력
+				sub = "이수증 출력";
+				break;
+			case 4:
+				url = "/usr/svc/userService04.do"; //영수증 출력
+				sub = "영수증 출력";
+				break;
+			case 5:
+				url = "/usr/svc/userService05.do"; //인가서 출력
+				sub = "인가서 출력";
+				break;
+			case 6:
+				url = "/usr/svc/qnaList02.do"; //입금확인 및 환불 요청
+				sub = "입금확인 및 환불 요청";
+				break;
+			default:
+				url = "/usr/svc/qnaList03.do"; //연수지명 번호 입력
+				sub = "연수지명 번호 입력";
+				break;
+			}
+		} else if (p_main == 6) { //마이페이지
+			tab = "마이페이지";
+			switch (p_sub) {
+			case 1:
+				url = "/usr/mpg/memMyQnaList.do"; //나의 상담내역
+				sub = "나의 상담내역";
+				break;
+			case 2:
+				url = "/usr/mpg/concernInfoList.do"; //나의 관심과정
+				sub = "나의 관심과정";
+				break;
+			case 3:
+				url = "/usr/mpg/memMyPage.do"; //개인정보수정
+				sub = "개인정보수정";
+				break;
+			case 4:
+				url = "/usr/mpg/copyRight.do"; //개인정보처리방침
+				sub = "개인정보처리방침";
+				break;
+			case 5:
+				url = "/usr/mpg/memberOut.do"; //회원탈퇴
+				sub = "회원탈퇴";
+				break;
+			case 6:
+				url = "/usr/mpg/pwdChange.do"; //비밀번호변경
+				sub = "비밀번호변경";
+				break;
+			case 8:
+				url = "/usr/mem/idIntergrationIdSearch.do"; //아이디통합
+				sub = "아이디통합";
+				break;
+			case 9:
+				url = "/usr/mpg/copyRight1.do";
+				sub = "개인정보처리방침";
+				break;
+			default:
+				url = "/usr/mpg/memMyQnaList.do"; //나의 상담내역
+				sub = "나의 상담내역";
+				break;
+			}
+		} else if (p_main == 7) { //MEMBER
+			tab = "회원가입";
+			switch (p_sub) {
+			case 1:
+				url = "/usr/mem/memJoinStep01.do"; //회원가입
+				sub = "회원가입";
+				break;
+			case 2:
+				url = "/usr/mem/userIdPwdSearch01.do"; //아이디/비밀번호찾기
+				sub = "아이디/비밀번호찾기";
+				break;
+			case 3:
+				url = "/usr/mem/userLogin.do"; //로그인
+				sub = "로그인";
+				break;
+			case 4:
+				url = "/usr/mem/copyRight.do"; //개인정보처리방침
+				sub = "개인정보처리방침";
+				break;
+			case 5:
+				url = "/usr/mem/memDormantPage01.do"; //휴면회원
+				sub = "휴면계정전환";
+				break;				
+			default:
+				url = "/usr/mem/memJoinStep01.do"; //회원가입
+				sub = "회원가입";
+				break;
+			}
+		} else if (p_main == 8) { //사이트맵
+			tab = "사이트맵";
+			switch (p_sub) {
+			case 1:
+				url = "/usr/sit/siteMap.do"; //사이트맵
+				sub = "사이트맵";
+				break;
+			default:
+				url = "/usr/sit/siteMap.do"; //사이트맵
+				sub = "사이트맵";
+				break;
+			}
+		}
+
+		menuFrm.menu_tab_title.value = tab;
+		menuFrm.menu_sub_title.value = sub;
+		return url;
+	}
+
+	function fn_keyEvent(fun) {
+		if (event.keyCode == 13) {
+			eval("this." + fun + "()");
+		}
+	}
+
+	function fn_UserLogout(fun) {
+		if (confirm("로그아웃 하시겠습니까?")) {
+			var url = "/usr/lgn/portalUserLogout.do";
+			window.location.replace(url);
+		} else {
+			return;
+		}
+	}
+	//]]>
+</script>
+	<!-- header -->	
+    <!-- visual -->
+    
+    <div id="visual_4">
+         <div>			
+                 
+                 
+                 
+                
+                    <img src="/images/user/visual_tit04.gif" alt="참여마당, 교육관련 알림사항이나 자료들을 확인하실 수 있습니다."/> 
+                 
+                 
+                       
+                         
+         </div>
+    </div>	
+    <!-- visual -->
+	<!-- container -->
+	<div id="container">
+		<!-- left -->
+		
+<div id="LnbWrap">
+	<ul class="left_menu">
+		
+		
+			
+		
+		<li><a href="#" onclick="changeMenu(4, 1)"><img src="/images/user/left_menu04_1_off.gif" alt="공지사항" /></a></li>
+		
+		<li><a href="#" onclick="changeMenu(4, 3)"><img src="/images/user/left_menu04_3_off.gif" alt="연수후기" /></a></li>
+		
+		<li><a href="#" onclick="changeMenu(4, 5)"><img src="/images/user/left_menu04_5_off.gif" alt="자주묻는질문" /></a></li>
+		<li><a href="#" onclick="changeMenu(4, 6)"><img src="/images/user/left_menu04_6_on.gif" alt="연수관련문의" /></a></li>
+		
+		
+		
+		
+		
+	</ul>	
+	<div>
+		<!--<img src="/images/user/leftbanner_callcenter01.gif" alt="연수지원 : 041)537-1475~8, 평일 09시30분 ~ 17시50분, 원격문의 : 070)7434-2581, 평일 09시30분 ~ 17시50분"/><br/>-->
+		<!--<img src="/images/user/m_tit04_1.gif" alt="연수문의/안내, 원격연수운영팀, 연수문의: 041)537-1475~8 평일:09시30분~17시50분, 팩스 : 041)537-1479 , 이메일:jmx386@moe.go.kr, 원격서비스 지원센터, 원격지원 : 070)7434-2581 평일:09시30분~17시50분, 이메일: nurisys@nurisys.co.kr" />-->
+		<img src="/images/user/m_tit04_1.gif" alt="연수문의/안내, 원격연수운영팀, 평일:09시30분~17시50분, 이메일:iedu@moe.go.kr, 연수문의: 041)537-1475~9, 기술문의 및 원격지원 : 평일:09시30분~17시50분, 이메일: iedu@hkinet.co.kr, 기술지원: 070)8666-3548~9" />
+		<a href="https://www1.startsupport.com/knise" title="새창으로 사이트열기" target="blank" ><img src="/images/user/leftbanner_callcenter02.gif" alt="원격지원서비스 바로가기"/></a>
+	</div>
+</div>
+		<!-- // left -->
+		<!-- contents -->
+		<div class="contents" id="contents">
+			<!-- title -->
+			
+<div class="contop">
+	<h3><img src="/images/user/h4_04_6.gif" alt="연수관련문의"/></h3>    
+	<!-- 글자크기 -->            
+	<ul class="font_size">
+		<li class="fri"><img src="/images/user/txt_img.gif" alt="화면크기"/></li>
+		<li><a href="#" onclick="zoomIn()" ><img src="/images/user/plus.gif" alt="키우기"/></a></li>
+		<li><a href="#" onclick="zoomOut()" ><img src="/images/user/minus.gif" alt="줄이기"/></a></li>
+		<li><a href="#" onclick="zoomFrist()"><img src="/images/user/100.gif" alt="기본"/></a></li>
+	</ul>
+	<!-- //글자크기 --> 
+	<div class="loc">
+		<a href="#" onclick="changeMenu('', '')">홈</a> &gt; <a href="#" onclick="changeMenu(4, 1)">참여마당</a> &gt; <span>연수관련문의</span>
+	</div>
+</div>
+			<!-- // title -->
+
+
+
+
+
+
+<form name="studyForm" id="studyForm" method="post" action="">
+<input type="hidden" name="p_contenttype"/>
+<input type="hidden" name="p_subj"/>
+<input type="hidden" name="p_year"/>
+<input type="hidden" name="p_subjseq"/>
+<input type="hidden" name="p_studytype"/>
+<input type="hidden" name="p_process"/>
+<input type="hidden" name="p_next_process"/>
+<input type="hidden" name="p_height"/>
+<input type="hidden" name="p_width"/>
+<input type="hidden" name="p_lcmstype"/>
+</form>
+<form name="kniseForm" id="kniseForm" method="post" onsubmit="return false;" action="">
+	<fieldset>
+    <legend>연수관련상담</legend>
+	
+	<input type="hidden" name="menu_main"		value="4"/>
+	<input type="hidden" name="menu_sub"		value="6"/>
+	<input type="hidden" name="menu_tab_title"	value="참여마당"/>
+	<input type="hidden" name="menu_sub_title"	value="연수관련문의"/>
+ 	<!-- hidden param end-->
+	<input type="hidden" id="pageIndex" name="pageIndex"/>
+	<input type = "hidden" name="p_seq"     value = "" />
+	<input type = "hidden" name="p_openchk"     value = "" />
+	<input type = "hidden" name="p_tabseq"     value = "1" />
+	
+	    <!-- search wrap-->
+		<div class="searchWrap">
+			<div class="in">
+					<label for="p_search" class="blind">검색항목</label>
+                    <select name="p_search" id="p_search" title="검색항목">
+	                    
+	                      <option value='title' 	>제목</option>
+	                      <option value='content' 	>내용</option>
+	                   	
+	                       		<option value='name'	 	>작성자</option>
+		                      	<option value='userid' 	>아이디</option>
+		                      	<option value='ldate'  	>작성일자</option>
+		                
+	                </select>
+                    <label for="p_searchtext" class="blind">검색어</label>
+					<input type="text" name="p_searchtext" id="p_searchtext" value="" size="50" onkeypress="fn_keyEvent('doSearchList')" style="ime-mode:active;" title="검색어"/>
+				<a href="#" onclick="doSearchList()"><img src="/images/user/btn_search.gif" alt="검색" /></a>
+			</div>
+		</div>
+		<!-- // search wrap -->		
+		
+		<!-- list table-->
+		<div class="tbList">
+			<table summary="번호, 제목, 상태, 작성자, 등록일, 조회수로 구성" cellspacing="0" width="100%">
+            	<caption>연수관련상담목록</caption>
+				<colgroup>
+					<col width="10%" />
+					<col width="10%" />
+					<col width="*" />
+					<col width="10%" />
+					<col width="8%" />
+					<col width="10%" />
+                    <col width="10%" />
+				</colgroup>
+				<thead>
+					<tr>
+						<th scope="row">번호</th>
+						<th scope="row">구분</th>
+						<th scope="row">제목</th>
+						<th scope="row">상태</th>
+						<th scope="row">작성자</th>
+						<th scope="row">등록일</th>
+                        <th scope="row">조회수</th>
+					</tr>
+				</thead>
+				<tbody>
+			
+				<tr>
+						<td class="num">8528</td>
+						<td>
+							
+							
+								연수문의
+							
+							
+						
+						</td>
+						<td class="left">
+						
+						
+							<a href="#none" onclick="alert('본인글 또는 공개글만 조회가능 합니다.');return false;">학습 완료된 연수</a>
+						
+						</td>
+						<td>
+						
+							
+								<img src="/images/user/end.gif" alt="완료"/>
+							
+							
+						
+						</td>
+						<td>지한나</td>
+						<td >2017.01.13</td>
+                        <td class="num">14</td>
+				</tr>
+			
+				<tr>
+						<td class="num">8527</td>
+						<td>
+							
+							
+								연수문의
+							
+							
+						
+						</td>
+						<td class="left">
+						
+						
+							<a href="#none" onclick="alert('본인글 또는 공개글만 조회가능 합니다.');return false;">연수지명번호를 수강종료된 이후에 입력하였습니다 ㅠㅠ</a>
+						
+						</td>
+						<td>
+						
+							
+								<img src="/images/user/end.gif" alt="완료"/>
+							
+							
+						
+						</td>
+						<td>이예원</td>
+						<td >2017.01.03</td>
+                        <td class="num">7</td>
+				</tr>
+			
+				<tr>
+						<td class="num">8526</td>
+						<td>
+							
+							
+								연수문의
+							
+							
+						
+						</td>
+						<td class="left">
+						
+						
+							<a href="#none" onclick="alert('본인글 또는 공개글만 조회가능 합니다.');return false;">나이스 등재</a>
+						
+						</td>
+						<td>
+						
+							
+								<img src="/images/user/end.gif" alt="완료"/>
+							
+							
+						
+						</td>
+						<td>박진숙</td>
+						<td >2016.12.29</td>
+                        <td class="num">8</td>
+				</tr>
+			
+				<tr>
+						<td class="num">8525</td>
+						<td>
+							
+							
+								연수문의
+							
+							
+						
+						</td>
+						<td class="left">
+						
+						
+							<a href="#none" onclick="alert('본인글 또는 공개글만 조회가능 합니다.');return false;">나이스 등재관련 문의</a>
+						
+						</td>
+						<td>
+						
+							
+								<img src="/images/user/end.gif" alt="완료"/>
+							
+							
+						
+						</td>
+						<td>김윤환</td>
+						<td >2016.12.28</td>
+                        <td class="num">4</td>
+				</tr>
+			
+				<tr>
+						<td class="num">8524</td>
+						<td>
+							
+							
+								연수문의
+							
+							
+						
+						</td>
+						<td class="left">
+						
+						
+							<a href="#none" onclick="alert('본인글 또는 공개글만 조회가능 합니다.');return false;">영수증 출력 문의</a>
+						
+						</td>
+						<td>
+						
+							
+								<img src="/images/user/end.gif" alt="완료"/>
+							
+							
+						
+						</td>
+						<td>신무희</td>
+						<td >2016.12.23</td>
+                        <td class="num">5</td>
+				</tr>
+			
+				<tr>
+						<td class="num">8523</td>
+						<td>
+							
+							
+								연수문의
+							
+							
+						
+						</td>
+						<td class="left">
+						
+						
+							<a href="#none" onclick="alert('본인글 또는 공개글만 조회가능 합니다.');return false;">이수증관련</a>
+						
+						</td>
+						<td>
+						
+							
+								<img src="/images/user/end.gif" alt="완료"/>
+							
+							
+						
+						</td>
+						<td>정지영</td>
+						<td >2016.12.23</td>
+                        <td class="num">3</td>
+				</tr>
+			
+				<tr>
+						<td class="num">8522</td>
+						<td>
+							
+							
+								연수문의
+							
+							
+						
+						</td>
+						<td class="left">
+						
+						
+							<a href="#none" onclick="alert('본인글 또는 공개글만 조회가능 합니다.');return false;">나이스 등재관련</a>
+						
+						</td>
+						<td>
+						
+							
+								<img src="/images/user/end.gif" alt="완료"/>
+							
+							
+						
+						</td>
+						<td>박보라</td>
+						<td >2016.12.23</td>
+                        <td class="num">4</td>
+				</tr>
+			
+				<tr>
+						<td class="num">8521</td>
+						<td>
+							
+							
+								연수문의
+							
+							
+						
+						</td>
+						<td class="left">
+						
+						
+							<a href="#none" onclick="alert('본인글 또는 공개글만 조회가능 합니다.');return false;">나이스</a>
+						
+						</td>
+						<td>
+						
+							
+								<img src="/images/user/end.gif" alt="완료"/>
+							
+							
+						
+						</td>
+						<td>진혜송</td>
+						<td >2016.12.21</td>
+                        <td class="num">3</td>
+				</tr>
+			
+				<tr>
+						<td class="num">8520</td>
+						<td>
+							
+							
+								연수문의
+							
+							
+						
+						</td>
+						<td class="left">
+						
+						
+							<a href="#none" onclick="alert('본인글 또는 공개글만 조회가능 합니다.');return false;">나이스등재</a>
+						
+						</td>
+						<td>
+						
+							
+								<img src="/images/user/end.gif" alt="완료"/>
+							
+							
+						
+						</td>
+						<td>강미나</td>
+						<td >2016.12.16</td>
+                        <td class="num">4</td>
+				</tr>
+			
+				<tr>
+						<td class="num">8519</td>
+						<td>
+							
+							
+								연수문의
+							
+							
+						
+						</td>
+						<td class="left">
+						
+						
+							<a href="#none" onclick="alert('본인글 또는 공개글만 조회가능 합니다.');return false;">나이스 등재</a>
+						
+						</td>
+						<td>
+						
+							
+								<img src="/images/user/end.gif" alt="완료"/>
+							
+							
+						
+						</td>
+						<td>조현미</td>
+						<td >2016.12.15</td>
+                        <td class="num">6</td>
+				</tr>
+			
+							
+				
+				</tbody>
+			</table>
+		</div>
+		<!-- list table-->
+
+		<!-- 페이징 시작 -->
+		<div class="paging">
+			<a href="#" onclick="doLinkPage(1); "><img src="/images/adm/common/pg_btnPrv1.gif" 	alt="처음"   border="0"/></a>&#160;<a href="#" onclick="doLinkPage(1); "><img src="/images/adm/common/pg_btnPrv2.gif"    alt="이전"   border="0"/></a>&#160;&nbsp;&nbsp;<a href="#" class="on">1</a>&#160;&nbsp;&nbsp;<a href="#" onclick="doLinkPage(2); ">2</a>&#160;&nbsp;&nbsp;<a href="#" onclick="doLinkPage(3); ">3</a>&#160;&nbsp;&nbsp;<a href="#" onclick="doLinkPage(4); ">4</a>&#160;&nbsp;&nbsp;<a href="#" onclick="doLinkPage(5); ">5</a>&#160;&nbsp;&nbsp;<a href="#" onclick="doLinkPage(6); ">6</a>&#160;&nbsp;&nbsp;<a href="#" onclick="doLinkPage(7); ">7</a>&#160;&nbsp;&nbsp;<a href="#" onclick="doLinkPage(8); ">8</a>&#160;&nbsp;&nbsp;<a href="#" onclick="doLinkPage(9); ">9</a>&#160;&nbsp;&nbsp;<a href="#" onclick="doLinkPage(10); ">10</a>&#160;&nbsp;&nbsp;<a href="#" onclick="doLinkPage(11); "><img src="/images/adm/common/pg_btnNext2.gif"   alt="다음"   border="0"/></a>&#160;<a href="#" onclick="doLinkPage(853); "><img src="/images/adm/common/pg_btnNext1.gif" 	alt="마지막" border="0"/></a>&#160;
+
+		</div>
+		<!-- 페이징 끝 -->
+        <!-- button -->
+		<ul class="btnR">
+        	<li><a href="#"  onclick="doEdit('')"><img src="/images/user/btn_write.gif" alt="등록" /></a></li>
+		</ul> 
+		<!-- // button -->
+	</fieldset>       
+</form>
+
+
+
+
+		 <!-- text -->
+        
+        
+        <!-- text -->
+
+<script type="text/javascript">
+//<![CDATA[
+
+var thisForm = eval('document.kniseForm');
+
+function doPageList() {
+		
+	thisForm.action = "/usr/svc/qnaList01.do";
+	
+	
+	
+	thisForm.target = "_self";
+	thisForm.pageIndex.value = "1";
+	thisForm.submit();
+}
+
+function doSearchList() {
+
+	if(thisForm.p_searchtext.value == ''){
+		if(!confirm("검색어 없이 검색하시면 전체가 검색됩니다. 검색하시겠습니까?")){
+			thisForm.p_searchtext.focus(); 
+			return;
+		}else{
+				
+			thisForm.action = "/usr/svc/qnaList01.do";
+			
+			
+			thisForm.target = "_self";
+			thisForm.pageIndex.value = "1";
+			thisForm.submit();
+			
+		}
+	}else{
+		
+			
+		thisForm.action = "/usr/svc/qnaList01.do";
+		
+		
+		thisForm.target = "_self";
+		thisForm.pageIndex.value = "1";
+		thisForm.submit();
+	}
+	
+}
+
+function doLinkPage(index) {
+		
+	thisForm.action = "/usr/svc/qnaList01.do";
+	
+	
+	thisForm.pageIndex.value = index;
+	thisForm.target = "_self";
+	thisForm.submit();
+}
+
+
+
+function doView(p_seq, p_openchk){
+	thisForm.p_seq.value = p_seq;
+	thisForm.p_openchk.value = p_openchk;
+		
+	thisForm.action = "/usr/svc/qnaView01.do";
+	
+	
+	thisForm.target = "_self";
+	thisForm.submit();
+}
+
+function doEdit(){
+	thisForm.p_seq.value = '';
+		
+	thisForm.action = "/usr/svc/qnaEdit01.do";
+	
+	
+	thisForm.target = "_self";
+	thisForm.submit();
+}
+//]]>
+</script>
+
+<!-- button -->
+
+		</div>
+		<!-- // contents -->
+	</div>
+	<!-- // container -->
+
+	<!-- footer -->
+	<div id="footer">
+		<div class="foot1">
+			<!-- footer menu -->
+			<ul class="footMenu">
+				<li><a href="#" onclick="changeMenu(1, 1)"><img src="/images/user/footer_btn01.gif" alt="원격교육연수원 안내" /></a></li>
+<!--				<li><a href="#" onclick="changeMenu(7, 1)"><img src="/images/user/footer_btn02.gif" alt="개인정보보호정책 " /></a></li>-->
+
+				<li><a href="#" onclick="changeMenu(7, 4)"><img src="/images/user/footer_btn05.gif" alt="개인정보처리방침 " /></a></li>
+
+
+
+				<li class="last"><a href="#" onclick="window.open('/html/usr/fot/email_block.html','email_open','location=no','directories=no','resizable=no','status=no','toolbar=no','width=500','height=500','scrollbars=no');return false" title="새창"><img src="/images/user/footer_btn03.gif" alt="이메일 무단 수집거부" /></a></li>								
+			</ul>
+			<p style="text-align:right;padding-right:10px">
+  			  <a href="http://www.gov30.go.kr/gov30/index.do" target="_blank">
+      			<img src="/images/user/dreambanner.gif" alt="꿈과 끼를 키우는 행복교육 정부 3.0 개방 공유 소통 협력" height="48px" width="180px" /></a>
+            </p>			
+		</div>
+		<div class="foot2">
+			<p class="footlogo"><img src="/images/user/footer_logo.gif" alt="국립특수교육원부설 원격교육연수원" /></p>
+			<ul class="add">
+                <li><img src="/images/user/footer_add01.gif" alt="교육부 국립특수교육원 충남 아산시 배방읍 공원로 40 TEL : 041.537.1476 FAX : 041.537.1479" /></li>
+                <li><img src="/images/user/footer_add02.gif" alt="고유번호:134-83-01004, 국립특수교육원 부설원격교육연수원" /></li>
+                <li><img src="/images/user/footer_add03.gif" alt="copyright(c)2010 국립특수교육원 all rights reserved" /></li>
+            </ul>
+            <p class="">
+  			  <a href="http://wai.kewad.or.kr/complete/2808" target="_blank">
+      			<img src="/images/user/wamark2013060005.jpg" alt="KEWAD웹접근성사용자평가인증마크(인증현황페이지로 새창열림)" height="60px" width="180px" /></a>
+            </p>
+		</div>
+	</div> 
+	<!-- // footer -->
+	<!-- 페이지 정보 -->
+	
+
+
+
+
+
+
+	<!-- 페이지 정보 -->
+</div>
+<!-- // wrapper -->
+
+
+<style>
+.all_knise_modal_popup {
+	min-width:817px;
+	max-width:817px;
+	min-height:600px;
+	display:none;
+	/**/
+}
+.b-close {
+	 border-radius: 7px;
+	 font: bold 131% sans-serif;
+	 padding: 0 6px 2px;
+	 background-color: #2b91af;
+	 color: #fff;
+	 cursor: pointer;
+	 text-align: center;
+	 text-decoration: none;
+	 position: absolute;
+	 right: -7px;
+	 top: -7px;
+ }
+ .b-close:hover {
+ 	background-color: #1e1e1e;
+ }
+</style>
+
+<div class="all_knise_modal_popup">	
+	<div class="b-close">Close</div>
+	<div class="all_knise_modal_popup_content"></div>
+</div>
+
+</body>
+</html>
+<!-- // button -->

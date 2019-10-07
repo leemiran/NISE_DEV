@@ -1,0 +1,208 @@
+@charset "utf-8";
+
+/******************************************************************************
+	파일명   : learn.css 
+	작성자   : Sook kyoung Jung
+	작성일   : 2010-03-08
+******************************************************************************/
+
+/* base */
+*	{padding:0; margin:0; }
+html	{ height:100%; }
+body { 
+	color:#4d4d4f; 
+	font:12px/1.6 돋움,Dotum,AppleGothic,sans-serif; 
+	height:100%; 
+	background:#323131; 
+	}
+@media print { body { color:#000; } }
+th, td	{ font:12px/1.6 돋움,Dotum,AppleGothic,sans-serif; }
+h1,h2,h3,h4,h5,h6,ul,li,dl,dt,dd	{ font-size:100%; padding:0; margin:0;  }
+li	{ list-style:none; }
+fieldset,img	{ border:none; }
+address,em	{ font-style:normal; }
+input,textarea,select	{ font-family:inherit; font-size:1em;  }
+.input { border:1px solid #cbcbcb; height:17px; }
+textarea	{ border:1px solid #cbcbcb; }
+button {border:0; padding:0; background:transparent; cursor:pointer; *overflow:visible; _cursor /**/:hand; font-family:'돋움'; }
+table	 { border-collapse:collapse; border:0; }
+textarea	{ overflow:auto; }
+a	{ color:#4d4d4f;text-decoration:none; selector-dummy : expression(this.hideFocus=true);}  
+a:visited	{ color:#4d4d4f; text-decoration:none; }
+a:active	 { color:#dd324b; text-decoration:none; }
+a:hover	 { color:#dd324b; text-decoration:none; }
+
+/* Default */
+.pointer	{cursor:pointer; }
+
+
+/* hack */
+.png24 { tmp:expression(setPng24(this)); }
+
+.whiteSpace	{
+	word-break:break-all; 
+	overflow:hidden ;
+	white-space: -moz-pre-wrap; /* Mozilla, since 1999 */ 
+	white-space: -pre-wrap; /* Opera 4-6 */ 
+	white-space: -o-pre-wrap; /* Opera 7 */  
+}
+
+
+/* 학습창 */
+
+.learnWrap	{width:1100px;  position:relative; padding-top:18px;}
+
+.menuWrap	 {height:25px; width:100%; overflow:hidden; }
+.menuWrap .leftMenu	{float:left; }
+.menuWrap .leftMenu li	{float:left; }
+.menuWrap .rightMenu	{float:right; font-size:11px; }
+.menuWrap .rightMenu li	{float:left; }
+.menuWrap .rightMenu .time	{color:#f9a61c; padding:7px 15px 0 0; .padding:6px 15px 0 0;  line-height:12px;  }
+*html .menuWrap .rightMenu .time	{padding:8px 15px 0 0; }
+
+.mediaWrap	{clear:both;z-index=1; }
+
+.bottomMenu	{overflow:hidden; width:1001px; height:25px; background:url(../../../images/usr/KOREAN/learn/bg_bottom.gif) repeat-x; position:absolute; bottom:0; left:0; z-index:10; padding-right:11px; text-align:right;  }
+.learnListpop	 {width:180px; position:absolute; bottom:0; left:0; z-index:20; }
+
+#listpopShow	{display:none; }
+.poplistBody	{border-top:1px solid #000; padding:10px 15px; color:#FFF; }
+.poplistBody a	{color:#FFF;}
+.poplistBody a:visited	{ color:#FFF; text-decoration:none; }
+.poplistBody a:active	 { color:#FFF; text-decoration:none; }
+.poplistBody a:hover	{color:#FFF; text-decoration:underline; }
+.poplistBody dt	{font-weight:bold;}
+.poplistBody dd	 {font-size:11px;  line-height:18px;  margin-bottom:18px; }
+
+
+.poplistBody2	{border-top:1px solid #000; padding:10px 15px; color:#FFF; }
+.poplistBody2 a	{color:#FFF;}
+.poplistBody2 a:visited	{ color:#FFF; text-decoration:none; }
+.poplistBody2 a:active	 { color:#FFF; text-decoration:none; }
+.poplistBody2 a:hover	{color:#fe8300;  text-decoration:none; }
+.poplistBody2 dt	{font-weight:bold; padding-left:11px; background:url(../../../images/usr/KOREAN/learn/bg_li_s.gif) no-repeat 0 8px; }
+.poplistBody2 .dtMiddle	{font-weight:bold; padding-left:11px; padding-top:13px; background:url(../../../images/usr/KOREAN/learn/bg_li_sM.gif) no-repeat 0 -3px;}
+.poplistBody2 .select	{color:#fe8300;}
+.poplistBody2 .select a	{color:#fe8300;}
+.poplistBody2 .select a:visited	{ color:#fe8300; text-decoration:none; }
+.poplistBody2 .select a:active	 { color:#fe8300; text-decoration:none; }
+.poplistBody2 .select a:hover	{color:#fe8300;  text-decoration:none; }
+.poplistBody2 dd	 {font-size:11px;  line-height:18px;  background:url(../../../images/usr/KOREAN/learn/bg_li.gif) no-repeat 0 -9px; padding-left:17px;  }
+.poplistBody2 .ddEnd	 {font-size:11px;  line-height:18px;  background:url(../../../images/usr/KOREAN/learn/bg_li_e.gif) no-repeat 0 -7px; padding-left:17px;  }
+
+
+/* 팝업 게시판 */
+
+.popboardWrap	{width:780px;  height:100%; }
+.popboardTop	{position:relative; height:90px; background:url(../../../images/usr/KOREAN/learn/bg_poptop.gif) no-repeat; }
+.popboardTop span	{position:absolute; top:22px; right:15px; }
+.popboardTop h1	{font-size:18px; color:#FFF; padding:15px 0 0 20px; }
+.popboardMiddle	{background:url(../../../images/usr/KOREAN/learn/bg_popmiddle.gif) repeat-y; }
+.bgBottom	{background:url(../../../images/usr/KOREAN/learn/bg_popbottom.gif) bottom left no-repeat; padding:0 30px 30px 30px; min-height:420px; .height:420px;}
+*html .bgBottom	{height:420px; }
+
+.tbStyle05	{width:100%; clear:both; }
+.tbStyle05 .thStyle	{background:#b0b0b0;  color:#FFF; height:26px; font-size:11px;  text-align:center;  font-weight:bold;  }
+.tbStyle05 .tdStyle	 {border-bottom:1px solid #bdbcc1; padding:6px 0 6px 0;  .padding:4px 0 2px 0; text-align:center;  font-size:11px; line-height:14px; vertical-align:middle !important; }
+.tbStyle05 .left	{text-align:left; padding:5px;padding:6px 3px 6px 3px;}/*2010.03.26 leejoonsook*/
+.tbStyle05.subject	{text-align:left;  padding:5px;   }
+
+.pageBtn3	{height:20px; position:relative; margin-top:12px;  }
+.pageBtn3 table .pageNum	 {width:20px; vertical-align:middle !important; }
+.pageBtn3 table .pageNum .select	{font-weight:bold; color:#ff4200; }
+.pageBtn3 .boardBtn	{position:absolute; top:0; right:0; }
+.pageBtn3 .boardBtn button	{margin-left:6px; }
+.pageBtn3 a		{font-family:'Arial'; font-size:11px; padding:0 8px;} /*2010.04.05 leejoonsook*/
+.pageBtn3 .select	{color:#ff4200; } /*2010.04.05 leejoonsook*/
+
+.btStyle01	 {width:46px;  height:19px; border:none; background:url(../../../images/usr/KOREAN/learn/button02.gif) no-repeat; overflow:hidden; color:#FFF; font-size:11px;  line-height:11px; padding:2px 0 0 17px;   letter-spacing:-1px;  }
+.btStyle02	 {width:72px;  height:19px; border:none; background:url(../../../images/usr/KOREAN/learn/button04.gif) no-repeat; overflow:hidden; color:#FFF; font-size:11px;  line-height:11px; padding:2px 0 0 17px;   letter-spacing:-1px;  }
+.btStyle05	 {width:68px;  height:35px; border:none; background:url(../../../images/usr/KOREAN/learn/btn_comm.gif) no-repeat; overflow:hidden; color:#FFF; font-size:11px;  line-height:11px; padding:2px 0 0 17px;   letter-spacing:-1px;  }
+
+/*2010.04.13 leejoonsook*/
+.btSytle06_n {width:37px;  height:20px; border:none; background:url(../../../images/usr/KOREAN/mypage/bg_button03.gif) no-repeat; overflow:hidden; text-align:center; color:#FFF; font-size:11px;  line-height:14px; }
+/*2010.04.13 leejoonsook*/
+
+.viewStyle	 {border-top:3px solid #b0b0b0; width:100%; table-layout:fixed; }
+.viewStyle .tdStyle	{padding:6px 0; vertical-align:middle !important; font-size:11px; text-align:center; border-bottom:1px solid #bdbcc1; }
+.viewStyle .tdStyle2	{font-size:11px; }
+.viewStyle .subject	{font-size:12px; font-weight:bold; text-align:center; }
+.viewStyle .txtLeft	 {text-align:left; padding-left:13px; }
+.viewStyle .txtLeft2	 {text-align:left; }
+.viewStyle .line	{background:url(../../../images/usr/KOREAN/learn/img_line.gif) right 50% no-repeat; }
+.viewStyle .orangeLine	{border-bottom:1px solid #fcab83; text-align:left;  }
+.viewStyle .viewCon	{background:#f0f0f0; padding:16px;  line-height:19px; }
+.viewStyle .viewCon2	{background:#fff; padding:16px;  line-height:19px; }
+.viewStyle .viewCon3	{background:#fff; padding:14px 16px;  line-height:19px; }
+.viewStyle .prevCon	{background:url(../../../images/usr/KOREAN/learn/bg_prev.gif) 7px 50% no-repeat; padding-left:77px; }
+.viewStyle .nextCon	{background:url(../../../images/usr/KOREAN/learn/bg_next.gif) 7px 50% no-repeat; padding-left:77px; }
+
+.margin0	{margin:0 !important; }
+.contentList 	{  border-top:1px solid #fcab83; margin:8px 0 0 0; font-size:11px; }
+.contentList .prevCon	{background:url(../../../images/usr/KOREAN/learn/bg_prev.gif) 7px 50% no-repeat; padding:6px 0 6px 77px;  border-bottom:1px solid #fcab83; text-align:left; }
+.contentList .nextCon	{background:url(../../../images/usr/KOREAN/learn/bg_next.gif) 7px 50% no-repeat; padding:6px 0 6px 77px;  border-bottom:1px solid #fcab83; text-align:left; }
+
+
+.fileList	{width:100%; }
+.fileList .thStyle	{background:#ebeaea;  color:#4d4d4f; height:29px;  border-bottom:1px solid #c9c9ca; font-size:11px;}
+.fileList .tdStyle	 {border-bottom:1px solid #c9c9ca; padding:5px 0 5px 0; text-align:center; font-size:11px;}
+.fileList .subject	{text-align:left;  padding-left:5px; word-break:break-all;   }
+.borderRight	 {border-right:1px solid #c9c9ca; }
+
+
+.commentWrap	{margin-top:12px;  border-top:1px solid #c9c9ca; padding-top:8px; }
+.commentWrap .commentWrite	{height:35px; width:100%; }
+.commentWrap .commentWrite .textareaStyle	{float:left; width:635px; height:26px;  border:1px solid #c9c9ca;  padding:0 5px 5px 5px; }
+.commentWrap .commentWrite button	{margin-top:1px; }
+
+.commentWrap .commentList	{ border-bottom:1px solid #c9c9ca; margin-top:2px; }
+.commentWrap .comment {font-size:11px; padding:0 8px 0 8px; border-top:1px solid #c9c9ca;  }
+.commentWrap .comment dd	 {line-height:18px; padding:0 0 4px 0;}
+.commentWrap .comment dt	{padding:3px 0 2px 0; }
+.commentWrap .comment span	{padding:0 10px 0 18px; }
+
+.writeStyle	 {border-top:3px solid #b0b0b0;  width:100%;  }
+.writeStyle .thStyle	{width:94px; font-size:11px; background:#eae9e9; text-align:left; padding-left:15px; border-bottom:1px solid #bdbcc1; font-weight:bold; }
+.writeStyle .writeItem{font-size:11px; text-align:left; padding:4px 0 4px 11px; border-bottom:1px solid #bdbcc1;}
+.writeStyle .editor	 {border:1px solid #cccccc; width:588px; }
+.writeStyle .txtTop	{vertical-align:top; padding-top:8px; }
+.writeStyle .inputStyle	{border:1px solid #cbcbcb; height:16px;}/*2010.03.25 leejoonsook*/
+
+
+/*2010.04.08 leejoonsook*/
+.boardSearch	{text-align:right; clear:both; margin:5px 0 7px 0; }
+.boardSearch table	{margin:0 0 0 auto;}
+.boardSearch table td	{vertical-align:middle !important; }
+.boardSearch .inputStyle	{border:1px solid #c6c4c4; height:18px; margin:0 6px; }
+
+/*2010.04.12 leejoonsook-내정보변경*/
+.myInfobox2	 {width:100%; float:left; margin-top:22px; }
+.myInfobox2 .myPhoto	{float:left; width:153px;  }
+.myInfobox2 .myPhoto .imgBg {background:#bdbdbd; text-align:center; }
+.myInfobox2 .myPhoto .imgBg img	{width:145px; height:165px; margin:5px 0;}
+.myInfobox2 .myinfoTxt	{float:right; width:540px;}
+.myInfobox2 .myinfoTxt li	{position:relative; background:url(../../../images/usr/KOREAN/mypage/icon_dot.gif) 1px 12px no-repeat;  line-height:20px; padding:5px 0 2px 12px;  border-bottom:1px solid #d1d1d1; }
+.myInfobox2 .myinfoTxt li span	 {position:absolute; top:5px; left:12px; .top:2px; .left:12px; }
+*html .subconBody .myInfobox2 .myinfoTxt li span	 {position:absolute; top:2px; left:0px; }
+.myInfobox2 .myinfoTxt .pdL32	{padding-left:32px; }
+.cl	 {clear:both; height:13px; }
+.borderBox	{border:1px solid #d1d1d1; }
+.btStyle10	 {width:100%; padding:3px 0; text-align:center; color:#FFF; background:#9ca0a4; overflow:hidden; line-height:14px;  font-size:11px; margin-top:8px; }
+
+
+.bgBottom_myinfo	{background:url(../../../images/usr/KOREAN/learn/bg_popbottom.gif) bottom left no-repeat; padding:0 30px 30px 30px; min-height:300px; .height:300px;}
+*html .bgBottom_myinfo	{height:300px; }
+
+
+/*2010.04.13 leejoonsook*/
+.myinfobox3	{width:100%; float:left; margin-top:0px; }
+.myInfobox3 .myinfoTxt2	{float:right; width:100%;}
+.myInfobox3 .myinfoTxt2	li	{position:relative; background:url(../../../images/usr/KOREAN/mypage/icon_dot.gif) 1px 12px no-repeat;  line-height:20px; padding:5px 0 2px 12px;  border-bottom:1px solid #d1d1d1; }
+
+.popboardWrap2	{width:631px;  height:100%; }
+.popboardTop2	{position:relative; height:90px; background:url(../../../images/usr/KOREAN/learn/bg_poptop2.gif) no-repeat; }
+.popboardTop2 span	{position:absolute; top:22px; right:15px; }
+.popboardTop2 h1	{font-size:18px; color:#FFF; padding:15px 0 0 20px; }
+.popboardMiddle2	{background:url(../../../images/usr/KOREAN/learn/bg_popmiddle2.gif) repeat-y; }
+.bgBottom3	{background:url(../../../images/usr/KOREAN/learn/bg_popbottom2.gif) bottom left no-repeat; padding:0 30px 30px 30px; min-height:380px; .height:380px;}
+*html .bgBottom3	{height:380px; }

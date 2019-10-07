@@ -1,0 +1,136 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE sqlMap PUBLIC "-//iBATIS.com//DTD SQL Map 2.0//EN" "http://ibatis.apache.org/dtd/sql-map-2.dtd">
+
+<sqlMap namespace="LcmsSeqRollupCondition">
+	<typeAlias  alias="egovMap" type="egovframework.rte.psl.dataaccess.util.EgovMap"/>
+
+    <select id="lcmsSeqRollupConditionDAO.selectLcmsSeqRollupConditionPageList" parameterClass="map" resultClass="egovMap">
+        SELECT * 
+        FROM
+               (
+                SELECT TEMP.*, 
+                <isNotEmpty property="rowsPerPage">
+                       CEIL(ROWNUM / #rowsPerPage#) AS PAGE 
+                </isNotEmpty>
+                <isEmpty property="rowsPerPage">
+                       CEIL(ROWNUM / 10) AS PAGE 
+                </isEmpty>
+                FROM
+                      (
+                       SELECT 
+	        	              RLC_IDX_NUM,
+	        	              ROLLUP_CONDITION_NUM,
+	        	              OPERATOR,
+	        	              CONDITION,
+	        	              userid,
+	        	              UPDATE_DT,
+	        	               RR_IDX_NUM
+        		       FROM   TB_LCMS_SEQ_ROLLUP_CONDITION
+        		       <!--  APPEND WHERE CONDITION START  -->
+
+        		       <!--  APPEND WHERE CONDITION END    -->
+        		       <isNotEmpty property="orderBy">
+        			       $orderBy$
+        		       </isNotEmpty>
+        	          ) TEMP 
+               )
+        <isNotEmpty property="page">
+        WHERE PAGE = #page#
+        </isNotEmpty>
+        <isEmpty property="page">
+        WHERE PAGE = 1
+        </isEmpty>
+    </select>
+
+    <select id="lcmsSeqRollupConditionDAO.selectLcmsSeqRollupConditionList" parameterClass="map" resultClass="egovMap">
+        SELECT RLC_IDX_NUM,
+               ROLLUP_CONDITION_NUM,
+               OPERATOR,
+               CONDITION,
+               userid,
+               UPDATE_DT,
+               RR_IDX_NUM
+        FROM   TB_LCMS_SEQ_ROLLUP_CONDITION
+    </select>
+
+    <select id="lcmsSeqRollupConditionDAO.selectLcmsSeqRollupConditionPageListTotCnt" parameterClass="map" resultClass="long">
+        SELECT COUNT(ROWNUM) AS [COUNT]
+        FROM   TB_LCMS_SEQ_ROLLUP_CONDITION
+    </select>
+
+    <select id="lcmsSeqRollupConditionDAO.selectLcmsSeqRollupConditionMaxNum" parameterClass="map" resultClass="int">
+        select nvl(max(rlc_idx_num),0)+1 as seq from tb_lcms_seq_rollup_condition
+    </select>
+
+    <select id="lcmsSeqRollupConditionDAO.selectLcmsSeqRollupCondition" parameterClass="map" resultClass="egovMap">
+        SELECT RLC_IDX_NUM,
+               ROLLUP_CONDITION_NUM,
+               OPERATOR,
+               CONDITION,
+               userid,
+               UPDATE_DT,
+               RR_IDX_NUM
+        FROM   TB_LCMS_SEQ_ROLLUP_CONDITION
+        WHERE  RLC_IDX_NUM = #rlcIdxNum#
+    </select>
+
+    <insert id="lcmsSeqRollupConditionDAO.insertLcmsSeqRollupCondition">
+        INSERT INTO TB_LCMS_SEQ_ROLLUP_CONDITION(
+            RLC_IDX_NUM,
+            ROLLUP_CONDITION_NUM,
+            OPERATOR,
+            CONDITION,
+            userid,
+            UPDATE_DT,
+            RR_IDX_NUM
+        )
+        VALUES(
+            #rlcIdxNum#,
+            #rollupConditionNum#,
+            #operator#,
+            #condition#,
+            #userid#,
+            sysdate,
+            #rrIdxNum#
+        )
+    </insert>
+
+    <update id="lcmsSeqRollupConditionDAO.updateLcmsSeqRollupCondition">
+        UPDATE TB_LCMS_SEQ_ROLLUP_CONDITION
+        SET    ROLLUP_CONDITION_NUM = #rollupConditionNum#,
+               OPERATOR = #operator#,
+               CONDITION = #condition#,
+               userid = #userId#,
+               UPDATE_DT = #updateDt#,
+               RR_IDX_NUM = #rrIdxNum#
+        WHERE  RLC_IDX_NUM = #rlcIdxNum#
+    </update>
+
+    <delete id="lcmsSeqRollupConditionDAO.deleteLcmsSeqRollupCondition">
+        delete tb_lcms_seq_rollup_condition 
+         where rr_idx_num in(
+                 select rr_idx_num from tb_lcms_seq_rollup_rule
+                  where seq_idx_num in (
+                          select seq_idx_num from tb_lcms_scorm_sequence
+                           where org_seq in <iterate property="orgSeq" conjunction="," open="(" close=")">$orgSeq[]$</iterate>
+                        )
+               )
+    </delete>
+
+    <delete id="lcmsSeqRollupConditionDAO.deleteLcmsSeqRollupConditionAll">
+        DELETE FROM TB_LCMS_SEQ_ROLLUP_CONDITION
+        <dynamic prepend="WHERE RLC_IDX_NUM IN ">
+            <isNotEmpty property="rlcIdxNum">
+                <iterate property="rlcIdxNum" open="(" close=")" conjunction=",">
+                    #rlcIdxNum[]#
+                </iterate>
+            </isNotEmpty>
+            <isEmpty property="rlcIdxNum">
+                ('')
+            </isEmpty>
+        </dynamic>
+    </delete>
+
+
+</sqlMap>
+

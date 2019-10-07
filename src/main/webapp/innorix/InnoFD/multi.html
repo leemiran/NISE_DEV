@@ -1,0 +1,64 @@
+﻿<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+<meta http-equiv="content-type" content="text/html; charset=utf-8" />
+<head>
+<title>Innorix File Transfer Solution - InnoFD</title>
+<script type="text/javascript" src="../common/innorix.js"></script>
+
+<script type="text/javascript">
+window.onload = function()
+{
+	innoInit({
+		ContainElementID : "innorix_component_01",	// 컴포넌트 출력 객체 ID
+		TransferMode : "innofd"						// InnoFD 다운로드 모드 설정
+	},"InnoFD_01");
+
+	innoInit({
+		ContainElementID : "innorix_component_02",	// 컴포넌트 출력 객체 ID
+		TransferMode : "innofd"						// InnoFD 다운로드 모드 설정
+	},"InnoFD_02");
+}
+
+innoOnEvent = function(msgEvent, arrParam, objName)
+{
+	if (msgEvent == Event.msgLoadComplete) // 컴포넌트 로딩 완료 이벤트
+	{
+		if (objName == "InnoFD_01")
+		{
+			// 다운로드 파일 구성
+			File.AddDownloadFile([
+			//  ["http://다운로드 URL" [,"저장파일명" [,"파일용량"]]]
+			["http://dist.innorix.com:8080/test/sample/우리나라 금융시스템의 안정성 평가.pptx", "우리나라 금융시스템의 안정성 평가.pptx", "19787335"],
+			["http://dist.innorix.com:8080/test/sample/2012년 금융IT 정보보호동향 예측 분석.pdf", "2012년 금융IT 정보보호동향 예측 분석.pdf", "6290913"],
+			["http://dist.innorix.com:8080/test/sample/선진 자산운용회사의 경영전략과 시사점.pdf", "선진 자산운용회사의 경영전략과 시사점.pdf", "2016205"],
+			], "InnoFD_01");
+		}
+
+		if (objName == "InnoFD_02")
+		{
+			File.AddDownloadFile([
+			["http://dist.innorix.com:8080/test/sample/유가증권보유명세서용 채권분류표.xlsx", "유가증권보유명세서용 채권분류표.xlsx", "2282639"],
+			["http://dist.innorix.com:8080/test/sample/지급결제보고서 그림데이터.xlsx", "지급결제보고서 그림데이터.xlsx", "326600"],
+			["http://dist.innorix.com:8080/test/sample/자본시장과 금융투자업에 관한 법률 시행령.docx", "자본시장과 금융투자업에 관한 법률 시행령.docx", "935916"],
+			], "InnoFD_02");
+		}
+	}
+}
+</script>
+</head>
+<body>
+	
+<div id="innorix_component_01" style="border: 1px solid #97b4cc; width:500px; height:130px"></div><br />
+
+<input class="innoGreenBtn" type="button" value="선택파일 다운로드" onClick="File.SelectDownload('InnoFD_01');" />
+<input class="innoGreenBtn" type="button" value="바로열기" onClick="File.DownloadAndOpen('InnoFD_01');" />
+<input class="innoBlueBtn" type="button" value="전체파일 다운로드" onClick="File.Download('InnoFD_01');" /><br /><br />
+
+<div id="innorix_component_02" style="border: 1px solid #97b4cc; width:500px; height:130px"></div><br />
+
+<input class="innoGreenBtn" type="button" value="선택파일 다운로드" onClick="File.SelectDownload('InnoFD_02');" />
+<input class="innoGreenBtn" type="button" value="바로열기" onClick="File.DownloadAndOpen('InnoFD_02');" />
+<input class="innoBlueBtn" type="button" value="전체파일 다운로드" onClick="File.Download('InnoFD_02');" />
+
+</body>
+</html>

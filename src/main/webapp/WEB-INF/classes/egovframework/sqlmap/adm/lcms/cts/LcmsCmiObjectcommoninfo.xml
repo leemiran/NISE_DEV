@@ -1,0 +1,163 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE sqlMap PUBLIC "-//iBATIS.com//DTD SQL Map 2.0//EN" "http://ibatis.apache.org/dtd/sql-map-2.dtd">
+
+<sqlMap namespace="LcmsCmiObjectcommoninfo">
+
+
+<typeAlias  alias="egovMap" type="egovframework.rte.psl.dataaccess.util.EgovMap"/>
+
+    <select id="lcmsCmiObjectcommoninfoDAO.selectLcmsCmiObjectcommoninfoPageList" parameterClass="map" resultClass="egovMap">
+        SELECT * 
+        FROM
+               (
+                SELECT TEMP.*, 
+                <isNotEmpty property="rowsPerPage">
+                       CEIL(ROWNUM / #rowsPerPage#) AS PAGE 
+                </isNotEmpty>
+                <isEmpty property="rowsPerPage">
+                       CEIL(ROWNUM / 10) AS PAGE 
+                </isEmpty>
+                FROM
+                      (
+                       SELECT 
+	        	              SEQ,
+	        	              VERSION,
+	        	              COMMENTS_FROM_LEARNER_CHILDREN,
+	        	              COMMENTS_FROM_LMS_CHILDREN,
+	        	              INTERACTIONS_CHILDREN,
+	        	              LEARNER_PREFERENCE_CHILDREN,
+	        	              OBJECTIVES_CHILDREN,
+	        	              OBJECTIVES_SCORE_CHILDREN,
+	        	              SCORE_CHILDREN,
+	        	              USER_ID,
+	        	               UPDATE_DT
+        		       FROM   TB_LCMS_CMI_OBJECTCOMMONINFO
+        		       <!--  APPEND WHERE CONDITION START  -->
+
+        		       <!--  APPEND WHERE CONDITION END    -->
+        		       <isNotEmpty property="orderBy">
+        			       $orderBy$
+        		       </isNotEmpty>
+        	          ) TEMP 
+               )
+        <isNotEmpty property="page">
+        WHERE PAGE = #page#
+        </isNotEmpty>
+        <isEmpty property="page">
+        WHERE PAGE = 1
+        </isEmpty>
+    </select>
+
+    <select id="lcmsCmiObjectcommoninfoDAO.selectLcmsCmiObjectcommoninfoList" parameterClass="map" resultClass="egovMap">
+        SELECT SEQ,
+               VERSION,
+               COMMENTS_FROM_LEARNER_CHILDREN,
+               COMMENTS_FROM_LMS_CHILDREN,
+               INTERACTIONS_CHILDREN,
+               LEARNER_PREFERENCE_CHILDREN,
+               OBJECTIVES_CHILDREN,
+               OBJECTIVES_SCORE_CHILDREN,
+               SCORE_CHILDREN,
+               USER_ID,
+               UPDATE_DT
+        FROM   TB_LCMS_CMI_OBJECTCOMMONINFO
+    </select>
+
+    <select id="lcmsCmiObjectcommoninfoDAO.selectLcmsCmiObjectcommoninfoPageListTotCnt" parameterClass="map" resultClass="int">
+        SELECT COUNT(ROWNUM) AS [COUNT]
+        FROM   TB_LCMS_CMI_OBJECTCOMMONINFO
+    </select>
+
+    <select id="lcmsCmiObjectcommoninfoDAO.selectLcmsCmiObjectcommoninfo" parameterClass="map" resultClass="egovMap">
+        SELECT SEQ,
+               VERSION,
+               COMMENTS_FROM_LEARNER_CHILDREN,
+               COMMENTS_FROM_LMS_CHILDREN,
+               INTERACTIONS_CHILDREN,
+               LEARNER_PREFERENCE_CHILDREN,
+               OBJECTIVES_CHILDREN,
+               OBJECTIVES_SCORE_CHILDREN,
+               SCORE_CHILDREN,
+               USER_ID,
+               UPDATE_DT
+        FROM   TB_LCMS_CMI_OBJECTCOMMONINFO
+        WHERE  SEQ = #seq#
+    </select>
+
+    <insert id="lcmsCmiObjectcommoninfoDAO.insertLcmsCmiObjectcommoninfo">
+        <selectKey resultClass="long" keyProperty="seq">
+            SELECT NVL(MAX(SEQ)+1, 1)
+            FROM   TB_LCMS_CMI_OBJECTCOMMONINFO
+        </selectKey>
+        INSERT INTO TB_LCMS_CMI_OBJECTCOMMONINFO
+        (
+            SEQ,
+            VERSION,
+            COMMENTS_FROM_LEARNER_CHILDREN,
+            COMMENTS_FROM_LMS_CHILDREN,
+            INTERACTIONS_CHILDREN,
+            LEARNER_PREFERENCE_CHILDREN,
+            OBJECTIVES_CHILDREN,
+            OBJECTIVES_SCORE_CHILDREN,
+            SCORE_CHILDREN,
+            USER_ID,
+            UPDATE_DT
+        )
+        VALUES
+        (
+            #seq#,
+            #version#,
+            #commentsFromLearnerChildren#,
+            #commentsFromLmsChildren#,
+            #interactionsChildren#,
+            #learnerPreferenceChildren#,
+            #objectivesChildren#,
+            #objectivesScoreChildren#,
+            #scoreChildren#,
+            #userId#,
+            #updateDt#
+        )
+    </insert>
+
+    <update id="lcmsCmiObjectcommoninfoDAO.updateLcmsCmiObjectcommoninfo">
+        UPDATE TB_LCMS_CMI_OBJECTCOMMONINFO
+        SET    VERSION = #version#,
+               COMMENTS_FROM_LEARNER_CHILDREN = #commentsFromLearnerChildren#,
+               COMMENTS_FROM_LMS_CHILDREN = #commentsFromLmsChildren#,
+               INTERACTIONS_CHILDREN = #interactionsChildren#,
+               LEARNER_PREFERENCE_CHILDREN = #learnerPreferenceChildren#,
+               OBJECTIVES_CHILDREN = #objectivesChildren#,
+               OBJECTIVES_SCORE_CHILDREN = #objectivesScoreChildren#,
+               SCORE_CHILDREN = #scoreChildren#,
+               USER_ID = #userId#,
+               UPDATE_DT = #updateDt#
+        WHERE  SEQ = #seq#
+    </update>
+
+    <delete id="lcmsCmiObjectcommoninfoDAO.deleteLcmsCmiObjectcommoninfo">
+        DELETE FROM TB_LCMS_CMI_OBJECTCOMMONINFO
+        WHERE  SEQ = #seq#
+    </delete>
+
+    <delete id="lcmsCmiObjectcommoninfoDAO.deleteLcmsCmiObjectcommoninfoAll">
+        DELETE FROM TB_LCMS_CMI_OBJECTCOMMONINFO
+        <dynamic prepend="WHERE SEQ IN ">
+            <isNotEmpty property="seq">
+                <iterate property="seq" open="(" close=")" conjunction=",">
+                    #seq[]#
+                </iterate>
+            </isNotEmpty>
+            <isEmpty property="seq">
+                ('')
+            </isEmpty>
+        </dynamic>
+    </delete>
+
+    <select id="lcmsCmiObjectcommoninfoDAO.existLcmsCmiObjectcommoninfo" resultClass="long">
+        SELECT COUNT(ROWNUM) 
+        FROM   TB_LCMS_CMI_OBJECTCOMMONINFO
+        WHERE  SEQ = #seq#
+    </select>
+
+</sqlMap>
+

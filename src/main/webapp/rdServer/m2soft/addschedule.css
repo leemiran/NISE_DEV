@@ -1,0 +1,138 @@
+body, table, tr, td,select {font-family:Tahoma, µ¸¿ò, ±¼¸², verdana; font-size:9pt;color:#222222;line-height:170%}
+
+
+TD
+{
+    SCROLLBAR-FACE-COLOR: white;
+    FONT-SIZE: 9pt;
+    SCROLLBAR-HIGHLIGHT-COLOR: white;
+    SCROLLBAR-SHADOW-COLOR: #dfdfdf;
+    SCROLLBAR-3DLIGHT-COLOR: #dfdfdf;
+    SCROLLBAR-ARROW-COLOR: #dfdfdf;
+    SCROLLBAR-TRACK-COLOR: white;
+    FONT-FAMILY: ±¼¸²;
+    COLOR: black;
+    SCROLLBAR-DARKSHADOW-COLOR: black
+}
+TR
+{
+    SCROLLBAR-FACE-COLOR: white;
+    FONT-SIZE: 9pt;
+    SCROLLBAR-HIGHLIGHT-COLOR: white;
+    SCROLLBAR-SHADOW-COLOR: #dfdfdf;
+    SCROLLBAR-3DLIGHT-COLOR: #dfdfdf;
+    SCROLLBAR-ARROW-COLOR: #dfdfdf;
+    SCROLLBAR-TRACK-COLOR: white;
+    FONT-FAMILY: ±¼¸²;
+    SCROLLBAR-DARKSHADOW-COLOR: black
+}
+A:link
+{
+    COLOR: blue;
+    TEXT-DECORATION: none
+}
+A:visited
+{
+    COLOR: blue;
+    TEXT-DECORATION: none
+}
+A:active
+{
+    COLOR: red
+}
+A:hover
+{
+    COLOR: red;
+    TEXT-DECORATION: underline
+}
+.style1
+{
+    BORDER-RIGHT: #202020 1px;
+    BORDER-TOP: #202020 1px;
+    FONT-SIZE: 9pt;
+    BORDER-LEFT: #202020 1px;
+    COLOR: red;
+    BORDER-BOTTOM: #202020 1px dotted;
+    font-family:Tahoma, µ¸¿ò, ±¼¸², verdana; font-size:9pt;
+}
+
+.style2
+{
+    BORDER-RIGHT: #202020 1px line;
+    BORDER-TOP: #202020 1px line;
+    FONT-SIZE: 9pt;
+    BORDER-LEFT: #202020 1px line;
+    COLOR: red;
+    BORDER-BOTTOM: #202020 2px line;
+    font-family:Tahoma, µ¸¿ò, ±¼¸², verdana; font-size:9pt;
+}
+
+.style3
+{
+    BORDER-RIGHT: #202020 1px dotted;
+    BORDER-TOP: #202020 1px dotted;
+    FONT-SIZE: 9pt;
+    BORDER-LEFT: #202020 1px dotted;
+    COLOR: red;
+    BORDER-BOTTOM: #202020 1px dotted;
+}
+
+.style4
+{
+    BORDER-RIGHT: #202020 1px;
+    BORDER-TOP: #202020 1px;
+    FONT-SIZE: 9pt;
+    BORDER-LEFT: #202020 1px;
+    COLOR: gray;
+    BORDER-BOTTOM: #202020 0px line;
+}
+
+.style5
+{
+    BORDER-RIGHT: #202020 1px line;
+    BORDER-TOP: #202020 1px line;
+    FONT-SIZE: 9pt;
+    BORDER-LEFT: #202020 1px line;
+    COLOR: darkbule;
+    BORDER-BOTTOM: #202020 2px line;
+}
+
+.buttonstyle
+{
+	background-color:#dfdfdf;
+	border:1 solid #ffffff;
+	color: darkblue;
+	font-size: 9pt;
+}
+
+.inboxstyle
+{
+	width=110;
+	font: 9pt ±¼¸²;
+	border:1 solid #81B8A9;
+}
+
+
+SELECT
+{
+    BORDER-RIGHT: thin;
+    PADDING-RIGHT: 1px;
+    BORDER-TOP: thin;
+    PADDING-LEFT: 1px;
+    SCROLLBAR-FACE-COLOR: white;
+    FONT-SIZE: 9pt;
+    PADDING-BOTTOM: 1px;
+    MARGIN: 1px;
+    SCROLLBAR-HIGHLIGHT-COLOR: white;
+    BORDER-LEFT: thin;
+    SCROLLBAR-SHADOW-COLOR: #dfdfdf;
+    COLOR: red;
+    SCROLLBAR-3DLIGHT-COLOR: #dfdfdf;
+    LINE-HEIGHT: 17pt;
+    SCROLLBAR-ARROW-COLOR: #dfdfdf;
+    PADDING-TOP: 1pt;
+    SCROLLBAR-TRACK-COLOR: white;
+    BORDER-BOTTOM: thin;
+    FONT-FAMILY: ±¼¸²,Arial,µ¸¿ò;
+    SCROLLBAR-DARKSHADOW-COLOR: black
+}

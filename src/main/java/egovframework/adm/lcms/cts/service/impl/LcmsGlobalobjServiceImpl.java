@@ -1,0 +1,95 @@
+/* 
+ * LcmsGlobalobjServiceImpl.java		1.00	2011-09-16 
+ *
+ * Copyright (c) 2011 ???? Co. All Rights Reserved.
+ * 
+ * This software is the confidential and proprietary information
+ * of um2m.  You shall not disclose such Confidential Information
+ * and shall use it only in accordance with the terms of the license agreement
+ * you entered into with um2m.
+ */
+package egovframework.adm.lcms.cts.service.impl;
+
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+import java.util.StringTokenizer;
+
+import javax.annotation.Resource;
+
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
+
+import org.springframework.web.multipart.commons.CommonsMultipartResolver;
+import org.springframework.stereotype.Service;
+
+import egovframework.rte.fdl.excel.EgovExcelService;
+import egovframework.rte.fdl.cmmn.EgovAbstractServiceImpl;
+
+import egovframework.adm.lcms.cts.service.LcmsGlobalobjService;
+import egovframework.adm.lcms.cts.dao.LcmsGlobalobjDAO;
+import egovframework.adm.lcms.cts.domain.LcmsGlobalobj;
+
+/**
+ * <pre>
+ * system      : 
+ * menu        : 
+ * source      : LcmsGlobalobjServiceImpl.java
+ * description : 
+ * </pre> 
+ * @version
+ * <pre> 
+ * 1.0	2011-09-16 created by ?
+ * 1.1	
+ * </pre>
+ */
+
+
+@Service("lcmsGlobalobjService")
+public class LcmsGlobalobjServiceImpl extends EgovAbstractServiceImpl implements LcmsGlobalobjService {
+    @Resource(name="lcmsGlobalobjDAO")
+    private LcmsGlobalobjDAO lcmsGlobalobjDAO;
+
+    public List selectLcmsGlobalobjPageList( Map<String, Object> commandMap) throws Exception {
+        return lcmsGlobalobjDAO.selectLcmsGlobalobjPageList( commandMap);
+    }
+
+    public int selectLcmsGlobalobjPageListTotCnt( Map<String, Object> commandMap) throws Exception {
+        return lcmsGlobalobjDAO.selectLcmsGlobalobjPageListTotCnt( commandMap);
+    }
+
+    public List selectLcmsGlobalobjList( Map<String, Object> commandMap) throws Exception {
+        return lcmsGlobalobjDAO.selectLcmsGlobalobjList( commandMap);
+    }
+
+    public Object selectLcmsGlobalobj( Map<String, Object> commandMap) throws Exception {
+        return lcmsGlobalobjDAO.selectLcmsGlobalobj( commandMap);
+    }
+
+    public Object insertLcmsGlobalobj( Map<String, Object> commandMap) throws Exception {
+        return lcmsGlobalobjDAO.insertLcmsGlobalobj( commandMap);
+    }
+
+    public int updateLcmsGlobalobj( Map<String, Object> commandMap) throws Exception {
+        return lcmsGlobalobjDAO.updateLcmsGlobalobj( commandMap);
+    }
+
+    public int updateFieldLcmsGlobalobj( Map<String, Object> commandMap) throws Exception {
+        return lcmsGlobalobjDAO.updateLcmsGlobalobj( commandMap);
+    }
+
+    public int deleteLcmsGlobalobj( Map<String, Object> commandMap) throws Exception {
+        return lcmsGlobalobjDAO.deleteLcmsGlobalobj( commandMap);
+    }
+
+    public int deleteLcmsGlobalobjAll( Map<String, Object> commandMap) throws Exception {
+        return lcmsGlobalobjDAO.deleteLcmsGlobalobjAll( commandMap);
+    }
+
+    
+    public Object existLcmsGlobalobj( LcmsGlobalobj lcmsGlobalobj) throws Exception {
+        return lcmsGlobalobjDAO.existLcmsGlobalobj( lcmsGlobalobj);
+    }
+
+    
+}

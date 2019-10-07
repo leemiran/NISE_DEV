@@ -1,0 +1,153 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE sqlMap PUBLIC "-//iBATIS.com//DTD SQL Map 2.0//EN" "http://ibatis.apache.org/dtd/sql-map-2.dtd">
+
+<sqlMap namespace="LcmsSeqConditionType">
+	<typeAlias  alias="egovMap" type="egovframework.rte.psl.dataaccess.util.EgovMap"/>
+
+    <select id="lcmsSeqConditionTypeDAO.selectLcmsSeqConditionTypePageList" parameterClass="map" resultClass="egovMap">
+        SELECT * 
+        FROM
+               (
+                SELECT TEMP.*, 
+                <isNotEmpty property="rowsPerPage">
+                       CEIL(ROWNUM / #rowsPerPage#) AS PAGE 
+                </isNotEmpty>
+                <isEmpty property="rowsPerPage">
+                       CEIL(ROWNUM / 10) AS PAGE 
+                </isEmpty>
+                FROM
+                      (
+                       SELECT 
+	        	              CT_IDX_NUM,
+	        	              SEQ_ID_NUM,
+	        	              RULE_CONDITION_ID,
+	        	              CONDITION_RULE_TYPE,
+	        	              RULE_ACTION,
+	        	              CONDITION_COMBINATION,
+	        	              userid,
+	        	              UPDATE_DT,
+	        	              SEQ_IDX_NUM,
+	        	               BEFORE_CT_IDX_NUM
+        		       FROM   TB_LCMS_SEQ_CONDITION_TYPE
+        		       <!--  APPEND WHERE CONDITION START  -->
+
+        		       <!--  APPEND WHERE CONDITION END    -->
+        		       <isNotEmpty property="orderBy">
+        			       $orderBy$
+        		       </isNotEmpty>
+        	          ) TEMP 
+               )
+        <isNotEmpty property="page">
+        WHERE PAGE = #page#
+        </isNotEmpty>
+        <isEmpty property="page">
+        WHERE PAGE = 1
+        </isEmpty>
+    </select>
+
+    <select id="lcmsSeqConditionTypeDAO.selectLcmsSeqConditionTypeList" parameterClass="map" resultClass="egovMap">
+        SELECT CT_IDX_NUM,
+               SEQ_ID_NUM,
+               RULE_CONDITION_ID,
+               CONDITION_RULE_TYPE,
+               RULE_ACTION,
+               CONDITION_COMBINATION,
+               userid,
+               UPDATE_DT,
+               SEQ_IDX_NUM,
+               BEFORE_CT_IDX_NUM
+        FROM   TB_LCMS_SEQ_CONDITION_TYPE
+    </select>
+
+    <select id="lcmsSeqConditionTypeDAO.selectLcmsSeqConditionTypePageListTotCnt" parameterClass="map" resultClass="long">
+        SELECT COUNT(ROWNUM) AS [COUNT]
+        FROM   TB_LCMS_SEQ_CONDITION_TYPE
+    </select>
+
+	<!-- CONDITION_TYPE의 시퀀스 값 return -->
+    <select id="lcmsSeqConditionTypeDAO.selectLcmsSeqConditionTypeMaxNum" parameterClass="map" resultClass="int">
+        select nvl(max(ct_idx_num),0)+1 as num from tb_lcms_seq_condition_type
+    </select>
+
+    <select id="lcmsSeqConditionTypeDAO.selectLcmsSeqConditionType" parameterClass="map" resultClass="egovMap">
+        SELECT CT_IDX_NUM,
+               SEQ_ID_NUM,
+               RULE_CONDITION_ID,
+               CONDITION_RULE_TYPE,
+               RULE_ACTION,
+               CONDITION_COMBINATION,
+               userid,
+               UPDATE_DT,
+               SEQ_IDX_NUM,
+               BEFORE_CT_IDX_NUM
+        FROM   TB_LCMS_SEQ_CONDITION_TYPE
+        WHERE  CT_IDX_NUM = #ctIdxNum#
+    </select>
+
+    <insert id="lcmsSeqConditionTypeDAO.insertLcmsSeqConditionType">
+        INSERT INTO TB_LCMS_SEQ_CONDITION_TYPE
+        (
+            CT_IDX_NUM,
+            SEQ_ID_NUM,
+            RULE_CONDITION_ID, 
+            CONDITION_RULE_TYPE,
+            RULE_ACTION,
+            CONDITION_COMBINATION,
+            userid,
+            UPDATE_DT,
+            SEQ_IDX_NUM, 
+            BEFORE_CT_IDX_NUM 
+        )
+        VALUES
+        (
+            #ctIdxNum#,
+            #seqIdNum#,
+            #ruleConditionId#,
+            #conditionRuleType#,
+            #ruleAction#,
+            #conditionCombination#,
+            #userid#,
+            sysdate,
+            #seqIdxNum#,
+            #beforeCtIdxNum#
+        )
+    </insert>
+
+    <update id="lcmsSeqConditionTypeDAO.updateLcmsSeqConditionType">
+        UPDATE TB_LCMS_SEQ_CONDITION_TYPE
+        SET    SEQ_ID_NUM = #seqIdNum#,
+               RULE_CONDITION_ID = #ruleConditionId#,
+               CONDITION_RULE_TYPE = #conditionRuleType#,
+               RULE_ACTION = #ruleAction#,
+               CONDITION_COMBINATION = #conditionCombination#,
+               userid = #userId#,
+               UPDATE_DT = #updateDt#,
+               SEQ_IDX_NUM = #seqIdxNum#,
+               BEFORE_CT_IDX_NUM = #beforeCtIdxNum#
+        WHERE  CT_IDX_NUM = #ctIdxNum#
+    </update>
+
+    <delete id="lcmsSeqConditionTypeDAO.deleteLcmsSeqConditionType">
+        delete tb_lcms_seq_condition_type
+         where seq_idx_num in (
+                 select seq_idx_num from tb_lcms_scorm_sequence
+                  where org_seq in <iterate property="orgSeq" conjunction="," open="(" close=")">$orgSeq[]$</iterate>
+               )
+    </delete>
+
+    <delete id="lcmsSeqConditionTypeDAO.deleteLcmsSeqConditionTypeAll">
+        DELETE FROM TB_LCMS_SEQ_CONDITION_TYPE
+        <dynamic prepend="WHERE CT_IDX_NUM IN ">
+            <isNotEmpty property="ctIdxNum">
+                <iterate property="ctIdxNum" open="(" close=")" conjunction=",">
+                    #ctIdxNum[]#
+                </iterate>
+            </isNotEmpty>
+            <isEmpty property="ctIdxNum">
+                ('')
+            </isEmpty>
+        </dynamic>
+    </delete>
+
+</sqlMap>
+

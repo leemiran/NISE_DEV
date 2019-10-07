@@ -1,0 +1,145 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE sqlMap PUBLIC "-//iBATIS.com//DTD SQL Map 2.0//EN" "http://ibatis.apache.org/dtd/sql-map-2.dtd">
+
+<sqlMap namespace="adminCalendar">
+	<typeAlias alias="egovMap" type="egovframework.rte.psl.dataaccess.util.EgovMap"/>
+	
+	<select id="getCalendarList" resultClass="egovMap">
+		select
+			calendar_seq
+			, category_nm
+		from
+			tz_calendar
+		order by calendar_seq desc
+	</select>
+	
+	<insert id="insertCalendar" parameterClass="map">
+		insert into tz_calendar
+		(
+			calendar_seq
+			, category_nm
+			, reg_date
+			, mod_date
+		)
+		values
+		(
+			(select nvl(max(calendar_seq), 0) + 1 from tz_calendar)
+			, #categoryNm#
+			, sysdate
+			, sysdate
+		)
+	</insert>
+	
+	<select id="getCalendarDetail" parameterClass="string" resultClass="egovMap">
+		select
+			calendar_seq
+			, category_nm
+			, to_char(reg_date, 'yyyy-mm-dd') reg_date
+		from
+			tz_calendar
+		where
+			calendar_seq = #calendarSeq#
+	</select>
+	
+	<update id="updateCalendar" parameterClass="map">
+		update tz_calendar
+		set
+			category_nm = #categoryNm#
+			, mod_date = sysdate
+		where
+			calendar_seq = #calendarSeq#
+	</update>
+	
+	<delete id="deleteCalendar" parameterClass="map">
+		delete from tz_calendar
+		where
+			calendar_seq = #calendarSeq#
+	</delete>
+	
+	<delete id="deleteCalendarPeriodFromCalendar" parameterClass="map">
+		delete from tz_calendar_period
+		where
+			calendar_seq = #calendarSeq#
+	</delete>
+	
+	
+	<select id="getCalendarPeriodList" resultClass="egovMap">
+		select
+			calendar_period_seq
+			, request_period
+			, train_period
+			, to_char(reg_date, 'yyyy-mm-dd') reg_date
+		from
+			tz_calendar_period
+		where
+			calendar_seq = #calendarSeq#
+		order by calendar_period_seq desc
+	</select>
+	
+	<insert id="insertCalendarPeriod">
+		insert into tz_calendar_period
+		(
+			calendar_period_seq
+			, calendar_seq
+			, request_period
+			, train_period
+			, reg_date
+			, mod_date
+		)
+		values
+		(
+			(select nvl(max(calendar_period_seq), 0) + 1 from tz_calendar_period)
+			, #calendarSeq#
+			, #requestPeriod#
+			, #trainPeriod#
+			, sysdate
+			, sysdate
+		)
+	</insert>
+	
+	<select id="getCalendarPeriodDetail" parameterClass="string" resultClass="egovMap">
+		select
+			calendar_period_seq
+			, calendar_seq
+			, request_period
+			, train_period
+		from
+			tz_calendar_period
+		where
+			calendar_period_seq = #calendarPeriodSeq#
+	</select>
+	
+	<update id="updateCalendarPeriod" parameterClass="map">
+		update tz_calendar_period
+		set
+			request_period = #requestPeriod#
+			, train_period = #trainPeriod#
+			, mod_date = sysdate
+		where
+			calendar_period_seq = #calendarPeriodSeq#
+	</update>
+	
+	<delete id="deleteCalendarPeriod" parameterClass="map">
+		delete from tz_calendar_period
+		where
+			calendar_period_seq = #calendarPeriodSeq#
+	</delete>
+	
+	<select id="getCalendarTitle" resultClass="egovMap">
+		select
+			calendar_title_seq
+			, title_nm
+		from
+			tz_calendar_title
+	</select>
+	
+	<update id="updateCalendarTitle" parameterClass="map">
+		update tz_calendar_title
+		set
+			title_nm = #titleNm#
+		where
+			calendar_title_seq = #calendarTitleSeq#
+	</update>
+	
+</sqlMap>
+

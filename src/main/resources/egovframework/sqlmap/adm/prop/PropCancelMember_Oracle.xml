@@ -1,0 +1,288 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE sqlMap PUBLIC "-//iBATIS.com//DTD SQL Map 2.0//EN" "http://ibatis.apache.org/dtd/sql-map-2.dtd">
+
+<sqlMap namespace="Approval">
+<typeAlias  alias="egovMap" type="egovframework.rte.psl.dataaccess.util.EgovMap"/>
+
+	
+	
+<!--	반려/취소자 목록 -->
+	<select id="approvalDAO.selectPropCancelMemberList" parameterClass="map" resultClass="egovMap">
+	<![CDATA[
+	 select
+		 z.*,
+		 case when paycd = 'PB' then  enteryn
+		      when paycd <> 'PB' and enter_cnt > 0 then 'Y'
+		      when paycd is null then ''
+		      else 'N'
+		 end as enter_yn     
+		 from(
+			 select      c.grseq                                            	
+				,	c.course                                           	
+				,	c.cyear                                            	
+				,	c.courseseq                                        	
+				,	c.coursenm                                         	
+				,	c.subj                                             	
+				,	c.[year]                                             	
+				,	c.subjnm                                           	
+				,	c.subjseq                                          	
+				,	c.subjseqgr                                        	
+				,	c.isonoff                                          	
+				,	a.canceldate                                       	
+				,	a.cancelkind                                       	
+				,	a.reason                                           	
+				,	b.userid                                           	
+				,	b.name                                             	
+				,	b.email                                				
+				,	get_compnm(b.comp) companynm           				                       
+				,(select count(*)                                    	
+				from   tz_sangdam                                  	
+				where  subj    = c.subj                           	
+				and    [year]    = c.[year]                           	
+				and    subjseq = c.subjseq                        	
+				and    userid  = b.userid                         	
+				) as csangcnt    									
+				,(select grseqnm                                      
+				from   tz_grseq                                     
+				where  grcode = c.grcode                          	
+				and    gyear  = c.gyear                           	
+				and    grseq  = c.grseq                           	
+				) as grseqnm      									
+				,(select order_id from pa_payment where order_id=a.order_id)as order_id 
+				,(select type from pa_payment where order_id=a.order_id) as paycd 
+				,(select decode(trim(type), 'OB','교육청일괄납부','PB','무통장','RE','재수강','SC0010','신용카드','SC0030','계좌이체','SC0040','가상계좌', 'FE', '무료',type) from pa_payment where order_id=a.order_id) as paynm 
+				,nvl((select amount from pa_payment where order_id=a.order_id),'0') as amount 
+				,(select enter_dt from pa_payment where order_id=a.order_id) as enter_dt 
+				,(select count(1) from pa_payment where order_id=a.order_id) as enter_cnt
+		        ,(select decode(enter_dt,null,'N','','N','Y') as enter_yn from pa_payment where order_id=a.order_id) as enteryn 
+				,(select to_char(to_date(repay_dt,'yyyymmdd'),'yyyy-mm-dd') as repay_dt from pa_payment where order_id=a.order_id) as repay_dt 
+				,(select decode(repay_dt,null,'N','','N','Y') as repay_yn from pa_payment where order_id=a.order_id)as repay_yn 
+				,b.ismailling 
+		        ,b.issms 
+          		, code.codenm area_codenm
+				from    tz_cancel    a                                      
+				, tz_member    b                                      
+				, vz_scsubjseq c
+				, tz_code code
+				where   a.userid  = b.userid                            	
+				and     a.subj    = c.subj                              	
+				and     a.[year]    = c.[year]                              	
+				and     a.subjseq = c.subjseq 
+				
+				]]>
+				and    c.grcode = 'N000001'
+				and    b.comp ='1001'
+				and    c.grseq        =  #ses_search_grseq# 
+				and	code.gubun(+) = '0118'
+				and	code.code(+) = a.area_code
+			 
+			 <isNotEmpty property="ses_search_gyear">
+				and    c.gyear =  #ses_search_gyear#
+			 </isNotEmpty>
+			 
+			 
+			 <isNotEmpty property="ses_search_att">
+				and    c.oriupperclass =  #ses_search_att#
+			 </isNotEmpty>
+			 
+			 
+			 
+			 <isNotEmpty property="ses_search_subj">
+			  and    c.scsubj         = #ses_search_subj#
+			 </isNotEmpty>
+			  
+			 <isNotEmpty property="ses_search_subjseq">
+			  and    c.scsubjseq      = #ses_search_subjseq#
+			 </isNotEmpty>
+			 
+			 <isNotEmpty property="ses_search_year">
+			  and    c.[year]      = #ses_search_year#
+			 </isNotEmpty>
+			  
+			   
+			 <isNotEmpty property="search_payType">
+			 	<isEqual property="search_payType" compareValue="etc">
+					and (select trim(type) from pa_payment pa  where pa.order_id = a.order_id)  not in ('PB','OB','RE','SC0010','SC0030','SC0040')	 	 
+			 	</isEqual>
+			 	<isNotEqual property="search_payType" compareValue="etc">
+			 		and (select trim(type) from pa_payment pa  where pa.order_id = a.order_id)  = #search_payType#
+			 	</isNotEqual>
+			 </isNotEmpty>
+			 
+			 <isNotEmpty property="search_text">
+			 	<isEqual property="search_group" compareValue="birth_date">
+			 		and b.birth_date Like UPPER('%' || REPLACE(#search_text#, '-', '') || '%')
+			 	</isEqual>
+			 	<isNotEqual property="search_group" compareValue="birth_date">
+			 		and UPPER(REPLACE(b.$search_group$, '-', '')) Like Upper('%' || REPLACE(#search_text#, '-', '') || '%')
+			 	</isNotEqual>
+			 </isNotEmpty>
+			 <isNotEmpty property="search_area">
+		 	 	and a.area_code = #search_area#
+		 	 </isNotEmpty>
+			 
+			 
+			 	<isNotEmpty property="search_orderColumn">
+				 	order by $search_orderColumn$ $search_orderType$ 
+		 		</isNotEmpty>
+		       	<isEmpty property="search_orderColumn">
+		       		order by a.canceldate, c.subj, c.[year], c.subjseq
+		      	</isEmpty>
+	 <![CDATA[
+	 ) z
+]]>
+	</select>
+	
+	
+	
+	<update id="approvalDAO.updatePropCancelMemberRePay">
+	<![CDATA[
+		update pa_payment set 
+	]]>
+		<isEqual property="v_repayYn" compareValue="Y">	
+			repay_dt = nvl(Replace(#v_repay_dt#, '-', ''), to_char(sysdate, 'yyyymmdd'))
+		</isEqual>
+		<isEqual property="v_repayYn" compareValue="N">	
+			repay_dt = ''
+		</isEqual>
+	<![CDATA[
+			, amount = nvl(#v_amount#,'0')
+		where order_id= #v_order_id#		
+		and userid 		= #v_userid#	
+	]]>
+	</update>
+	
+	
+	
+	
+	
+<!--	개인별 수강신청/반려 리스트 #1-->
+	<select id="approvalDAO.selectUserCancelPosibleList" parameterClass="map" resultClass="egovMap">
+	<![CDATA[
+		select                                                                                   
+			   a.userid,                                                                           
+			   b.subj,                                                                                                                                                                                    
+			   b.[year],                                                                                                                                                                                    
+			   b.subjseq,                                                                                                                                                                             
+			   b.subjnm,                                                                                                                                                                                  
+			   b.propstart,                                                                                                                                                                           
+			   b.propend,                                                                                                                                                                             
+			   b.edustart,                                                                                                                                                                            
+			   b.eduend,                                                                                                                                                                                                                                                                                      
+			   a.chkfinal,                                                                                                                                                                            
+			   a.cancelkind,  
+			   a.order_id,                                                                                                                                                                        
+			   TO_CHAR(TO_DATETIME(a.ldate, 'YYYYMMDDHH24MISS'), 'YYYY.MM.DD') propose_date,                                     
+			   to_char(TO_DATE(substr(nvl(b.propend,'2000010100'),0,8),'YYYYMMDD')+nvl(b.canceldays,0), 'YYYYMMDD') cancelend     
+			   , get_codenm('0004', d.isonoff) codenm                                           
+			   , d.isonoff                                                                          
+			   , d.eduperiod                                                                        
+		from                                                                                                                                                                                                         
+			   TZ_PROPOSE a,                                                                        
+			   tz_subjseq b,                                                                     
+			   tz_subj d                                                                              
+		where a.subj = b.subj                                                                                                                                                                     
+		and a.[year] = b.[year]                                                                                                                                                                         
+		and a.subjseq = b.subjseq                                                                                                                                                                                           
+		and b.subj = d.subj                                                                        
+		and a.userid = #userid#
+		and a.chkfinal != 'N'                                                      
+		and ((a.chkfinal = 'Y' and (to_char(sysdatetime,'YYYYMMDDHH24') < b.edustart))                  
+			   -- or (a.chkfinal='N' and (to_char(sysdatetime,'YYYYMMDDHH24') < to_char(TO_DATETIME(substr(b.edustart,1,8))+10,'YYYYMMDDHH24')))  
+			   or (a.chkfinal='N' and (to_char(sysdatetime,'YYYYMMDDHH24') < TO_CHAR(ADDDATE(TO_DATETIME(b.edustart, 'YYYYMMDDHH24'), INTERVAL 10 DAY), 'YYYYMMDDHH24')))
+			   or (a.chkfinal='B' and (to_char(sysdatetime,'YYYYMMDDHH24') < b.propend))                                    
+			   or (a.chkfinal='B' and (to_char(sysdatetime,'YYYYMMDDHH24') < b.edustart)))                      
+		order by b.subjnm, b.edustart desc
+	]]>
+	</select>
+	
+	
+	<!--	개인별 수강신청/반려 리스트 #2-->
+	<select id="approvalDAO.selectUserCourseCancelList" parameterClass="map" resultClass="egovMap">
+	<![CDATA[
+		select																					
+		       a.userid,																			
+		       b.scsubj,																			                                                                                                         
+		       b.scyear,																			                                                                                                         
+		       b.scsubjseq,																		                                                                                                      
+		       b.scsubjnm,																		               	
+		       b.subj,																			                                                                                                         
+		       b.[year],																			                                                                                                         
+		       b.subjseq,																		                                                                                                      
+		       b.subjnm,																			                                                                                                       
+		       b.propstart,																		                                                                                                    
+		       b.propend,																		                                                                                                      
+		       b.edustart,																		                                                                                                     
+		       b.eduend,																			                                                                                                                                                                                                           
+		       a.chkfinal,																		                                                                                                     
+		       a.cancelkind,
+		       a.order_id,																		                                                                                                   
+		       TO_CHAR(TO_DATETIME(a.ldate, 'YYYYMMDDHH24MISS'), 'YYYY.MM.DD') propose_date, 	                                 
+		       to_char(TO_DATE(substr(nvl(b.propend,'2000010100'),0,8),'YYYYMMDD')+nvl(b.canceldays,0), 'YYYYMMDD') cancelend	  
+		       , get_codenm('0004', b.isonoff) codenm											
+		       , b.isonoff																		  
+		       , d.cnt																			            	
+		from																						                                                                                                                 
+		       TZ_PROPOSE a,																		
+		       vz_scsubjseq b, 																	
+		 ( select scsubj,scyear,scsubjseq, count(*) cnt from tz_propose x, vz_scsubjseq y where x.subj=y.subj and x.[year]=y.[year] and x.subjseq=y.subjseq and userid = #userid#
+		 group by scsubj, scyear, scsubjseq, userid ) d 
+		where a.subj = b.subj																	                                                                                                 
+		and a.[year] = b.[year]																		                                                                                                 
+		and a.subjseq = b.subjseq																                                                                                           								
+		and b.scsubj = d.scsubj																	                                                                                                 
+		and b.scyear = d.scyear																	                                                                                                 
+		and b.scsubjseq = d.scsubjseq															                	
+		and a.userid = #userid#
+		and a.chkfinal != 'N'																	    
+		and b.course != '000000'																	                	
+		and ((a.chkfinal = 'Y' and (to_char(sysdatetime,'YYYYMMDDHH24') < b.cedustart))  			
+		       -- or (a.chkfinal='N' and (to_char(sysdatetime,'YYYYMMDDHH24') < to_char(TO_DATETIME(substr(b.cedustart,1,8))+10,'YYYYMMDDHH24')))
+		       or (a.chkfinal='N' and (to_char(sysdatetime,'YYYYMMDDHH24') < TO_CHAR(ADDDATE(TO_DATETIME(b.cedustart, 'YYYYMMDDHH24'), INTERVAL 10 DAY), 'YYYYMMDDHH24')))  
+		       or (a.chkfinal='B' and (to_char(sysdatetime,'YYYYMMDDHH24') < b.cpropend)) 			                       
+		       or (a.chkfinal='B' and (to_char(sysdatetime,'YYYYMMDDHH24') < b.cedustart))) 			         
+		order by b.subjnm, b.edustart desc
+	]]>
+	</select>
+	
+	
+	<!--	개인별 취소/반려 리스트 #3-->
+	<select id="approvalDAO.selectUserCancelList" parameterClass="map" resultClass="egovMap">
+	<![CDATA[
+		select																					
+		       b.subj,																			                                                                                                         
+		       b.[year],																			                                                                                                         
+		       b.subjseq,																		                                                                                                      
+		       b.subjnm,																			                                                                                                       
+		       a.userid,																			            	
+		       get_codenm('0036',a.cancelkind) cancelkind,										                                                                                                     
+		       a.canceldate,																		                                                                                                   
+		       a.reason,																			                                                                                                   
+		       get_codenm('0096',a.reasoncd) reasoncd,											                                                                                                   
+		       get_codenm('0004', b.isonoff) codenm												
+		from																						                                                                                                                 
+		       TZ_CANCEL a,																		
+		       vz_scsubjseq b 																	
+		where a.subj = b.subj																	                                                                                                 
+		and a.[year] = b.[year]																		                                                                                                 
+		and a.subjseq = b.subjseq																                                                                                           								
+		and a.userid = #userid#
+		order by a.canceldate desc, b.subjnm
+	]]>
+	</select>
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+</sqlMap>
+
+ 
+
+
+

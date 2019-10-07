@@ -1,0 +1,200 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE sqlMap PUBLIC "-//iBATIS.com//DTD SQL Map 2.0//EN" "http://ibatis.apache.org/dtd/sql-map-2.dtd">
+
+<sqlMap namespace="LcmsItemResource">
+	<typeAlias  alias="egovMap" type="egovframework.rte.psl.dataaccess.util.EgovMap"/>
+	
+<resultMap id="LcmsItemResourceResult" class="egovframework.adm.lcms.cts.domain.LcmsItemResource">	
+<result property="rsrcSeq"        column="RSRC_SEQ"         />
+<result property="rsrcType"       column="RSRC_TYPE"        />
+<result property="rsrcHref"       column="RSRC_HREF"        />
+<result property="rsrcBaseDir"    column="RSRC_BASE_DIR"    />
+<result property="rsrcScormType"  column="RSRC_SCORM_TYPE"  />
+<result property="rsrcPstState"   column="RSRC_PST_STATE"   />
+<result property="userId"         column="USERID"          />
+<result property="updateDt"       column="UPDATE_DT"        />
+<result property="rsrcTitle"      column="RSRC_TITLE"       />
+<result property="rsrcScoSize"    column="RSRC_SCO_SIZE"    />
+<result property="groupSeq"       column="GROUP_SEQ"        />
+<result property="rsrcScoVersion" column="RSRC_SCO_VERSION" />
+<result property="rsrcId"         column="RSRC_ID"          />
+</resultMap>
+
+    <select id="lcmsItemResourceDAO.selectLcmsItemResourcePageList" parameterClass="map" resultClass="egovMap">
+        SELECT * 
+        FROM
+               (
+                SELECT TEMP.*, 
+                <isNotEmpty property="rowsPerPage">
+                       CEIL(ROWNUM / #rowsPerPage#) AS PAGE 
+                </isNotEmpty>
+                <isEmpty property="rowsPerPage">
+                       CEIL(ROWNUM / 10) AS PAGE 
+                </isEmpty>
+                FROM
+                      (
+                       SELECT 
+	        	              RSRC_SEQ,
+	        	              RSRC_TYPE,
+	        	              RSRC_HREF,
+	        	              RSRC_BASE_DIR,
+	        	              RSRC_SCORM_TYPE,
+	        	              RSRC_PST_STATE,
+	        	              USERID,
+	        	              UPDATE_DT,
+	        	              RSRC_TITLE,
+	        	              RSRC_SCO_SIZE,
+	        	              GROUP_SEQ,
+	        	              RSRC_SCO_VERSION,
+	        	               RSRC_ID
+        		       FROM   TB_LCMS_ITEM_RESOURCE
+        		       <!--  APPEND WHERE CONDITION START  -->
+
+        		       <!--  APPEND WHERE CONDITION END    -->
+        		       <isNotEmpty property="orderBy">
+        			       $orderBy$
+        		       </isNotEmpty>
+        	          ) TEMP 
+               )
+        <isNotEmpty property="page">
+        WHERE PAGE = #page#
+        </isNotEmpty>
+        <isEmpty property="page">
+        WHERE PAGE = 1
+        </isEmpty>
+    </select>
+
+    <select id="lcmsItemResourceDAO.selectLcmsItemResourceList" parameterClass="map" resultClass="egovMap">
+        SELECT RSRC_SEQ,
+               RSRC_TYPE,
+               RSRC_HREF,
+               RSRC_BASE_DIR,
+               RSRC_SCORM_TYPE,
+               RSRC_PST_STATE,
+               USERID,
+               UPDATE_DT,
+               RSRC_TITLE,
+               RSRC_SCO_SIZE,
+               GROUP_SEQ,
+               RSRC_SCO_VERSION,
+               RSRC_ID
+        FROM   TB_LCMS_ITEM_RESOURCE
+    </select>
+
+    <select id="lcmsItemResourceDAO.selectLcmsItemResourcePageListTotCnt" parameterClass="map" remapResults="true" resultClass="int">
+        SELECT COUNT(ROWNUM) AS [COUNT]
+        FROM   TB_LCMS_ITEM_RESOURCE
+    </select>
+
+    <select id="lcmsItemResourceDAO.selectLcmsItemResource" parameterClass="map" resultClass="egovMap">
+        SELECT RSRC_SEQ,
+               RSRC_TYPE,
+               RSRC_HREF,
+               RSRC_BASE_DIR,
+               RSRC_SCORM_TYPE,
+               RSRC_PST_STATE,
+               USERID,
+               UPDATE_DT,
+               RSRC_TITLE,
+               RSRC_SCO_SIZE,
+               GROUP_SEQ,
+               RSRC_SCO_VERSION,
+               RSRC_ID
+        FROM   TB_LCMS_ITEM_RESOURCE
+        WHERE  RSRC_SEQ = #rsrcSeq#
+    </select>
+
+	<select id="lcmsItemResourceDAO.selectLcmsItemResourceSeq" parameterClass="map" remapResults="true" resultClass="int">
+        SELECT NVL(MAX(RSRC_SEQ)+1, 1) as resc_seq FROM   TB_LCMS_ITEM_RESOURCE
+    </select>
+    <insert id="lcmsItemResourceDAO.insertLcmsItemResource">
+        INSERT INTO TB_LCMS_ITEM_RESOURCE
+        (
+            RSRC_SEQ,
+            RSRC_TYPE,
+            RSRC_HREF,
+            RSRC_BASE_DIR,
+            RSRC_SCORM_TYPE,
+            RSRC_PST_STATE,
+            USERID,
+            UPDATE_DT,
+            RSRC_TITLE,
+            RSRC_SCO_SIZE,
+            GROUP_SEQ,
+            RSRC_SCO_VERSION,
+            RSRC_ID
+        )
+        VALUES
+        (
+            #rsrcSeq#,
+            #rsrcType#,
+            #rsrcHref#,
+            #rsrcBaseDir#,
+            #rsrcScormType#,
+            #rsrcPstState#,
+            #userid#,
+            sysdate,
+            #rsrcTitle#,
+            #rsrcScoSize#,
+            #groupSeq#,
+            #rsrcScoVersion#,
+            #rsrcId#
+        )
+    </insert>
+
+    <update id="lcmsItemResourceDAO.updateLcmsItemResource">
+        UPDATE TB_LCMS_ITEM_RESOURCE
+        SET    RSRC_TYPE = #rsrcType#,
+               RSRC_HREF = #rsrcHref#,
+               RSRC_BASE_DIR = #rsrcBaseDir#,
+               RSRC_SCORM_TYPE = #rsrcScormType#,
+               RSRC_PST_STATE = #rsrcPstState#,
+               USERID = #userId#,
+               UPDATE_DT = #updateDt#,
+               RSRC_TITLE = #rsrcTitle#,
+               RSRC_SCO_SIZE = #rsrcScoSize#,
+               GROUP_SEQ = #groupSeq#,
+               RSRC_SCO_VERSION = #rsrcScoVersion#,
+               RSRC_ID = #rsrcId#
+        WHERE  RSRC_SEQ = #rsrcSeq#
+    </update>
+
+    <delete id="lcmsItemResourceDAO.deleteLcmsItemResource">
+        delete tb_lcms_item_resource
+         where rsrc_seq in (
+                 select rsrc_seq from tb_lcms_item
+                  where org_seq in <iterate property="orgSeq" conjunction="," open="(" close=")">$orgSeq[]$</iterate>
+               )
+    </delete>
+
+    <delete id="lcmsItemResourceDAO.deleteLcmsItemResourceAll">
+        DELETE FROM TB_LCMS_ITEM_RESOURCE
+        <dynamic prepend="WHERE RSRC_SEQ IN ">
+            <isNotEmpty property="rsrcSeq">
+                <iterate property="rsrcSeq" open="(" close=")" conjunction=",">
+                    #rsrcSeq[]#
+                </iterate>
+            </isNotEmpty>
+            <isEmpty property="rsrcSeq">
+                ('')
+            </isEmpty>
+        </dynamic>
+    </delete>
+
+        
+    <select id="lcmsItemResourceDAO.selectComLenLcmsItemResource" parameterClass="map" resultClass="egovMap">
+        <![CDATA[
+         SELECT RSRC_BASE_DIR ||
+	            CASE INSTR(RSRC_HREF,'/')
+	            WHEN -1 THEN
+	                RSRC_HREF
+	            ELSE
+	                REVERSE(SUBSTR(REVERSE(RSRC_HREF),1,INSTR(REVERSE(RSRC_HREF), '/')))
+	            END   AS RSRC_BASE_DIR             
+         FROM TB_LCMS_ITEM_RESOURCE 
+         WHERE RSRC_SEQ=#rsrcSeq#
+         ]]>
+    </select>     
+
+</sqlMap>
+

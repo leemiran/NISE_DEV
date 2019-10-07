@@ -1,0 +1,36 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE sqlMap PUBLIC "-//iBATIS.com//DTD SQL Map 2.0//EN" "http://ibatis.apache.org/dtd/sql-map-2.dtd">
+
+<sqlMap namespace="LcmsCourseOrg">
+	<typeAlias  alias="egovMap" type="egovframework.rte.psl.dataaccess.util.EgovMap"/>
+
+    <select id="lcmsCourseOrgDAO.selectCrsOrgNo" parameterClass="map" remapResults="true" resultClass="int">
+        SELECT (NVL(MAX(CRS_ORG_NO), 0) + 1) + $crsOrgNo$
+          FROM TB_LCMS_COURSE_ORG
+         WHERE subj = #courseSeq#
+    </select>
+    
+    <insert id="lcmsCourseOrgDAO.insertLcmsCourseOrg">
+    	insert into tb_lcms_course_org(
+    		org_seq,
+    		subj,
+    		userid,
+    		reg_dttm,
+    		crs_org_no
+    	)
+    	values(
+    		#orgSeq#,
+    		#courseSeq#,
+    		#userid#,
+    		to_char(sysdate, 'yyyyMMddHHMISS'),
+    		#crsOrgNo#
+    	)
+    </insert>
+    
+    <delete id="lcmsCourseOrgDAO.deleteLcmsCourseOrg">
+    	delete tb_lcms_course_org where org_seq in
+    	<iterate property="orgSeq" conjunction="," open="(" close=")">$orgSeq[]$</iterate>
+    </delete>
+
+</sqlMap>
+

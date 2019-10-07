@@ -1,0 +1,207 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE sqlMap PUBLIC "-//iBATIS.com//DTD SQL Map 2.0//EN" "http://www.ibatis.com/dtd/sql-map-2.dtd">
+
+<sqlMap namespace="LoginUsr">
+
+	<typeAlias  alias="egovMap" type="egovframework.rte.psl.dataaccess.util.EgovMap"/>
+	<typeAlias  alias="loginVO" type="egovframework.adm.lgn.domain.LoginVO"/>
+
+	<!-- 로그인 처리를 위한 resultMap -->
+	<resultMap id="login" class="egovframework.adm.lgn.domain.LoginVO">
+		<result property="id" column="id" columnIndex="1"/>
+		<result property="name" column="name" columnIndex="2"/>
+		<result property="ihidNum" column="ihidNum" columnIndex="3"/>
+		<result property="email" column="email" columnIndex="4"/>
+		<result property="password" column="password" columnIndex="5"/>
+		<result property="userSe" column="userSe" columnIndex="6"/>
+		<result property="orgnztId" column="orgnztId" columnIndex="7"/>
+		<result property="uniqId" column="uniqId" columnIndex="8"/>	
+		<result property="logoSaveFileName" column="logoSaveFileName" columnIndex="9"/>	
+	</resultMap>
+	
+	<!-- 아이디 찾기를 위한 resultMap -->
+	<resultMap id="id" class="egovframework.adm.lgn.domain.LoginVO">
+		<result property="id" column="id" columnIndex="1"/>
+	</resultMap>
+	
+	<!-- 비밀번호 처리를 위한 resultMap -->
+	<resultMap id="password" class="egovframework.adm.lgn.domain.LoginVO">
+		<result property="password" column="password" columnIndex="1"/>
+	</resultMap>
+	
+	<!-- 일반 로그인 -->
+	<select id="loginDAO.actionLogin" resultClass="egovMap">
+			<![CDATA[
+            SELECT A.USER_ID, 
+	               A.PW, 
+	               A.USER_NAME,
+	               A.EMAIL,
+	               A.MOBILE_NO,
+	               '' ID_NO, 
+	               B.AUTH_GRADE_CODE ,
+	               C.COMMON_CODE_NAME  AUTH_GRADE_NAME,
+	               A.NICKNAME,
+	               A.ORG_CD,
+	               A.ORG_NM,
+	               A.POS_CD,
+	               A.POS_NM,
+	               A.ASP_CODE,
+	               P.ASP_NAME,
+	               p.LOGO_SAVE_FILE_NAME
+	          FROM EC_PERSON A, 
+	               ( SELECT A.USER_ID, 
+	                        CASE WHEN A.AUTH_GRADE_CODE IS NOT NULL AND A.AUTH_GRADE_CODE != '11'
+	                             THEN A.AUTH_GRADE_CODE
+	                             ELSE B.AUTH_GRADE_CODE
+	                        END AUTH_GRADE_CODE     
+	                   FROM EC_PERSON A, 
+	                       ( SELECT USER_ID, '04' AUTH_GRADE_CODE
+   	                         FROM EC_AI_LECTURER
+  	                        GROUP BY USER_ID ) B 
+	             WHERE A.USER_ID = B.USER_ID(+)
+	               AND A.USER_ID = #userId# ) B,
+	               EC_COMMON_CODE_NEW C ,
+	               EC_ASP P
+	         WHERE A.USER_ID = B.USER_ID
+	           AND A.ASP_CODE = P.ASP_CODE
+	           AND C.ASP_CODE(+) = 'COMMONC'
+	           AND C.CODE_TYPE(+)  ='001'
+	           AND B.AUTH_GRADE_CODE = C.COMMON_CODE(+)
+	           AND A.ASP_CODE = #asp_code#
+	           AND A.USER_ID = #userId#
+			]]>
+	</select>
+	
+	<!-- 인증서 로그인 -->
+	<select id="loginDAO.actionCrtfctLogin" resultMap="login">
+		<![CDATA[
+		SELECT emplyr_id AS id
+		     , emplyr_nm AS name
+		     , password AS password
+		     , ihidnum AS ihidNum
+		     , email_adres AS email
+		     , 'USR' AS userSe
+		     , orgnzt_id AS orgnztId
+		     , uniq_id AS uniqId
+		  FROM COMTNEMPLYRINFO
+		 WHERE sub_dn = #dn#
+		]]>
+	</select>
+	
+<!-- 강사의 seqId 가져오기 -->
+	<select id="loginDAO.getLecSion" resultClass="egovMap">	
+	SELECT b.SEQ_ID 	           
+	FROM EC_PERSON a
+    	,EC_AI_LECTURER b
+	WHERE a.ID_NO = b.ID_NO
+	AND A.ASP_CODE = #aspCode#
+	AND A.USER_ID = #userId#
+	</select>
+	
+	<!-- 아이디 찾기 -->
+	<select id="loginDAO.searchId" resultMap="id">
+		<!-- 일반회원 -->
+		<isEqual property="userSe" compareValue="GNR">
+			<![CDATA[
+			SELECT mber_id AS id
+			  FROM COMTNGNRLMBER
+			 WHERE mber_nm = #name#
+			   AND mber_email_adres = #email#
+			   AND mber_sttus = 'P'
+			]]>
+		</isEqual>
+		<!-- 기업회원 -->
+		<isEqual property="userSe" compareValue="ENT">
+			<![CDATA[
+			SELECT entrprsmber_id AS id
+			  FROM COMTNENTRPRSMBER
+			 WHERE cmpny_nm = #name#
+			   AND applcnt_email_adres = #email#
+			   AND entrprs_mber_sttus = 'P'
+			]]>
+		</isEqual>
+		<!-- 업무사용자 -->
+		<isEqual property="userSe" compareValue="USR">
+			<![CDATA[
+			SELECT emplyr_id AS id
+			  FROM COMTNEMPLYRINFO
+			 WHERE emplyr_nm = #name#
+			   AND email_adres = #email#
+			   AND emplyr_sttus_code = 'P'
+			]]>
+		</isEqual>
+	</select>
+	
+	<!-- 비밀번호 찾기 -->
+	<select id="loginDAO.searchPassword" resultMap="password">
+		<!-- 일반회원 -->
+		<isEqual property="userSe" compareValue="GNR">
+			<![CDATA[
+			SELECT password AS password
+			  FROM COMTNGNRLMBER
+			 WHERE mber_id = #id#
+			   AND mber_nm = #name#
+			   AND mber_email_adres = #email#
+			   AND password_hint = #passwordHint#
+			   AND password_cnsr = #passwordCnsr#
+			   AND mber_sttus = 'P'
+			]]>
+		</isEqual>
+		<!-- 기업회원 -->
+		<isEqual property="userSe" compareValue="ENT">
+			<![CDATA[
+			SELECT entrprs_mber_password AS password
+			  FROM COMTNENTRPRSMBER
+			 WHERE entrprsmber_id = #id#
+			   AND cmpny_nm = #name#
+			   AND applcnt_email_adres = #email#
+			   AND entrprs_mber_password_hint = #passwordHint#
+			   AND entrprs_mber_password_cnsr = #passwordCnsr#
+			   AND entrprs_mber_sttus = 'P'
+			]]>
+		</isEqual>
+		<!-- 업무사용자 -->
+		<isEqual property="userSe" compareValue="USR">
+			<![CDATA[
+			SELECT password AS password
+			  FROM COMTNEMPLYRINFO
+			 WHERE emplyr_id = #id#
+			   AND emplyr_nm = #name#
+			   AND email_adres = #email#
+			   AND password_hint = #passwordHint#
+			   AND password_cnsr = #passwordCnsr#
+			   AND emplyr_sttus_code = 'P'
+			]]>
+		</isEqual>
+	</select>
+	
+	<!-- 변경된 비밀번호를 저장 -->
+	<update id="loginDAO.updatePassword">
+		<!-- 일반회원 -->
+		<isEqual property="userSe" compareValue="GNR">
+			<![CDATA[
+			UPDATE COMTNGNRLMBER
+			   SET password = #password#
+			 WHERE mber_id = #id#
+			]]>
+		</isEqual>
+		<!-- 기업회원 -->
+		<isEqual property="userSe" compareValue="ENT">
+			<![CDATA[
+			UPDATE COMTNENTRPRSMBER
+			   SET entrprs_mber_password = #password#
+			 WHERE entrprsmber_id = #id#
+			]]>
+		</isEqual>
+		<!-- 업무사용자 -->
+		<isEqual property="userSe" compareValue="USR">
+			<![CDATA[
+			UPDATE COMTNEMPLYRINFO
+			   SET password = #password#
+			 WHERE emplyr_id = #id#
+			]]>
+		</isEqual>
+	</update>
+	
+	
+</sqlMap>

@@ -1,0 +1,1290 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE sqlMap PUBLIC "-//iBATIS.com//DTD SQL Map 2.0//EN" "http://ibatis.apache.org/dtd/sql-map-2.dtd">
+
+<sqlMap namespace="StudyManage">
+<typeAlias  alias="egovMap" type="egovframework.rte.psl.dataaccess.util.EgovMap"/>
+
+
+	<select id="studyManageDAO.getProgress" parameterClass="map" resultClass="String">
+		SELECT ROUND (decode( b.total_cnt, 0 , a.completed_educheck_cnt, (a.completed_educheck_cnt * 100/ b.total_cnt)) , 2) AS tstep
+		  FROM (
+		  
+		  		 
+		  		
+		  			<isEqual property="subjOneThreeYn" compareValue="Y">
+		  			select 
+									       <![CDATA[
+									       (
+									       	select case when 3<= cnt1+cnt2+cnt3
+											        then 3+cnt4
+											        else cnt1+cnt2+cnt3+cnt4
+											        end COMPLETED_EDUCHECK_CNT
+											from
+											(
+											    select *
+											    from(
+											    select 
+											    
+											    case when 3= (SELECT COUNT (0) as cnt
+											                    FROM TZ_PROGRESS
+											                    WHERE  SUBJ       = #p_subj#
+											                    AND    [year]          = #p_year#
+											                    AND    SUBJSEQ    = #p_subjseq#
+											                    AND    userid     = #userid#  
+											                    and lesson in ('0010', '0011', '0012')
+											                    AND        lessonstatus = 'Y'
+											                    )
+											    then 3
+											    else 0
+											    end cnt1
+											    ,
+											    case when 3= (SELECT COUNT (0) as cnt
+											                    FROM TZ_PROGRESS
+											                    WHERE  SUBJ       = #p_subj#
+											                    AND    [year]          = #p_year#
+											                    AND    SUBJSEQ    = #p_subjseq#
+											                    AND    userid     = #userid#
+											                    and lesson in ('0013', '0014', '0015')
+											                    AND        lessonstatus = 'Y'
+											                    )
+											    then 3
+											    else 0
+											    end cnt2    
+											    ,
+											    case when 3= (SELECT COUNT (0) as cnt
+											                    FROM TZ_PROGRESS
+											                    WHERE  SUBJ       = #p_subj#
+											                    AND    [year]          = #p_year#
+											                    AND    SUBJSEQ    = #p_subjseq#
+											                    AND    userid     = #userid#
+											                    and lesson in ('0016', '0017', '0018')
+											                    AND        lessonstatus = 'Y'
+											                    )
+											    then 3
+											    else 0
+											    end cnt3 
+											    
+											    ,
+                                                (SELECT COUNT (0) as cnt
+                                                                FROM TZ_PROGRESS
+                                                                 WHERE  SUBJ       = #p_subj#
+											                    AND    [year]          = #p_year#
+											                    AND    SUBJSEQ    = #p_subjseq#
+											                    AND    userid     = #userid#
+                                                                and lesson not in ('0010', '0011', '0012', '0013', '0014', '0015','0016', '0017', '0018')
+                                                                AND        lessonstatus = 'Y'
+                                                                ) cnt4  
+											    
+											    from DB_ROOT
+											    )
+											)
+											)as COMPLETED_EDUCHECK_CNT
+											]]>	
+									      from DB_ROOT
+									       </isEqual>
+									       
+				<isNotEqual property="subjOneThreeYn" compareValue="Y">
+				  SELECT
+				   	COUNT (0) COMPLETED_EDUCHECK_CNT		  			
+		          FROM tz_progress a
+		               ,TZ_SUBJLESSON B
+		         where b.subj    = #p_subj#
+		           and a.subj    = #p_subj#
+		           and a.[year]    = #p_year#
+		           and a.subjseq = #p_subjseq#
+		           AND A.LESSON = B.LESSON
+                   AND A.SUBJ = B.SUBJ
+                   AND A.OID = '1'
+		           
+					<isNotEmpty property="p_userid">
+			           and userid  = #p_userid#
+					</isNotEmpty>
+					<isEmpty property="p_userid">
+			           and userid  = #userid#
+					</isEmpty>
+		           and lessonstatus = 'Y'
+		         </isNotEqual>
+		         
+		        ) a,
+		        (
+	        	<isEqual property="subjOneThreeYn" compareValue="Y">
+	   				select '30' as total_cnt from DB_ROOT
+	   			</isEqual>
+				<isNotEqual property="subjOneThreeYn" compareValue="Y">
+	  				<![CDATA[   			
+			        select count(0) total_cnt
+			        	from tz_subjlesson
+			        	where subj = #p_subj# and lesson != '00' and lesson != '99'
+			        ]]>							
+				</isNotEqual>
+		          ) b
+	</select>
+	
+	<select id="studyManageDAO.getNewScormProgress" parameterClass="map" resultClass="String">
+		SELECT ROUND (decode( b.total_cnt, 0 , a.completed_educheck_cnt, (a.completed_educheck_cnt * 100 / b.total_cnt)) , 2) AS tstep
+		  FROM (
+                    select count(0) as completed_educheck_cnt
+                      from tb_lcms_course_map a, tb_lcms_cmi_objectinfo b
+                     where a.subj    = #p_subj#
+                       and a.[year]    = #p_year#
+                       and a.subjseq = #p_subjseq#
+                       and a.course_map_seq = b.course_map_seq
+					<isNotEmpty property="p_userid">
+                       and b.learner_id = #p_userid#
+					</isNotEmpty>
+					<isEmpty property="p_userid">
+                       and b.learner_id = #userid#
+					</isEmpty>
+               ) a,
+               (
+                select count(0) as total_cnt
+                  from tb_lcms_item
+                 where org_seq in (
+                                    select org_seq from tb_lcms_course_org a where a.subj = #p_subj#
+                                   )
+                   and rsrc_seq != 0
+               ) b
+	</select>
+	<select id="studyManageDAO.getNewNonScormProgress" parameterClass="map" resultClass="String">
+		SELECT ROUND (decode( b.total_cnt, 0 , a.completed_educheck_cnt, (a.completed_educheck_cnt * 100 / b.total_cnt)) , 2) AS tstep
+		  FROM (SELECT COUNT (0) completed_educheck_cnt
+		          FROM tb_lcms_progress
+		         where subj    = #p_subj#
+		           and [year]    = #p_year#
+		           and subjseq = #p_subjseq#
+				<isNotEmpty property="p_userid">
+		           and userid  = #p_userid#
+				</isNotEmpty>
+				<isEmpty property="p_userid">
+		           and userid  = #userid#
+				</isEmpty>
+		           and lessonstatus = 'Y'
+		        ) a,
+		        (select count(0) total_cnt
+		           from tb_lcms_lesson
+		          where subj = #p_subj# and progress_yn = 'Y') b
+	</select>
+	
+	<select id="studyManageDAO.SelectEduTimeCountOBC" parameterClass="map" resultClass="egovMap">
+    	select trunc(
+	    	           (
+	    	               sum(to_number(substr(total_time, 1, (instr(total_time, ':', 1)-1 )) )) * 60 * 60 +
+	    	               sum(to_number(substr(total_time, (instr(total_time, ':', 3)+1 ), 2) )) * 60 +
+	    	               sum(to_number(substr(total_time, (instr(total_time, ':', 6)+1 ), 2) ))
+	    	           ) DIV (60*60)
+	    	           , 0
+	    	        ) as total_time,
+	    	   trunc(
+	    	           mod(
+	    	                 (
+	    	                    sum(to_number(substr(total_time, 1, (instr(total_time, ':', 1)-1 )) )) * 60 * 60 +
+	    	                    sum(to_number(substr(total_time, (instr(total_time, ':', 3)+1 ), 2) )) * 60 +
+	    	                    sum(to_number(substr(total_time, (instr(total_time, ':', 6)+1 ), 2) ))
+	    	                 ) DIV 60
+	    	                 , 60
+	    	              )
+	    	           , 0
+	    	        ) as total_minute,
+	    	   mod(
+	    	          sum(
+	    	                to_number(substr(total_time, 1, (instr(total_time, ':', 1)-1 )) ) * 60 * 60 +
+	    	                to_number(substr(total_time, (instr(total_time, ':', 3)+1 ), 2) ) * 60 +
+	    	                to_number(substr(total_time, (instr(total_time, ':', 6)+1 ), 2) )
+	    	             )
+	    	          , 60
+	    	      ) as total_sec,
+	    	   max(substr(first_end, 1, 8)) as edudt,
+	    	   sum(lesson_count) as [count]
+		  from TZ_SUBJLESSON a, tz_progress b 
+		 where a.subj    = #p_subj#
+		   AND b.SUBJ    = a.SUBJ     
+		   and b.subj    = #p_subj#
+		   and b.[year]    = #p_year#
+		   and b.subjseq = #p_subjseq#
+		   AND b.LESSON = a.LESSON
+		   and b.oid = '1'
+		   
+		<isNotEmpty property="p_userid">
+           and b.userid  = #p_userid#
+		</isNotEmpty>
+		<isEmpty property="p_userid">
+           and b.userid  = #userid#
+		</isEmpty>
+	</select>
+	
+	<select id="studyManageDAO.SelectEduScore" parameterClass="map" resultClass="egovMap">
+		select a.score, a.tstep, a.htest, a.mtest, a.ftest,
+		       a.report, a.act, a.etc1, a.etc2, a.avtstep,
+		       a.avhtest, a.avmtest, a.avftest, a.avreport, a.avact,
+		       a.avetc1, a.avetc2, b.gradscore, b.gradstep, b.gradexam,
+		       b.gradhtest, b.gradftest, b.gradreport, b.wstep, b.wmtest,
+		       b.wftest, b.whtest, b.wreport, b.wact, b.wetc1, b.wetc2,
+		       b.gradftest_flag, b.gradhtest_flag, b.gradexam_flag, b.gradreport_flag, b.gradstep,
+		       a.isgraduated, b.edustart edustart, b.eduend eduend, b.study_count, b.subjnm, b.subjseq,
+		       (
+		       		select count(*) cnt
+		       		  from tz_subjloginid
+		       		 where subj = a.subj	
+		       		   and [year] = a.[year]
+		       		   and subjseq= a.subjseq
+		       		   and userid = a.userid
+		       ) cnt,
+		       decode(c.userid, null, 'N', 'Y') as realgraduated, b.isclosed,a.editscore
+		  from (
+			  select * from  tz_student 
+			  where userid  = #userid#
+		  ) a, tz_subjseq b, tz_stold c
+		 where b.subj    = #p_subj#
+		   and b.[year]    = #p_year#
+		   and b.subjseq = #p_subjseq#
+		   
+		   and a.subj(+)	 = b.subj
+		   and a.[year](+)    = b.[year]
+		   and a.subjseq(+) = b.subjseq
+		   and a.subj    = c.subj(+)
+		   and a.[year]    = c.[year](+)
+		   and a.subjseq = c.subjseq(+)
+		   and a.userid  = c.userid(+)
+	</select>
+	
+	<select id="studyManageDAO.getTutorInfo" parameterClass="map" resultClass="egovMap">
+		select a.tuserid, b.name, b.handphone, b.hometel, b.email, b.position_nm
+		  from tz_classtutor a, tz_member b
+		 where a.subj    = #p_subj#
+		   and a.[year]    = #p_year#
+		   and a.subjseq = #p_subjseq#
+		   and a.tuserid = b.userid
+		   and rownum    = 1
+	</select>
+	
+	<select id="studyManageDAO.selectListOrderPerson" parameterClass="map" resultClass="egovMap">
+
+             SELECT ordseq, weeklyseq, weeklysubseq, title, startdate, expiredate,                              
+                    score, isopen, restartdate, reexpiredate, weight,                                           
+                    CASE WHEN                                                                                   
+                           TO_CHAR(sysdatetime, 'YYYYMMDDHH24MISS') 
+                          BETWEEN startdate AND expiredate                                                      
+                    THEN 'Y' ELSE 'N'                                                                           
+                    END indate,                                                                                 
+                    CASE WHEN                                                                                   
+                           TO_CHAR(sysdatetime, 'YYYYMMDDHH24MISS')
+                          BETWEEN restartdate AND reexpiredate                                                  
+                    THEN 'Y' ELSE 'N'                                                                           
+                    END adddate,                                                                                
+                    (CASE WHEN (SELECT COUNT(*) FROM TU_PROJREP                                                 
+                                 WHERE ldate is not null                                                                      
+                                   AND grcode  = #p_grcode#
+                                   AND subj    = #p_subj#
+                                   AND [year]    = #p_year#
+                                   AND subjseq = #p_subjseq#
+                                   AND [CLASS]   = #p_class#
+		<isEqual property="p_grcode" compareValue="N001001">
+								   AND substr(projid, 1, 9)  = #hakbun#
+		</isEqual>
+		<isNotEqual property="p_grcode" compareValue="N001001">
+								   AND projid  = #userid#
+		</isNotEqual>
+            
+                                   AND ordseq = a.ordseq ) > 0   
+                    THEN 'Y' ELSE 'N' END                        
+                    ) submityn, PERFECTSCORE, SUBMITSCORE, NOTSUBMITSCORE,
+            	    (select score from TU_PROJREP where grcode = a.grcode and subj=a.subj and  [year]=a.[year] and subjseq=a.subjseq and [CLASS]=a.[CLASS] and projid=#userid# and ordseq=a.ordseq) as user_score           
+             ,(select realfile from tu_projrep  WHERE grcode = a.grcode 
+             AND subj = a.subj	
+             AND [year] = a.[year] 
+             AND subjseq = a.subjseq
+             AND [CLASS] = a.[CLASS] 
+             AND projid = #userid#) realfile 
+             ,(select newfile from tu_projrep  WHERE grcode = a.grcode 
+             AND subj = a.subj	
+             AND [year] = a.[year] 
+             AND subjseq = a.subjseq	
+             AND [CLASS] = a.[CLASS] 	
+             AND projid = #userid#) newfile  
+               FROM tu_projord a                                 
+              WHERE 1=1                                          
+                AND grcode  = #p_grcode#
+                AND subj    = #p_subj#
+                AND [year]    = #p_year#
+                AND subjseq = #p_subjseq#
+                AND [CLASS]   = #p_class#
+                AND reptype = 'P' AND DELYN != 'Y'
+	</select>
+	
+	<select id="studyManageDAO.selectWstep" parameterClass="map" resultClass="String">
+		select gradstep as wstep
+		  from tz_subjseq
+		 where subj    = #p_subj#
+		   and [year]    = #p_year#
+		   and subjseq = #p_subjseq#
+	</select>
+	<select id="studyManageDAO.selectOldlesson" parameterClass="map" resultClass="int">
+		select count(0) datecnt from tz_subjlesson where subj = #p_subj# and lesson != '00' and lesson != '99' 
+	</select>
+	
+	<select id="studyManageDAO.selectAttendCnt" parameterClass="map" resultClass="int">
+		select nvl((
+			select 
+			nvl(
+			(
+			    select count(0) from tz_attendance 
+			    where subj = a.subj and [year] = a.[year] and subjseq = a.subjseq and userid = a.userid
+			    and isattend = 'O'
+			    and attdate between substr(b.edustart, 0, 8) and substr(b.eduend, 0, 8)
+			), 0) as attendcnt
+			from  tz_student a, tz_subjseq b
+			where a.subj      = #p_subj#
+			and a.[year]      = #p_year#
+			and a.subjseq   = #p_subjseq#
+			
+			<isNotEmpty property="p_userid">
+	           and a.userid  = #p_userid#
+			</isNotEmpty>
+			<isEmpty property="p_userid">
+	           and a.userid  = #userid#
+			</isEmpty>
+			
+			and a.subj      = b.subj
+			and a.[year]      = b.[year]
+			and a.subjseq   = b.subjseq
+		), 0) as cnt
+        from DB_ROOT
+	</select>
+	
+	
+	<select id="studyManageDAO.selectOldProgress" parameterClass="map" resultClass="int">
+		select count(0) as edudatecnt
+		  from TZ_SUBJLESSON a, tz_progress b 
+		 where a.subj    = #p_subj#
+		   and b.subj    = #p_subj#
+		   and b.[year]    = #p_year#
+		   and b.subjseq = #p_subjseq#
+		   and a.subj = b.subj
+		   AND b.LESSON = a.LESSON
+		   and b.oid = '1'
+		   
+		<isNotEmpty property="p_userid">
+           and userid  = #p_userid#
+		</isNotEmpty>
+		<isEmpty property="p_userid">
+           and userid  = #userid#
+		</isEmpty>
+		   and lessonstatus = 'Y'
+	</select>
+	
+	<select id="studyManageDAO.selectNewScormlesson" parameterClass="map" resultClass="int">
+		select count(0) datecnt from tb_lcms_organization where course_cd = #p_subj#
+	</select>
+	
+	<select id="studyManageDAO.selectNewScormProgress" parameterClass="map" resultClass="int">
+		select count(0) as edudatecnt
+		  from tb_lcms_course_map a, tb_lcms_cmi_objectinfo b
+		 where a.subj    = #p_subj#
+		   and a.[year]    = #p_year#
+		   and a.subjseq = #p_subjseq#
+		   and a.course_map_seq = b.course_map_seq
+		<isNotEmpty property="p_userid">
+		   and b.learner_id = #p_userid#
+		</isNotEmpty>
+		<isEmpty property="p_userid">
+		   and b.learner_id = #userid#
+		</isEmpty>
+	</select>
+	
+	<select id="studyManageDAO.selectNewNonscormlesson" parameterClass="map" resultClass="int">
+		select count(0) datecnt from tb_lcms_lesson where subj = #p_subj# and progress_yn = 'Y'
+	</select>
+	
+	<select id="studyManageDAO.selectNewNonscormProgress" parameterClass="map" resultClass="int">
+		select count(0) as edudatecnt
+		  from tb_lcms_progress 
+		 where subj    = #p_subj#
+		   and [year]    = #p_year#
+		   and subjseq = #p_subjseq#
+		<isNotEmpty property="p_userid">
+           and userid  = #p_userid#
+		</isNotEmpty>
+		<isEmpty property="p_userid">
+           and userid  = #userid#
+		</isEmpty>
+		   and nvl(lesson_count, 0) > 0
+	</select>
+	
+	<select id="studyManageDAO.selectGongList" parameterClass="map" resultClass="egovMap">
+		select seq, addate, title, to_char(sysdatetime, 'yyyyMMddhh24') as today
+		  from  (
+		  			select seq, addate, title
+		  			from   tz_gong
+		  			where  subj = #p_subj#
+		  			and    [year] = #p_year#
+		  			and    subjseq = #p_subjseq#
+		  			order by addate desc
+		        )
+		 where  rownum <![CDATA[<=]]> 3
+	</select>
+	
+	<select id="studyManageDAO.selectBoardList" parameterClass="map" resultClass="egovMap">
+		select title, ldate, tabseq, seq, to_char(sysdatetime, 'yyyyMMddhh24') as today
+		  from  (
+		  			select b.title, b.ldate, a.tabseq, b.seq
+		  			from   tz_bds a, tz_board b
+		  			where  a.tabseq = b.tabseq
+		  			and    a.type = #p_type#
+		  			and    a.subj = #p_subj#
+		  			and    b.levels = 1
+		  			order by b.ldate desc
+		        )
+		 where  rownum <![CDATA[<=]]> 3
+	</select>
+	
+	<select id="studyManageDAO.selectQnaBoardList" parameterClass="map" resultClass="egovMap">
+		select fuserid, title, ldate, tabseq, seq ,chk , luserid, to_char(sysdatetime, 'yyyyMMddhh24') as today, isopen
+		  from  (
+		  			select b.title, b.ldate, a.tabseq, b.seq ,DECODE(userid,'"+s_userid+"','Y',NVL(ISOPEN,'N')) AS chk, isopen
+		  			     ,(select luserid from tz_subjseq ts where ts.subj = a.subj and ts.[year] = b.[year] and ts.subjseq = b.subjseq) luserid
+		  			     , (select userid 
+				       		from tz_board tb
+				       		where tabseq = b.tabseq    		
+	   	  				      and tb.subj   = #p_subj#
+  				    		  and tb.[year]   = #p_year#
+				              and tb.subjseq= #p_subjseq#
+				              and tb.refseq = b.refseq
+				              and seq = (select min(seq )
+				       		from tz_board tb2
+				       		where tabseq = b.tabseq    		
+	   	  				      and tb2.subj   = #p_subj#
+  				    		  and tb2.[year]   = #p_year#
+				              and tb2.subjseq= #p_subjseq#
+				              and tb2.refseq = b.refseq)
+				              ) as fuserid
+		  			from   tz_bds a, tz_board b
+		  			where  a.tabseq = b.tabseq
+		  			and    a.type = #p_type#
+		  			and    a.subj = #p_subj#
+		  			and    b.[year] = #p_year#
+		  			and    b.subjseq = #p_subjseq#
+		  			and    b.levels = 1
+		  			order by b.ldate desc
+		        )
+		 where  rownum <![CDATA[<=]]> 3
+	</select>
+	
+	<select id="studyManageDAO.getSulData" parameterClass="map" resultClass="int">
+		select decode(nvl(a.sulpapernum, 0), 0, 0, 1)
+			   + decode(nvl(a.presulpapernum, 0), 0, 0, 1)
+			   + decode(nvl(a.aftersulpapernum, 0), 0, 0, 1) as suldata
+	      from tz_subjseq a
+	     where subj    = #p_subj#
+	       and [year]    = #p_year#
+	       and subjseq = #p_subjseq#
+	</select>
+	
+	<select id="studyManageDAO.getUserData" parameterClass="map" resultClass="int">
+		select count(a.answers) researchcnt
+		  from tz_suleach a
+	     where subj    = #p_subj#
+	       and [year]    = #p_year#
+	       and subjseq = #p_subjseq#
+	       and userid  = #userid#
+	       and grcode != 'ALL'
+	</select>
+	
+	<select id="studyManageDAO.getSulDate" parameterClass="map" resultClass="egovMap">
+		select aftersulsdate, aftersuledate
+		  from tz_subjseq a
+	     where subj    = #p_subj#
+	       and [year]    = #p_year#
+	       and subjseq = #p_subjseq#
+	       and grcode != 'ALL'
+	</select>
+	
+	<select id="studyManageDAO.getContenttype" parameterClass="map" resultClass="egovMap">
+		select nvl(contenttype, 'N') as contenttype,
+		       case when substr(a.indate, 0, 8) >= '20120501' then 'NEW' else 'OLD' end study_type,
+		       decode(a.upperclass, 'MBL', 'Y', 'N') as mobile_check,
+		       content_lesson_all_view
+		  from tz_subj a
+		 where subj = #p_subj#
+	</select>
+	
+	<select id="studyManageDAO.selectOldItemList" parameterClass="map" resultClass="egovMap">
+		select 
+		    [MODULE],
+		    module_nm,
+		    lesson,
+		    lesson_nm,
+		    owner,
+		    starting,
+		    edu_time,
+		    edu_time_yn,
+		    lessonstatus,
+		    total_time,
+		    first_edu,
+		    lesson_count,
+		    ldate,
+		    mobile_url,
+		    total_lesson_count,
+		    study_count,
+		    study_end_count,
+		    (TRUNC(total_lesson_time DIV (60*60)))||':'||
+            LPad(TRUNC(Mod((total_lesson_time DIV 60),60)),2,0)||':' ||
+            LPad(TRUNC(Mod(total_lesson_time,60)),2,0) AS total_lesson_time,
+            trunc(total_lesson_time * (80 DIV 100.0)) as suryo_lesson_time,
+            final_status,
+            start_edu,
+            last_edu,
+            (TRUNC(user_lesson_time DIV (60*60)))||':'||
+            LPad(TRUNC(Mod((user_lesson_time DIV 60),60)),2,0)||':' ||
+            LPad(TRUNC(Mod(user_lesson_time,60)),2,0) AS user_lesson_time,
+            total_lesson_time as total_lesson_time_num,
+            user_lesson_time as user_lesson_time_num
+            , Case When total_lesson_count > 0 And total_lesson_count = study_end_count Then 'Y' 
+                 When study_count > 0 Then 'N'
+                 Else 'C' End lessonfinalstatus
+		from (
+			select /*+ index(c TZ_PROGRESSPK) */ a.[MODULE], 
+				a.sdesc as module_nm, 
+				b.lesson, 
+				b.sdesc as lesson_nm, 
+				b.owner, 
+				b.starting,  
+				nvl(b.edu_time, 0) edu_time, 
+				b.edu_time_yn,
+	            c.lessonstatus, 
+	            nvl(c.total_time, 0) total_time, 
+	            c.first_edu, nvl(c.lesson_count, 0) as lesson_count, 
+	            c.ldate, 
+	            a.mobile_url, 
+	            (select count(0) 
+	            	from tz_subjlesson 
+	            	where subj = a.subj 
+	            	and [MODULE] = a.[MODULE]
+					<isEqual property="p_contentLessonAllView" compareValue="Y">
+				 		and b.lesson = LESSON 
+				 	</isEqual>
+	            ) as total_lesson_count,
+	            (
+	                select /*+ index(aa TZ_PROGRESSPK) */ count(0) 
+	                from tz_subjmodule aa 
+                        ,tz_subjlesson bb
+                        ,tz_progress cc
+                    --inner join tz_subjlesson bb on aa.subj=bb.subj and aa.lesson=bb.lesson 
+                    where aa.subj       = a.subj 
+				           and aa.subj       = bb.subj
+				           and aa.[MODULE]     = bb.[MODULE]
+				           and bb.subj       = cc.subj
+				           and bb.lesson     = cc.lesson
+				           and cc.[year]    = #p_year#
+				           and cc.subjseq = #p_subjseq# 
+				           and cc.userid  = #userid#
+				           and bb.lesson = cc.lesson
+			               and cc.oid = '1'  
+			               and bb.[MODULE] = a.[MODULE]
+					<isEqual property="p_contentLessonAllView" compareValue="Y">
+				 		and b.lesson = cc.LESSON 
+				 	</isEqual>
+	            ) as study_count,
+	            (
+	                select /*+ index(aa TZ_PROGRESSPK) */ min(cc.first_edu) 
+	               from tz_subjmodule aa 
+                        ,tz_subjlesson bb
+                        ,tz_progress cc
+                    --inner join tz_subjlesson bb on aa.subj=bb.subj and aa.lesson=bb.lesson 
+                    where aa.subj       = a.subj 
+				           and aa.subj       = bb.subj
+				           and aa.[MODULE]     = bb.[MODULE]
+				           and bb.subj       = cc.subj
+				           and bb.lesson     = cc.lesson
+				           and cc.[year]    = #p_year#
+				           and cc.subjseq = #p_subjseq# 
+				           and cc.userid  = #userid#
+				           and bb.lesson = cc.lesson
+			               and cc.oid = '1'  
+			               and bb.[MODULE] = a.[MODULE]
+					<isEqual property="p_contentLessonAllView" compareValue="Y">
+				 		and b.lesson = cc.LESSON 
+				 	</isEqual>
+	            ) as start_edu,
+	            (
+	                select /*+ index(aa TZ_PROGRESSPK) */ max(cc.ldate) 
+	                from tz_subjmodule aa 
+                        ,tz_subjlesson bb
+                        ,tz_progress cc
+                    --inner join tz_subjlesson bb on aa.subj=bb.subj and aa.lesson=bb.lesson 
+                    where aa.subj       = a.subj 
+				           and aa.subj       = bb.subj
+				           and aa.[MODULE]     = bb.[MODULE]
+				           and bb.subj       = cc.subj
+				           and bb.lesson     = cc.lesson
+				           and cc.[year]    = #p_year#
+				           and cc.subjseq = #p_subjseq# 
+				           and cc.userid  = #userid#
+				           and bb.lesson = cc.lesson
+			               and cc.oid = '1'  
+			               and bb.[MODULE] = a.[MODULE]
+					<isEqual property="p_contentLessonAllView" compareValue="Y">
+				 		and b.lesson = cc.LESSON 
+				 	</isEqual>
+	            ) as last_edu,
+	            (
+	                select /*+ index(aa TZ_PROGRESSPK) */ count(0) 
+	                from tz_subjmodule aa 
+                        ,tz_subjlesson bb
+                        ,tz_progress cc
+                    --inner join tz_subjlesson bb on aa.subj=bb.subj and aa.lesson=bb.lesson 
+                    where aa.subj       = a.subj 
+				           and aa.subj       = bb.subj
+				           and aa.[MODULE]     = bb.[MODULE]
+				           and bb.subj       = cc.subj
+				           and bb.lesson     = cc.lesson
+				           and cc.[year]    = #p_year#
+				           and cc.subjseq = #p_subjseq# 
+				           and cc.userid  = #userid#
+				           and bb.lesson = cc.lesson
+			               and cc.oid = '1'  
+			               and bb.[MODULE] = a.[MODULE]
+			               and cc.lessonstatus = 'Y'
+	   	                   and cc.final_status = 'Y'
+	   	                   
+		                    <isEqual property="p_contentLessonAllView" compareValue="Y">
+						 		and b.lesson = cc.LESSON 
+						 	</isEqual>
+	            ) as study_end_count,
+	            (SELECT CAST(sum(lesson_time) as integer)
+	              FROM   tz_subjlesson
+	             WHERE   subj = a.subj AND [MODULE] = a.[MODULE]
+                     <isEqual property="p_contentLessonAllView" compareValue="Y">
+				 		and b.lesson = LESSON 
+				 	</isEqual>
+	             )
+	              AS total_lesson_time,
+	              c.final_status,
+	            nvl((
+                    select /*+ index(aa TZ_PROGRESSPK) */ cast(sum(cc.total_time) as integer)
+                    from tz_subjmodule aa 
+                        ,tz_subjlesson bb
+                        ,tz_progress cc
+                    --inner join tz_subjlesson bb on aa.subj=bb.subj and aa.lesson=bb.lesson 
+                    where aa.subj       = a.subj 
+				           and aa.subj       = bb.subj
+				           and aa.[MODULE]     = bb.[MODULE]
+				           and bb.subj       = cc.subj
+				           and bb.lesson     = cc.lesson
+				           and cc.[year]    = #p_year#
+				           and cc.subjseq = #p_subjseq# 
+				           and cc.userid  = #userid#
+				           and bb.lesson = cc.lesson
+			               and cc.oid = '1'  
+			               and bb.[MODULE] = a.[MODULE]
+                           
+                           <isEqual property="p_contentLessonAllView" compareValue="Y">
+					 		and b.lesson = cc.LESSON 
+					 	   </isEqual>
+	                
+                ), 0) as user_lesson_time
+			  from tz_subjmodule a, tz_subjlesson b, tz_progress c
+	         where a.subj       = #p_subj#
+	           and a.subj       = b.subj
+	           and a.[MODULE]     = b.[MODULE]
+	           and b.subj       = c.subj(+)
+	           and b.lesson     = c.lesson(+)
+	           and c.[year](+)    = #p_year#
+	           and c.subjseq(+) = #p_subjseq#
+	           and c.userid(+)  = #userid#
+	           and b.lesson = c.lesson(+)
+               and c.oid(+) = '1'  
+			 order by to_number(a.[MODULE]) asc, to_number(b.lesson) asc
+		 )	 
+	</select>
+	
+	
+<!--	모바일지원과정일경우의 아이템리스트 - 웹과모바일을 통합할때 사용.. [MLEARN]은 모바일지원과정과 모바일과정의 구분자로 사용된다. LESSON코드로 사용함-->
+	<select id="studyManageDAO.selectOldItemMobileList" parameterClass="map" resultClass="egovMap">
+	
+		select [MODULE], sdesc as lesson_name , nvl(max(m_end), 0) edu_time, '1' as rsrc_seq, 'MLEARN' as lesson
+            , nvl(sum(total_time1), 0) total_time1, sum(lesson_count) lesson_count, mobile_url
+            , study_count, total_lesson_count, study_end_count, study_final_count
+            , Case When total_lesson_count > 0 And total_lesson_count = study_final_count Then 'Y' 
+             	When study_count > 0 Then 'N'
+             	Else 'C' End lessonstatus, total_time
+		from (
+		
+		select /*+ index(c TZ_PROGRESSPK) */ a.[MODULE], a.sdesc, b.lesson, b.sdesc as lesson_nm, b.owner, b.starting,  nvl(b.edu_time, 0) edu_time, b.edu_time_yn, b.m_end,
+                c.lessonstatus, c.first_edu, nvl(c.lesson_count, 0) as lesson_count, c.ldate, a.mobile_url, 
+                trunc(round(mod(( TO_DATETIME(c.ldate, 'yyyymmddhh24miss') - TO_DATETIME(c.first_edu, 'yyyymmddhh24miss') ) * 24 * 60, 1) * 60)) total_time1,
+                (select count(0) from tz_subjlesson where subj = a.subj and [MODULE] = a.[MODULE]) as total_lesson_count,
+                (
+                    select /*+ index(aa TZ_PROGRESSPK) */  count(0) from tz_progress aa inner join tz_subjlesson bb on aa.subj=bb.subj and aa.lesson=bb.lesson 
+                    where aa.subj = a.subj 
+                    and aa.[year] = #p_year#
+                    and aa.subjseq = #p_subjseq# 
+                    and aa.userid = #userid#
+                    --and aa.lessonstatus = 'Y'
+                    and bb.[MODULE] = a.[MODULE]
+                ) as study_count,
+                (
+                    select /*+ index(aa TZ_PROGRESSPK) */  count(0) from tz_progress aa inner join tz_subjlesson bb on aa.subj=bb.subj and aa.lesson=bb.lesson 
+                    where aa.subj = a.subj 
+                    and aa.[year] = #p_year#
+                    and aa.subjseq = #p_subjseq# 
+                    and aa.userid = #userid#
+                    and aa.lessonstatus = 'Y'
+                    and bb.[MODULE] = a.[MODULE]
+                ) as study_end_count,
+                (
+                    select /*+ index(aa TZ_PROGRESSPK) */  count(0) from tz_progress aa inner join tz_subjlesson bb on aa.subj=bb.subj and aa.lesson=bb.lesson 
+                    where aa.subj = a.subj 
+                    and aa.[year] = #p_year#
+                    and aa.subjseq = #p_subjseq# 
+                    and aa.userid = #userid#
+                    and aa.lessonstatus = 'Y'
+                    and aa.final_status = 'Y'
+                    and bb.[MODULE] = a.[MODULE]
+                ) as study_final_count,
+                (
+                    select /*+ index(aa TZ_PROGRESSPK) */  sum(nvl(to_number(aa.total_time),0)) from tz_progress aa inner join tz_subjlesson bb on aa.subj=bb.subj and aa.lesson=bb.lesson 
+                    where aa.subj = a.subj 
+                    and aa.[year] = #p_year#
+                    and aa.subjseq = #p_subjseq# 
+                    and aa.userid = #userid#
+                 --   and aa.lessonstatus = 'Y'
+                    and bb.[MODULE] = a.[MODULE]
+                ) as total_time
+		  from tz_subjmodule a, tz_subjlesson b, tz_progress c
+         where a.subj       = #p_subj#
+           and a.subj       = b.subj
+           and a.[MODULE]     = b.[MODULE]
+           and b.subj       = c.subj(+)
+           and b.lesson     = c.lesson(+)
+           and c.[year](+)    = #p_year#
+           and c.subjseq(+) = #p_subjseq#
+           and c.userid(+)  = #userid#
+		 ) aa 
+         
+         group by [MODULE], sdesc, mobile_url
+         , study_count, total_lesson_count, study_end_count, study_final_count, total_time
+         order by [MODULE]
+	</select>
+	
+	<select id="studyManageDAO.selectLcmsCourseMapCount" parameterClass="map" resultClass="int">
+		select count(0) from tb_lcms_course_map where subj = #p_subj# and [year] = #p_year# and subjseq = #p_subjseq#
+	</select>
+	
+	<insert id="studyManageDAO.insertLcmsCourseMap">
+		<selectKey resultClass="int" keyProperty="courseMapSeq">
+            select sq_course_map_seq.nextval ascourseMapSeq from DB_ROOT
+        </selectKey>
+		insert into tb_lcms_course_map(
+		    course_map_seq, subj, [year], subjseq, lms_course_cd, service_yn
+		)
+		values(
+		    #courseMapSeq#,
+		    #p_subj#,
+		    #p_year#,
+		    #p_subjseq#,
+		    #p_subj#,
+		    'Y'
+		)
+	</insert>
+	
+	<select id="studyManageDAO.selectNewScormItemList" parameterClass="map" resultClass="egovMap">
+		select a.org_seq, a.crs_org_no, a.org_id, a.org_title, a.item_seq, a.high_item_seq, a.org_item_no, a.item_id, a.item_id_ref,
+		       a.item_title, a.item_type, a.item_open, a.item_tl_action, a.item_max_time, a.item_start_file, a.rsrc_seq,
+		       (select count(0) from tb_lcms_scorm_sequence where org_seq = a.org_seq and item_seq = a.item_seq) as imsss,
+		       (select count(0) from tb_lcms_item where org_seq = a.org_seq) as item_count,
+		       b.total_time, b.completion_status, nvl(b.attempt, 0) as attempt,
+		       case when (select count(0) from tb_lcms_cmi_objectinfo where course_map_seq = a.course_map_seq and org_seq = a.org_seq and learner_id = #userid#) > 0
+		            then case when (select count(0) from tb_lcms_item where org_seq = a.org_seq and rsrc_seq != 0)
+		                            =
+		                           (select count(0) from tb_lcms_cmi_objectinfo
+		                             where course_map_seq = a.course_map_seq and org_seq = a.org_seq and completion_status = 'completed' and learner_id = #userid#)
+		                      then '2'
+		                      else '1'
+		                  end
+		            else '0'
+		        end as complete_yn
+		  from (
+		        select a.course_map_seq, a.subj, a.[year], a.subjseq, b.org_seq, b.org_id, b.org_title, b.crs_org_no, c.item_seq, c.org_item_no,
+		               c.high_item_seq, c.item_id, c.item_id_ref, c.item_title, c.item_start_file, c.item_threshold, c.rsrc_seq, c.item_type,
+		               c.item_open, c.item_tl_action, c.item_max_time
+		          from tb_lcms_course_map a, tb_lcms_organization b, tb_lcms_item c
+		         where a.subj          = #p_subj#
+		           and a.[year]          = #p_year#
+		           and a.subjseq       = #p_subjseq#
+		           and a.lms_course_cd = b.course_cd
+		           and b.org_seq       = c.org_seq
+		       ) a, tb_lcms_cmi_objectinfo b
+		 where a.course_map_seq = b.course_map_seq(+)
+		   and a.org_seq        = b.org_seq(+)
+		   and a.item_id        = b.item_id(+)
+		   and b.learner_id(+)  = #userid#
+		 order by crs_org_no, org_item_no
+	</select>
+	
+	<select id="studyManageDAO.selectNewXiniceItemList" parameterClass="map" resultClass="egovMap">
+		select a.[MODULE], a.module_name, b.lesson, b.lesson_name,
+		       b.starting, b.edu_time, b.edu_time_yn, b.page_count,
+		       c.lessonstatus, nvl(c.lesson_count,0) as lesson_count,
+		       (select count(0) from tb_lcms_lesson where subj = b.subj and [MODULE] = b.[MODULE]) as lesson_cnt,
+		       (select count(0) from tb_lcms_progress 
+		         where subj = a.subj and [year] = #p_year# and subjseq = #p_subjseq#
+		           and [MODULE] = b.[MODULE] and lessonstatus = 'Y'
+		           and userid = #userid#) as study_cnt,
+		       (select count(0) from tb_lcms_progress 
+		         where subj = a.subj and [year] = #p_year# and subjseq = #p_subjseq#
+		           and [MODULE] = b.[MODULE]
+		           and userid = #userid#) as incomplete
+		  from tb_lcms_module a, tb_lcms_lesson b, tb_lcms_progress c
+		 where a.subj = #p_subj#
+		   and a.subj = b.subj
+		   and a.[MODULE] = b.[MODULE]
+		   and c.[year](+)  = #p_year#
+           and c.subjseq(+) = #p_subjseq#
+           and b.subj = c.subj(+)
+           and b.[MODULE] = c.[MODULE](+)
+           and b.lesson = c.lesson(+)
+           and c.userid(+) = #userid#
+		 order by to_number(a.[MODULE]), to_number(b.lesson)
+	</select>
+	
+	<select id="studyManageDAO.selectNewNonScormItemList" parameterClass="map" resultClass="egovMap">
+		select a.[MODULE], a.module_name, b.lesson, b.[DEPTH], b.starting, b.edu_time, b.edu_time_yn,
+		       b.progress_yn, b.page_count, b.lesson_name, nvl(c.total_time, 0) total_time,
+		       c.lessonstatus, nvl(c.lesson_count,0) as lesson_count,
+		       (select count(0) from tb_lcms_lesson where subj = b.subj and [MODULE] = b.[MODULE] and progress_yn = 'Y') as lesson_cnt,
+		       (
+		        select count(0) from tb_lcms_progress
+		         where subj = b.subj and [year] = #p_year# and subjseq = #p_subjseq#
+		           and [MODULE] = b.[MODULE] and lessonstatus = 'Y'
+		           and userid = #userid#
+		       ) as study_cnt,
+		       (
+		        select count(0) from tb_lcms_progress 
+		         where subj = b.subj and [year] = #p_year# and subjseq = #p_subjseq#
+		           and [MODULE] = b.[MODULE]
+		           and userid = #userid#
+		       ) as incomplete
+		  from tb_lcms_module a, tb_lcms_lesson b, tb_lcms_progress c
+		 where a.subj = #p_subj#
+		   and a.subj = b.subj
+		   and a.[MODULE] = b.[MODULE]
+		   and c.[year](+) = #p_year#
+           and c.subjseq(+) = #p_subjseq#
+           and b.subj = c.subj(+)
+           and b.[MODULE] = c.[MODULE](+)
+           and b.lesson = c.lesson(+)
+           and c.userid(+) = #userid#
+		 order by to_number(a.[MODULE]), to_number(b.lesson)
+	</select>
+	
+	<select id="studyManageDAO.selectSulpaperList" parameterClass="map" resultClass="egovMap">
+		select a.sulpapernum, b.sulpapernm, a.aftersulsdate, a.aftersuledate, decode(c.userid, null, 'N', 'Y') as answer_yn,
+		       case when to_char(sysdate, 'yyyyMMdd') between a.aftersulsdate and a.aftersuledate
+		            then 'Y'
+		            else 'N'
+		        end as indata, b.progress,
+		       (select count(0) from tz_suleach where subj = a.subj and [year] = a.[year] and subjseq = a.subjseq and sulpapernum = a.sulpapernum and userid = #userid#) as eachcnt
+		  from tz_subjseq a, tz_sulpaper b, tz_suleach c
+		 where a.subj    	 = #p_subj#
+		   and a.[year]   	 = #p_year#
+		   and a.subjseq 	 = #p_subjseq#
+		   and a.sulpapernum = b.sulpapernum
+		   and a.subj	     = c.subj(+)
+		   and a.[year] 		 = c.[year](+)
+		   and a.subjseq 	 = c.subjseq(+)
+		   and c.userid(+)   = #userid#
+	</select>
+	<select id="studyManageDAO.selectReportList" parameterClass="map" resultClass="egovMap">
+		select a.[CLASS], a.ordseq, a.reptype, a.isopen, a.title, a.contents, a.startdate, a.expiredate, a.restartdate, a.reexpiredate,
+		       case when to_char(sysdate, 'yyyyMMdd') between substr(a.startdate, 1, 8) and substr(a.expiredate, 1, 8)
+		            then 'Y'
+		            else 'N'
+		        end as indata,
+		       case when to_char(sysdate, 'yyyyMMdd') between substr(a.restartdate, 1, 8) and substr(a.reexpiredate, 1, 8)
+		            then 'Y'
+		            else 'N'
+		        end as re_indata,
+		         <![CDATA[
+		         --decode( b.projid, null, 'N', 'Y') as answer_yn,
+		        case when (b.ldate is null or b.ldate = '') then 'N'
+		            else case when (b.ldate <= a.expiredate)
+		                      then case when b.ldate between a.startdate and a.expiredate
+		                                then 'Y' else 'Y'
+		                            end
+		                      else case when b.ldate between a.restartdate and a.reexpiredate
+		                                then 'Y' else 'Y'
+		                            end
+		                  end
+		        end as answer_yn
+		        ]]>
+		  from tu_projord a, tu_projrep b
+		 where a.subj 		= #p_subj#
+		   and a.[year]		= #p_year#
+		   and a.subjseq 	= #p_subjseq#
+		   and a.delyn 		= 'N'
+		   and a.subj    	= b.subj(+)
+		   and a.[year]    	= b.[year](+)
+		   and a.subjseq 	= b.subjseq(+)
+		   and a.[CLASS]   	= b.[CLASS](+)
+		   and a.ordseq   	= b.ordseq(+)
+		   and b.projid(+)	= #userid#
+	</select>
+	
+	<select id="studyManageDAO.selectExamList" parameterClass="map" resultClass="egovMap">
+	SELECT 
+	 PAPERNUM,
+	       LESSON,
+	       EXAMTYPE,
+	       get_codenm('0012', examtype) as examtype_nm,
+	       LESSONSTART,
+	       LESSONEND,
+	       EXAMTIME,
+	       EXAMPOINT,
+	       EXAMCNT,
+	       TOTALSCORE,
+	       RETRYCNT,
+	       USERRETRY,
+	       STARTDT,
+	       ENDDT,
+	       INDATA,
+	       ANSWER_YN,
+	       ANSWERTEMP_YN,
+	       SULCHECK,
+	       EXAMSUBJ,
+	       SUBMIT_YN,
+	       nvl(submit_temp_yn,'N') as submit_temp_yn,
+	       STARTED,
+	       EXTRATIME
+	 FROM( 
+		select a.papernum, a.lesson, a.examtype, 
+		--get_codenm('0012', a.examtype) as examtype_nm, 
+		a.lessonstart, a.lessonend,
+		       a.examtime, a.exampoint, a.examcnt, a.totalscore, a.retrycnt, b.userretry, a.startdt, a.enddt,
+		       -- case when to_char(sysdate, 'yyyyMMdd') between a.startdt and a.enddt
+		       --     then 'Y'
+		       --     else 'N'
+		       -- end indata,		       
+				CASE WHEN (SELECT tstep FROM tz_student WHERE  [year] = a.[year] AND subj = a.subj AND subjseq = a.subjseq AND userid IN (#userid#)) >=90 THEN  'Y' 
+				ELSE 'N'
+				END indata,
+		       decode(b.userid, null, 'N', 'Y') as answer_yn,
+		       decode(c.userid, null, 'N', 'Y') as answertemp_yn,
+               case when (select nvl(SULPAPERNUM, 0) from tz_subjseq where subj = a.subj and [year] = a.[year] and subjseq = a.subjseq) > 0
+                     then case when (select count(0) from tz_suleach where subj = a.subj and [year] = a.[year] and subjseq = a.subjseq and userid = #userid#) > 0
+                                 then 'Y'
+                                 else 'N' end
+                     else 'Y'
+                end as sulcheck,
+                a.examsubj
+                , b.submit_yn
+                , c.submit_yn as submit_temp_yn
+                , b.started
+                , DECODE((SELECT HANDICAP_YN FROM TZ_MEMBER WHERE USERID = #userid#), 'Y', DECODE(A.HANDICAP_EXAMTIME, NULL, A.EXAMTIME, A.HANDICAP_EXAMTIME), A.EXAMTIME) EXTRATIME
+		  from TZ_EXAMPAPER a, tz_examresult b, tz_examresulttemp c
+		 where a.subj      = #p_subj#
+		   and a.[year]      = #p_year#
+		   and a.subjseq   = #p_subjseq#
+		   and a.subj      = b.subj(+)
+		   and a.[year]      = b.[year](+)
+		   and a.subjseq   = b.subjseq(+)
+		   and a.lesson    = b.lesson(+)
+		   and a.examtype  = b.examtype(+)
+		   and a.papernum  = b.papernum(+)
+		   and b.userid(+) = #userid#
+		   
+		   and a.subj      = c.subj(+)
+           and a.[year]      = c.[year](+)
+           and a.subjseq   = c.subjseq(+)
+           and a.lesson    = c.lesson(+)
+           and a.examtype  = c.examtype(+)
+           and a.papernum  = c.papernum(+)
+           and c.userid(+) = #userid#
+           and a.examtype = 'E'
+           
+     )      
+	</select>
+	
+	<select id ="studyManageDAO.checkDuplicateIP" parameterClass="map" resultClass="Integer">
+		select count(user_ip) from tz_examresult where user_ip = #user_ip# and ended > #user_now#
+	</select>
+	
+	
+<!--	모바일지원여부 가져오기-->
+	<select id="studyManageDAO.selectMobileSubject" parameterClass="map" resultClass="string">
+		select mobile from tz_subj Where subj = substr(#CONTENT_ID#, 0, 9)
+	</select>
+	
+	
+<!--	모바일컨텐츠정보를 앱으로 넘기기위한 쿼리 - 모바일만 진행하는 과정 -->
+	<select id="studyManageDAO.selectMobileContentView" parameterClass="map" resultClass="egovMap">
+		select 
+		  a.subj
+		, a.subjnm 
+		, nvl(b.session_time, 0) session_time
+		from tz_subj a left outer join (
+			select * from tb_lcms_progress 
+			where userid = #userid#
+			and subj || '||' || [year] || '||' || subjseq || '||' || [MODULE] || '||' || lesson = #CONTENT_ID#
+		) b on a.subj=b.subj
+		where a.subj = substr(#CONTENT_ID#, 0, 9)
+	</select>
+	
+	
+	
+	
+	
+	
+	<!--	모바일컨텐츠정보를 앱으로 넘기기위한 쿼리 - 모바일지원과정 -->
+	<select id="studyManageDAO.selectMobileContentOldView" parameterClass="map" resultClass="egovMap">
+	<![CDATA[
+		select 
+		aaa.subj, aaa.subjnm, aaa.[MODULE], aaa.course_complete
+		
+		, trunc(TO_DATETIME(aaa.eduend, 'yyyymmddhh24'))+1 - trunc(sysdatetime)  as day_limit
+		
+		, bbb.sdesc as MODULE_nm, replace(bbb.mobile_url, '.mp4', '.smi') as caption_url
+		
+		, nvl((
+            select book_mark  from TZ_SUBJMODULE_BOOKMARK zz
+            Where zz.subj=aaa.subj 
+            and zz.[year]=substr(#CONTENT_ID#, 12, 4) 
+            and zz.subjseq=substr(#CONTENT_ID#, 18, 4)
+            and zz.[MODULE] = aaa.[MODULE]
+            and zz.userid   = #userid#
+          ), '') as book_mark
+          
+          
+
+		, Case when (select m_start from tz_subjlesson where subj=aaa.subj and [MODULE]=aaa.[MODULE] and lesson = 
+			(
+            Case When aaa.noendlesson < aaa.lesson Then aaa.noendlesson
+                Else aaa.lesson end
+            )
+		) > session_time Then
+	    (select m_start from tz_subjlesson where subj=aaa.subj and [MODULE]=aaa.[MODULE] and lesson = 
+	    	(
+            Case When aaa.noendlesson < aaa.lesson Then aaa.noendlesson
+                Else aaa.lesson end
+            )
+	    )
+		  else
+		    session_time 
+		  end session_time
+		  
+			, noendlesson, lesson as orglesson
+          
+          	, Case When noendlesson < lesson Then noendlesson
+            	Else lesson end lesson
+		from (
+		select 
+          a.subj
+        , a.subjnm 
+        , nvl(max(to_number(replace(b.session_time, ':', ''))), 0) session_time
+        , b.[MODULE]
+        
+        , (
+            select eduend from tz_subjseq z 
+            Where z.subj=a.subj 
+            and z.[year]=substr(#CONTENT_ID#, 12, 4) 
+            and z.subjseq=substr(#CONTENT_ID#, 18, 4)
+        ) as eduend
+        
+        , Case 
+            When max(b.plesson) is not null  Then max(b.plesson) 
+           Else Min(b.lesson) End as lesson
+        , Case When count(lesson) > 0 And count(lesson) = sum(finishcnt) Then 'Y' Else 'N' end as COURSE_COMPLETE
+        , max(noendlesson) noendlesson
+        from tz_subj a inner join (
+            select aa.subj, aa.[MODULE], bb.session_time, aa.lesson, bb.lesson as plesson
+            , case when bb.lessonstatus = 'Y' then 1 else 0 end as finishcnt
+            , case when bb.lessonstatus <> 'Y' then bb.lesson else '' end as noendlesson
+            from tz_subjlesson aa left outer join 
+            (select * from 
+             tz_progress 
+             where userid = #userid#
+             and subj =  substr(#CONTENT_ID#, 0, 9)
+             and [year] =  substr(#CONTENT_ID#, 12, 4)
+             and subjseq =  substr(#CONTENT_ID#, 18, 4)
+            ) bb on aa.subj=bb.subj and aa.lesson=bb.lesson
+            where aa.subj || '||' || substr(#CONTENT_ID#, 12, 4) || substr(#CONTENT_ID#, 16, 8) || aa.[MODULE] = replace(#CONTENT_ID#, '||MLEARN', '')
+                ]]>
+                <isNotEmpty property="mblLessonstatus">
+	                <isEqual property="mblLessonstatus" compareValue="N">
+	                and rownum = 1
+	             	and bb.ldate = (select max(ldate)  from 
+	             		(
+	             			select * 
+		             		from tz_progress 
+				             where userid = #userid#
+				             and subj =  substr(#CONTENT_ID#, 0, 9)
+				             and [year] =  substr(#CONTENT_ID#, 12, 4)
+				             and subjseq =  substr(#CONTENT_ID#, 18, 4)
+				             and lesson in (select lesson from tz_subjlesson 
+				             	where subj = substr(#CONTENT_ID#, 0, 9)
+				             	and [MODULE] =  substr(#CONTENT_ID#, 24, 2)
+			            	)
+			            	and LESSONSTATUS = 'N'
+	             	    )
+	                )
+	                </isEqual>
+                </isNotEmpty>
+                <![CDATA[
+        ) b on a.subj=b.subj
+        group by 
+          a.subj
+        , a.subjnm 
+        , b.[MODULE]
+        
+    )  aaa inner join tz_subjmodule bbb on aaa.subj=bbb.subj and aaa.[MODULE] = bbb.[MODULE]
+    
+    ]]>
+	</select>
+	
+	
+	
+	<!--	모바일챕터리스트 -->
+	<select id="studyManageDAO.selectMobileChapterList" parameterClass="map" resultClass="egovMap">
+		select subj, lesson, m_start, m_end from tz_subjlesson
+		where subj = substr(#CONTENT_ID#, 0, 9)
+		and [MODULE] = substr(#CONTENT_ID#, 24, 2)
+		order by lesson
+	</select>
+	
+	
+<!--	사용자의 진도가 저장되어 있는지를 확인한다.-->
+	<select id="studyManageDAO.selectMobileProgressCount" parameterClass="map" resultClass="int">
+		select count(0) cnt from tb_lcms_progress 
+		where userid = #ID#
+		and subj || '||' || [year] || '||' || subjseq || '||' || [MODULE] || '||' || lesson = #CONTENT_ID#
+	</select>
+	
+	
+<!--	레슨에 들어있는 edu_time과 starting 값을 가져오는 쿼리 -->
+	<select id="studyManageDAO.selectMobileLessonInfo" parameterClass="map" resultClass="egovMap">
+		select 
+			(edu_time * 60) as edu_time
+			, starting
+		from tb_lcms_lesson
+		where subj = #p_subj#
+		and [MODULE] = #p_module#
+		and lesson = #p_lesson#
+		and [DEPTH] = '1'
+		and rownum = 1
+	</select>	
+	
+	
+<!--	앱에서 넘어온 진도값을 넣어준다.-->
+	<insert id="studyManageDAO.insertMobileProgress">
+		insert into tb_lcms_progress(
+		    subj, [year], subjseq, [MODULE], lesson, userid, lessonstatus, session_time, total_time, lesson_count, location, indate, inuserid, ldate, luserid
+		)
+		values(
+		    #p_subj#,
+		    #p_year#,
+		    #p_subjseq#,
+		    #p_module#,
+		    #p_lesson#,
+		    #ID#,
+		    <![CDATA[
+		    (Case When #PLAYING_TIME# >= #p_eduTime# Then 'Y' Else 'N' End),
+		    ]]> 
+		    #CONTINUE_TIME#,
+		    #PLAYING_TIME#,
+		    '1',
+		    #p_location#,
+		    to_char(sysdatetime, 'YYYYMMDDHH24MISS'),
+		    #ID#,
+		    to_char(sysdatetime, 'YYYYMMDDHH24MISS'),
+		    #ID#
+		)
+	</insert>
+	
+	<!--	앱에서 넘어온 진도값을 넣어준다.-->
+	<update id="studyManageDAO.updateMobileProgress">
+		update tb_lcms_progress set 
+		<![CDATA[
+		    lessonstatus = (Case When (to_number(total_time) + to_number(#PLAYING_TIME#) ) >= #p_eduTime# Then 'Y' Else 'N' End),
+		]]>
+		    session_time = #CONTINUE_TIME#,
+		    total_time = to_number(total_time) + to_number(#PLAYING_TIME#),
+		    lesson_count = to_number(lesson_count + 1),
+		    ldate = to_char(sysdatetime, 'YYYYMMDDHH24MISS'),
+		    luserid = #ID#
+		where subj = #p_subj#
+	    and [year] = #p_year#
+	    and subjseq = #p_subjseq#
+	    and [MODULE] = #p_module#
+	    and lesson = #p_lesson#
+	    and userid = #ID#
+	</update>
+	
+	
+	<select id="studyManageDAO.selectOldItemMobileStatus" parameterClass="map" resultClass="egovMap">
+	
+		select [MODULE], sdesc as lesson_name , nvl(max(m_end), 0) edu_time, '1' as rsrc_seq, 'MLEARN' as lesson
+            , nvl(sum(total_time1), 0) total_time1, sum(lesson_count) lesson_count, mobile_url
+            , study_count, total_lesson_count, study_end_count, study_final_count
+            , Case When total_lesson_count > 0 And total_lesson_count = study_final_count Then 'Y' 
+             	When study_count > 0 Then 'N'
+             	Else 'C' End lessonstatus, total_time
+		from (
+		
+		select /*+ index(c TZ_PROGRESSPK) */ a.[MODULE], a.sdesc, b.lesson, b.sdesc as lesson_nm, b.owner, b.starting,  nvl(b.edu_time, 0) edu_time, b.edu_time_yn, b.m_end,
+                c.lessonstatus, c.first_edu, nvl(c.lesson_count, 0) as lesson_count, c.ldate, a.mobile_url, 
+                trunc(round(mod(( TO_DATETIME(c.ldate, 'yyyymmddhh24miss') - TO_DATETIME(c.first_edu, 'yyyymmddhh24miss') ) * 24 * 60, 1) * 60)) total_time1,
+                (select count(0) from tz_subjlesson where subj = a.subj and [MODULE] = a.[MODULE]) as total_lesson_count,
+                (
+                    select /*+ index(aa TZ_PROGRESSPK) */  count(0) from tz_progress aa inner join tz_subjlesson bb on aa.subj=bb.subj and aa.lesson=bb.lesson 
+                    where aa.subj = a.subj 
+                    and aa.[year] = substr(#CONTENT_ID#, 12, 4)
+                    and aa.subjseq = substr(#CONTENT_ID#, 18, 4) 
+                    and aa.userid = #userid#
+                    --and aa.lessonstatus = 'Y'
+                    and bb.[MODULE] = a.[MODULE]
+                ) as study_count,
+                (
+                    select /*+ index(aa TZ_PROGRESSPK) */  count(0) from tz_progress aa inner join tz_subjlesson bb on aa.subj=bb.subj and aa.lesson=bb.lesson 
+                    where aa.subj = a.subj 
+                    and aa.[year] = substr(#CONTENT_ID#, 12, 4)
+                    and aa.subjseq = substr(#CONTENT_ID#, 18, 4) 
+                    and aa.userid = #userid#
+                    and aa.lessonstatus = 'Y'
+                    and bb.[MODULE] = a.[MODULE]
+                ) as study_end_count,
+                (
+                    select /*+ index(aa TZ_PROGRESSPK) */  count(0) from tz_progress aa inner join tz_subjlesson bb on aa.subj=bb.subj and aa.lesson=bb.lesson 
+                    where aa.subj = a.subj 
+                    and aa.[year] = substr(#CONTENT_ID#, 12, 4)
+                    and aa.subjseq = substr(#CONTENT_ID#, 18, 4) 
+                    and aa.userid = #userid#
+                    and aa.lessonstatus = 'Y'
+                    and aa.final_status = 'Y'
+                    and bb.[MODULE] = a.[MODULE]
+                ) as study_final_count,
+                (
+                    select /*+ index(aa TZ_PROGRESSPK) */  sum(nvl(to_number(aa.total_time),0)) from tz_progress aa inner join tz_subjlesson bb on aa.subj=bb.subj and aa.lesson=bb.lesson 
+                    where aa.subj = a.subj 
+                    and aa.[year] = substr(#CONTENT_ID#, 12, 4)
+                    and aa.subjseq = substr(#CONTENT_ID#, 18, 4) 
+                    and aa.userid = #userid#
+                 --   and aa.lessonstatus = 'Y'
+                    and bb.[MODULE] = a.[MODULE]
+                ) as total_time
+		  from tz_subjmodule a, tz_subjlesson b, tz_progress c
+         where a.subj       = substr(#CONTENT_ID#, 0, 9)
+           and a.subj       = b.subj
+           and a.[MODULE]     = b.[MODULE]
+           and b.subj       = c.subj(+)
+           and b.lesson     = c.lesson(+)
+           and c.[year](+)    = substr(#CONTENT_ID#, 12, 4)
+           and c.subjseq(+) = substr(#CONTENT_ID#, 18, 4)
+           and c.userid(+)  = #userid#
+           and a.[MODULE] = substr(#CONTENT_ID#, 24, 2)
+		 ) aa 
+         
+         group by [MODULE], sdesc, mobile_url
+         , study_count, total_lesson_count, study_end_count, study_final_count, total_time         
+	</select>
+	
+	
+</sqlMap>

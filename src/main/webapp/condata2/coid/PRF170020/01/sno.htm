@@ -1,0 +1,37 @@
+<HTML><HEAD><TITLE></TITLE>
+<SCRIPT LANGUAGE="JAVASCRIPT" SRC="common/APIWrapper.js"></SCRIPT>
+<SCRIPT LANGUAGE="JAVASCRIPT" SRC="common/SCOFunctions.js"></SCRIPT>
+<script language="javascript">
+url=window.location.href;
+s1=url.lastIndexOf("/") ;
+th=url.substr(s1-6,6);
+
+sURL=url.split("?")[0];
+sURL=sURL.split("/");
+
+tName=sURL[sURL.length-1];
+tModule=sURL[sURL.length-2];
+
+th=url.split(tName)[0];
+//alert(th);
+
+startpage=th+""+tModule+"_01.html";
+
+loadPage();
+var student_name=doLMSGetValue("cmi.core.student_name");//학습자 이름
+var bookmark=doLMSGetValue("cmi.core.lesson_location");//북마크 호출 
+if (bookmark=="" || bookmark=="true"){
+	if(student_name!="true")alert(student_name+"님의 첫 방문이십니다.");//맛보기에서는 출력안함 true로 리턴됨
+	parent.mainFrame.location.href= startpage;
+	doLMSSetValue ("cmi.core.lesson_location",startpage);
+	// 또는	doLMSSetValue( "cmi.core.lesson_status", "completed" );
+}else{	
+	if(confirm(student_name+"님 이전에 학습하신곳으로\n이동하시겠습니까?")){							
+		parent.mainFrame.location.href=bookmark;
+	}else{	
+		parent.mainFrame.location.href= startpage
+		doLMSSetValue ("cmi.core.lesson_location",startpage);
+	}
+}
+</script>
+</HEAD><BODY onunload = "return unloadPage()"></BODY></HTML>

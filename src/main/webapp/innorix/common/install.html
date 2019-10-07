@@ -1,0 +1,169 @@
+﻿<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head>
+<meta http-equiv="content-type" content="text/html; charset=utf-8" />
+<title>Innorix File Transfer Solution - Install</title>
+<script type="text/javascript" src="./innorix.js"></script>
+<style type="text/css">
+body { margin:0; }
+h1,p  { margin:0; padding:0;}
+ol { list-style: none}
+.installWrap { position:absolute; width:100%; min-height:100%;}
+.installMsg { position:absolute; left:50%; margin-left:-250px; top:80px;width:500px; height:290px; background:#2e8be9;}
+.installMsg .inner { margin:5px; background:#fff; height: 280px;}
+.installMsg .inner .imgWrap { padding:40px 0 20px; width:100%; }
+.installMsg .inner .imgWrap img { display:block; margin:0 auto;}
+.installMsg .inner h1 { font-size:17px; color:#000; text-align: center}
+.installMsg .inner p { padding:0 40px; margin-top:10px; font-size:13px; color:#6C7A89; }
+.installMsg .inner a.downloadBtn { display:block; margin: 0 auto; margin-top:20px; padding:5px 20px; width:160px; height:35px; background:#2e8be9; text-decoration: none}
+.installMsg .inner a.downloadBtn span { display:block; color:#fff; font-size:11px;}
+.installMsg .inner a.downloadBtn span:first-child { font-size:13px; font-weight:bold;}
+.chromeInstallInfo { font-size: 12px; width:498px; position:absolute; left:50%; margin-left:-250px;top:380px; border: 1px solid #cccccc;}
+.chromeInstallInfo img { display:block}
+.chromeInstallInfo .inner { padding: 10px 13px;}
+.chromeInstallInfo .inner p.txt { font-size:12px; padding:0 0 20px;}
+.chromeInstallInfo .inner ol { padding:0; margin:0;}
+.chromeInstallInfo .inner ol li { margin-top:30px; color:#6C7A89;}
+.chromeInstallInfo .inner ol li:first-child { margin-top:0;}
+.chromeInstallInfo .inner ol li img { display:block; margin-top:10px;}
+
+</style>
+</head>
+<body>
+<!-- installWrap -->
+<div class="installWrap">
+	<!-- installMsg -->
+	<div class="installMsg">
+		<div class="inner">
+			<div class="imgWrap">
+				<img src="./image/install_icon.png" alt=""/>
+			</div>
+			<h1>파일전송 기능을 사용하기 위하여 설치가 필요합니다.</h1>
+			<p>설치파일 다운로드가 자동으로 시작되지 않을 경우 아래 버튼을 클릭하여 설치하여 주십시오</p>
+			<a href="../package/InnoGMP_Win.exe" id="innomp_download_link"  class="downloadBtn" >
+				<span id="innomp_download_button">설치파일 다운로드</span>
+				<span id="innomp_download_str">Version 7.2 for Windows</span>
+			</a>
+			<a href="../package/InnoGMP_Win.exe" id="innomp_download_link2" class="downloadBtn" style="display: none">
+				<span id="innomp_download_button2">설치파일 다운로드</span>
+				<span id="innomp_download_str2">Version 7.2 for Windows</span>
+			</a>
+		</div>
+	</div>
+	<!-- //installMsg -->
+	<div id='chrome-npapi-info' class="chromeInstallInfo" style="display:none;">
+		<div class="inner">
+			<p class="txt">
+				현재 크롬 브라우저 <span id="chrome-version">42</span>버전을 사용중 입니다.<br />
+				파일전송 프로그램 설치가 완료되지 않으면 아래 가이드를 따라 진행 바랍니다.
+			</p>
+			<ol>
+				<li>
+					<span>1) 크롬 브라우저 URL 입력 주소창에 "chrome://flags/#enable-npapi" 입력</span>
+					<img src="./image/chrome-npapi-info-1.png" />
+				</li>
+				<li>	
+					<span>2) NPAPI 사용 Mac, Windows 항목에 "사용" 글자를 클릭해서 "사용 중지" 로 변경</span>
+					<img src="./image/chrome-npapi-info-2.png" />
+				</li>
+				<li>
+					<span>3) 크롬 브라우저 하단의 "지금 다시 시작"을 클릭</span>
+					<img src="./image/chrome-npapi-info-3.png" />
+				</li>
+			</ol>
+		</div>
+	</div>
+</div>
+<!-- //installWrap -->
+
+
+<div id="innomp_check_obj"></div>
+
+<script type="text/javascript">
+
+	Install.Init();
+	Install.SelectPackage();
+	Install.UpdateStatus();
+
+	browserDetect.init();
+	
+    var auto_down_flag = true;
+	var innomp_detected_os = browserDetect.OS;
+	var innomp_download_file = "", innomp_download_file2 = "";
+
+	if (innomp_detected_os == "Win32") {
+		innomp_download_file = "InnoGMP_Win.exe";
+		document.getElementById("innomp_download_str").innerHTML = "Version 7.2 for Windows";
+		document.getElementById('innomp_download_link').href = Install.InnoPackage + "/" + innomp_download_file;
+	}
+	else if (innomp_detected_os == "Win64") {
+		innomp_download_file = "InnoGMP_Win.exe";
+		document.getElementById("innomp_download_str").innerHTML = "Version 7.2 for Windows";
+		document.getElementById('innomp_download_link').href = Install.InnoPackage + "/" + innomp_download_file;
+	}
+	else if (innomp_detected_os == "Linux i686") {
+		innomp_download_file = "innogmp7-x86.rpm";
+		innomp_download_file2 = "innogmp7-x86.deb";
+		document.getElementById("innomp_download_str").innerHTML = "Version 7.2 for Linux(.RPM)";
+		document.getElementById("innomp_download_str2").innerHTML = "Version 7.2 for Linux(.DEB)";
+
+		document.getElementById('innomp_download_link').href = Install.InnoPackage + "/" + innomp_download_file;
+		document.getElementById('innomp_download_link').style.cssText = "float:left; margin-left:30px";
+
+		document.getElementById('innomp_download_link2').href = Install.InnoPackage + "/" + innomp_download_file2;
+		document.getElementById('innomp_download_link2').style.cssText = "display:inline; float:left; margin-left:10px";
+
+		auto_down_flag = false;
+	}
+	else if (innomp_detected_os == "Linux x86_64") {
+		innomp_download_file = "innogmp7-x64.rpm";
+		innomp_download_file2 = "innogmp7-x64.deb";
+		document.getElementById("innomp_download_str").innerHTML = "Version 7.2 for Linux(.RPM)";
+		document.getElementById("innomp_download_str2").innerHTML = "Version 7.2 for Linux(.DEB)";
+
+		document.getElementById('innomp_download_link').href = Install.InnoPackage + "/" + innomp_download_file;
+		document.getElementById('innomp_download_link').style.cssText = "float:left; margin-left:30px";
+
+		document.getElementById('innomp_download_link2').href = Install.InnoPackage + "/" + innomp_download_file2;
+		document.getElementById('innomp_download_link2').style.cssText = "display:inline; float:left; margin-left:10px";
+
+		auto_down_flag = false;
+	}
+	else if (innomp_detected_os == "MacIntel") {
+		innomp_download_file = "InnoGMP_Mac_Intel.pkg";
+		document.getElementById("innomp_download_str").innerHTML = "Version 7.2 for Intel";
+		document.getElementById('innomp_download_link').href = Install.InnoPackage + "/" + innomp_download_file;
+	}
+	else if (innomp_detected_os == "MacPPC") {
+		innomp_download_file = "InnoGMP_Mac_PPC.pkg";
+		document.getElementById("innomp_download_str").innerHTML = "Version 7.2 for PPC";
+		document.getElementById('innomp_download_link').href = Install.InnoPackage + "/" + innomp_download_file;
+	}
+
+	var irxUA = navigator.userAgent;
+	if (/Chrome\//.test(irxUA))
+	{
+		var irxChVer = /Chrome\/([0-9\.A-z]+)/.exec(irxUA)[1];
+		var irxChVer = irxChVer.split(".");
+		var irxChV1 = parseInt(irxChVer[0] + "000000000000");
+		var irxChV2 = parseInt(irxChVer[1] + "00000000");
+		var irxChV3 = parseInt(irxChVer[2] + "0000");
+		var irxChV4 = parseInt(irxChVer[3]);
+		var irxCmpV1 = irxChV1 + irxChV2 + irxChV3 + irxChV4;
+		var irxCmpV2 = 42000023110089;
+		
+        if (irxChVer[0] >= 42) {
+            alert("사용중인 브라우저는 플러그인 사용이 중단 되었기에\n익스플로어, 파이어폭스, 사파리 사용을 권장 합니다.");
+        } else if (irxCmpV1 > irxCmpV2)
+		{
+			document.getElementById("chrome-npapi-info").style.display = 'block';
+			document.getElementById("chrome-version").innerHTML = irxChVer[0];
+            if (auto_down_flag) {
+                document.write('<META HTTP-EQUIV="Refresh" CONTENT="3; URL='+Install.InnoPackage+"/"+innomp_download_file+'"/>');
+            }            
+		}
+	}
+</script>
+<div>
+</body>
+</html>

@@ -1,0 +1,124 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE sqlMap PUBLIC "-//iBATIS.com//DTD SQL Map 2.0//EN" "http://ibatis.apache.org/dtd/sql-map-2.dtd">
+
+<sqlMap namespace="LcmsOrganizationLog">
+	<typeAlias  alias="egovMap" type="egovframework.rte.psl.dataaccess.util.EgovMap"/>
+
+    <select id="lcmsOrganizationLogDAO.selectLcmsOrganizationLogPageList" parameterClass="map" resultClass="egovMap">
+        SELECT * 
+        FROM
+               (
+                SELECT TEMP.*, 
+                <isNotEmpty property="rowsPerPage">
+                       CEIL(ROWNUM / #rowsPerPage#) AS PAGE 
+                </isNotEmpty>
+                <isEmpty property="rowsPerPage">
+                       CEIL(ROWNUM / 10) AS PAGE 
+                </isEmpty>
+                FROM
+                      (
+                       SELECT 
+	        	              LOG_SEQ,
+	        	              UPDATE_DT,
+	        	              UPDATE_ID,
+	        	              INSERT_ID,
+	        	               ORG_SEQ
+        		       FROM   TB_LCMS_ORGANIZATION_LOG
+        		       <!--  APPEND WHERE CONDITION START  -->
+
+        		       <!--  APPEND WHERE CONDITION END    -->
+        		       <isNotEmpty property="orderBy">
+        			       $orderBy$
+        		       </isNotEmpty>
+        	          ) TEMP 
+               )
+        <isNotEmpty property="page">
+        WHERE PAGE = #page#
+        </isNotEmpty>
+        <isEmpty property="page">
+        WHERE PAGE = 1
+        </isEmpty>
+    </select>
+
+    <select id="lcmsOrganizationLogDAO.selectLcmsOrganizationLogList" parameterClass="map" resultClass="egovMap">
+        SELECT LOG_SEQ,
+               UPDATE_DT,
+               UPDATE_ID,
+               INSERT_ID,
+               ORG_SEQ
+        FROM   TB_LCMS_ORGANIZATION_LOG
+    </select>
+
+    <select id="lcmsOrganizationLogDAO.selectLcmsOrganizationLogPageListTotCnt" parameterClass="map" resultClass="long">
+        SELECT COUNT(ROWNUM) AS [COUNT]
+        FROM   TB_LCMS_ORGANIZATION_LOG
+    </select>
+
+    <select id="lcmsOrganizationLogDAO.selectLcmsOrganizationLogMaxNum" parameterClass="map" resultClass="int">
+        select nvl(max(log_seq), 0)+1 as seq from tb_lcms_organization_log
+    </select>
+
+    <select id="lcmsOrganizationLogDAO.selectLcmsOrganizationLog" parameterClass="map" resultClass="egovMap">
+        SELECT LOG_SEQ,
+               UPDATE_DT,
+               UPDATE_ID,
+               INSERT_ID,
+               ORG_SEQ
+        FROM   TB_LCMS_ORGANIZATION_LOG
+        WHERE  LOG_SEQ = #logSeq#
+    </select>
+
+    <insert id="lcmsOrganizationLogDAO.insertLcmsOrganizationLog">
+        <selectKey resultClass="long" keyProperty="logSeq">
+            SELECT NVL(MAX(LOG_SEQ)+1, 1)
+            FROM   TB_LCMS_ORGANIZATION_LOG
+        </selectKey>
+        INSERT INTO TB_LCMS_ORGANIZATION_LOG
+        (
+            LOG_SEQ,
+            UPDATE_DT,
+            UPDATE_ID,
+            INSERT_ID,
+            ORG_SEQ
+        )
+        VALUES
+        (
+            #logSeq#,
+            #updateDt#,
+            #updateId#,
+            #insertId#,
+            #orgSeq#
+        )
+    </insert>
+
+    <update id="lcmsOrganizationLogDAO.updateLcmsOrganizationLog">
+        UPDATE TB_LCMS_ORGANIZATION_LOG
+        SET    UPDATE_DT = #updateDt#,
+               UPDATE_ID = #updateId#,
+               INSERT_ID = #insertId#,
+               ORG_SEQ = #orgSeq#
+        WHERE  LOG_SEQ = #logSeq#
+    </update>
+
+    <delete id="lcmsOrganizationLogDAO.deleteLcmsOrganizationLog">
+        DELETE FROM TB_LCMS_ORGANIZATION_LOG
+        WHERE  LOG_SEQ = #logSeq#
+    </delete>
+
+    <delete id="lcmsOrganizationLogDAO.deleteLcmsOrganizationLogAll">
+        DELETE FROM TB_LCMS_ORGANIZATION_LOG
+        <dynamic prepend="WHERE LOG_SEQ IN ">
+            <isNotEmpty property="logSeq">
+                <iterate property="logSeq" open="(" close=")" conjunction=",">
+                    #logSeq[]#
+                </iterate>
+            </isNotEmpty>
+            <isEmpty property="logSeq">
+                ('')
+            </isEmpty>
+        </dynamic>
+    </delete>
+
+
+</sqlMap>
+

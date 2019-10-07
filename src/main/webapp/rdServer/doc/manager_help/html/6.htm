@@ -1,0 +1,1503 @@
+<html>
+
+<head>
+<meta name=Generator content="Microsoft Office HTML Filter 2.0">
+<meta http-equiv=Content-Type content="text/html; charset=ks_c_5601-1987">
+<meta name=Originator content="Microsoft Word 9">
+<title>스케줄링</title>
+<link rel="stylesheet" type="text/css" href="default.css" title="Style">
+</head>
+
+<body lang=KO link=blue vlink=purple>
+
+<div class=Section1 style='layout-grid:18.0pt'>
+
+<p class=MsoNormal><a name="_Toc85544686"></a><a name="_Toc93757594"><b><u><span style='font-size:14.0pt;font-family:Tahoma;'>스케줄링</span></u></b></a></p>
+
+<p class=MsoNormal><a name="_Toc53326349"></a><a name="_Toc84410301"></a><a
+name="_Toc85544687"></a><a name="_Toc93757595"><span
+style='font-size:11.0pt;font-family:Tahoma;'>스케줄링</span></a><span
+style='font-size:11.0pt;font-family:Tahoma;'>서버</span></p>
+
+<p class=MsoNormal><span lang=EN-US style='font-size:11.0pt;font-family:Tahoma;'>&nbsp;</span></p>
+
+<p class=MsoNormal><span lang=EN-US style='font-size:11.0pt;font-family:Tahoma;'>&lt;</span><span
+style='font-size:11.0pt;font-family:Tahoma;'>실행</span><span style='font-size:11.0pt;font-family:Tahoma;'>전</span><span
+style='font-size:11.0pt;font-family:Tahoma;'>점검</span><span style='font-size:11.0pt;font-family:Tahoma;'>사항</span><span lang=EN-US style='font-size:11.0pt;font-family:Tahoma;'>&gt;</span></p>
+
+<p class=MsoNormal><span style='font-size:11.0pt;
+font-family:Tahoma;'>메일통지</span><span
+style='font-size:11.0pt;font-family:Tahoma;'>기능을</span><span style='font-size:11.0pt;font-family:Tahoma;'>사용하기</span><span
+style='font-size:11.0pt;font-family:Tahoma;'>위해</span><span
+lang=EN-US style='font-size:11.0pt;font-family:Tahoma;'> RDServer&nbsp;
+IP </span><span style='font-size:11.0pt;
+font-family:Tahoma;'>가</span><span
+style='font-size:11.0pt;font-family:Tahoma;'>스팸</span><span
+lang=EN-US style='font-size:11.0pt;font-family:Tahoma;'> IP</span><span style='font-size:11.0pt;font-family:Tahoma;'>로</span><span style='font-size:11.0pt;font-family:Tahoma;'>등록되어</span><span
+style='font-size:11.0pt;font-family:Tahoma;'>있지</span><span style='font-size:11.0pt;font-family:Tahoma;'>않은지</span><span
+style='font-size:11.0pt;font-family:Tahoma;'>확인</span></p>
+
+<p class=MsoNormal><span lang=EN-US style='font-size:11.0pt;font-family:Tahoma;'>RDServer</span><span
+style='font-size:11.0pt;font-family:Tahoma;'>에</span><span
+lang=EN-US style='font-size:11.0pt;font-family:Tahoma;'> db.properties,rd.properties </span><span
+style='font-size:11.0pt;font-family:Tahoma;'>파일이</span><span
+lang=EN-US style='font-size:11.0pt;font-family:Tahoma;'> /RDServer/conf </span><span style='font-size:
+11.0pt;font-family:Tahoma;'>아래에</span><span style='font-size:11.0pt;font-family:Tahoma;'>있는지</span><span
+style='font-size:11.0pt;font-family:Tahoma;'>확인하고</span><span
+lang=EN-US style='font-size:11.0pt;font-family:Tahoma;'>, </span><span style='font-size:11.0pt;font-family:Tahoma;'>데이터베이스에</span><span
+style='font-size:11.0pt;font-family:Tahoma;'>대한</span><span style='font-size:11.0pt;font-family:Tahoma;'>설정이</span><span
+style='font-size:11.0pt;font-family:Tahoma;'>맞는지</span><span style='font-size:11.0pt;font-family:Tahoma;'>확인</span></p>
+
+<p class=MsoNormal><span lang=EN-US style='font-size:11.0pt;font-family:Tahoma;'>JDK1.3 </span><span
+style='font-size:11.0pt;font-family:Tahoma;'>이상</span><span
+lang=EN-US style='font-size:11.0pt;font-family:Tahoma;'>(</span><span style='font-size:11.0pt;font-family:Tahoma;'>이하</span><span
+style='font-size:11.0pt;font-family:Tahoma;'>버전에서는</span><span style='font-size:11.0pt;font-family:Tahoma;'>스케줄링</span><span
+style='font-size:11.0pt;font-family:Tahoma;'>기능을</span><span style='font-size:11.0pt;font-family:Tahoma;'>사용할</span><span
+style='font-size:11.0pt;font-family:Tahoma;'>수</span><span style='font-size:11.0pt;font-family:Tahoma;'>없음</span><span lang=EN-US style='font-size:11.0pt;font-family:Tahoma;'>)</span></p>
+
+<p class=MsoNormal><span lang=EN-US style='font-size:11.0pt;font-family:Tahoma;'>&nbsp;</span></p>
+
+<p class=MsoNormal><span lang=EN-US style='font-size:11.0pt;font-family:Tahoma;'>&lt;</span><span
+style='font-size:11.0pt;font-family:Tahoma;'>처리과정</span><span
+lang=EN-US style='font-size:11.0pt;font-family:Tahoma;'>&gt;</span></p>
+
+<p class=MsoNormal><span style='font-size:11.0pt;
+font-family:Tahoma;'>스케줄링</span><span
+style='font-size:11.0pt;font-family:Tahoma;'>작업은</span><span
+lang=EN-US style='font-size:11.0pt;font-family:Tahoma;'> RDServer </span><span style='font-size:11.0pt;font-family:Tahoma;'>관리자를</span><span style='font-size:11.0pt;font-family:Tahoma;'>통해</span><span
+style='font-size:11.0pt;font-family:Tahoma;'>등록하고</span><span
+lang=EN-US style='font-size:11.0pt;font-family:Tahoma;'>, </span><span style='font-size:11.0pt;font-family:Tahoma;'>처리는</span><span
+style='font-size:11.0pt;font-family:Tahoma;'>서버에</span><span style='font-size:11.0pt;font-family:Tahoma;'>작동중인</span><span
+style='font-size:11.0pt;font-family:Tahoma;'>스케줄링</span><span style='font-size:11.0pt;font-family:Tahoma;'>서버가</span><span
+style='font-size:11.0pt;font-family:Tahoma;'>수행한다</span><span
+lang=EN-US style='font-size:11.0pt;font-family:Tahoma;'>.</span></p>
+
+<p class=MsoNormal><span lang=EN-US style='font-size:11.0pt;font-family:Tahoma;'>&nbsp;</span></p>
+
+<p class=MsoNormal><span lang=EN-US style='font-size:11.0pt;font-family:Tahoma;'><span style='position:
+relative;z-index:0'><span style='position:absolute;left:-1px;top:-5px;
+width:565px;height:224px'><img width=565 height=224 src="./6.files/image001.gif"></span></span></span></p>
+
+<p class=MsoNormal><a name="_Toc53326350"></a><a name="_Toc84410302"></a><a
+name="_Toc85544688"></a><a name="_Toc93757596"><span
+style='font-size:11.0pt;font-family:Tahoma;'>스케줄링</span></a><span
+style='font-size:11.0pt;font-family:Tahoma;'>서버</span><span
+style='font-size:11.0pt;font-family:Tahoma;'>시작</span></p>
+
+<p class=MsoNormal><span lang=EN-US style='font-size:11.0pt;font-family:Tahoma;'>&nbsp;</span></p>
+
+<p class=MsoNormal><span style='font-size:11.0pt;
+font-family:Tahoma;'>서블릿</span><span
+style='font-size:11.0pt;font-family:Tahoma;'>버전</span><span
+lang=EN-US style='font-size:11.0pt;font-family:Tahoma;'>: rdagent.jsp </span><span style='font-size:11.0pt;font-family:Tahoma;'>최초</span><span style='font-size:11.0pt;font-family:Tahoma;'>접속시</span><span
+style='font-size:11.0pt;font-family:Tahoma;'>자동</span><span
+lang=EN-US style='font-size:11.0pt;font-family:Tahoma;'> Start (rdagent.jsp)</span></p>
+
+<p class=MsoNormal><span lang=EN-US style='font-size:11.0pt;font-family:Tahoma;'>private static boolean
+schedule = true;</span></p>
+
+<p class=MsoNormal><span style='font-size:11.0pt;
+font-family:Tahoma;'>데몬</span><span
+style='font-size:11.0pt;font-family:Tahoma;'>버전</span><span
+lang=EN-US style='font-size:11.0pt;font-family:Tahoma;'>: </span><span style='font-size:11.0pt;font-family:Tahoma;'>서버</span><span
+style='font-size:11.0pt;font-family:Tahoma;'>구동</span><span style='font-size:11.0pt;font-family:Tahoma;'>시</span><span
+style='font-size:11.0pt;font-family:Tahoma;'>자동</span><span
+lang=EN-US style='font-size:11.0pt;font-family:Tahoma;'> Start (startup.bat)</span></p>
+
+<p class=MsoNormal><span lang=EN-US style='font-size:11.0pt;font-family:Tahoma;'>runschedule=true</span></p>
+
+<p class=MsoNormal><a name="_Toc84410304"></a><a name="_Toc85544690"></a><a
+name="_Toc93757597"></a><a name="_스케줄링_등록하기"></a><span style='font-size:11.0pt;
+font-family:Tahoma;'>스케줄링</span><span style='font-size:11.0pt;font-family:Tahoma;'>등록하기</span></p>
+
+<p class=MsoNormal><span lang=EN-US style='font-size:11.0pt;font-family:Tahoma;'><img width=181 height=132
+src="./6.files/image002.jpg"></span></p>
+
+<p class=MsoNormal><span style='font-size:11.0pt;
+font-family:Tahoma;'>스케줄링</span><span lang=EN-US style='font-size:11.0pt;font-family:Tahoma;'>/</span><span
+style='font-size:11.0pt;font-family:Tahoma;'>새로</span><span style='font-size:11.0pt;font-family:Tahoma;'>등록하기</span><span
+style='font-size:11.0pt;font-family:Tahoma;'>메뉴를</span><span style='font-size:11.0pt;font-family:Tahoma;'>선택한다</span></p>
+
+<p class=MsoNormal><span lang=EN-US style='font-size:11.0pt;font-family:Tahoma;'><img width=440 height=451
+src="./6.files/image004.jpg"></span></p>
+
+<p class=MsoNormal><b><span style='font-size:11.0pt;
+font-family:Tahoma;'>스케줄링</span></b><b><span
+style='font-size:11.0pt;font-family:Tahoma;'>명</span></b></p>
+
+<p class=MsoNormal><span style='font-size:11.0pt;
+font-family:Tahoma;'>스케줄</span><span
+style='font-size:11.0pt;font-family:Tahoma;'>등록</span><span style='font-size:11.0pt;font-family:Tahoma;'>이름을</span><span
+style='font-size:11.0pt;font-family:Tahoma;'>입력한다</span><span
+lang=EN-US style='font-size:11.0pt;font-family:Tahoma;'><br>
+</span><span style='font-size:11.0pt;font-family:
+Tahoma;'>최대</span><span style='font-size:
+11.0pt;font-family:Tahoma;'>입력값은</span><span
+lang=EN-US style='font-size:11.0pt;font-family:Tahoma;'> 40</span><span style='font-size:11.0pt;font-family:Tahoma;'>자</span><span style='font-size:11.0pt;font-family:Tahoma;'>이다</span><span lang=EN-US style='font-size:11.0pt;font-family:Tahoma;'>.</span></p>
+
+<p class=MsoNormal><b><span style='font-size:11.0pt;
+font-family:Tahoma;'>스케줄</span></b><b><span
+style='font-size:11.0pt;font-family:Tahoma;'>대상</span></b><b><span style='font-size:11.0pt;font-family:Tahoma;'>문서</span></b></p>
+
+<p class=MsoNormal><span style='font-size:11.0pt;
+font-family:Tahoma;'>스케줄링</span><span
+style='font-size:11.0pt;font-family:Tahoma;'>할</span><span style='font-size:11.0pt;font-family:Tahoma;'>문서를</span><span
+style='font-size:11.0pt;font-family:Tahoma;'>서버에</span><span style='font-size:11.0pt;font-family:Tahoma;'>등록된</span><span lang=EN-US style='font-size:11.0pt;font-family:Tahoma;'> MRD </span><span
+style='font-size:11.0pt;font-family:Tahoma;'>문서</span><span style='font-size:11.0pt;font-family:Tahoma;'>목록</span><span
+style='font-size:11.0pt;font-family:Tahoma;'>중에서</span><span style='font-size:11.0pt;font-family:Tahoma;'>하나를</span><span
+style='font-size:11.0pt;font-family:Tahoma;'>선택한다</span><span
+lang=EN-US style='font-size:11.0pt;font-family:Tahoma;'>. </span><span style='font-size:11.0pt;font-family:Tahoma;'>찾아보기</span><span
+style='font-size:11.0pt;font-family:Tahoma;'>버튼을</span><span style='font-size:11.0pt;font-family:Tahoma;'>눌러</span><span
+style='font-size:11.0pt;font-family:Tahoma;'>목록</span><span style='font-size:11.0pt;font-family:Tahoma;'>중</span><span
+style='font-size:11.0pt;font-family:Tahoma;'>하나를</span><span style='font-size:11.0pt;font-family:Tahoma;'>선택한다</span><span lang=EN-US style='font-size:11.0pt;font-family:Tahoma;'>.</span></p>
+
+<p class=MsoNormal><span lang=EN-US style='font-size:11.0pt;font-family:Tahoma;'>&nbsp;</span></p>
+
+<p class=MsoNormal><span lang=EN-US style='font-size:11.0pt;font-family:Tahoma;'><img width=277 height=167
+src="./6.files/image006.jpg"></span></p>
+
+<p class=MsoNormal><span lang=EN-US style='font-size:11.0pt;font-family:Tahoma;'>&nbsp;</span></p>
+
+<p class=MsoNormal><b><span style='font-size:11.0pt;
+font-family:Tahoma;'>실행</span></b><b><span
+style='font-size:11.0pt;font-family:Tahoma;'>파라미터</span></b></p>
+
+<p class=MsoNormal><b><span lang=EN-US style='font-size:11.0pt;font-family:Tahoma;'>* </span></b><b><span
+style='font-size:11.0pt;font-family:Tahoma;'>지원</span></b><b><span style='font-size:11.0pt;font-family:Tahoma;'>파라미터</span></b><b><span
+lang=EN-US style='font-size:11.0pt;font-family:Tahoma;'> : /rp ,/rserverprn, /rpdrv </span></b></p>
+
+<p class=MsoNormal><span style='font-size:11.0pt;
+font-family:Tahoma;'>스케줄</span><span
+style='font-size:11.0pt;font-family:Tahoma;'>문서에</span><span style='font-size:11.0pt;font-family:Tahoma;'>필요한</span><span lang=EN-US style='font-size:11.0pt;font-family:Tahoma;'> /rp </span><span
+style='font-size:11.0pt;font-family:Tahoma;'>파라미터</span><span style='font-size:11.0pt;font-family:Tahoma;'>값들을</span><span
+style='font-size:11.0pt;font-family:Tahoma;'>입력한다</span><span
+lang=EN-US style='font-size:11.0pt;font-family:Tahoma;'>.<br>&nbsp;&nbsp;&nbsp; </span><span
+style='font-size:11.0pt;font-family:Tahoma;'>최대</span><span style='font-size:11.0pt;font-family:Tahoma;'>입력값은</span><span lang=EN-US style='font-size:11.0pt;font-family:Tahoma;'> 512</span><span
+style='font-size:11.0pt;font-family:Tahoma;'>자</span><span style='font-size:11.0pt;font-family:Tahoma;'>이다</span><span lang=EN-US style='font-size:11.0pt;font-family:Tahoma;'>.</span></p>
+
+<p class=MsoNormal><span style='font-size:11.0pt;
+font-family:Tahoma;'>파라미터</span><span
+style='font-size:11.0pt;font-family:Tahoma;'>값을</span><span style='font-size:11.0pt;font-family:Tahoma;'>공백을</span><span
+style='font-size:11.0pt;font-family:Tahoma;'>구분자로</span><span style='font-size:11.0pt;font-family:Tahoma;'>직접</span><span
+style='font-size:11.0pt;font-family:Tahoma;'>입력</span><span
+lang=EN-US style='font-size:11.0pt;font-family:Tahoma;'>(</span><span style='font-size:11.0pt;font-family:Tahoma;'>데이터에</span><span
+style='font-size:11.0pt;font-family:Tahoma;'>공백이</span><span style='font-size:11.0pt;font-family:Tahoma;'>있을경우</span><span lang=EN-US style='font-size:11.0pt;font-family:Tahoma;'> []</span><span
+style='font-size:11.0pt;font-family:Tahoma;'>로</span><span style='font-size:11.0pt;font-family:Tahoma;'>묶음</span><span lang=EN-US style='font-size:11.0pt;font-family:Tahoma;'>), </span><span
+style='font-size:11.0pt;font-family:Tahoma;'>또는</span><span style='font-size:11.0pt;font-family:Tahoma;'>파라미터를</span><span
+style='font-size:11.0pt;font-family:Tahoma;'>가져올</span><span
+lang=EN-US style='font-size:11.0pt;font-family:Tahoma;'> jsp </span><span style='font-size:11.0pt;font-family:Tahoma;'>또는</span><span
+lang=EN-US style='font-size:11.0pt;font-family:Tahoma;'> asp </span><span style='font-size:11.0pt;font-family:Tahoma;'>패스</span><span
+lang=EN-US style='font-size:11.0pt;font-family:Tahoma;'> url</span><span style='font-size:11.0pt;font-family:Tahoma;'>를</span><span style='font-size:11.0pt;font-family:Tahoma;'>입력한다</span><span lang=EN-US style='font-size:11.0pt;font-family:Tahoma;'>.</span></p>
+
+<p class=MsoNormal><b><span lang=EN-US style='font-size:11.0pt;font-family:Tahoma;'>/rp</span></b><span style='font-size:11.0pt;font-family:Tahoma;'>사용</span><span
+style='font-size:11.0pt;font-family:Tahoma;'>예</span><span
+lang=EN-US style='font-size:11.0pt;font-family:Tahoma;'>)</span></p>
+
+<table border=1 cellspacing=0 cellpadding=0 width=462 style='width:346.3pt;
+ border-collapse:collapse;border:none;'>
+ <tr>
+  <td width=168 style='width:126.3pt;border:solid windowtext .5pt;padding:0cm 4.95pt 0cm 4.95pt'>
+  <p class=MsoNormal><span style='font-size:11.0pt;
+  font-family:Tahoma;'>파라미터를</span><span
+  style='font-size:11.0pt;font-family:Tahoma;'>직접</span><span style='font-size:11.0pt;font-family:Tahoma;'>입력할</span></p>
+  <p class=MsoNormal><span style='font-size:11.0pt;
+  font-family:Tahoma;'>경우</span></p>
+  </td>
+  <td width=293 style='width:220.0pt;border:solid windowtext .5pt;border-left:
+  none;padding:0cm 4.95pt 0cm 4.95pt'>
+  <p class=MsoNormal><span style='font-size:11.0pt;
+  font-family:Tahoma;'>입력</span><span
+  style='font-size:11.0pt;font-family:Tahoma;'>예</span><span
+  lang=EN-US style='font-size:11.0pt;font-family:Tahoma;'>) /rp
+  20021218 20021230</span></p>
+  </td>
+ </tr>
+ <tr>
+  <td width=168 style='width:126.3pt;border:solid windowtext .5pt;border-top:
+  none;padding:0cm 4.95pt 0cm 4.95pt'>
+  <p class=MsoNormal><span style='font-size:11.0pt;
+  font-family:Tahoma;'>사용자</span><span
+  style='font-size:11.0pt;font-family:Tahoma;'>정의</span><span
+  lang=EN-US style='font-size:11.0pt;font-family:Tahoma;'> jsp </span><span style='font-size:11.0pt;font-family:Tahoma;'>또는</span></p>
+  <p class=MsoNormal><span lang=EN-US style='font-size:11.0pt;font-family:Tahoma;'>asp </span><span
+  style='font-size:11.0pt;font-family:Tahoma;'>호출결과를</span><span style='font-size:11.0pt;font-family:Tahoma;'>파라미터</span></p>
+  <p class=MsoNormal><span style='font-size:11.0pt;
+  font-family:Tahoma;'>로</span><span
+  style='font-size:11.0pt;font-family:Tahoma;'>사용할</span><span style='font-size:11.0pt;font-family:Tahoma;'>경우</span></p>
+  </td>
+  <td width=293 style='width:220.0pt;border-top:none;border-left:none;
+  border-bottom:solid windowtext .5pt;border-right:solid windowtext .5pt;
+  padding:0cm 4.95pt 0cm 4.95pt'>
+  <p class=MsoNormal><span lang=EN-US style='font-size:11.0pt;font-family:Tahoma;'>&nbsp;</span></p>
+  <p class=MsoNormal><span style='font-size:11.0pt;
+  font-family:Tahoma;'>입력</span><span
+  style='font-size:11.0pt;font-family:Tahoma;'>예</span><span
+  lang=EN-US style='font-size:11.0pt;font-family:Tahoma;'>) http://server:port/rpparam.jsp</span></p>
+  <p class=MsoNormal><span lang=EN-US style='font-size:11.0pt;font-family:Tahoma;'>&nbsp;</span></p>
+  <p class=MsoNormal><span style='font-size:11.0pt;
+  font-family:Tahoma;'>출력</span><span
+  style='font-size:11.0pt;font-family:Tahoma;'>결과는</span><span style='font-size:11.0pt;font-family:Tahoma;'>직접</span><span style='font-size:11.0pt;font-family:Tahoma;'>입력할</span><span style='font-size:11.0pt;font-family:Tahoma;'>경우와</span><span style='font-size:11.0pt;font-family:Tahoma;'>같은</span><span style='font-size:11.0pt;font-family:Tahoma;'>형태의</span></p>
+  <p class=MsoNormal><span style='font-size:11.0pt;
+  font-family:Tahoma;'>결과여야</span><span
+  style='font-size:11.0pt;font-family:Tahoma;'>한다</span></p>
+  <p class=MsoNormal><span lang=EN-US style='font-size:11.0pt;font-family:Tahoma;'>jsp </span><span
+  style='font-size:11.0pt;font-family:Tahoma;'>예</span><span
+  lang=EN-US style='font-size:11.0pt;font-family:Tahoma;'>)</span></p>
+  <p class=MsoNormal><b><span lang=EN-US style='font-size:11.0pt;font-family:Tahoma;'>out.print</span></b><span
+  lang=EN-US style='font-size:11.0pt;font-family:Tahoma;'>(<span style='color:black'>&quot;</span>/rp
+  20021218 20021230;/rp</span></p>
+  <p class=MsoNormal><span lang=EN-US style='font-size:11.0pt;font-family:Tahoma;'>20031018 20031230<span
+  style='color:black'>&quot;</span>)</span></p>
+  <p class=MsoNormal><span lang=EN-US style='font-size:11.0pt;font-family:Tahoma;'>asp </span><span
+  style='font-size:11.0pt;font-family:Tahoma;'>예</span><span
+  lang=EN-US style='font-size:11.0pt;font-family:Tahoma;'>)</span></p>
+  <p class=MsoNormal><b><span lang=EN-US style='font-size:11.0pt;font-family:Tahoma;color:black'>Response</span></b><span
+  lang=EN-US style='font-size:11.0pt;font-family:Tahoma;color:black'>.<b>Write</b>(&quot;</span><span
+  lang=EN-US style='font-size:11.0pt;font-family:Tahoma;'>/rp 20021218 20021230;/rp </span></p>
+  <p class=MsoNormal><span lang=EN-US style='font-size:11.0pt;font-family:Tahoma;'>20031018 20031230<span
+  style='color:black'>&quot;)</span></span></p>
+  </td>
+ </tr>
+ <tr>
+  <td width=168 style='width:126.3pt;border:solid windowtext .5pt;border-top:
+  none;padding:0cm 4.95pt 0cm 4.95pt'>
+  <p class=MsoNormal><span style='font-size:11.0pt;
+  font-family:Tahoma;'>다중</span><span
+  style='font-size:11.0pt;font-family:Tahoma;'>파라미터</span><span style='font-size:11.0pt;font-family:Tahoma;'>입력할</span><span style='font-size:11.0pt;font-family:Tahoma;'>경우</span></p>
+  <p class=MsoNormal><span lang=EN-US style='font-size:11.0pt;font-family:Tahoma;'>(</span><span
+  style='font-size:11.0pt;font-family:Tahoma;'>구분자</span><span
+  lang=EN-US style='font-size:11.0pt;font-family:Tahoma;'> ;)</span></p>
+  </td>
+  <td width=293 style='width:220.0pt;border-top:none;border-left:none;
+  border-bottom:solid windowtext .5pt;border-right:solid windowtext .5pt;
+  padding:0cm 4.95pt 0cm 4.95pt'>
+  <p class=MsoNormal><span style='font-size:11.0pt;
+  font-family:Tahoma;'>입력</span><span
+  style='font-size:11.0pt;font-family:Tahoma;'>예</span><span
+  lang=EN-US style='font-size:11.0pt;font-family:Tahoma;'>) /rp 1 2;/rp 3 4</span></p>
+  <p class=MsoNormal><span style='font-size:11.0pt;
+  font-family:Tahoma;'>용도</span><span lang=EN-US style='font-size:11.0pt;font-family:Tahoma;'>: </span><span
+  style='font-size:11.0pt;font-family:Tahoma;'>하나의</span><span style='font-size:11.0pt;font-family:Tahoma;'>문서를</span><span style='font-size:11.0pt;font-family:Tahoma;'>가지고</span><span
+  lang=EN-US style='font-size:11.0pt;font-family:Tahoma;'>,</span><span style='font-size:11.0pt;font-family:Tahoma;'>서로</span><span style='font-size:11.0pt;font-family:Tahoma;'>다른</span></p>
+  <p class=MsoNormal><span style='font-size:11.0pt;
+  font-family:Tahoma;'>파라미터를</span><span
+  style='font-size:11.0pt;font-family:Tahoma;'>적용하여</span><span style='font-size:11.0pt;font-family:Tahoma;'>결과파일을</span><span style='font-size:11.0pt;font-family:Tahoma;'>생성하고자</span></p>
+  <p class=MsoNormal><span style='font-size:11.0pt;
+  font-family:Tahoma;'>할</span><span
+  style='font-size:11.0pt;font-family:Tahoma;'>때</span><span style='font-size:11.0pt;font-family:Tahoma;'>사용하는</span><span style='font-size:11.0pt;font-family:Tahoma;'>옵션이다</span><span
+  lang=EN-US style='font-size:11.0pt;font-family:Tahoma;'>. </span></p>
+  <p class=MsoNormal><span style='font-size:11.0pt;
+  font-family:Tahoma;'>이와</span><span
+  style='font-size:11.0pt;font-family:Tahoma;'>관련하여</span><span style='font-size:11.0pt;font-family:Tahoma;'>각각의</span><span style='font-size:11.0pt;font-family:Tahoma;'>결과에</span><span style='font-size:11.0pt;font-family:Tahoma;'>대해</span></p>
+  <p class=MsoNormal><span style='font-size:11.0pt;
+  font-family:Tahoma;'>메일수신자가</span><span
+  style='font-size:11.0pt;font-family:Tahoma;'>다를경우</span></p>
+  <p class=MsoNormal><b><span style='font-size:11.0pt;
+  font-family:Tahoma;'>메일통지여부</span></b><b><span lang=EN-US
+  style='font-size:11.0pt;font-family:Tahoma;'>-</span></b><b><span style='font-size:11.0pt;font-family:Tahoma;'>메일수신자</span></b><span style='font-size:11.0pt;font-family:Tahoma;'>입력을</span><span style='font-size:11.0pt;font-family:Tahoma;'>참고</span></p>
+  </td>
+ </tr>
+</table>
+
+<p class=MsoNormal><span lang=EN-US style='font-size:11.0pt;font-family:Tahoma;'>&nbsp;</span></p>
+
+<p class=MsoNormal><b><span lang=EN-US style='font-size:11.0pt;font-family:Tahoma;'>/rserverprn,/rpdrv</span></b><span style='font-size:11.0pt;font-family:Tahoma;'>사용</span><span
+style='font-size:11.0pt;font-family:Tahoma;'>예</span><span
+lang=EN-US style='font-size:11.0pt;font-family:Tahoma;'>)</span></p>
+
+<p class=MsoNormal><span style='font-size:11.0pt;
+font-family:Tahoma;'>서버프린트</span><span
+style='font-size:11.0pt;font-family:Tahoma;'>체크</span><span style='font-size:11.0pt;font-family:Tahoma;'>후</span><span
+style='font-size:11.0pt;font-family:Tahoma;'>출력을</span><span style='font-size:11.0pt;font-family:Tahoma;'>원하는</span><span
+style='font-size:11.0pt;font-family:Tahoma;'>프린터를</span><span style='font-size:11.0pt;font-family:Tahoma;'>선택하면</span><span
+style='font-size:11.0pt;font-family:Tahoma;'>자동으로</span><span style='font-size:11.0pt;font-family:Tahoma;'>파라미터</span><span
+style='font-size:11.0pt;font-family:Tahoma;'>입력창에</span><span style='font-size:11.0pt;font-family:Tahoma;'>입력된다</span><span lang=EN-US style='font-size:11.0pt;font-family:Tahoma;'>.</span></p>
+
+<p class=MsoNormal><span lang=EN-US style='font-size:11.0pt;font-family:Tahoma;'>&nbsp;</span></p>
+
+<p class=MsoNormal><b><span style='font-size:11.0pt;
+font-family:Tahoma;'>스케줄링</span></b><b><span
+style='font-size:11.0pt;font-family:Tahoma;'>결과</span></b><b><span style='font-size:11.0pt;font-family:Tahoma;'>파일명</span></b><span
+lang=EN-US style='font-size:11.0pt;font-family:Tahoma;'>: </span><span style='font-size:11.0pt;font-family:Tahoma;'>스케줄링</span><span
+style='font-size:11.0pt;font-family:Tahoma;'>후</span><span style='font-size:11.0pt;font-family:Tahoma;'>생성될</span><span
+style='font-size:11.0pt;font-family:Tahoma;'>결과</span><span style='font-size:11.0pt;font-family:Tahoma;'>파일명을</span><span
+style='font-size:11.0pt;font-family:Tahoma;'>입력한다</span><span
+lang=EN-US style='font-size:11.0pt;font-family:Tahoma;'>. </span><span style='font-size:11.0pt;font-family:Tahoma;'>결과</span><span
+style='font-size:11.0pt;font-family:Tahoma;'>파일</span><span style='font-size:11.0pt;font-family:Tahoma;'>확장자는</span><span lang=EN-US style='font-size:11.0pt;font-family:Tahoma;'> html</span><span
+style='font-size:11.0pt;font-family:Tahoma;'>이며</span><span
+lang=EN-US style='font-size:11.0pt;font-family:Tahoma;'> html </span><span style='font-size:11.0pt;font-family:Tahoma;'>파일을</span><span style='font-size:11.0pt;font-family:Tahoma;'>통해</span><span
+style='font-size:11.0pt;font-family:Tahoma;'>완료문서를</span><span style='font-size:11.0pt;font-family:Tahoma;'>볼수</span><span
+style='font-size:11.0pt;font-family:Tahoma;'>있다</span><span
+lang=EN-US style='font-size:11.0pt;font-family:Tahoma;'>.</span></p>
+
+<p class=MsoNormal><span lang=EN-US style='font-size:11.0pt;font-family:Tahoma;'>&lt;</span><span
+style='font-size:11.0pt;font-family:Tahoma;'>참고사항</span><span
+lang=EN-US style='font-size:11.0pt;font-family:Tahoma;'>&gt;</span></p>
+
+<p class=MsoNormal><span style='font-size:11.0pt;
+font-family:Tahoma;'>결과</span><span
+style='font-size:11.0pt;font-family:Tahoma;'>파일에</span><span style='font-size:11.0pt;font-family:Tahoma;'>디렉토리를</span><span
+style='font-size:11.0pt;font-family:Tahoma;'>지정하고</span><span style='font-size:11.0pt;font-family:Tahoma;'>싶을때는</span><span
+style='font-size:11.0pt;font-family:Tahoma;'>디렉토리</span><span style='font-size:11.0pt;font-family:Tahoma;'>패스와</span><span
+style='font-size:11.0pt;font-family:Tahoma;'>결과명을</span><span style='font-size:11.0pt;font-family:Tahoma;'>입력하면</span><span
+style='font-size:11.0pt;font-family:Tahoma;'>된다</span><span
+lang=EN-US style='font-size:11.0pt;font-family:Tahoma;'>.<br>
+</span><span style='font-size:11.0pt;font-family:
+Tahoma;'>최대</span><span style='font-size:
+11.0pt;font-family:Tahoma;'>입력값은</span><span
+lang=EN-US style='font-size:11.0pt;font-family:Tahoma;'> 40</span><span style='font-size:11.0pt;font-family:Tahoma;'>자</span><span style='font-size:11.0pt;font-family:Tahoma;'>이다</span><span lang=EN-US style='font-size:11.0pt;font-family:Tahoma;'>.</span></p>
+
+<p class=MsoNormal><span style='font-size:11.0pt;
+font-family:Tahoma;'>예</span><span lang=EN-US style='font-size:11.0pt;font-family:Tahoma;'>)/myfolder/myDoc
+</span></p>
+
+<p class=MsoNormal><span lang=EN-US style='font-size:11.0pt;font-family:Tahoma;'>&gt;&gt;myfolder </span><span
+style='font-size:11.0pt;font-family:Tahoma;'>라는</span><span style='font-size:11.0pt;font-family:Tahoma;'>디렉토리</span><span
+style='font-size:11.0pt;font-family:Tahoma;'>생성</span><span style='font-size:11.0pt;font-family:Tahoma;'>후</span><span lang=EN-US style='font-size:11.0pt;font-family:Tahoma;'>
+myDoc….html </span><span style='font-size:11.0pt;
+font-family:Tahoma;'>파일을</span><span
+style='font-size:11.0pt;font-family:Tahoma;'>생성</span></p>
+
+<p class=MsoNormal><span style='font-size:11.0pt;
+font-family:Tahoma;'>참고</span><span lang=EN-US style='font-size:11.0pt;font-family:Tahoma;'>)
+/myfolder </span><span style='font-size:11.0pt;
+font-family:Tahoma;'>기준</span><span
+style='font-size:11.0pt;font-family:Tahoma;'>디렉토리는</span><span
+lang=EN-US style='font-size:11.0pt;font-family:Tahoma;'> JSP </span><span style='font-size:11.0pt;font-family:Tahoma;'>웹루트를</span><span style='font-size:11.0pt;font-family:Tahoma;'>기준으로</span><span
+style='font-size:11.0pt;font-family:Tahoma;'>생성</span></p>
+
+<p class=MsoNormal><b><span style='font-size:11.0pt;
+font-family:Tahoma;'>실행</span></b><b><span
+style='font-size:11.0pt;font-family:Tahoma;'>파라미터</span></b><b><span style='font-size:11.0pt;font-family:Tahoma;'>참조</span></b><b><span
+lang=EN-US style='font-size:11.0pt;font-family:Tahoma;'> index</span></b><span lang=EN-US
+style='font-size:11.0pt;font-family:Tahoma;'>: </span><span style='font-size:11.0pt;font-family:Tahoma;'>스케줄링</span><span
+style='font-size:11.0pt;font-family:Tahoma;'>결과</span><span style='font-size:11.0pt;font-family:Tahoma;'>파일명에</span><span
+style='font-size:11.0pt;font-family:Tahoma;'>파라미터</span><span style='font-size:11.0pt;font-family:Tahoma;'>값을</span><span
+style='font-size:11.0pt;font-family:Tahoma;'>추가하여</span><span style='font-size:11.0pt;font-family:Tahoma;'>생성하고</span><span
+style='font-size:11.0pt;font-family:Tahoma;'>싶을</span><span style='font-size:11.0pt;font-family:Tahoma;'>때</span><span lang=EN-US style='font-size:11.0pt;font-family:Tahoma;'> /rp </span><span
+style='font-size:11.0pt;font-family:Tahoma;'>파라미터</span><span style='font-size:11.0pt;font-family:Tahoma;'>값에서</span><span
+style='font-size:11.0pt;font-family:Tahoma;'>참조할</span><span style='font-size:11.0pt;font-family:Tahoma;'>파라미터</span><span lang=EN-US style='font-size:11.0pt;font-family:Tahoma;'>
+index </span><span style='font-size:11.0pt;
+font-family:Tahoma;'>를</span><span
+style='font-size:11.0pt;font-family:Tahoma;'>입력한다</span><span
+lang=EN-US style='font-size:11.0pt;font-family:Tahoma;'>. Index </span><span style='font-size:11.0pt;font-family:Tahoma;'>는</span><span
+lang=EN-US style='font-size:11.0pt;font-family:Tahoma;'> 1</span><span style='font-size:11.0pt;font-family:Tahoma;'>부터</span><span
+style='font-size:11.0pt;font-family:Tahoma;'>시작하며</span><span
+lang=EN-US style='font-size:11.0pt;font-family:Tahoma;'>, </span><span style='font-size:11.0pt;font-family:Tahoma;'>최대</span><span
+style='font-size:11.0pt;font-family:Tahoma;'>입력값은</span><span
+lang=EN-US style='font-size:11.0pt;font-family:Tahoma;'> 99 </span><span style='font-size:11.0pt;font-family:Tahoma;'>이다</span></p>
+
+<p class=MsoNormal><span style='font-size:11.0pt;
+font-family:Tahoma;'>실행</span><span
+style='font-size:11.0pt;font-family:Tahoma;'>파라미터를</span><span
+lang=EN-US style='font-size:11.0pt;font-family:Tahoma;'> /rp [1] [myid] </span><span style='font-size:
+11.0pt;font-family:Tahoma;'>로</span><span style='font-size:11.0pt;font-family:Tahoma;'>줄경우</span><span
+style='font-size:11.0pt;font-family:Tahoma;'>실행</span><span style='font-size:11.0pt;font-family:Tahoma;'>파라미터</span><span
+style='font-size:11.0pt;font-family:Tahoma;'>참조</span><span
+lang=EN-US style='font-size:11.0pt;font-family:Tahoma;'> index</span><span style='font-size:11.0pt;font-family:Tahoma;'>를</span><span
+lang=EN-US style='font-size:11.0pt;font-family:Tahoma;'> 2</span><span style='font-size:11.0pt;font-family:Tahoma;'>로</span><span
+style='font-size:11.0pt;font-family:Tahoma;'>입력하면</span><span style='font-size:11.0pt;font-family:Tahoma;'>결과파일</span><span
+style='font-size:11.0pt;font-family:Tahoma;'>생성은</span><span style='font-size:11.0pt;font-family:Tahoma;'>날짜</span><span lang=EN-US style='font-size:11.0pt;font-family:Tahoma;'>_myid.html
+</span><span style='font-size:11.0pt;font-family:
+Tahoma;'>와</span><span style='font-size:
+11.0pt;font-family:Tahoma;'>같은</span><span style='font-size:11.0pt;font-family:Tahoma;'>형태로</span><span
+style='font-size:11.0pt;font-family:Tahoma;'>생성</span></p>
+
+<p class=MsoNormal><span lang=EN-US style='font-size:11.0pt;font-family:Tahoma;'>:</span><b><span style='font-size:11.0pt;font-family:Tahoma;'>서버</span></b><b><span
+style='font-size:11.0pt;font-family:Tahoma;'>프린트</span></b><b><span lang=EN-US style='font-size:11.0pt;font-family:Tahoma;'>(Server
+Print)</span></b></p>
+
+<p class=MsoNormal><span style='font-size:11.0pt;
+font-family:Tahoma;'>서버</span><span lang=EN-US style='font-size:11.0pt;font-family:Tahoma;'> O.S </span><span
+style='font-size:11.0pt;font-family:Tahoma;'>가</span><span
+lang=EN-US style='font-size:11.0pt;font-family:Tahoma;'> windows </span><span style='font-size:11.0pt;font-family:Tahoma;'>일</span><span style='font-size:11.0pt;font-family:Tahoma;'>경우</span><span
+style='font-size:11.0pt;font-family:Tahoma;'>사용가능</span><span style='font-size:11.0pt;font-family:Tahoma;'>한</span><span
+style='font-size:11.0pt;font-family:Tahoma;'>옵션으로</span><span
+lang=EN-US style='font-size:11.0pt;font-family:Tahoma;'>, </span><span style='font-size:11.0pt;font-family:Tahoma;'>스케줄링</span><span
+style='font-size:11.0pt;font-family:Tahoma;'>완료</span><span style='font-size:11.0pt;font-family:Tahoma;'>후</span><span
+style='font-size:11.0pt;font-family:Tahoma;'>해당</span><span style='font-size:11.0pt;font-family:Tahoma;'>프린터로</span><span
+style='font-size:11.0pt;font-family:Tahoma;'>출력</span><span style='font-size:11.0pt;font-family:Tahoma;'>가능하다</span><span lang=EN-US style='font-size:11.0pt;font-family:Tahoma;'>.</span></p>
+
+<p class=MsoNormal><span style='font-size:11.0pt;
+font-family:Tahoma;'>서버프린트</span><span
+style='font-size:11.0pt;font-family:Tahoma;'>체크</span><span style='font-size:11.0pt;font-family:Tahoma;'>후</span><span
+style='font-size:11.0pt;font-family:Tahoma;'>서버쪽</span><span style='font-size:11.0pt;font-family:Tahoma;'>출력</span><span
+style='font-size:11.0pt;font-family:Tahoma;'>프린터를</span><span style='font-size:11.0pt;font-family:Tahoma;'>선택한다</span><span lang=EN-US style='font-size:11.0pt;font-family:Tahoma;'>.</span></p>
+
+<p class=MsoNormal><span lang=EN-US style='font-size:11.0pt;font-family:Tahoma;'><img border=0 width=300 height=152
+src="./6.files/image008.jpg"></span></p>
+
+<p class=MsoNormal><b><span
+style='font-size:11.0pt;font-family:Tahoma;'>스케줄링</span></b><b><span style='font-size:11.0pt;font-family:Tahoma;'>결과</span></b><b><span
+style='font-size:11.0pt;font-family:Tahoma;'>파일위치</span></b></p>
+
+<p class=MsoNormal><span style='font-size:11.0pt;
+font-family:Tahoma;'>스케줄링</span><span
+style='font-size:11.0pt;font-family:Tahoma;'>후</span><span style='font-size:11.0pt;font-family:Tahoma;'>생성될</span><span
+style='font-size:11.0pt;font-family:Tahoma;'>결과</span><span style='font-size:11.0pt;font-family:Tahoma;'>파일명을</span><span
+style='font-size:11.0pt;font-family:Tahoma;'>입력한다</span></p>
+
+<p class=MsoNormal><span style='font-size:11.0pt;
+font-family:Tahoma;'>결과</span><span
+style='font-size:11.0pt;font-family:Tahoma;'>파일</span><span style='font-size:11.0pt;font-family:Tahoma;'>확장자는</span><span lang=EN-US style='font-size:11.0pt;font-family:Tahoma;'> html</span><span
+style='font-size:11.0pt;font-family:Tahoma;'>이며</span><span
+lang=EN-US style='font-size:11.0pt;font-family:Tahoma;'> html </span><span style='font-size:11.0pt;font-family:Tahoma;'>파일을</span><span style='font-size:11.0pt;font-family:Tahoma;'>통해</span><span
+style='font-size:11.0pt;font-family:Tahoma;'>완료문서를</span><span style='font-size:11.0pt;font-family:Tahoma;'>볼수</span><span
+style='font-size:11.0pt;font-family:Tahoma;'>있다</span></p>
+
+<p class=MsoNormal><span lang=EN-US style='font-size:11.0pt;font-family:Tahoma;'>&lt;</span><span
+style='font-size:11.0pt;font-family:Tahoma;'>참고사항</span><span
+lang=EN-US style='font-size:11.0pt;font-family:Tahoma;'>&gt;</span></p>
+
+<p class=MsoNormal><span style='font-size:11.0pt;
+font-family:Tahoma;'>결과</span><span
+style='font-size:11.0pt;font-family:Tahoma;'>파일</span><span style='font-size:11.0pt;font-family:Tahoma;'>위치에</span><span lang=EN-US style='font-size:11.0pt;font-family:Tahoma;'>
+/myfolder/myDoc </span><span style='font-size:11.0pt;
+font-family:Tahoma;'>으로</span><span
+style='font-size:11.0pt;font-family:Tahoma;'>입력할</span><span style='font-size:11.0pt;font-family:Tahoma;'>경우</span><span lang=EN-US style='font-size:11.0pt;font-family:Tahoma;'>
+myfolder </span><span style='font-size:11.0pt;
+font-family:Tahoma;'>디렉토리를생성</span><span
+style='font-size:11.0pt;font-family:Tahoma;'>후</span><span
+lang=EN-US style='font-size:11.0pt;font-family:Tahoma;'> myDoc….html </span><span style='font-size:11.0pt;font-family:Tahoma;'>파일을</span><span style='font-size:11.0pt;font-family:Tahoma;'>생성한다</span></p>
+
+<p class=MsoNormal><span lang=EN-US style='font-size:11.0pt;font-family:Tahoma;'>&nbsp;</span></p>
+
+<p class=MsoNormal><b><span style='font-size:11.0pt;
+font-family:Tahoma;'>스케줄</span></b><b><span
+style='font-size:11.0pt;font-family:Tahoma;'>실행</span></b><b><span style='font-size:11.0pt;
+font-family:Tahoma;'>기준일</span></b><b><span lang=EN-US
+style='font-size:11.0pt;font-family:Tahoma;'>(</span></b><b><span style='font-size:11.0pt;
+font-family:Tahoma;'>스케줄</span></b><b><span
+style='font-size:11.0pt;font-family:Tahoma;'>시작일</span></b><b><span
+lang=EN-US style='font-size:11.0pt;font-family:Tahoma;'>):</span></b><span style='font-size:11.0pt;
+font-family:Tahoma;'>스케줄링</span><span
+style='font-size:11.0pt;font-family:Tahoma;'>시작</span><span style='font-size:11.0pt;font-family:Tahoma;'>기준일을</span><span
+style='font-size:11.0pt;font-family:Tahoma;'>시까지</span><span style='font-size:11.0pt;font-family:Tahoma;'>입력한다</span><span lang=EN-US style='font-size:11.0pt;font-family:Tahoma;'>. (24</span><span
+style='font-size:11.0pt;font-family:Tahoma;'>시간</span><span style='font-size:11.0pt;font-family:Tahoma;'>기준</span><span lang=EN-US style='font-size:11.0pt;font-family:Tahoma;'>)</span></p>
+
+<p class=MsoNormal><span lang=EN-US style='font-size:11.0pt;font-family:Tahoma;'>&nbsp;</span></p>
+
+<p class=MsoNormal><b><span style='font-size:11.0pt;
+font-family:Tahoma;'>스케줄</span></b><b><span
+style='font-size:11.0pt;font-family:Tahoma;'>실행</span></b><b><span style='font-size:11.0pt;font-family:Tahoma;'>날짜</span></b><span
+lang=EN-US style='font-size:11.0pt;font-family:Tahoma;'>:</span></p>
+
+<p class=MsoNormal><span lang=EN-US style='font-size:11.0pt;font-family:Tahoma;'>.</span><span
+style='font-size:11.0pt;font-family:Tahoma;'>정해진</span><span style='font-size:11.0pt;font-family:Tahoma;'>날짜에</span><span
+style='font-size:11.0pt;font-family:Tahoma;'>한번</span><span style='font-size:11.0pt;font-family:Tahoma;'>실행하기</span><span lang=EN-US style='font-size:11.0pt;font-family:Tahoma;'>: </span><span
+style='font-size:11.0pt;font-family:Tahoma;'>정해진</span><span style='font-size:11.0pt;font-family:Tahoma;'>날짜에</span><span
+style='font-size:11.0pt;font-family:Tahoma;'>한번</span><span style='font-size:11.0pt;font-family:Tahoma;'>실행한다</span><span lang=EN-US style='font-size:11.0pt;font-family:Tahoma;'>.</span></p>
+
+<p class=MsoNormal><span lang=EN-US style='font-size:11.0pt;font-family:Tahoma;'>.</span><span
+style='font-size:11.0pt;font-family:Tahoma;'>매주에</span><span style='font-size:11.0pt;font-family:Tahoma;'>실행하기</span><span lang=EN-US style='font-size:11.0pt;font-family:Tahoma;'>: </span><span
+style='font-size:11.0pt;font-family:Tahoma;'>매주에</span><span style='font-size:11.0pt;font-family:Tahoma;'>선택한</span><span
+style='font-size:11.0pt;font-family:Tahoma;'>요일과</span><span style='font-size:11.0pt;font-family:Tahoma;'>정해진</span><span
+style='font-size:11.0pt;font-family:Tahoma;'>시간에</span><span style='font-size:11.0pt;font-family:Tahoma;'>실행한다</span></p>
+
+<p class=MsoNormal><span lang=EN-US style='font-size:11.0pt;font-family:Tahoma;'>.</span><span
+style='font-size:11.0pt;font-family:Tahoma;'>매월에</span><span style='font-size:11.0pt;font-family:Tahoma;'>실행하기</span><span lang=EN-US style='font-size:11.0pt;font-family:Tahoma;'> : </span><span
+style='font-size:11.0pt;font-family:Tahoma;'>매월</span><span style='font-size:11.0pt;font-family:Tahoma;'>정해진</span><span
+style='font-size:11.0pt;font-family:Tahoma;'>날짜에</span><span style='font-size:11.0pt;font-family:Tahoma;'>한번</span><span
+style='font-size:11.0pt;font-family:Tahoma;'>실행하다</span></p>
+
+<p class=MsoNormal><span lang=EN-US style='font-size:11.0pt;font-family:Tahoma;'>.</span><span
+style='font-size:11.0pt;font-family:Tahoma;'>매일</span><span style='font-size:11.0pt;font-family:Tahoma;'>실행하기</span><span lang=EN-US style='font-size:11.0pt;font-family:Tahoma;'> : </span><span
+style='font-size:11.0pt;font-family:Tahoma;'>시작일로부터</span><span style='font-size:11.0pt;font-family:Tahoma;'>매일</span><span
+style='font-size:11.0pt;font-family:Tahoma;'>정해진</span><span style='font-size:11.0pt;font-family:Tahoma;'>시간에</span><span
+style='font-size:11.0pt;font-family:Tahoma;'>실행한다</span></p>
+
+<p class=MsoNormal><span lang=EN-US style='font-size:11.0pt;font-family:Tahoma;'>.</span><span
+style='font-size:11.0pt;font-family:Tahoma;'>매시간마다</span><span style='font-size:11.0pt;font-family:Tahoma;'>실행하기</span><span lang=EN-US style='font-size:11.0pt;font-family:Tahoma;'>: </span><span
+style='font-size:11.0pt;font-family:Tahoma;'>정해진</span><span style='font-size:11.0pt;font-family:Tahoma;'>시간</span><span lang=EN-US style='font-size:11.0pt;font-family:Tahoma;'>, </span><span
+style='font-size:11.0pt;font-family:Tahoma;'>매분에</span><span style='font-size:11.0pt;font-family:Tahoma;'>실행한다</span></p>
+
+<p class=MsoNormal><span lang=EN-US style='font-size:11.0pt;font-family:Tahoma;'>&nbsp;</span></p>
+
+<p class=MsoNormal><b><span style='font-size:11.0pt;
+font-family:Tahoma;'>메일발송</span></b><b><span
+style='font-size:11.0pt;font-family:Tahoma;'>여부</span></b><span
+lang=EN-US style='font-size:11.0pt;font-family:Tahoma;'>:</span></p>
+
+<p class=MsoNormal><span style='font-size:11.0pt;
+font-family:Tahoma;'>스케줄링</span><span
+style='font-size:11.0pt;font-family:Tahoma;'>완료</span><span style='font-size:11.0pt;font-family:Tahoma;'>후</span><span
+style='font-size:11.0pt;font-family:Tahoma;'>메일통지</span><span style='font-size:11.0pt;font-family:Tahoma;'>여부를</span><span
+style='font-size:11.0pt;font-family:Tahoma;'>선택한</span><span style='font-size:11.0pt;font-family:Tahoma;'>후</span><span style='font-size:11.0pt;font-family:Tahoma;'>&nbsp;</span><span style='font-size:11.0pt;font-family:Tahoma;'>메일</span><span style='font-size:11.0pt;font-family:Tahoma;'>수신자를</span><span
+style='font-size:11.0pt;font-family:Tahoma;'>입력한다</span><span
+lang=EN-US style='font-size:11.0pt;font-family:Tahoma;'>. </span><span style='font-size:11.0pt;font-family:Tahoma;'>받는</span><span
+style='font-size:11.0pt;font-family:Tahoma;'>사람이</span><span style='font-size:11.0pt;font-family:Tahoma;'>복수인경우</span><span
+style='font-size:11.0pt;font-family:Tahoma;'>세미콜론</span><span
+lang=EN-US style='font-size:11.0pt;font-family:Tahoma;'>(;)</span><span style='font-size:11.0pt;font-family:Tahoma;'>으로</span><span style='font-size:11.0pt;font-family:Tahoma;'>열거한다</span><span lang=EN-US style='font-size:11.0pt;font-family:Tahoma;'>. <br>
+</span><span style='font-size:11.0pt;font-family:
+Tahoma;'>최대입력값은</span><span lang=EN-US style='font-size:11.0pt;font-family:Tahoma;'> 512</span><span
+style='font-size:11.0pt;font-family:Tahoma;'>자</span><span style='font-size:11.0pt;font-family:Tahoma;'>이다</span><span lang=EN-US style='font-size:11.0pt;font-family:Tahoma;'>.</span></p>
+
+<p class=MsoNormal><span style='font-size:11.0pt;
+font-family:Tahoma;'>만약에</span><span
+style='font-size:11.0pt;font-family:Tahoma;'>메일리스트를</span><span
+lang=EN-US style='font-size:11.0pt;font-family:Tahoma;'> jsp </span><span style='font-size:11.0pt;font-family:Tahoma;'>또는</span><span
+lang=EN-US style='font-size:11.0pt;font-family:Tahoma;'> asp</span><span style='font-size:11.0pt;font-family:Tahoma;'>를</span><span style='font-size:11.0pt;font-family:Tahoma;'>호출하여</span><span
+style='font-size:11.0pt;font-family:Tahoma;'>가져오고</span><span style='font-size:11.0pt;font-family:Tahoma;'>싶으면</span><span lang=EN-US style='font-size:11.0pt;font-family:Tahoma;'>, </span><span
+style='font-size:11.0pt;font-family:Tahoma;'>다음의</span><span style='font-size:11.0pt;font-family:Tahoma;'>예처럼</span><span lang=EN-US style='font-size:11.0pt;font-family:Tahoma;'> URL </span><span
+style='font-size:11.0pt;font-family:Tahoma;'>를</span><span style='font-size:11.0pt;font-family:Tahoma;'>입력한다</span><span lang=EN-US style='font-size:11.0pt;font-family:Tahoma;'>.</span></p>
+
+<p class=MsoNormal><span style='font-size:11.0pt;
+font-family:Tahoma;'>예</span><span lang=EN-US style='font-size:11.0pt;font-family:Tahoma;'>) <b>http://ip:port/schedulemaillist.jsp</b></span></p>
+
+<p class=MsoNormal><span style='font-size:11.0pt;
+font-family:Tahoma;'>출력</span><span
+style='font-size:11.0pt;font-family:Tahoma;'>결과는</span><span style='font-size:11.0pt;font-family:Tahoma;'>직접</span><span
+style='font-size:11.0pt;font-family:Tahoma;'>입력할</span><span style='font-size:11.0pt;font-family:Tahoma;'>경우와</span><span
+style='font-size:11.0pt;font-family:Tahoma;'>같은</span><span style='font-size:11.0pt;font-family:Tahoma;'>형태의</span><span
+style='font-size:11.0pt;font-family:Tahoma;'>결과여야</span><span style='font-size:11.0pt;font-family:Tahoma;'>한다</span></p>
+
+<p class=MsoNormal><i><span lang=EN-US
+style='font-size:11.0pt;font-family:Tahoma;'>jsp </span></i><i><span
+style='font-size:11.0pt;font-family:Tahoma;'>구문</span></i><i><span lang=EN-US style='font-size:11.0pt;font-family:Tahoma;'>)</span></i></p>
+
+<p class=MsoNormal><b><span lang=EN-US style='font-size:11.0pt;font-family:Tahoma;'>out.print</span></b><span
+lang=EN-US style='font-size:11.0pt;font-family:Tahoma;'>(<span style='color:black'>&quot;shkim@m2soft.co.kr;meene@hanmail.net</span>;<span
+style='color:black'>&quot;</span>)</span></p>
+
+<p class=MsoNormal><i><span lang=EN-US
+style='font-size:11.0pt;font-family:Tahoma;'>asp </span></i><i><span
+style='font-size:11.0pt;font-family:Tahoma;'>구문</span></i><i><span lang=EN-US style='font-size:11.0pt;font-family:Tahoma;'>)</span></i></p>
+
+<p class=MsoNormal><b><span lang=EN-US style='font-size:11.0pt;font-family:Tahoma;color:black'>Response</span></b><span
+lang=EN-US style='font-size:11.0pt;font-family:Tahoma;color:black'>.<b>Write</b>(&quot;shkim@m2soft.co.kr;meene@hanmail.net
+&quot;)</span></p>
+
+<p class=MsoNormal><span lang=EN-US style='font-size:11.0pt;font-family:Tahoma;'>&lt;</span><span
+style='font-size:11.0pt;font-family:Tahoma;'>참고사항</span><span
+lang=EN-US style='font-size:11.0pt;font-family:Tahoma;'>&gt; </span><b><span style='font-size:11.0pt;font-family:Tahoma;'>실행파라미터</span></b><span
+style='font-size:11.0pt;font-family:Tahoma;'>에</span><span style='font-size:11.0pt;font-family:Tahoma;'>다중파라미터</span><span
+style='font-size:11.0pt;font-family:Tahoma;'>값을</span><span style='font-size:11.0pt;font-family:Tahoma;'>입력한</span><span
+style='font-size:11.0pt;font-family:Tahoma;'>경우</span><span style='font-size:11.0pt;font-family:Tahoma;'>세미콜론</span><span lang=EN-US style='font-size:11.0pt;font-family:Tahoma;'>(; ) </span><span
+style='font-size:11.0pt;font-family:Tahoma;'>구분자로</span><span style='font-size:11.0pt;font-family:Tahoma;'>수신자</span><span
+style='font-size:11.0pt;font-family:Tahoma;'>입력란에</span><span style='font-size:11.0pt;font-family:Tahoma;'>주소를</span><span
+style='font-size:11.0pt;font-family:Tahoma;'>입력한다</span><span
+lang=EN-US style='font-size:11.0pt;font-family:Tahoma;'>. </span><span style='font-size:11.0pt;font-family:Tahoma;'>그러면</span><span lang=EN-US style='font-size:11.0pt;font-family:Tahoma;'> /rp </span><span
+style='font-size:11.0pt;font-family:Tahoma;'>입력</span><span style='font-size:11.0pt;font-family:Tahoma;'>순서에</span><span
+style='font-size:11.0pt;font-family:Tahoma;'>따라</span><span style='font-size:11.0pt;font-family:Tahoma;'>차례로</span><span
+style='font-size:11.0pt;font-family:Tahoma;'>매핑되어</span><span style='font-size:11.0pt;font-family:Tahoma;'>메일이</span><span
+style='font-size:11.0pt;font-family:Tahoma;'>발송된다</span><span
+lang=EN-US style='font-size:11.0pt;font-family:Tahoma;'>. </span><span style='font-size:11.0pt;font-family:Tahoma;'>실행파라미터에</span><span
+style='font-size:11.0pt;font-family:Tahoma;'>대응되는</span><span style='font-size:11.0pt;font-family:Tahoma;'>메일</span><span
+style='font-size:11.0pt;font-family:Tahoma;'>입력값이</span><span style='font-size:11.0pt;font-family:Tahoma;'>없을경우</span><span
+style='font-size:11.0pt;font-family:Tahoma;'>메일발송되지</span><span style='font-size:11.0pt;font-family:Tahoma;'>않음</span><span lang=EN-US style='font-size:11.0pt;font-family:Tahoma;'>.</span></p>
+
+<p class=MsoNormal><span lang=EN-US style='font-size:11.0pt;font-family:Tahoma;'>&nbsp;</span></p>
+
+<p class=MsoNormal><b><span style='font-size:11.0pt;
+font-family:Tahoma;'>메일발송</span></b><b><span
+style='font-size:11.0pt;font-family:Tahoma;'>형식</span></b><span
+lang=EN-US style='font-size:11.0pt;font-family:Tahoma;'>: </span><span style='font-size:11.0pt;font-family:Tahoma;'>메일발송</span><span
+style='font-size:11.0pt;font-family:Tahoma;'>시</span><span style='font-size:11.0pt;font-family:Tahoma;'>내용을</span><span lang=EN-US style='font-size:11.0pt;font-family:Tahoma;'> HTML
+</span><span style='font-size:11.0pt;font-family:
+Tahoma;'>형식으로</span><span lang=EN-US style='font-size:11.0pt;font-family:Tahoma;'> embed </span><span
+style='font-size:11.0pt;font-family:Tahoma;'>시킬</span><span style='font-size:11.0pt;font-family:Tahoma;'>때는</span><span style='font-size:11.0pt;font-family:Tahoma;'> <span lang=EN-US>HTML</span></span><span
+style='font-size:11.0pt;font-family:Tahoma;'>를</span><span style='font-size:11.0pt;font-family:Tahoma;'>선택하고</span><span lang=EN-US style='font-size:11.0pt;font-family:Tahoma;'>, </span><span
+style='font-size:11.0pt;font-family:Tahoma;'>스케줄링</span><span style='font-size:11.0pt;font-family:Tahoma;'>완료</span><span
+style='font-size:11.0pt;font-family:Tahoma;'>파일</span><span style='font-size:11.0pt;font-family:Tahoma;'>위치만</span><span
+style='font-size:11.0pt;font-family:Tahoma;'>링크시킬때는</span><span
+lang=EN-US style='font-size:11.0pt;font-family:Tahoma;'> URL LINK</span><span style='font-size:11.0pt;font-family:Tahoma;'>를</span><span style='font-size:11.0pt;font-family:Tahoma;'>선택한다</span><span lang=EN-US style='font-size:11.0pt;font-family:Tahoma;'>.</span></p>
+
+<p class=MsoNormal><span lang=EN-US style='font-size:11.0pt;font-family:Tahoma;'>- URL LINK </span><span
+style='font-size:11.0pt;font-family:Tahoma;'>선택</span><span style='font-size:11.0pt;font-family:Tahoma;'>시</span><b><span
+style='font-size:11.0pt;font-family:Tahoma;'>스케줄링</span></b><b><span style='font-size:11.0pt;font-family:Tahoma;'>메일통지</span></b><b><span style='font-size:11.0pt;font-family:Tahoma;'>양식</span></b><b><span
+lang=EN-US style='font-size:11.0pt;font-family:Tahoma;'>(HTML) </span></b><b><span style='font-size:11.0pt;font-family:Tahoma;'>작성하기</span></b><span style='font-size:11.0pt;font-family:Tahoma;'>참조</span></p>
+
+<p class=MsoNormal><span style='font-size:11.0pt;
+font-family:Tahoma;'>예</span><span lang=EN-US style='font-size:11.0pt;font-family:Tahoma;'>)
+HTML </span><span style='font-size:11.0pt;font-family:
+Tahoma;'>형식으로</span><span style='font-size:
+11.0pt;font-family:Tahoma;'>메일을</span><span style='font-size:11.0pt;font-family:Tahoma;'>보낸경우</span><span lang=EN-US style='font-size:11.0pt;font-family:Tahoma;'> (</span><span
+style='font-size:11.0pt;font-family:Tahoma;'>기준</span><span
+lang=EN-US style='font-size:11.0pt;font-family:Tahoma;'>: Outlook&nbsp;
+express </span><span style='font-size:11.0pt;
+font-family:Tahoma;'>이며</span><span lang=EN-US style='font-size:11.0pt;font-family:Tahoma;'>,</span></p>
+
+<p class=MsoNormal><span lang=EN-US style='font-size:11.0pt;font-family:Tahoma;'><img border=0 width=451 height=286
+src="./6.files/image010.jpg"></span></p>
+
+<p class=MsoNormal><span style='font-size:11.0pt;
+font-family:Tahoma;'>내용에</span><span lang=EN-US style='font-size:11.0pt;font-family:Tahoma;'> RD
+ActiveX </span><span style='font-size:11.0pt;
+font-family:Tahoma;'>가</span><span
+style='font-size:11.0pt;font-family:Tahoma;'>바로</span><span style='font-size:11.0pt;font-family:Tahoma;'>보이는</span><span
+style='font-size:11.0pt;font-family:Tahoma;'>형태</span><span
+lang=EN-US style='font-size:11.0pt;font-family:Tahoma;'>)</span></p>
+
+<p class=MsoNormal><span lang=EN-US style='font-size:11.0pt;font-family:Tahoma;'>&nbsp;</span></p>
+
+<p class=MsoNormal><span lang=EN-US style='font-size:11.0pt;font-family:Tahoma;'>&lt;</span><span
+style='font-size:11.0pt;font-family:Tahoma;'>참고사항</span><span
+lang=EN-US style='font-size:11.0pt;font-family:Tahoma;'>&gt;</span></p>
+
+<p class=MsoNormal><span lang=EN-US style='font-size:11.0pt;font-family:Tahoma;'>* HTML </span><span
+style='font-size:11.0pt;font-family:Tahoma;'>형식으로</span><span style='font-size:11.0pt;font-family:Tahoma;'>보낼</span><span
+style='font-size:11.0pt;font-family:Tahoma;'>때는</span><span style='font-size:11.0pt;font-family:Tahoma;'>사용자가</span><span
+style='font-size:11.0pt;font-family:Tahoma;'>사용한</span><span style='font-size:11.0pt;font-family:Tahoma;'>메일프로그램이</span><span
+style='font-size:11.0pt;font-family:Tahoma;'>낮은</span><span style='font-size:11.0pt;font-family:Tahoma;'>보안수준</span><span
+style='font-size:11.0pt;font-family:Tahoma;'>옵션을</span><span style='font-size:11.0pt;font-family:Tahoma;'>가져야</span><span
+style='font-size:11.0pt;font-family:Tahoma;'>한다</span></p>
+
+<p class=MsoNormal><span style='font-size:11.0pt;
+font-family:Tahoma;'>예</span><span lang=EN-US style='font-size:11.0pt;font-family:Tahoma;'>)
+Outlook expresss </span><span style='font-size:11.0pt;
+font-family:Tahoma;'>경우</span><span lang=EN-US style='font-size:11.0pt;font-family:Tahoma;'>:</span></p>
+
+<p class=MsoNormal><span lang=EN-US style='font-size:11.0pt;font-family:Tahoma;'>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; </span><span
+style='font-size:11.0pt;font-family:Tahoma;'>도구</span><span
+lang=EN-US style='font-size:11.0pt;font-family:Tahoma;'>/</span><span style='font-size:11.0pt;font-family:Tahoma;'>옵션</span><span lang=EN-US style='font-size:11.0pt;font-family:Tahoma;'>/</span><span
+style='font-size:11.0pt;font-family:Tahoma;'>보안</span><span
+lang=EN-US style='font-size:11.0pt;font-family:Tahoma;'>-</span><span style='font-size:11.0pt;font-family:Tahoma;'>인터넷영역</span><span lang=EN-US style='font-size:
+11.0pt;font-family:Tahoma;'>(</span><span style='font-size:11.0pt;
+font-family:Tahoma;'>보안수준은</span><span
+style='font-size:11.0pt;font-family:Tahoma;'>낮고</span><span
+lang=EN-US style='font-size:11.0pt;font-family:Tahoma;'>, </span><span style='font-size:11.0pt;font-family:Tahoma;'>기능성은</span><span
+style='font-size:11.0pt;font-family:Tahoma;'>높음</span><span
+lang=EN-US style='font-size:11.0pt;font-family:Tahoma;'>)</span></p>
+
+<p class=MsoNormal><span lang=EN-US style='font-size:11.0pt;font-family:Tahoma;'>* </span><span
+style='font-size:11.0pt;font-family:Tahoma;'>스케줄링이</span><span style='font-size:11.0pt;font-family:Tahoma;'>제대로</span><span
+style='font-size:11.0pt;font-family:Tahoma;'>시행되지</span><span style='font-size:11.0pt;font-family:Tahoma;'>않을</span><span
+style='font-size:11.0pt;font-family:Tahoma;'>때</span><span style='font-size:11.0pt;font-family:Tahoma;'>스케줄링</span><span lang=EN-US style='font-size:11.0pt;font-family:Tahoma;'>/</span><span
+style='font-size:11.0pt;font-family:Tahoma;'>서비스제어</span><span style='font-size:11.0pt;font-family:Tahoma;'>메뉴에</span><span
+style='font-size:11.0pt;font-family:Tahoma;'>스케줄링을</span><span style='font-size:11.0pt;font-family:Tahoma;'>재시작</span><span
+style='font-size:11.0pt;font-family:Tahoma;'>또는</span><span style='font-size:11.0pt;font-family:Tahoma;'>일시중지</span><span
+style='font-size:11.0pt;font-family:Tahoma;'>시킬</span><span style='font-size:11.0pt;font-family:Tahoma;'>수</span><span
+style='font-size:11.0pt;font-family:Tahoma;'>있다</span><span
+lang=EN-US style='font-size:11.0pt;font-family:Tahoma;'>.</span></p>
+
+<p class=MsoNormal><span lang=EN-US style='font-size:11.0pt;font-family:Tahoma;'>* </span><span
+style='font-size:11.0pt;font-family:Tahoma;'>스케줄링은</span><span style='font-size:11.0pt;font-family:Tahoma;'>시작</span><span
+style='font-size:11.0pt;font-family:Tahoma;'>되었으나</span><span style='font-size:11.0pt;font-family:Tahoma;'>쿼리</span><span
+style='font-size:11.0pt;font-family:Tahoma;'>및</span><span style='font-size:11.0pt;font-family:Tahoma;'>데이터의</span><span
+style='font-size:11.0pt;font-family:Tahoma;'>양에</span><span style='font-size:11.0pt;font-family:Tahoma;'>따라</span><span
+style='font-size:11.0pt;font-family:Tahoma;'>데이터</span><span style='font-size:11.0pt;font-family:Tahoma;'>파일이</span><span
+style='font-size:11.0pt;font-family:Tahoma;'>즉시</span><span style='font-size:11.0pt;font-family:Tahoma;'>생성되지</span><span
+style='font-size:11.0pt;font-family:Tahoma;'>않을</span><span style='font-size:11.0pt;font-family:Tahoma;'>수도</span><span
+style='font-size:11.0pt;font-family:Tahoma;'>있으며</span><span
+lang=EN-US style='font-size:11.0pt;font-family:Tahoma;'>, </span><span style='font-size:11.0pt;font-family:Tahoma;'>서버</span><span
+style='font-size:11.0pt;font-family:Tahoma;'>매니저의</span><span style='font-size:11.0pt;font-family:Tahoma;'>로그</span><span lang=EN-US style='font-size:11.0pt;font-family:Tahoma;'>/</span><span
+style='font-size:11.0pt;font-family:Tahoma;'>스케줄링</span><span style='font-size:11.0pt;font-family:Tahoma;'>로그보기를</span><span
+style='font-size:11.0pt;font-family:Tahoma;'>참조하여</span><span style='font-size:11.0pt;font-family:Tahoma;'>스케줄링</span><span
+style='font-size:11.0pt;font-family:Tahoma;'>관련</span><span style='font-size:11.0pt;font-family:Tahoma;'>진행</span><span
+style='font-size:11.0pt;font-family:Tahoma;'>상태를</span><span style='font-size:11.0pt;font-family:Tahoma;'>파악할</span><span
+style='font-size:11.0pt;font-family:Tahoma;'>수</span><span style='font-size:11.0pt;font-family:Tahoma;'>있다</span></p>
+
+<p class=MsoNormal><span lang=EN-US style='font-size:11.0pt;font-family:Tahoma;'>&nbsp;</span></p>
+
+<p class=MsoNormal><span lang=EN-US style='font-size:11.0pt;font-family:Tahoma;'>&nbsp;</span></p>
+
+<p class=MsoNormal><a name="_Toc77760711"></a><a name="_Toc84410305"></a><a
+name="_Toc85544691"></a><a name="_Toc93757598"><span
+style='font-size:11.0pt;font-family:Tahoma;'>스케줄링</span></a><span
+style='font-size:11.0pt;font-family:Tahoma;'>메일통지</span><span
+style='font-size:11.0pt;font-family:Tahoma;'>양식</span><span
+lang=EN-US style='font-size:11.0pt;font-family:Tahoma;'>(HTML) </span><span
+style='font-size:11.0pt;font-family:Tahoma;'>작성하기</span></p>
+
+<p class=MsoNormal><span lang=EN-US style='font-size:11.0pt;font-family:Tahoma;'>&nbsp;</span></p>
+
+<p class=MsoNormal><span style='font-size:11.0pt;
+font-family:Tahoma;'>템플릿</span><span
+style='font-size:11.0pt;font-family:Tahoma;'>만들기</span></p>
+
+<p class=MsoNormal><span lang=EN-US style='font-size:11.0pt;font-family:Tahoma;'>HTML </span><span
+style='font-size:11.0pt;font-family:Tahoma;'>에</span><span style='font-size:11.0pt;font-family:Tahoma;'>스케줄링</span><span
+style='font-size:11.0pt;font-family:Tahoma;'>문서가</span><span style='font-size:11.0pt;font-family:Tahoma;'>링크될</span><span
+style='font-size:11.0pt;font-family:Tahoma;'>위치에</span><span
+lang=EN-US style='font-size:11.0pt;font-family:Tahoma;'> $RDPARAM </span><span style='font-size:11.0pt;font-family:Tahoma;'>문자를</span><span style='font-size:11.0pt;font-family:Tahoma;'>추가하여</span><span
+style='font-size:11.0pt;font-family:Tahoma;'>생성한다</span><span
+lang=EN-US style='font-size:11.0pt;font-family:Tahoma;'>.</span></p>
+
+<p class=MsoNormal><span lang=EN-US style='font-size:11.0pt;font-family:Tahoma;'>HTML </span><span
+style='font-size:11.0pt;font-family:Tahoma;'>작성</span><span style='font-size:11.0pt;font-family:Tahoma;'>예</span><span lang=EN-US style='font-size:11.0pt;font-family:Tahoma;'>)
+mailhtm.html</span></p>
+
+<p class=MsoNormal><span lang=EN-US style='font-size:11.0pt;font-family:Tahoma;'>&lt;html&gt;&lt;body&gt;</span></p>
+
+<p class=MsoNormal><span lang=EN-US style='font-size:11.0pt;font-family:Tahoma;'>&lt;table&gt;</span></p>
+
+<p class=MsoNormal><span lang=EN-US style='font-size:11.0pt;font-family:Tahoma;'>&lt;tr&gt;&lt;td&gt;RDServer
+</span><span style='font-size:11.0pt;font-family:
+Tahoma;'>스케줄링</span><span lang=EN-US style='font-size:11.0pt;font-family:Tahoma;'> &#8211; </span><span
+style='font-size:11.0pt;font-family:Tahoma;'>매출</span><span style='font-size:11.0pt;font-family:Tahoma;'>주간</span><span
+style='font-size:11.0pt;font-family:Tahoma;'>보고서</span><span
+lang=EN-US style='font-size:11.0pt;font-family:Tahoma;'>&lt;/td&gt;&lt;/tr&gt;</span></p>
+
+<p class=MsoNormal><span lang=EN-US style='font-size:11.0pt;font-family:Tahoma;'>&lt;tr&gt;&lt;td&gt;</span><span
+style='font-size:11.0pt;font-family:Tahoma;'>다음을</span><span
+lang=EN-US style='font-size:11.0pt;font-family:Tahoma;'> &lt;a href=<span style='color:#FF6600'>&quot;<b>$RDPARAM</b>&quot;&gt;</span></span><span
+style='font-size:11.0pt;font-family:Tahoma;'>클릭</span><span
+lang=EN-US style='font-size:11.0pt;font-family:Tahoma;'>&lt;/a&gt;</span><span style='font-size:11.0pt;font-family:Tahoma;'>하세요</span><span
+lang=EN-US style='font-size:11.0pt;font-family:Tahoma;'>!!&lt;/td&gt;&lt;/tr&gt;</span></p>
+
+<p class=MsoNormal><span lang=EN-US style='font-size:11.0pt;font-family:Tahoma;'>&lt;/table&gt;</span></p>
+
+<p class=MsoNormal><span lang=EN-US style='font-size:11.0pt;font-family:Tahoma;'>&lt;/body&gt;</span></p>
+
+<p class=MsoNormal><span lang=EN-US style='font-size:11.0pt;font-family:Tahoma;'>&lt;/html&gt;</span></p>
+
+<p class=MsoNormal><span lang=EN-US style='font-size:11.0pt;font-family:Tahoma;'>&nbsp;</span></p>
+
+<p class=MsoNormal><span style='font-size:11.0pt;
+font-family:Tahoma;'>스케줄링</span><span
+style='font-size:11.0pt;font-family:Tahoma;'>환경설정</span><span
+lang=EN-US style='font-size:11.0pt;font-family:Tahoma;'>/</span><span style='font-size:11.0pt;font-family:Tahoma;'>환경설정</span><span style='font-size:11.0pt;font-family:Tahoma;'> <span
+lang=EN-US>&#8211; </span></span><span style='font-size:11.0pt;font-family:Tahoma;'>경로를</span><span
+style='font-size:11.0pt;font-family:Tahoma;'>선택한</span><span style='font-size:11.0pt;font-family:Tahoma;'>후</span><span lang=EN-US style='font-size:11.0pt;font-family:Tahoma;'> ‘</span><span
+style='font-size:11.0pt;font-family:Tahoma;'>메일발송</span><span style='font-size:11.0pt;font-family:Tahoma;'>양식</span><span lang=EN-US style='font-size:11.0pt;font-family:Tahoma;'> HTML</span><span
+style='font-size:11.0pt;font-family:Tahoma;'>에</span><span style='font-size:11.0pt;font-family:Tahoma;'>템플릿</span><span
+style='font-size:11.0pt;font-family:Tahoma;'>절대패스를</span><span style='font-size:11.0pt;font-family:Tahoma;'>입력한다</span><span lang=EN-US style='font-size:11.0pt;font-family:Tahoma;'>.</span></p>
+
+<p class=MsoNormal><span lang=EN-US style='font-size:11.0pt;font-family:Tahoma;'><img border=0 width=433 height=336
+src="./6.files/image012.jpg"></span></p>
+
+<p class=MsoNormal><span style='font-size:11.0pt;
+font-family:Tahoma;'>메일발송</span><span
+style='font-size:11.0pt;font-family:Tahoma;'>양식</span><span
+lang=EN-US style='font-size:11.0pt;font-family:Tahoma;'> HTML(</span><span style='font-size:11.0pt;font-family:Tahoma;'>절대</span><span
+lang=EN-US style='font-size:11.0pt;font-family:Tahoma;'>PATH)</span><span style='font-size:11.0pt;font-family:Tahoma;'>에</span><span
+style='font-size:11.0pt;font-family:Tahoma;'> <b><span lang=EN-US>c:/mytemplate/mailhtm.html</span></b></span><span style='font-size:11.0pt;font-family:Tahoma;'>를</span><span
+style='font-size:11.0pt;font-family:Tahoma;'>입력</span></p>
+
+<p class=MsoNormal><span lang=EN-US style='font-size:11.0pt;font-family:Tahoma;'>&nbsp;</span></p>
+
+<p class=MsoNormal><span lang=EN-US style='font-size:11.0pt;font-family:Tahoma;'>&lt;</span><span
+style='font-size:11.0pt;font-family:Tahoma;'>참고사항</span><span
+lang=EN-US style='font-size:11.0pt;font-family:Tahoma;'>&gt;</span></p>
+
+<p class=MsoNormal><span style='font-size:11.0pt;
+font-family:Tahoma;'>메일발송</span><span
+style='font-size:11.0pt;font-family:Tahoma;'>양식</span><span
+lang=EN-US style='font-size:11.0pt;font-family:Tahoma;'> HTML </span><span style='font-size:11.0pt;font-family:Tahoma;'>이</span><span style='font-size:11.0pt;font-family:
+Tahoma;'>없을</span><span style='font-size:
+11.0pt;font-family:Tahoma;'>때</span><span style='font-size:11.0pt;font-family:
+Tahoma;'>스케줄링</span><span style='font-size:
+11.0pt;font-family:Tahoma;'>완료</span><span style='font-size:11.0pt;font-family:
+Tahoma;'>후</span><span style='font-size:
+11.0pt;font-family:Tahoma;'>메일통지</span><span style='font-size:11.0pt;font-family:
+Tahoma;'>시</span><span lang=EN-US style='font-size:11.0pt;font-family:Tahoma;'> outlook express </span><span
+style='font-size:11.0pt;font-family:Tahoma;'>내용</span></p>
+
+<p class=MsoNormal><span lang=EN-US style='font-size:11.0pt;font-family:Tahoma;'><img border=0 width=227 height=134
+src="./6.files/image014.jpg"></span></p>
+
+<p class=MsoNormal><span lang=EN-US style='font-size:11.0pt;font-family:Tahoma;'>&nbsp;</span></p>
+
+<p class=MsoNormal><span style='font-size:11.0pt;
+font-family:Tahoma;'>메일발송</span><span
+style='font-size:11.0pt;font-family:Tahoma;'>양식</span><span
+lang=EN-US style='font-size:11.0pt;font-family:Tahoma;'> HTML</span><span style='font-size:11.0pt;font-family:Tahoma;'>을</span><span style='font-size:11.0pt;font-family:
+Tahoma;'>설정을</span><span style='font-size:
+11.0pt;font-family:Tahoma;'>하고</span><span style='font-size:11.0pt;font-family:
+Tahoma;'>정의한</span><span lang=EN-US style='font-size:11.0pt;font-family:Tahoma;'> templete </span><span
+style='font-size:11.0pt;font-family:Tahoma;'>이</span><span style='font-size:11.0pt;font-family:
+Tahoma;'>성공적으로</span><span style='font-size:
+11.0pt;font-family:Tahoma;'>처리됬을</span><span style='font-size:11.0pt;font-family:
+Tahoma;'>때</span><span style='font-size:11.0pt;
+font-family:Tahoma;'>&nbsp;</span><span style='font-size:11.0pt;
+font-family:Tahoma;'>메일통지</span><span
+style='font-size:11.0pt;font-family:Tahoma;'>결과</span><span
+lang=EN-US style='font-size:11.0pt;font-family:Tahoma;'> (outlook express)</span></p>
+
+<p class=MsoNormal><span lang=EN-US style='font-size:11.0pt;font-family:Tahoma;'><img border=0 width=226 height=173
+src="./6.files/image016.jpg"></span></p>
+
+<p class=MsoNormal><span lang=EN-US style='font-size:11.0pt;font-family:Tahoma;'>&nbsp;</span></p>
+
+<p class=MsoNormal><a name="_Toc84410306"></a><a name="_Toc85544692"></a><a
+name="_Toc93757599"><span style='font-size:11.0pt;font-family:Tahoma;'>스케줄링</span></a><span style='font-size:11.0pt;font-family:Tahoma;'>목록보기</span></p>
+
+<p class=MsoNormal><span lang=EN-US style='font-size:11.0pt;font-family:Tahoma;'>&nbsp;</span></p>
+
+<p class=MsoNormal><span lang=EN-US style='font-size:11.0pt;font-family:Tahoma;'><img border=0 width=180 height=131
+src="./6.files/image017.jpg"></span></p>
+
+<p class=MsoNormal><span lang=EN-US style='font-size:11.0pt;font-family:Tahoma;'>&nbsp;</span></p>
+
+<p class=MsoNormal><span style='font-size:11.0pt;
+font-family:Tahoma;'>스케줄링</span><span lang=EN-US style='font-size:11.0pt;font-family:Tahoma;'>/</span><span
+style='font-size:11.0pt;font-family:Tahoma;'>목록보기</span><span style='font-size:11.0pt;font-family:Tahoma;'>메뉴를</span><span
+style='font-size:11.0pt;font-family:Tahoma;'>선택한다</span></p>
+
+<p class=MsoNormal><span lang=EN-US style='font-size:11.0pt;font-family:Tahoma;'>&nbsp;</span></p>
+
+<p class=MsoNormal><span lang=EN-US style='font-size:11.0pt;font-family:Tahoma;'><img border=0 width=454 height=353
+src="./6.files/image019.jpg"></span></p>
+
+<p class=MsoNormal><span lang=EN-US style='font-size:11.0pt;font-family:Tahoma;'>&nbsp;</span></p>
+
+<p class=MsoNormal><span style='font-size:11.0pt;
+font-family:Tahoma;'>서버에</span><span
+style='font-size:11.0pt;font-family:Tahoma;'>등록된</span><span style='font-size:11.0pt;font-family:Tahoma;'>스케줄링</span><span
+style='font-size:11.0pt;font-family:Tahoma;'>목록을</span><span style='font-size:11.0pt;font-family:Tahoma;'>보여준다</span></p>
+
+<p class=MsoNormal><span lang=EN-US style='font-size:11.0pt;font-family:Tahoma;'>&nbsp;</span></p>
+
+<p class=MsoNormal><b><span style='font-size:11.0pt;
+font-family:Tahoma;'>보기</span></b></p>
+
+<p class=MsoNormal><span style='font-size:11.0pt;
+font-family:Tahoma;'>스케줄링</span><span
+style='font-size:11.0pt;font-family:Tahoma;'>완료</span><span
+lang=EN-US style='font-size:11.0pt;font-family:Tahoma;'>/</span><span style='font-size:11.0pt;font-family:Tahoma;'>진행</span><span lang=EN-US style='font-size:11.0pt;font-family:Tahoma;'>/</span><span
+style='font-size:11.0pt;font-family:Tahoma;'>취소</span><span style='font-size:11.0pt;font-family:Tahoma;'>등</span><span lang=EN-US style='font-size:11.0pt;font-family:Tahoma;'> Task
+</span><span style='font-size:11.0pt;font-family:
+Tahoma;'>상태를</span><span style='font-size:
+11.0pt;font-family:Tahoma;'>조회하거나</span><span style='font-size:11.0pt;font-family:Tahoma;'>제어할수</span><span
+style='font-size:11.0pt;font-family:Tahoma;'>있다</span><span
+lang=EN-US style='font-size:11.0pt;font-family:Tahoma;'>.</span></p>
+
+<p class=MsoNormal><span lang=EN-US style='font-size:11.0pt;font-family:Tahoma;'>&nbsp;</span></p>
+
+<p class=MsoNormal><span lang=EN-US style='font-size:11.0pt;font-family:Tahoma;'><img border=0 width=247 height=141
+src="./6.files/image021.gif">&nbsp;</span></p>
+
+<p class=MsoNormal><span lang=EN-US style='font-size:11.0pt;font-family:Tahoma;'>&nbsp;</span></p>
+
+<p class=MsoNormal><span style='font-size:11.0pt;
+font-family:Tahoma;'>진행중이거나</span><span
+style='font-size:11.0pt;font-family:Tahoma;'>앞으로</span><span style='font-size:11.0pt;font-family:Tahoma;'>등록된</span><span lang=EN-US style='font-size:11.0pt;font-family:Tahoma;'> task
+</span><span style='font-size:11.0pt;font-family:
+Tahoma;'>를</span><span style='font-size:
+11.0pt;font-family:Tahoma;'>취소시킬수</span><span style='font-size:11.0pt;font-family:Tahoma;'>있다</span><span lang=EN-US style='font-size:11.0pt;font-family:Tahoma;'>. (</span><span
+style='font-size:11.0pt;font-family:Tahoma;'>해당</span><span
+lang=EN-US style='font-size:11.0pt;font-family:Tahoma;'> task </span><span style='font-size:11.0pt;font-family:Tahoma;'>박스에</span><span style='font-size:11.0pt;font-family:Tahoma;'>오른쪽</span><span
+style='font-size:11.0pt;font-family:Tahoma;'>마우스</span><span style='font-size:11.0pt;font-family:Tahoma;'>선택</span><span
+style='font-size:11.0pt;font-family:Tahoma;'>시</span><span
+lang=EN-US style='font-size:11.0pt;font-family:Tahoma;'> Cancel </span><span style='font-size:11.0pt;font-family:Tahoma;'>명령메뉴</span><span style='font-size:11.0pt;font-family:Tahoma;'>이용</span><span lang=EN-US style='font-size:11.0pt;font-family:Tahoma;'>)</span></p>
+
+<p class=MsoNormal><span lang=EN-US style='font-size:11.0pt;font-family:Tahoma;'><img border=0 width=227 height=130
+src="./6.files/image023.jpg"><img border=0 width=227 height=130
+src="./6.files/image025.jpg"></span></p>
+
+<p class=MsoNormal><span lang=EN-US style='font-size:11.0pt;font-family:Tahoma;'>&nbsp;</span></p>
+
+<p class=MsoNormal><span lang=EN-US style='font-size:11.0pt;font-family:Tahoma;'>&nbsp;&nbsp; &lt;</span><span
+style='font-size:11.0pt;font-family:Tahoma;'>작업</span><span style='font-size:11.0pt;font-family:Tahoma;'>취소</span><span
+style='font-size:11.0pt;font-family:Tahoma;'>결과</span><span
+lang=EN-US style='font-size:11.0pt;font-family:Tahoma;'>&gt;</span></p>
+
+<p class=MsoNormal><span lang=EN-US style='font-size:11.0pt;font-family:Tahoma;'>&nbsp;</span></p>
+
+<p class=MsoNormal><b><span style='font-size:11.0pt;
+font-family:Tahoma;'>수정</span></b></p>
+
+<p class=MsoNormal><span lang=EN-US style='font-size:11.0pt;font-family:Tahoma;'>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; </span><span
+style='font-size:11.0pt;font-family:Tahoma;'>스케줄링을</span><span style='font-size:11.0pt;font-family:Tahoma;'>수정</span><span lang=EN-US style='font-size:11.0pt;font-family:Tahoma;'>/</span><span
+style='font-size:11.0pt;font-family:Tahoma;'>편집</span><span style='font-size:11.0pt;font-family:Tahoma;'>할수</span><span
+style='font-size:11.0pt;font-family:Tahoma;'>있다</span></p>
+
+<p class=MsoNormal><b><span style='font-size:11.0pt;
+font-family:Tahoma;'>삭제</span></b></p>
+
+<p class=MsoNormal><span lang=EN-US style='font-size:11.0pt;font-family:Tahoma;'>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; </span><span
+style='font-size:11.0pt;font-family:Tahoma;'>스케줄링을</span><span style='font-size:11.0pt;font-family:Tahoma;'>삭제한다</span></p>
+
+<p class=MsoNormal><span lang=EN-US style='font-size:11.0pt;font-family:Tahoma;'>&nbsp;</span></p>
+
+<p class=MsoNormal><a name="_Toc84410307"></a><a name="_Toc85544693"></a><a
+name="_Toc93757600"><span style='font-size:11.0pt;font-family:Tahoma;'>스케줄링</span></a><span style='font-size:11.0pt;font-family:Tahoma;'>완료문서</span><span style='font-size:11.0pt;font-family:Tahoma;'>보기</span></p>
+
+<p class=MsoNormal><span lang=EN-US style='font-size:11.0pt;font-family:Tahoma;'>&nbsp;</span></p>
+
+<p class=MsoNormal><span lang=EN-US style='font-size:11.0pt;font-family:Tahoma;'>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; <img border=0 width=181 height=131
+src="./6.files/image026.jpg"></span></p>
+
+<p class=MsoNormal><span lang=EN-US style='font-size:11.0pt;font-family:Tahoma;'>&nbsp;</span></p>
+
+<p class=MsoNormal><span lang=EN-US style='font-size:11.0pt;font-family:Tahoma;'>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; </span><span
+style='font-size:11.0pt;font-family:Tahoma;'>스케줄링</span><span
+lang=EN-US style='font-size:11.0pt;font-family:Tahoma;'>/</span><span style='font-size:11.0pt;font-family:Tahoma;'>완료문서</span><span
+style='font-size:11.0pt;font-family:Tahoma;'>메뉴를</span><span style='font-size:11.0pt;font-family:Tahoma;'>선택한다</span></p>
+
+<p class=MsoNormal><span lang=EN-US style='font-size:11.0pt;font-family:Tahoma;'>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; <img border=0 width=439 height=342
+src="./6.files/image028.jpg"></span></p>
+
+<p class=MsoNormal><span lang=EN-US style='font-size:11.0pt;font-family:Tahoma;'>&nbsp;</span></p>
+
+<p class=MsoNormal><span lang=EN-US style='font-size:11.0pt;font-family:Tahoma;'>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; </span><span
+style='font-size:11.0pt;font-family:Tahoma;'>스케줄링이</span><span style='font-size:11.0pt;font-family:Tahoma;'>완료된</span><span
+style='font-size:11.0pt;font-family:Tahoma;'>문서의</span><span style='font-size:11.0pt;font-family:Tahoma;'>목록을</span><span
+style='font-size:11.0pt;font-family:Tahoma;'>보여준다</span></p>
+
+<p class=MsoNormal><span lang=EN-US style='font-size:11.0pt;font-family:Tahoma;'>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; </span><span
+style='font-size:11.0pt;font-family:Tahoma;'>단</span><span
+lang=EN-US style='font-size:11.0pt;font-family:Tahoma;'>, </span><span style='font-size:11.0pt;font-family:Tahoma;'>현재</span><span lang=EN-US style='font-size:11.0pt;font-family:Tahoma;'>
+Manager</span><span style='font-size:11.0pt;
+font-family:Tahoma;'>에</span><span
+style='font-size:11.0pt;font-family:Tahoma;'>로긴한</span><span style='font-size:11.0pt;font-family:Tahoma;'>사용자가</span><span
+style='font-size:11.0pt;font-family:Tahoma;'>등록한</span><span style='font-size:11.0pt;font-family:Tahoma;'>스케줄의</span><span
+style='font-size:11.0pt;font-family:Tahoma;'>결과만</span><span style='font-size:11.0pt;font-family:Tahoma;'>볼</span><span
+style='font-size:11.0pt;font-family:Tahoma;'>수</span><span style='font-size:11.0pt;font-family:Tahoma;'>있다</span></p>
+
+<p class=MsoNormal><span lang=EN-US style='font-size:11.0pt;font-family:Tahoma;'>&nbsp;</span></p>
+
+<p class=MsoNormal><span style='font-size:11.0pt;
+font-family:Tahoma;'>보기</span></p>
+
+<p class=MsoNormal><span lang=EN-US style='font-size:11.0pt;font-family:Tahoma;'>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; </span><span
+style='font-size:11.0pt;font-family:Tahoma;'>스케줄링</span><span style='font-size:11.0pt;font-family:Tahoma;'>완료된</span><span
+style='font-size:11.0pt;font-family:Tahoma;'>문서를</span><span style='font-size:11.0pt;font-family:Tahoma;'>웹브라우저로</span><span
+style='font-size:11.0pt;font-family:Tahoma;'>볼</span><span style='font-size:11.0pt;font-family:Tahoma;'>수</span><span
+style='font-size:11.0pt;font-family:Tahoma;'>있다</span></p>
+
+<p class=MsoNormal><span lang=EN-US style='font-size:11.0pt;font-family:Tahoma;'>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; </span><span
+style='font-size:11.0pt;font-family:Tahoma;'>단</span><span
+lang=EN-US style='font-size:11.0pt;font-family:Tahoma;'>, Windows Platform </span><span style='font-size:
+11.0pt;font-family:Tahoma;'>에서만</span><span style='font-size:11.0pt;font-family:Tahoma;'>볼</span><span
+style='font-size:11.0pt;font-family:Tahoma;'>수</span><span style='font-size:11.0pt;font-family:Tahoma;'>있다</span></p>
+
+<p class=MsoNormal><span style='font-size:11.0pt;
+font-family:Tahoma;'>삭제</span></p>
+
+<p class=MsoNormal><span lang=EN-US style='font-size:11.0pt;font-family:Tahoma;'>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; </span><span
+style='font-size:11.0pt;font-family:Tahoma;'>스케줄링</span><span style='font-size:11.0pt;font-family:Tahoma;'>완료된</span><span
+style='font-size:11.0pt;font-family:Tahoma;'>문서를</span><span style='font-size:11.0pt;font-family:Tahoma;'>서버</span><span
+style='font-size:11.0pt;font-family:Tahoma;'>디렉토리에서</span><span style='font-size:11.0pt;font-family:Tahoma;'>삭제한다</span></p>
+
+<p class=MsoNormal><span lang=EN-US style='font-size:11.0pt;font-family:Tahoma;'>&nbsp;</span></p>
+
+<p class=MsoNormal><a name="_Toc84410308"></a><a name="_Toc85544694"></a><a
+name="_Toc93757601"><span style='font-size:11.0pt;font-family:Tahoma;'>스케줄링</span></a><span style='font-size:11.0pt;font-family:Tahoma;'>파일</span><span style='font-size:11.0pt;font-family:Tahoma;'>등록</span></p>
+
+<p class=MsoNormal><span lang=EN-US style='font-size:11.0pt;font-family:Tahoma;'>&nbsp;</span></p>
+
+<p class=MsoNormal><span lang=EN-US style='font-size:11.0pt;font-family:Tahoma;'>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; <img border=0 width=180 height=131
+src="./6.files/image029.jpg"></span></p>
+
+<p class=MsoNormal><span lang=EN-US style='font-size:11.0pt;font-family:Tahoma;'>&nbsp;</span></p>
+
+<p class=MsoNormal><span lang=EN-US style='font-size:11.0pt;font-family:Tahoma;'>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; </span><span
+style='font-size:11.0pt;font-family:Tahoma;'>스케줄링</span><span
+lang=EN-US style='font-size:11.0pt;font-family:Tahoma;'>/</span><span style='font-size:11.0pt;font-family:Tahoma;'>파일등록</span><span
+style='font-size:11.0pt;font-family:Tahoma;'>메뉴를</span><span style='font-size:11.0pt;font-family:Tahoma;'>선택한다</span></p>
+
+<p class=MsoNormal><span lang=EN-US style='font-size:11.0pt;font-family:Tahoma;'>&nbsp;</span></p>
+
+<p class=MsoNormal><span lang=EN-US style='font-size:11.0pt;font-family:Tahoma;'><img border=0 width=434 height=336
+src="./6.files/image031.jpg"></span></p>
+
+<p class=MsoNormal><span lang=EN-US style='font-size:11.0pt;font-family:Tahoma;'>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; </span></p>
+
+<p class=MsoNormal><span lang=EN-US style='font-size:11.0pt;font-family:Tahoma;'>&nbsp;</span></p>
+
+<p class=MsoNormal><span lang=EN-US style='font-size:11.0pt;font-family:Tahoma;'>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; </span><span
+style='font-size:11.0pt;font-family:Tahoma;'>스케줄링에</span><span style='font-size:11.0pt;font-family:Tahoma;'>쓰일</span><span lang=EN-US style='font-size:11.0pt;font-family:Tahoma;'> MRD </span><span
+style='font-size:11.0pt;font-family:Tahoma;'>문서를</span><span style='font-size:11.0pt;font-family:Tahoma;'>등록한다</span></p>
+
+<p class=MsoNormal><span lang=EN-US style='font-size:11.0pt;font-family:Tahoma;'>&nbsp;</span></p>
+
+<p class=MsoNormal><span style='font-size:11.0pt;
+font-family:Tahoma;'>올리기</span><span lang=EN-US style='font-size:11.0pt;font-family:Tahoma;'><br>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; </span></p>
+
+<p class=MsoNormal><span lang=EN-US style='font-size:11.0pt;font-family:Tahoma;'>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; </span><span
+style='font-size:11.0pt;font-family:Tahoma;'>찾아보기</span><span style='font-size:11.0pt;font-family:Tahoma;'>버튼을</span><span
+style='font-size:11.0pt;font-family:Tahoma;'>눌러</span><span style='font-size:11.0pt;font-family:Tahoma;'>스케줄링</span><span
+style='font-size:11.0pt;font-family:Tahoma;'>할</span><span
+lang=EN-US style='font-size:11.0pt;font-family:Tahoma;'> MRD</span><span style='font-size:11.0pt;font-family:Tahoma;'>를</span><span style='font-size:11.0pt;font-family:Tahoma;'>선택한</span><span
+style='font-size:11.0pt;font-family:Tahoma;'>후</span><span style='font-size:11.0pt;font-family:Tahoma;'>파일설명을</span><span lang=EN-US style='font-size:
+11.0pt;font-family:Tahoma;'>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; </span><span
+style='font-size:11.0pt;font-family:Tahoma;'>입력한다</span><span
+lang=EN-US style='font-size:11.0pt;font-family:Tahoma;'>. (</span><span style='font-size:11.0pt;font-family:Tahoma;'>파일설명은</span><span style='font-size:11.0pt;font-family:Tahoma;'>입력하지</span><span
+style='font-size:11.0pt;font-family:Tahoma;'>않아도</span><span style='font-size:11.0pt;font-family:Tahoma;'>무방</span><span lang=EN-US style='font-size:11.0pt;font-family:Tahoma;'>)</span></p>
+
+<p class=MsoNormal><span lang=EN-US style='font-size:11.0pt;font-family:Tahoma;'>&nbsp;</span></p>
+
+<p class=MsoNormal><span lang=EN-US style='font-size:11.0pt;font-family:Tahoma;'>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; </span><span
+style='font-size:11.0pt;font-family:Tahoma;'>파일선택</span><span
+lang=EN-US style='font-size:11.0pt;font-family:Tahoma;'> : 200</span><span style='font-size:11.0pt;font-family:Tahoma;'>자까지</span><span style='font-size:11.0pt;font-family:Tahoma;'>입력</span><span
+style='font-size:11.0pt;font-family:Tahoma;'>가능</span></p>
+
+<p class=MsoNormal><span lang=EN-US style='font-size:11.0pt;font-family:Tahoma;'>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; </span><span
+style='font-size:11.0pt;font-family:Tahoma;'>디렉토리</span><span
+lang=EN-US style='font-size:11.0pt;font-family:Tahoma;'> : 200</span><span style='font-size:11.0pt;font-family:Tahoma;'>자까지</span><span style='font-size:11.0pt;font-family:Tahoma;'>입력</span><span
+style='font-size:11.0pt;font-family:Tahoma;'>가능</span><span
+lang=EN-US style='font-size:11.0pt;font-family:Tahoma;'> (</span><span style='font-size:11.0pt;font-family:Tahoma;'>디렉토리</span><span
+style='font-size:11.0pt;font-family:Tahoma;'>명이</span><span
+lang=EN-US style='font-size:11.0pt;font-family:Tahoma;'> 200</span><span style='font-size:11.0pt;font-family:Tahoma;'>자가</span><span style='font-size:11.0pt;font-family:Tahoma;'>넘지</span><span
+style='font-size:11.0pt;font-family:Tahoma;'>않아도</span></p>
+
+<p class=MsoNormal><span lang=EN-US style='font-size:11.0pt;font-family:Tahoma;'>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; &nbsp;&nbsp; </span><span style='font-size:
+11.0pt;font-family:Tahoma;'>서버에</span><span style='font-size:11.0pt;font-family:Tahoma;'>위치할</span><span
+style='font-size:11.0pt;font-family:Tahoma;'>파일의</span><span style='font-size:11.0pt;font-family:Tahoma;'>절대경로가</span><span lang=EN-US style='font-size:
+11.0pt;font-family:Tahoma;'> 200</span><span style='font-size:11.0pt;
+font-family:Tahoma;'>자를</span><span
+style='font-size:11.0pt;font-family:Tahoma;'>넘을</span><span style='font-size:11.0pt;font-family:Tahoma;'>수</span><span
+style='font-size:11.0pt;font-family:Tahoma;'>없다</span><span
+lang=EN-US style='font-size:11.0pt;font-family:Tahoma;'>)</span></p>
+
+<p class=MsoNormal><span lang=EN-US style='font-size:11.0pt;font-family:Tahoma;'>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; </span><span
+style='font-size:11.0pt;font-family:Tahoma;'>파일설명</span><span
+lang=EN-US style='font-size:11.0pt;font-family:Tahoma;'> : 20</span><span style='font-size:11.0pt;font-family:Tahoma;'>자까지</span><span style='font-size:11.0pt;font-family:Tahoma;'>입력</span><span
+style='font-size:11.0pt;font-family:Tahoma;'>가능</span></p>
+
+<p class=MsoNormal><span lang=EN-US style='font-size:11.0pt;font-family:Tahoma;'>&nbsp;</span></p>
+
+<p class=MsoNormal><span lang=EN-US style='font-size:11.0pt;font-family:Tahoma;'><img border=0 width=430 height=130
+src="./6.files/image032.jpg"></span></p>
+
+<p class=MsoNormal><span lang=EN-US style='font-size:11.0pt;font-family:Tahoma;'><img border=0 width=261 height=168
+src="./6.files/image034.jpg"></span></p>
+
+<p class=MsoNormal><span lang=EN-US style='font-size:11.0pt;font-family:Tahoma;'>&nbsp;</span></p>
+
+<p class=MsoNormal><span style='font-size:11.0pt;
+font-family:Tahoma;'>삭제</span></p>
+
+<p class=MsoNormal><span lang=EN-US style='font-size:11.0pt;font-family:Tahoma;'>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; </span><span
+style='font-size:11.0pt;font-family:Tahoma;'>서버에</span><span style='font-size:11.0pt;font-family:Tahoma;'>등록된</span><span lang=EN-US style='font-size:11.0pt;font-family:Tahoma;'> MRD </span><span
+style='font-size:11.0pt;font-family:Tahoma;'>파일을</span><span style='font-size:11.0pt;font-family:Tahoma;'>삭제한다</span></p>
+
+<p class=MsoNormal><span lang=EN-US style='font-size:11.0pt;font-family:Tahoma;'>&nbsp;</span></p>
+
+<p class=MsoNormal><span style='font-size:11.0pt;
+font-family:Tahoma;'>디렉토리</span><span
+style='font-size:11.0pt;font-family:Tahoma;'>생성</span><span
+lang=EN-US style='font-size:11.0pt;font-family:Tahoma;'>, </span><span style='font-size:11.0pt;font-family:Tahoma;'>삭제</span><span lang=EN-US style='font-size:11.0pt;font-family:Tahoma;'>, </span><span
+style='font-size:11.0pt;font-family:Tahoma;'>변경</span></p>
+
+<p class=MsoNormal><span lang=EN-US style='font-size:11.0pt;font-family:Tahoma;'>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; </span><span
+style='font-size:11.0pt;font-family:Tahoma;'>디렉토리를</span><span style='font-size:11.0pt;font-family:Tahoma;'>생성하여</span><span
+style='font-size:11.0pt;font-family:Tahoma;'>디렉토리</span><span style='font-size:11.0pt;font-family:Tahoma;'>별로</span><span
+style='font-size:11.0pt;font-family:Tahoma;'>파일을</span><span style='font-size:11.0pt;font-family:Tahoma;'>올리고</span><span
+style='font-size:11.0pt;font-family:Tahoma;'>관리할</span><span style='font-size:11.0pt;font-family:Tahoma;'>수</span><span
+style='font-size:11.0pt;font-family:Tahoma;'>있다</span><span
+lang=EN-US style='font-size:11.0pt;font-family:Tahoma;'>.</span></p>
+
+<p class=MsoNormal><span lang=EN-US style='font-size:11.0pt;font-family:Tahoma;'>&nbsp;</span></p>
+
+<p class=MsoNormal><span lang=EN-US style='font-size:11.0pt;font-family:Tahoma;'><img border=0 width=234 height=181
+src="./6.files/image035.jpg"></span></p>
+
+<p class=MsoNormal><span lang=EN-US style='font-size:11.0pt;font-family:Tahoma;'>&nbsp;</span></p>
+
+<p class=MsoNormal><span style='font-size:11.0pt;
+font-family:Tahoma;'>디렉토리</span><span
+style='font-size:11.0pt;font-family:Tahoma;'>권한설정</span></p>
+
+<p class=MsoNormal><span lang=EN-US style='font-size:11.0pt;font-family:Tahoma;'>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; </span><span
+style='font-size:11.0pt;font-family:Tahoma;'>디렉토리</span><span style='font-size:11.0pt;font-family:Tahoma;'>생성</span><span
+style='font-size:11.0pt;font-family:Tahoma;'>후</span><span style='font-size:11.0pt;font-family:Tahoma;'>각</span><span
+style='font-size:11.0pt;font-family:Tahoma;'>디렉토리</span><span style='font-size:11.0pt;font-family:Tahoma;'>별로</span><span
+style='font-size:11.0pt;font-family:Tahoma;'>접근권한을</span><span style='font-size:11.0pt;font-family:Tahoma;'>설정할</span><span
+style='font-size:11.0pt;font-family:Tahoma;'>수</span><span style='font-size:11.0pt;font-family:Tahoma;'>있다</span><span lang=EN-US style='font-size:11.0pt;font-family:Tahoma;'>.</span></p>
+
+<p class=MsoNormal><span lang=EN-US style='font-size:11.0pt;font-family:Tahoma;'>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; </span><span
+style='font-size:11.0pt;font-family:Tahoma;'>기본적으로</span><span style='font-size:11.0pt;font-family:Tahoma;'>디렉토리를</span><span
+style='font-size:11.0pt;font-family:Tahoma;'>생성한</span><span style='font-size:11.0pt;font-family:Tahoma;'>사용자와</span><span lang=EN-US style='font-size:11.0pt;font-family:Tahoma;'>
+admin </span><span style='font-size:11.0pt;
+font-family:Tahoma;'>계정에게만</span><span
+style='font-size:11.0pt;font-family:Tahoma;'>접근</span><span
+lang=EN-US style='font-size:11.0pt;font-family:Tahoma;'>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; </span><span
+style='font-size:11.0pt;font-family:Tahoma;'>권한이</span><span style='font-size:11.0pt;font-family:Tahoma;'>있다</span><span lang=EN-US style='font-size:11.0pt;font-family:Tahoma;'>. </span></p>
+
+<p class=MsoNormal><span lang=EN-US style='font-size:11.0pt;font-family:Tahoma;'>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; </span><span
+style='font-size:11.0pt;font-family:Tahoma;'>디렉토리</span><span style='font-size:11.0pt;font-family:Tahoma;'>권한설정은</span><span
+style='font-size:11.0pt;font-family:Tahoma;'>해당</span><span style='font-size:11.0pt;font-family:Tahoma;'>디렉토리에서</span><span
+style='font-size:11.0pt;font-family:Tahoma;'>오른쪽</span><span style='font-size:11.0pt;font-family:Tahoma;'>마우스</span><span
+style='font-size:11.0pt;font-family:Tahoma;'>버튼을</span><span
+style='font-size:11.0pt;font-family:Tahoma;'>누르면</span><span style='font-size:11.0pt;font-family:Tahoma;'>나타나는</span><span
+style='font-size:11.0pt;font-family:Tahoma;'>메뉴에서</span><span style='font-size:11.0pt;font-family:Tahoma;'>할</span><span
+style='font-size:11.0pt;font-family:Tahoma;'>수</span><span style='font-size:11.0pt;font-family:Tahoma;'>있다</span><span lang=EN-US style='font-size:11.0pt;font-family:Tahoma;'>.</span></p>
+
+<p class=MsoNormal><span lang=EN-US style='font-size:11.0pt;font-family:Tahoma;'>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; Administrator
+</span><span style='font-size:11.0pt;font-family:
+Tahoma;'>그룹의</span><span style='font-size:
+11.0pt;font-family:Tahoma;'>사용자</span><span style='font-size:11.0pt;font-family:Tahoma;'>만이</span><span
+style='font-size:11.0pt;font-family:Tahoma;'>디렉토리</span><span style='font-size:11.0pt;font-family:Tahoma;'>권한설정을</span><span
+style='font-size:11.0pt;font-family:Tahoma;'>할</span><span style='font-size:11.0pt;font-family:Tahoma;'>수</span><span
+style='font-size:11.0pt;font-family:Tahoma;'>있다</span><span
+lang=EN-US style='font-size:11.0pt;font-family:Tahoma;'>.</span></p>
+
+<p class=MsoNormal><span lang=EN-US style='font-size:11.0pt;font-family:Tahoma;'>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; </span></p>
+
+<p class=MsoNormal><span lang=EN-US style='font-size:11.0pt;font-family:Tahoma;'><img border=0 width=454 height=354
+src="./6.files/image037.jpg"></span></p>
+
+<p class=MsoNormal><span lang=EN-US style='font-size:11.0pt;font-family:Tahoma;'>&nbsp;</span></p>
+
+<p class=MsoNormal><span style='font-size:11.0pt;
+font-family:Tahoma;'>전체</span><span
+style='font-size:11.0pt;font-family:Tahoma;'>파일</span><span style='font-size:11.0pt;font-family:Tahoma;'>보기</span></p>
+
+<p class=MsoNormal><span lang=EN-US style='font-size:11.0pt;font-family:Tahoma;'>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; </span><span
+style='font-size:11.0pt;font-family:Tahoma;'>서버에</span><span style='font-size:11.0pt;font-family:Tahoma;'>업로드</span><span
+style='font-size:11.0pt;font-family:Tahoma;'>되어있는</span><span style='font-size:11.0pt;font-family:Tahoma;'>모든</span><span
+style='font-size:11.0pt;font-family:Tahoma;'>파일을</span><span style='font-size:11.0pt;font-family:Tahoma;'>보여준다</span><span lang=EN-US style='font-size:11.0pt;font-family:Tahoma;'>.</span></p>
+
+<p class=MsoNormal><span lang=EN-US style='font-size:11.0pt;font-family:Tahoma;'>&nbsp;</span></p>
+
+<p class=MsoNormal><span lang=EN-US style='font-size:11.0pt;font-family:Tahoma;'><img border=0 width=151 height=71
+src="./6.files/image038.jpg"></span></p>
+
+<p class=MsoNormal><span lang=EN-US style='font-size:11.0pt;font-family:Tahoma;'>&nbsp;</span></p>
+
+<p class=MsoNormal><span lang=EN-US style='font-size:11.0pt;font-family:Tahoma;'><img border=0 width=454 height=354
+src="./6.files/image040.jpg"></span></p>
+
+<p class=MsoNormal><span lang=EN-US style='font-size:11.0pt;font-family:Tahoma;'>&nbsp;</span></p>
+
+<p class=MsoNormal><a name="_Toc93757602"><span style='font-size:11.0pt;font-family:Tahoma;'>스케줄링</span></a><span style='font-size:11.0pt;font-family:Tahoma;'>테이블</span></p>
+
+<p class=MsoNormal><span lang=EN-US style='font-size:11.0pt;font-family:Tahoma;'>&nbsp;</span></p>
+
+<p class=MsoNormal><span lang=EN-US style='font-size:11.0pt;font-family:Tahoma;'><img border=0 width=182 height=173
+src="./6.files/image041.gif"></span></p>
+
+<p class=MsoNormal><span lang=EN-US style='font-size:11.0pt;font-family:Tahoma;'>&nbsp;</span></p>
+
+<p class=MsoNormal><span style='font-size:11.0pt;
+font-family:Tahoma;'>스케줄링에</span><span
+style='font-size:11.0pt;font-family:Tahoma;'>필요한</span><span style='font-size:11.0pt;font-family:Tahoma;'>데이터를</span><span
+style='font-size:11.0pt;font-family:Tahoma;'>관리하기</span><span style='font-size:11.0pt;font-family:Tahoma;'>위한</span><span
+style='font-size:11.0pt;font-family:Tahoma;'>테이블을</span><span style='font-size:11.0pt;font-family:Tahoma;'>삭제하거나</span><span
+style='font-size:11.0pt;font-family:Tahoma;'>생성한다</span></p>
+
+<p class=MsoNormal><span lang=EN-US style='font-size:11.0pt;font-family:Tahoma;'>RDServer </span><span
+style='font-size:11.0pt;font-family:Tahoma;'>시작</span><span style='font-size:11.0pt;font-family:Tahoma;'>시</span><span
+style='font-size:11.0pt;font-family:Tahoma;'>스케줄링</span><span style='font-size:11.0pt;font-family:Tahoma;'>서버를</span><span
+style='font-size:11.0pt;font-family:Tahoma;'>구동시킬</span><span style='font-size:11.0pt;font-family:Tahoma;'>때만</span><span
+style='font-size:11.0pt;font-family:Tahoma;'>메뉴가</span><span style='font-size:11.0pt;font-family:Tahoma;'>활성화</span><span
+style='font-size:11.0pt;font-family:Tahoma;'>된다</span></p>
+
+<p class=MsoNormal><span lang=EN-US style='font-size:11.0pt;font-family:Tahoma;'>&nbsp;</span></p>
+
+<p class=MsoNormal><span lang=EN-US style='font-size:11.0pt;font-family:Tahoma;'>-</span><span
+style='font-size:11.0pt;font-family:Tahoma;'>테이블</span><span style='font-size:11.0pt;font-family:Tahoma;'>설명</span><span lang=EN-US style='font-size:11.0pt;font-family:Tahoma;'>:</span></p>
+
+<p class=MsoNormal><span lang=EN-US style='font-size:11.0pt;font-family:Tahoma;'>schedule: </span><span
+style='font-size:11.0pt;font-family:Tahoma;'>등록된</span><span style='font-size:11.0pt;font-family:Tahoma;'>스케줄링</span><span
+style='font-size:11.0pt;font-family:Tahoma;'>목록을</span><span style='font-size:11.0pt;font-family:Tahoma;'>관리</span></p>
+
+<p class=MsoNormal><span lang=EN-US style='font-size:11.0pt;font-family:Tahoma;'>schedulelist: </span><span
+style='font-size:11.0pt;font-family:Tahoma;'>스케줄링</span><span style='font-size:11.0pt;font-family:Tahoma;'>목록에</span><span
+style='font-size:11.0pt;font-family:Tahoma;'>대한</span><span style='font-size:11.0pt;font-family:Tahoma;'>세부</span><span lang=EN-US style='font-size:11.0pt;font-family:Tahoma;'> task
+</span><span style='font-size:11.0pt;font-family:
+Tahoma;'>목록을</span><span style='font-size:
+11.0pt;font-family:Tahoma;'>관리</span></p>
+
+<p class=MsoNormal><span lang=EN-US style='font-size:11.0pt;font-family:Tahoma;'>scuser: </span><span
+style='font-size:11.0pt;font-family:Tahoma;'>스케줄링</span><span style='font-size:11.0pt;font-family:Tahoma;'>사용자에</span><span
+style='font-size:11.0pt;font-family:Tahoma;'>대한</span><span style='font-size:11.0pt;font-family:Tahoma;'>등록</span><span
+style='font-size:11.0pt;font-family:Tahoma;'>정보를</span><span style='font-size:11.0pt;font-family:Tahoma;'>관리</span></p>
+
+<p class=MsoNormal><span lang=EN-US style='font-size:11.0pt;font-family:Tahoma;'>&nbsp;</span></p>
+
+<p class=MsoNormal><span lang=EN-US style='font-size:11.0pt;font-family:Tahoma;'><img border=0 width=467 height=88
+src="./6.files/image043.jpg"></span></p>
+
+<p class=MsoNormal><span lang=EN-US style='font-size:11.0pt;font-family:Tahoma;'>&nbsp;</span></p>
+
+<p class=MsoNormal><span lang=EN-US style='font-size:11.0pt;font-family:Tahoma;'>&nbsp;</span></p>
+
+<p class=MsoNormal><span style='font-size:11.0pt;
+font-family:Tahoma;'>삭제</span></p>
+
+<p class=MsoNormal><span style='font-size:11.0pt;
+font-family:Tahoma;'>기존에</span><span
+style='font-size:11.0pt;font-family:Tahoma;'>생성되었던</span><span style='font-size:11.0pt;font-family:Tahoma;'>관리테이블을</span><span
+style='font-size:11.0pt;font-family:Tahoma;'>삭제한다</span><span
+lang=EN-US style='font-size:11.0pt;font-family:Tahoma;'>. </span><span style='font-size:11.0pt;font-family:Tahoma;'>스케줄링</span><span
+style='font-size:11.0pt;font-family:Tahoma;'>등록정보를</span><span style='font-size:11.0pt;font-family:Tahoma;'>모두</span><span
+style='font-size:11.0pt;font-family:Tahoma;'>지우고</span><span
+lang=EN-US style='font-size:11.0pt;font-family:Tahoma;'>, </span><span style='font-size:11.0pt;font-family:Tahoma;'>테이블을</span><span
+style='font-size:11.0pt;font-family:Tahoma;'>삭제한다</span><span
+lang=EN-US style='font-size:11.0pt;font-family:Tahoma;'>.</span></p>
+
+<p class=MsoNormal><span lang=EN-US style='font-size:11.0pt;font-family:Tahoma;'>&nbsp;</span></p>
+
+<p class=MsoNormal><span style='font-size:11.0pt;
+font-family:Tahoma;'>재생성</span></p>
+
+<p class=MsoNormal><span style='font-size:11.0pt;
+font-family:Tahoma;'>스케줄링</span><span
+style='font-size:11.0pt;font-family:Tahoma;'>테이블이</span><span style='font-size:11.0pt;font-family:Tahoma;'>기존에</span><span
+style='font-size:11.0pt;font-family:Tahoma;'>있었다면</span><span style='font-size:11.0pt;font-family:Tahoma;'>삭제</span><span
+style='font-size:11.0pt;font-family:Tahoma;'>후</span><span style='font-size:11.0pt;font-family:Tahoma;'>다시</span><span
+style='font-size:11.0pt;font-family:Tahoma;'>생성한다</span></p>
+
+<p class=MsoNormal><span lang=EN-US style='font-size:11.0pt;font-family:Tahoma;'>&nbsp;</span></p>
+
+<p class=MsoNormal><a name="_Toc84410309"></a><a name="_Toc85544695"></a><a
+name="_Toc93757603"><span style='font-size:11.0pt;font-family:Tahoma;'>스케줄링</span></a><span style='font-size:11.0pt;font-family:Tahoma;'>서비스제어</span></p>
+
+<p class=MsoNormal><span lang=EN-US style='font-size:11.0pt;font-family:Tahoma;'>&nbsp;</span></p>
+
+<p class=MsoNormal><span lang=EN-US style='font-size:11.0pt;font-family:Tahoma;'>&nbsp;</span></p>
+
+<p class=MsoNormal><span style='font-size:11.0pt;
+font-family:Tahoma;'>스케줄링</span><span
+style='font-size:11.0pt;font-family:Tahoma;'>작업을</span><span style='font-size:11.0pt;font-family:Tahoma;'>일지중지</span><span
+style='font-size:11.0pt;font-family:Tahoma;'>하거나</span><span style='font-size:11.0pt;font-family:Tahoma;'>재</span><span
+style='font-size:11.0pt;font-family:Tahoma;'>시작한다</span></p>
+
+<p class=MsoNormal><span lang=EN-US style='font-size:11.0pt;font-family:Tahoma;'>&nbsp;</span></p>
+
+<p class=MsoNormal><span lang=EN-US style='font-size:11.0pt;font-family:Tahoma;'><img border=0 width=182 height=131
+src="./6.files/image044.jpg"></span></p>
+
+<p class=MsoNormal><span lang=EN-US style='font-size:11.0pt;font-family:Tahoma;'>&nbsp;</span></p>
+
+<p class=MsoNormal><span style='font-size:11.0pt;
+font-family:Tahoma;'>스케줄링</span><span lang=EN-US style='font-size:11.0pt;font-family:Tahoma;'>/</span><span
+style='font-size:11.0pt;font-family:Tahoma;'>서비스</span><span style='font-size:11.0pt;font-family:Tahoma;'>제어</span><span
+style='font-size:11.0pt;font-family:Tahoma;'>메뉴를</span><span style='font-size:11.0pt;font-family:Tahoma;'>선택한다</span><span lang=EN-US style='font-size:11.0pt;font-family:Tahoma;'>.</span></p>
+
+<p class=MsoNormal><span lang=EN-US style='font-size:11.0pt;font-family:Tahoma;'>&nbsp;</span></p>
+
+<p class=MsoNormal><span lang=EN-US style='font-size:11.0pt;font-family:Tahoma;'><img border=0 width=421 height=328
+src="./6.files/image046.jpg"></span></p>
+
+<p class=MsoNormal><span lang=EN-US style='font-size:11.0pt;font-family:Tahoma;'>&nbsp;</span></p>
+
+<p class=MsoNormal><span lang=EN-US style='font-size:11.0pt;font-family:Tahoma;'>&nbsp;</span></p>
+
+<p class=MsoNormal><span lang=EN-US style='font-size:11.0pt;font-family:Tahoma;'>&nbsp;</span></p>
+
+<p class=MsoNormal><span style='font-size:11.0pt;
+font-family:Tahoma;'>일시중지</span></p>
+
+<p class=MsoNormal><span style='font-size:11.0pt;
+font-family:Tahoma;'>스케줄링</span><span
+style='font-size:11.0pt;font-family:Tahoma;'>서비스를</span><span style='font-size:11.0pt;font-family:Tahoma;'>중지한다</span><span lang=EN-US style='font-size:11.0pt;font-family:Tahoma;'> (</span><span
+style='font-size:11.0pt;font-family:Tahoma;'>현재</span><span style='font-size:11.0pt;font-family:Tahoma;'>진행중인</span><span
+style='font-size:11.0pt;font-family:Tahoma;'>작업을</span><span style='font-size:11.0pt;font-family:Tahoma;'>정지</span><span lang=EN-US style='font-size:11.0pt;font-family:Tahoma;'>)</span></p>
+
+<p class=MsoNormal><span lang=EN-US style='font-size:11.0pt;font-family:Tahoma;'>&nbsp;</span></p>
+
+<p class=MsoNormal><span style='font-size:11.0pt;
+font-family:Tahoma;'>재시작</span></p>
+
+<p class=MsoNormal><span style='font-size:11.0pt;
+font-family:Tahoma;'>스케줄링</span><span
+style='font-size:11.0pt;font-family:Tahoma;'>서비스를</span><span style='font-size:11.0pt;font-family:Tahoma;'>시작한다</span></p>
+
+<p class=MsoNormal><span lang=EN-US style='font-size:11.0pt;font-family:Tahoma;'>&nbsp;</span></p>
+
+<p class=MsoNormal><span lang=EN-US style='font-size:11.0pt;font-family:Tahoma;'>&nbsp;</span></p>
+
+<p class=MsoNormal><a name="_Toc93757604"><span style='font-size:11.0pt;font-family:Tahoma;'>스케줄링</span></a><span style='font-size:11.0pt;font-family:Tahoma;'>메일발송</span></p>
+
+<p class=MsoNormal><span lang=EN-US style='font-size:11.0pt;font-family:Tahoma;'>&nbsp;</span></p>
+
+<p class=MsoNormal><span style='font-size:11.0pt;
+font-family:Tahoma;'>스케줄링</span><span
+style='font-size:11.0pt;font-family:Tahoma;'>메일발송은</span><span style='font-size:11.0pt;font-family:Tahoma;'>이미</span><span
+style='font-size:11.0pt;font-family:Tahoma;'>스케줄링이</span><span style='font-size:11.0pt;font-family:Tahoma;'>끝난</span><span
+style='font-size:11.0pt;font-family:Tahoma;'>파일을</span><span style='font-size:11.0pt;font-family:Tahoma;'>선택해서</span><span
+style='font-size:11.0pt;font-family:Tahoma;'>메일을</span><span style='font-size:11.0pt;font-family:Tahoma;'>보낼</span><span
+style='font-size:11.0pt;font-family:Tahoma;'>수</span></p>
+
+<p class=MsoNormal><span style='font-size:11.0pt;
+font-family:Tahoma;'>있는</span><span
+style='font-size:11.0pt;font-family:Tahoma;'>기능이다</span><span
+lang=EN-US style='font-size:11.0pt;font-family:Tahoma;'>.&nbsp;
+$RDServerHome/ocxhtm </span><span style='font-size:11.0pt;font-family:Tahoma;'>아래에</span><span
+style='font-size:11.0pt;font-family:Tahoma;'>있는</span><span
+lang=EN-US style='font-size:11.0pt;font-family:Tahoma;'> html </span><span style='font-size:11.0pt;font-family:Tahoma;'>파일들을</span><span
+lang=EN-US style='font-size:11.0pt;font-family:Tahoma;'>&nbsp; </span></p>
+
+<p class=MsoNormal><span style='font-size:11.0pt;
+font-family:Tahoma;'>정의된</span><span
+style='font-size:11.0pt;font-family:Tahoma;'>메일아이디로</span><span style='font-size:11.0pt;font-family:Tahoma;'>메일을</span><span
+style='font-size:11.0pt;font-family:Tahoma;'>발송하게</span><span style='font-size:11.0pt;font-family:Tahoma;'>된다</span><span lang=EN-US style='font-size:11.0pt;font-family:Tahoma;'> .</span></p>
+
+<p class=MsoNormal><span lang=EN-US style='font-size:11.0pt;font-family:Tahoma;'>&nbsp;</span></p>
+
+<p class=MsoNormal><span lang=EN-US style='font-size:11.0pt;font-family:Tahoma;'><img border=0 width=421 height=296
+src="./6.files/image048.gif"></span></p>
+
+<p class=MsoNormal><span lang=EN-US style='font-size:11.0pt;font-family:Tahoma;'>&nbsp;</span></p>
+
+<p class=MsoNormal><span lang=EN-US style='font-size:11.0pt;font-family:Tahoma;'>&nbsp;</span></p>
+
+<p class=MsoNormal><b><span style='font-size:11.0pt;
+font-family:Tahoma;'>소스파일</span></b><span lang=EN-US style='font-size:
+11.0pt;font-family:Tahoma;'>: </span><span style='font-size:11.0pt;
+font-family:Tahoma;'>발송해야할</span><span
+style='font-size:11.0pt;font-family:Tahoma;'>정보가</span><span style='font-size:11.0pt;font-family:Tahoma;'>담긴</span><span
+style='font-size:11.0pt;font-family:Tahoma;'>파일</span><span style='font-size:11.0pt;font-family:Tahoma;'>경로를</span><span
+style='font-size:11.0pt;font-family:Tahoma;'>입력한다</span><span
+lang=EN-US style='font-size:11.0pt;font-family:Tahoma;'>. </span><span style='font-size:11.0pt;font-family:Tahoma;'>입력제한</span></p>
+
+<p class=MsoNormal><span style='font-size:11.0pt;
+font-family:Tahoma;'>길이는</span><span lang=EN-US style='font-size:11.0pt;font-family:Tahoma;'>128</span><span
+style='font-size:11.0pt;font-family:Tahoma;'>자</span><span style='font-size:11.0pt;font-family:Tahoma;'>이다</span><span lang=EN-US style='font-size:11.0pt;font-family:Tahoma;'>. </span><span
+style='font-size:11.0pt;font-family:Tahoma;'>텍스트파일</span><span
+lang=EN-US style='font-size:11.0pt;font-family:Tahoma;'>(</span><span style='font-size:11.0pt;font-family:Tahoma;'>서버의</span><span
+style='font-size:11.0pt;font-family:Tahoma;'>절대경로</span><span
+lang=EN-US style='font-size:11.0pt;font-family:Tahoma;'>) </span><span style='font-size:11.0pt;font-family:Tahoma;'>또는</span><span lang=EN-US style='font-size:11.0pt;font-family:Tahoma;'> url </span><span
+style='font-size:11.0pt;font-family:Tahoma;'>로</span><span style='font-size:11.0pt;font-family:Tahoma;'>정의해</span><span
+style='font-size:11.0pt;font-family:Tahoma;'>줄수</span><span style='font-size:11.0pt;font-family:Tahoma;'>있다</span><span lang=EN-US style='font-size:11.0pt;font-family:Tahoma;'>. </span></p>
+
+<p class=MsoNormal><span lang=EN-US style='font-size:11.0pt;font-family:Tahoma;'>&nbsp;</span></p>
+
+<p class=MsoNormal><span style='font-size:11.0pt;
+font-family:Tahoma;'>소스파일</span><span
+style='font-size:11.0pt;font-family:Tahoma;'>위치</span><span style='font-size:11.0pt;font-family:Tahoma;'>입력</span><span
+style='font-size:11.0pt;font-family:Tahoma;'>예</span><span
+lang=EN-US style='font-size:11.0pt;font-family:Tahoma;'>)</span></p>
+
+<p class=MsoNormal><span lang=EN-US style='font-size:11.0pt;font-family:Tahoma;'>Windows </span><span
+style='font-size:11.0pt;font-family:Tahoma;'>계열</span><span
+lang=EN-US style='font-size:11.0pt;font-family:Tahoma;'>: C:/m.txt</span></p>
+
+<p class=MsoNormal><span lang=EN-US style='font-size:11.0pt;font-family:Tahoma;'>linux,unix </span><span
+style='font-size:11.0pt;font-family:Tahoma;'>계열</span><span
+lang=EN-US style='font-size:11.0pt;font-family:Tahoma;'> : /usr/local/RDServer/m.txt</span></p>
+
+<p class=MsoNormal><span lang=EN-US style='font-size:11.0pt;font-family:Tahoma;'>&nbsp;</span></p>
+
+<p class=MsoNormal><span style='font-size:11.0pt;
+font-family:Tahoma;'>소스파일의</span><span
+style='font-size:11.0pt;font-family:Tahoma;'>내용은</span><span style='font-size:11.0pt;font-family:Tahoma;'>발송해야</span><span
+style='font-size:11.0pt;font-family:Tahoma;'>할</span><span style='font-size:11.0pt;font-family:Tahoma;'>대상</span><span
+style='font-size:11.0pt;font-family:Tahoma;'>파일위치와</span><span style='font-size:11.0pt;font-family:Tahoma;'>메일수신자를</span><span lang=EN-US style='font-size:
+11.0pt;font-family:Tahoma;'> , </span><span style='font-size:11.0pt;
+font-family:Tahoma;'>로</span><span
+style='font-size:11.0pt;font-family:Tahoma;'>구분하여</span><span style='font-size:11.0pt;font-family:Tahoma;'>정의한다</span><span lang=EN-US style='font-size:11.0pt;font-family:Tahoma;'>. </span><span
+style='font-size:11.0pt;font-family:Tahoma;'>건당</span><span style='font-size:11.0pt;font-family:Tahoma;'>구분자는</span><span
+style='font-size:11.0pt;font-family:Tahoma;'>리턴캐릭터</span><span style='font-size:11.0pt;font-family:Tahoma;'>정의해</span><span
+style='font-size:11.0pt;font-family:Tahoma;'>준다</span><span
+lang=EN-US style='font-size:11.0pt;font-family:Tahoma;'>.</span></p>
+
+<p class=MsoNormal><span lang=EN-US style='font-size:11.0pt;font-family:Tahoma;'>&nbsp;</span></p>
+
+<p class=MsoNormal><span style='font-size:11.0pt;
+font-family:Tahoma;'>소스</span><span
+style='font-size:11.0pt;font-family:Tahoma;'>파일의</span><span style='font-size:11.0pt;font-family:Tahoma;'>내용</span><span
+style='font-size:11.0pt;font-family:Tahoma;'>예</span><span
+lang=EN-US style='font-size:11.0pt;font-family:Tahoma;'>)&nbsp; </span></p>
+
+<p class=MsoNormal><span lang=EN-US style='font-size:11.0pt;font-family:Tahoma;'>&nbsp;</span></p>
+
+<p class=MsoNormal><span lang=EN-US style='font-size:11.0pt;font-family:Tahoma;'>admin/TEST2004120111000011_VINET.html,VINET@m2soft.com</span></p>
+
+<p class=MsoNormal><span lang=EN-US style='font-size:11.0pt;font-family:Tahoma;'>admin/TEST2004120111000011_AROUT.html,hssong@hotmail.com</span></p>
+
+<p class=MsoNormal><span lang=EN-US style='font-size:11.0pt;font-family:Tahoma;'>:</span></p>
+
+<p class=MsoNormal><span lang=EN-US style='font-size:11.0pt;font-family:Tahoma;'>&nbsp;</span></p>
+
+<p class=MsoNormal><span lang=EN-US style='font-size:11.0pt;font-family:Tahoma;'>$RDServerHome/ocxhtm </span><span
+style='font-size:11.0pt;font-family:Tahoma;'>디렉토리의</span><span style='font-size:11.0pt;font-family:Tahoma;'>파일</span><span
+style='font-size:11.0pt;font-family:Tahoma;'>리스트</span></p>
+
+<p class=MsoNormal><span lang=EN-US style='font-size:11.0pt;font-family:Tahoma;'>&nbsp;</span></p>
+
+<p class=MsoNormal><span lang=EN-US style='font-size:11.0pt;font-family:Tahoma;'><img border=0 width=333 height=76
+src="./6.files/image050.jpg"></span></p>
+
+<p class=MsoNormal><span lang=EN-US style='font-size:11.0pt;font-family:Tahoma;'>&nbsp;</span></p>
+
+<p class=MsoNormal><b><span style='font-size:11.0pt;
+font-family:Tahoma;'>발송제목</span></b><span lang=EN-US style='font-size:
+11.0pt;font-family:Tahoma;'>: </span><span style='font-size:11.0pt;
+font-family:Tahoma;'>발송시</span><span
+style='font-size:11.0pt;font-family:Tahoma;'>제목을</span><span style='font-size:11.0pt;font-family:Tahoma;'>입력한다</span><span lang=EN-US style='font-size:11.0pt;font-family:Tahoma;'>. </span><span
+style='font-size:11.0pt;font-family:Tahoma;'>제목</span><span style='font-size:11.0pt;font-family:Tahoma;'>최대길이는</span><span lang=EN-US style='font-size:
+11.0pt;font-family:Tahoma;'> 30</span><span style='font-size:11.0pt;
+font-family:Tahoma;'>자</span><span
+style='font-size:11.0pt;font-family:Tahoma;'>내외이다</span></p>
+
+<p class=MsoNormal><b><span style='font-size:11.0pt;
+font-family:Tahoma;'>실행</span></b><span lang=EN-US style='font-size:
+11.0pt;font-family:Tahoma;'>: </span><span style='font-size:11.0pt;
+font-family:Tahoma;'>소스파일을</span><span
+style='font-size:11.0pt;font-family:Tahoma;'>읽어</span><span
+lang=EN-US style='font-size:11.0pt;font-family:Tahoma;'>, </span><span style='font-size:11.0pt;font-family:Tahoma;'>메일</span><span
+style='font-size:11.0pt;font-family:Tahoma;'>발송을</span><span style='font-size:11.0pt;font-family:Tahoma;'>시작한다</span><span
+style='font-size:11.0pt;font-family:Tahoma;'>서버에</span><span style='font-size:11.0pt;font-family:Tahoma;'>기존에</span><span
+style='font-size:11.0pt;font-family:Tahoma;'>진행</span><span style='font-size:11.0pt;font-family:Tahoma;'>중인</span><span
+style='font-size:11.0pt;font-family:Tahoma;'>작업이</span><span style='font-size:11.0pt;font-family:Tahoma;'>있으면</span><span
+style='font-size:11.0pt;font-family:Tahoma;'>실행하지</span><span style='font-size:11.0pt;font-family:Tahoma;'>않는다</span><span lang=EN-US style='font-size:11.0pt;font-family:Tahoma;'>.</span></p>
+
+<p class=MsoNormal><span style='font-size:11.0pt;
+font-family:Tahoma;'>실행</span><span
+style='font-size:11.0pt;font-family:Tahoma;'>후</span><span
+style='font-size:11.0pt;font-family:Tahoma;'>결과는</span><span
+style='font-size:11.0pt;font-family:Tahoma;'>서버의</span><span
+style='font-size:11.0pt;font-family:Tahoma;'>처리</span><span
+style='font-size:11.0pt;font-family:Tahoma;'>시간이</span><span
+style='font-size:11.0pt;font-family:Tahoma;'>있으므로</span><span
+style='font-size:11.0pt;font-family:Tahoma;'>바로</span><span
+style='font-size:11.0pt;font-family:Tahoma;'>결과가</span><span
+style='font-size:11.0pt;font-family:Tahoma;'>오지</span><span
+style='font-size:11.0pt;font-family:Tahoma;'>않을수도</span><span
+style='font-size:11.0pt;font-family:Tahoma;'>있으며</span><span lang=EN-US style='font-size:11.0pt;font-family:Tahoma;'>, </span><span style='font-size:11.0pt;
+font-family:Tahoma;'>그럴경우</span><span
+style='font-size:11.0pt;font-family:Tahoma;'>로그보기</span><span lang=EN-US style='font-size:11.0pt;font-family:Tahoma;'>-</span><span style='font-size:11.0pt;
+font-family:Tahoma;'>스케줄링</span><span
+style='font-size:11.0pt;font-family:Tahoma;'>로그</span><span
+style='font-size:11.0pt;font-family:Tahoma;'>메뉴를</span><span
+style='font-size:11.0pt;font-family:Tahoma;'>참고한다</span></p>
+
+<p class=MsoNormal><b><span style='font-size:11.0pt;
+font-family:Tahoma;'>중지</span></b><span lang=EN-US style='font-size:
+11.0pt;font-family:Tahoma;'>: </span><span style='font-size:11.0pt;
+font-family:Tahoma;'>현재</span><span
+style='font-size:11.0pt;font-family:Tahoma;'>진행중</span><span style='font-size:11.0pt;font-family:Tahoma;'>인</span><span
+style='font-size:11.0pt;font-family:Tahoma;'>메일</span><span style='font-size:11.0pt;font-family:Tahoma;'>발송</span><span
+style='font-size:11.0pt;font-family:Tahoma;'>작업을</span><span style='font-size:11.0pt;font-family:Tahoma;'>취소한다</span><span lang=EN-US style='font-size:11.0pt;font-family:Tahoma;'>. </span><span
+style='font-size:11.0pt;font-family:Tahoma;'>발송되지</span><span style='font-size:11.0pt;font-family:Tahoma;'>않은</span><span
+style='font-size:11.0pt;font-family:Tahoma;'>작업</span><span style='font-size:11.0pt;font-family:Tahoma;'>위치부터</span><span
+style='font-size:11.0pt;font-family:Tahoma;'>메일을</span><span style='font-size:11.0pt;font-family:Tahoma;'>발송하지</span><span
+style='font-size:11.0pt;font-family:Tahoma;'>않는다</span></p>
+
+<p class=MsoNormal><b><span style='font-size:11.0pt;
+font-family:Tahoma;'>모니터링</span></b><b><span
+style='font-size:11.0pt;font-family:Tahoma;'>시작</span></b><span
+lang=EN-US style='font-size:11.0pt;font-family:Tahoma;'>: </span><span style='font-size:11.0pt;font-family:Tahoma;'>발송되는</span><span
+style='font-size:11.0pt;font-family:Tahoma;'>과정</span><span
+lang=EN-US style='font-size:11.0pt;font-family:Tahoma;'>(</span><span style='font-size:11.0pt;font-family:Tahoma;'>성공</span><span lang=EN-US style='font-size:11.0pt;font-family:Tahoma;'>,</span><span
+style='font-size:11.0pt;font-family:Tahoma;'>실패</span><span
+lang=EN-US style='font-size:11.0pt;font-family:Tahoma;'>)</span><span style='font-size:11.0pt;font-family:Tahoma;'>을</span><span
+style='font-size:11.0pt;font-family:Tahoma;'>실시간</span><span style='font-size:11.0pt;font-family:Tahoma;'>모니터링</span><span
+style='font-size:11.0pt;font-family:Tahoma;'>한다</span><span
+lang=EN-US style='font-size:11.0pt;font-family:Tahoma;'> (</span><span style='font-size:11.0pt;font-family:Tahoma;'>실행이</span><span
+style='font-size:11.0pt;font-family:Tahoma;'>처음으로</span><span style='font-size:11.0pt;font-family:Tahoma;'>이루어질</span><span
+style='font-size:11.0pt;font-family:Tahoma;'>때</span><span style='font-size:11.0pt;font-family:Tahoma;'>기본값은</span><span
+style='font-size:11.0pt;font-family:Tahoma;'>모니터링</span><span style='font-size:11.0pt;font-family:Tahoma;'>시작</span><span lang=EN-US style='font-size:11.0pt;font-family:Tahoma;'>)</span></p>
+
+<p class=MsoNormal><b><span style='font-size:11.0pt;
+font-family:Tahoma;'>모니터링</span></b><b><span
+style='font-size:11.0pt;font-family:Tahoma;'>중지</span></b><span
+lang=EN-US style='font-size:11.0pt;font-family:Tahoma;'>: </span><span style='font-size:11.0pt;font-family:Tahoma;'>모니터링을</span><span
+style='font-size:11.0pt;font-family:Tahoma;'>중지한다</span><span
+lang=EN-US style='font-size:11.0pt;font-family:Tahoma;'>.</span></p>
+
+<p class=MsoNormal><span lang=EN-US style='font-size:11.0pt;font-family:Tahoma;'>&nbsp;</span></p>
+
+<p class=MsoNormal><a name="_Toc93757605"><span style='font-size:11.0pt;font-family:Tahoma;'>스케줄링</span></a><span style='font-size:11.0pt;font-family:Tahoma;'>서버</span><span
+style='font-size:11.0pt;font-family:Tahoma;'>중지</span></p>
+
+<p class=MsoNormal><span lang=EN-US style='font-size:11.0pt;font-family:Tahoma;'>&nbsp;</span></p>
+
+<p class=MsoNormal><span lang=EN-US style='font-size:11.0pt;font-family:Tahoma;'>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; </span></p>
+
+<p class=MsoNormal><span style='font-size:11.0pt;
+font-family:Tahoma;'>서블릿</span><span
+style='font-size:11.0pt;font-family:Tahoma;'>버전</span><span
+lang=EN-US style='font-size:11.0pt;font-family:Tahoma;'>:&nbsp; WAS
+</span><span style='font-size:11.0pt;font-family:
+Tahoma;'>중지</span><span style='font-size:
+11.0pt;font-family:Tahoma;'>시</span><span style='font-size:11.0pt;font-family:Tahoma;'>자동</span><span
+style='font-size:11.0pt;font-family:Tahoma;'>종료</span></p>
+
+<p class=MsoNormal><span style='font-size:11.0pt;
+font-family:Tahoma;'>데몬</span><span
+style='font-size:11.0pt;font-family:Tahoma;'>버전</span><span
+lang=EN-US style='font-size:11.0pt;font-family:Tahoma;'>: </span><span style='font-size:11.0pt;font-family:Tahoma;'>서버</span><span
+style='font-size:11.0pt;font-family:Tahoma;'>정지</span><span style='font-size:11.0pt;font-family:Tahoma;'>시</span><span
+style='font-size:11.0pt;font-family:Tahoma;'>자동</span><span style='font-size:11.0pt;font-family:Tahoma;'>종료</span></p>
+
+</div>
+
+</body>
+
+</html>

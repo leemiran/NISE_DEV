@@ -1,0 +1,190 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+	- DispatcherServlet application context for Application's web tier.
+-->
+<beans xmlns="http://www.springframework.org/schema/beans"
+ xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+ xmlns:p="http://www.springframework.org/schema/p"
+ xmlns:context="http://www.springframework.org/schema/context"
+ xmlns:aop="http://www.springframework.org/schema/aop"
+ xsi:schemaLocation="http://www.springframework.org/schema/beans
+                 http://www.springframework.org/schema/beans/spring-beans-2.5.xsd
+                 http://www.springframework.org/schema/context 
+                 http://www.springframework.org/schema/context/spring-context-2.5.xsd
+                 http://www.springframework.org/schema/aop
+                 http://www.springframework.org/schema/aop/spring-aop-2.0.xsd">
+	<!--
+		- The controllers are autodetected POJOs labeled with the @Controller annotation.
+	-->
+	<context:component-scan base-package="egovframework">
+		<context:include-filter type="annotation" expression="org.springframework.stereotype.Controller"/>
+		<context:exclude-filter type="annotation" expression="org.springframework.stereotype.Service"/>
+		<context:exclude-filter type="annotation" expression="org.springframework.stereotype.Repository"/>
+	</context:component-scan>
+
+	<!--
+		- The form-based controllers within this application provide @RequestMapping 
+		- annotations at the type level for path mapping URLs and @RequestMapping 
+		- at the method level for request type mappings (e.g., GET and POST). 
+		- In contrast, ClinicController - which is not form-based - provides 
+		- @RequestMapping only at the method level for path mapping URLs.
+		-
+		- DefaultAnnotationHandlerMapping is driven by these annotations and is 
+		- enabled by default with Java 5+.
+	-->
+
+	<!--
+		- This bean processes annotated handler methods, applying Application-specific PropertyEditors
+		- for request parameter binding. It overrides the default AnnotationMethodHandlerAdapter.
+	-->
+	<bean class="org.springframework.web.servlet.mvc.annotation.AnnotationMethodHandlerAdapter">
+		<property name="webBindingInitializer">
+			<bean class="egovframework.com.cmm.web.EgovBindingInitializer"/>
+		</property>
+		<property name="customArgumentResolvers">
+			<list>
+				<bean class="egovframework.rte.ptl.mvc.bind.CommandMapArgumentResolver"/>
+			</list>
+		</property>
+		<property name="synchronizeOnSession" value="true" />
+	</bean>
+
+	<!--
+		- This bean resolves specific types of exceptions to corresponding logical 
+		- view names for error views. The default behaviour of DispatcherServlet 
+		- is to propagate all exceptions to the servlet container: this will happen 
+		- here with all other types of exceptions.
+	-->
+	<bean class="org.springframework.web.servlet.handler.SimpleMappingExceptionResolver">
+		<property name="defaultErrorView" value="cmm/egovError"/>
+		<property name="exceptionMappings">
+			<props>
+				<prop key="org.springframework.dao.DataAccessException">cmm/dataAccessFailure</prop>
+				<prop key="org.springframework.transaction.TransactionException">cmm/dataAccessFailure</prop>
+				<prop key="egovframework.rte.fdl.cmmn.exception.EgovBizException">cmm/egovBizException</prop>
+				<prop key="org.springframework.web.HttpSessionRequiredException">cmm/uat/uia/EgovLoginUsr</prop>
+			</props>
+		</property>
+	</bean>	
+	
+	<!--
+		- This bean configures the 'prefix' and 'suffix' properties of 
+		- InternalResourceViewResolver, which resolves logical view names 
+		- returned by Controllers. For example, a logical view name of "vets" 
+		- will be mapped to "/WEB-INF/jsp/vets.jsp".
+	-->
+	<bean class="org.springframework.web.servlet.view.UrlBasedViewResolver" p:order="1" 
+	p:viewClass="org.springframework.web.servlet.view.JstlView" 
+	p:prefix="/WEB-INF/jsp/egovframework/" p:suffix=".jsp"/>
+
+	<!--
+		- Message source for this context, loaded from localized "messages_xx" files.
+		- Could also reside in the root application context, as it is generic,
+		- but is currently just used within Application's web tier.
+	-->
+	<bean id="messageSource" class="org.springframework.context.support.ResourceBundleMessageSource"
+			p:basename="messages"/>
+	
+	<!-- 
+	<aop:aspectj-autoproxy />
+	<bean id="comMenuManage" class="egovframework.com.meu.ComMenuManageAspect" />
+	 -->
+	
+	<bean id="comMenuManage" class="egovframework.com.meu.ComMenuManageAspect" />
+	<aop:config>
+		<aop:aspect id="comMenuManageAspect" ref="comMenuManage">
+	      	<aop:around pointcut="execution(public * egovframework.adm.**..*Controller.*(..)) || execution(public * egovframework.svt.adm.**..*Controller.*(..))" method="aroundMenuController" />
+		</aop:aspect>
+	</aop:config>
+
+	<bean id="comUserManageAspect" class="egovframework.com.meu.ComMenuUserManageAspect" />
+	<aop:config>
+		<aop:aspect id="comMenuUserManageAspect" ref="comUserManageAspect">
+	      	<aop:around pointcut="execution(public * egovframework.usr.**..*Controller.*(..))" method="aroundUserMenuController" />
+		</aop:aspect>
+	</aop:config>
+
+	<bean id="logManage" class="egovframework.com.log.LogManageAspect" />
+	<aop:config>
+		<aop:aspect id="logManageAspect" ref="logManage">
+	      	<aop:around pointcut="execution(public * egovframework.*.**..*Controller.*(..))" method="aroundController" />
+		</aop:aspect>
+	</aop:config>
+	
+	<bean id="selectAnnotaionMapper" class="egovframework.com.inc.SimpleUrlAnnotationHandlerMapping" p:order="1">
+		<property name="interceptors">
+			<list>
+				<ref local="loginInterceptor"/>
+			</list>
+		</property>
+		<property name="urls">
+			<set>
+				<value>/adm/asp/*.do</value>
+				<value>/adm/cod/*.do</value>
+				<value>/adm/meu/*.do</value>
+			</set>
+		</property>
+	</bean>
+	
+	<bean id="viewResolver" class="org.springframework.web.servlet.view.InternalResourceViewResolver">
+	    <property name="prefix" value="/WEB-INF/jsp/"></property>
+	    <property name="suffix" value=".jsp"></property>
+	</bean>
+ 
+	<bean id="loginInterceptor" class="egovframework.com.inc.LoginInterceptor" />
+	
+	<bean id="annotationMapper" class="org.springframework.web.servlet.mvc.annotation.DefaultAnnotationHandlerMapping" p:order="2"/>
+	
+	<bean id="beanNameResolver" class="org.springframework.web.servlet.view.BeanNameViewResolver"  p:order="0" />		
+	
+	<bean id="fileDownload" class="egovframework.com.file.controller.FileDownload"/>	
+	
+	
+	 <!-- 
+	    ( no. 3 ) qurtz job 추가
+	 -->
+ 
+      <!-- Scheduler task -->
+  <bean name="schedulerTask" class="egovframework.com.job.controller.SchedulerTask" />
+
+   <!-- Scheduler job -->
+   <bean name="schedulerJob"
+     class="org.springframework.scheduling.quartz.JobDetailBean">
+
+     <property name="jobClass"
+           value="egovframework.com.job.controller.SchedulerJob" />
+
+     <property name="jobDataAsMap">
+	<map>
+	   <entry key="schedulerTask" value-ref="schedulerTask" />
+	 </map>
+      </property>
+
+   </bean>
+
+   <!-- Cron Trigger  매달 26일 7시 15분 실행 -->
+   <bean id="cronTrigger"
+	class="org.springframework.scheduling.quartz.CronTriggerBean">
+	<property name="jobDetail" ref="schedulerJob" />
+	<!-- <property name="cronExpression" value="0 15 7 10 * ?" /> -->
+	<property name="cronExpression" value="0 15 7 26 * ?" />
+   </bean>
+
+   <!-- Scheduler -->
+   <bean class="org.springframework.scheduling.quartz.SchedulerFactoryBean">
+	<property name="jobDetails">
+	   <list>
+	      <ref bean="schedulerJob" />
+	   </list>
+	</property>
+
+	<property name="triggers">
+	    <list>
+		<ref bean="cronTrigger" />
+	    </list>
+	</property>
+   </bean>
+    
+
+
+</beans>

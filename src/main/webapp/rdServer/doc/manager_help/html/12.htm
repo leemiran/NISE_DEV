@@ -1,0 +1,133 @@
+<html>
+
+<head>
+<meta name=Generator content="Microsoft Office HTML Filter 2.0">
+<meta http-equiv=Content-Type content="text/html; charset=ks_c_5601-1987">
+<meta name=Originator content="Microsoft Word 9">
+<title>기타(기능설명)</title>
+<link rel="stylesheet" type="text/css" href="default.css" title="Style">
+</head>
+
+<body lang=KO>
+
+<div class=Section1>
+
+<p class=MsoNormal><a name="_Toc93765701"><b><u><span style='font-size:14.0pt;font-family:Tahoma'>기타<span lang=EN-US>(기능설명)</span></span></u></b></a></p>
+
+<p class=MsoNormal><a name="_Toc93765702"><span style='font-size:11.0pt;font-family:Tahoma'>캐쉬 기능</span></a></p>
+
+<p class=MsoNormal><span lang=EN-US style='font-size:11.0pt;font-family:Tahoma'>RDServer의 캐쉬 기능은 Report Designer에서 쿼리 다이얼로그에서 쿼리 캐쉬사용을 체크
+하였을 때 수행되는 기능으로 </span><span style='font-size:11.0pt;
+font-family:Tahoma;'>데이터 베이스에서 데이터를 가져와 파일에 저장되며<span
+lang=EN-US>, 뷰어에서 쿼리 캐슁된 데이터를 요청 시 캐쉬 파일에서 읽어 데이터를 보내는 방식입니다. 캐쉬 파일의 종류는 두가지로 아래와
+같습니다.</span></span></p>
+
+<p class=MsoNormal><span lang=EN-US style='font-size:11.0pt;font-family:Tahoma;'>&nbsp;</span></p>
+
+<p class=MsoNormal><span lang=EN-US style='font-size:11.0pt;font-family:Tahoma;'>1. 영구캐쉬(파일이 없어지지 않는다.)</span></p>
+
+<p class=MsoNormal><span lang=EN-US style='font-size:11.0pt;font-family:Tahoma;'>- Database에서 요청한 시간에 데이타를 가져온
+후 변하지 않는다.</span></p>
+
+<p class=MsoNormal><span lang=EN-US style='font-size:11.0pt;font-family:Tahoma;'>&nbsp;</span></p>
+
+<p class=MsoNormal><span lang=EN-US style='font-size:11.0pt;font-family:Tahoma;'>2. 비영구캐쉬(파일이 없어진다.)</span></p>
+
+<p class=MsoNormal><span lang=EN-US style='font-size:11.0pt;font-family:Tahoma;'>- Database에서 요청한 시간에 데이타를 가져온
+후 정해진 일자에 지워진다.(에디터에서 일자를 정의)</span></p>
+
+<p class=MsoNormal><span lang=EN-US style='font-size:11.0pt;font-family:Tahoma;'>&nbsp;</span></p>
+
+<p class=MsoNormal><span lang=EN-US style='font-size:11.0pt;font-family:Tahoma;'>%주의사항</span></p>
+
+<p class=MsoNormal><span lang=EN-US style='font-size:11.0pt;font-family:Tahoma;'>* 뷰어 실행 시 캐쉬가 적용됩니다.</span></p>
+
+<p class=MsoNormal><span lang=EN-US style='font-size:11.0pt;font-family:Tahoma;'>* 쿼리가 유일키가 됩니다.(캐쉬가 적용된 쿼리는 쿼리가
+조금이라도 변경되면 찾지 못하고 파일이 다시 생성됩니다.)</span></p>
+
+<p class=MsoNormal><span lang=EN-US style='font-size:11.0pt;font-family:Tahoma;'>* 캐쉬 파일은 월별로 폴더로 관리됩니다.(db.properties
+파일의 servercaching_dir 에 정의된 디렉토리에서 관리됩니다.)</span></p>
+
+<p class=MsoNormal><span lang=EN-US style='font-size:11.0pt;font-family:Tahoma;'>&nbsp;</span></p>
+
+<p class=MsoNormal><b><span lang=EN-US style='font-size:11.0pt;font-family:Tahoma;'>- 에디터에서의 사용법</span></b></p>
+
+<p class=MsoNormal><span lang=EN-US style='font-size:11.0pt;font-family:Tahoma;'>1. 새로운 RDeditor 를 설치합니다.</span></p>
+
+<p class=MsoNormal><span lang=EN-US style='font-size:11.0pt;font-family:Tahoma;'>2. rdagent 접속 후 쿼리를 만든 후 아래와
+같이&nbsp; 쿼리캐싱사용을 선택합니다.</span></p>
+
+<p class=MsoNormal><span lang=EN-US style='font-size:11.0pt;font-family:Tahoma'><img width=312 height=370
+src="./12.files/image002.jpg"></span></p>
+
+<p class=MsoNormal><span style='font-size:11.0pt;
+font-family:Tahoma;'>위의 그림은 해당 쿼리의 결과를 비 영구캐쉬<span
+lang=EN-US>(캐쉬파일이 첫 뷰어 실행 후 2일 동안 캐쉬 파일에서 읽어옴)으로 사용하겠다는 것입니다. 캐슁사용기간설정을 체크하지 않으시면
+영구캐쉬 파일이 생성되게며 지워지지 않습니다.</span></span></p>
+
+<p class=MsoNormal><span lang=EN-US style='font-size:11.0pt;font-family:Tahoma;'>3. 뷰어를 실행합니다.. </span></p>
+
+<p class=MsoNormal><span lang=EN-US style='font-size:11.0pt;font-family:Tahoma;'>-&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; 서버에서의
+생성된 파일</span></p>
+
+<p class=MsoNormal><span lang=EN-US style='font-size:11.0pt;font-family:Tahoma;'>&nbsp; db.properties 파일에서 servercaching_dir=/temp/cache/ 으로 설정이 되어었다면
+/temp/cache/2004121/20041212203112-1-0000-20031220200000.cache (비영구) 또는
+/temp/cache/2003121/20031212203112-0-0000-00000000000000.cache (영구)으로 캐쉬 파일이 생기게
+됩니다.</span></p>
+
+<p class=MsoNormal><span lang=EN-US style='font-size:11.0pt;font-family:Tahoma;'>&nbsp;</span></p>
+
+<p class=MsoNormal><span style='font-size:11.0pt;
+font-family:Tahoma;'>파일의 내용은 쿼리<span lang=EN-US>, 필드명, 쿼리결과가
+저장되어 있을 것입니다. 즉 /temp/cache/2003121/20031212203112-1-0000-20031220200000.cache 파일의
+내용을 보면</span></span></p>
+
+<p class=MsoNormal><span lang=EN-US style='font-size:11.0pt;font-family:Tahoma;'>SELECT * from scuser where
+username='bgso13'</span></p>
+
+<p class=MsoNormal><span lang=EN-US style='font-size:11.0pt;font-family:Tahoma;'>%1|1006|0%5%userid|12|50%username|12|50%useremail|12|50%pass|12|30%usergroup|12|30%1|1006|0%</span></p>
+
+<p class=MsoNormal><span lang=EN-US style='font-size:11.0pt;font-family:Tahoma;'>bgso13|bgso13|bgsokksi@mslkjf2sdi|2188|Administrator|</span></p>
+
+<p class=MsoNormal><span style='font-size:11.0pt;
+font-family:Tahoma;'>포멧으로 저장되게 됩니다<span lang=EN-US>.</span></span></p>
+
+<p class=MsoNormal><span lang=EN-US style='font-size:11.0pt;font-family:Tahoma;'>&nbsp;</span></p>
+
+<p class=MsoNormal><span lang=EN-US style='font-size:11.0pt;font-family:Tahoma;'>*쿼리가 캐쉬 파일에서 읽어오는지 DB에서 읽어오는지를
+판별하려면, 캐쉬 파일의 쿼리결과 부분을 편집해 보세요.</span></p>
+
+<p class=MsoNormal><a name="_Toc93765703"><span lang=EN-US style='font-size:
+11.0pt;font-family:Tahoma'>RDServer 사용시 속도 개선을 가져올수 있는 팁</span></a></p>
+
+<p class=MsoNormal><span lang=EN-US style='font-size:11.0pt;font-family:Tahoma;'>-Database 캐릭터셋을 언어에 맞게 설정하여,
+서버에서 캐릭터셋 컨버젼을 하지 않도록 한다. 컨버젼을 하게 되면 하지 않은 경우에 비해 리포팅 완료 속도가 3배또는 10배이상 차이가 날수 있다</span></p>
+
+<p class=MsoNormal><span lang=EN-US style='font-size:11.0pt;font-family:Tahoma;'>starup.bat 또는 startup.sh 파일에
+oencoding을 false 로 설정 (속도 개선)</span></p>
+
+<p class=MsoNormal><span lang=EN-US style='font-size:11.0pt;font-family:Tahoma;'>starup.bat 또는 startup.sh 파일에
+oencoding을 true 로 설정 (속도 저하)</span></p>
+
+<p class=MsoNormal><span lang=EN-US style='font-size:11.0pt;font-family:Tahoma;'>-저장 프로시져을 사용하는 경우 에디터에서 폼파일 작성시
+로그인하는 계정이 사용할 수 있는 프로시져들이 많은 경우(100개 이상) 메타정보를 가져올 때 검색시간이 오래걸리므로 속도 저하를 가져올 수 있다.</span></p>
+
+<p class=MsoNormal><span style='font-size:11.0pt;
+font-family:Tahoma;'>사용자에 대해서<span lang=EN-US>&nbsp; 저장프로시저가 많이 검색되지 않게 Database 내의 설정(권한설정)을
+변경해 주도록 한다. (속도 개선)</span></span></p>
+
+<p class=MsoNormal><span style='font-size:11.0pt;
+font-family:Tahoma;'>에디터 쿼리정의에서 자유편집을 통해 저장프로시저를 수행하도록 한다<span
+lang=EN-US>. 자유편집을 이용해 저장프로시저를 수행할수 있는 Database 종류는 아래와 같다. DB2, Sybase, MSSQL</span></span></p>
+
+<p class=MsoNormal><span lang=EN-US style='font-size:11.0pt;font-family:Tahoma;'>MSSQL 예) </span></p>
+
+<p class=MsoNormal><span lang=EN-US style='font-size:11.0pt;font-family:Tahoma;'>exec CustOrderHist '$1'</span></p>
+
+<p class=MsoNormal><span lang=EN-US style='font-size:11.0pt;font-family:Tahoma'>&nbsp;</span></p>
+
+</div>
+
+</body>
+
+</html>

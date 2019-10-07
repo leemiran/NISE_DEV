@@ -1,0 +1,99 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE sqlMap PUBLIC "-//iBATIS.com//DTD SQL Map 2.0//EN" "http://www.ibatis.com/dtd/sql-map-2.dtd">
+
+<sqlMap namespace="commonAjax">
+
+	<typeAlias  alias="egovMap" type="egovframework.rte.psl.dataaccess.util.EgovMap"/>
+	 
+	
+	<!-- 메뉴구조 콤보 조회(Main) -->
+ 	<select id="commonAjaxDAO.selectMainMenuCombo" parameterClass="map" resultClass="egovMap">
+		<![CDATA[
+			select main_menu_code as menu_code,
+			       main_menu_name as menu_name
+			  from ec_r_menu_main
+			 where as_gubun = #sasgubun#
+			 order by order_no
+		 ]]>
+	</select>
+	
+	<!-- 메뉴구조 콤보 조회(Detail) -->
+ 	<select id="commonAjaxDAO.selectDetailMenuCombo" parameterClass="map" resultClass="egovMap">
+		<![CDATA[
+			select detail_menu_code as menu_code,
+			       detail_menu_name as menu_name
+			  from ec_r_menu_detail
+			 where ued_yn = 'Y'
+			   and main_menu_code = #mainMenuCode#
+			 order by order_no
+		 ]]>
+	</select>
+	
+	<insert id="commonAjaxDAO.insertPrintLog">
+		insert into ec_print_log(
+			seq_print,
+			user_id,
+			main_menu_code,
+			detail_menu_code,
+			seq_curm,
+			sq_year,
+			asp_code,
+			write_date_time
+		)
+		values(
+			seq_print.nextval,
+			#userId#,
+			#mainMenuCode#,
+			#detailMenuCode#,
+			#seqCurm#,
+			#sqYear#,
+			#aspCode#,
+			to_char(sysdatetime,'yyyymmddhhmiss')
+		)
+	</insert>
+	
+	<!--자동로그인에 대한 로그-->
+	<insert id="commonAjaxDAO.insertAutoLoginLog">
+	INSERT INTO EC_AUTOLOGIN_LOG (SEQ_VIEW,
+	        ASP_CODE,
+	        USER_ID,
+	        SQ_YEAR,
+	        SEQ_CURM,
+	        JOCKY,
+	        ADMIN_ID,
+	        WRITE_DATE_TIME
+	        )
+	 VALUES(SEQ_VIEW.NEXTVAL,
+	        #ASP_CODE#,
+	        #USER_ID#,
+	        #SQ_YEAR#,
+	        #SEQ_CURM#,
+	        #JOCKY#,
+	        #ADMIN_ID#,
+	        TO_CHAR(sysdatetime, 'YYYYMMDDHH24MISS') 
+	        )
+	</insert>
+	
+	<procedure id="commonAjaxDAO.insertProgressFix" parameterClass="map" >
+	  <![CDATA[
+	   {call REMARK_PACKAGE.PROC_REMARK_PROGRESS(#crsSqCode#);}
+	  ]]>
+	</procedure>
+
+	<select id="commonAjaxDAO.nicePersonalNumOverlap" parameterClass="map" resultClass="int">
+		<![CDATA[
+			select count(0) as cnt
+			  from tz_member
+			 where  nice_personal_num = UPPER(#p_nicePersonalNum#)
+		]]>
+		<isNotEmpty property="p_userid"> 
+		 <![CDATA[and userid <> #p_userid#]]>
+		</isNotEmpty>	 
+	</select>
+	<select id="commonAjaxDAO.nicePersonalChkValue" parameterClass="map" resultClass="egovMap">	
+			select nvl(chkvalue,'N') as chkvalue, nvl(job_cd,'00000') as jobcd
+			  from tz_member
+			 where  userid = #userid#
+	</select>
+
+</sqlMap>                            

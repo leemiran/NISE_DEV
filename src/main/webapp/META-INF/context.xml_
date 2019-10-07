@@ -1,0 +1,20 @@
+<Context docBase="D:\" path="/condata" 
+	reloadable="true" 
+	privileged="true" >
+
+<!--	<MANAGER CLASSNAME="ORG.APACHE.CATALINA.SESSION.PERSISTENTMANAGER" SAVEONRESTART="TRUE"/>-->
+<!---->
+<!--	<RESOURCE NAME="JDBC/KNISE" AUTH="CONTAINER"-->
+<!--		TYPE="JAVAX.SQL.DATASOURCE"-->
+<!--		DRIVERCLASSNAME="ORACLE.JDBC.DRIVER.ORACLEDRIVER"-->
+<!--		URL="JDBC:ORACLE:THIN:@101.79.61.4:1521:KITSCOM"-->
+<!--		USERNAME="NEWKNISE"-->
+<!--		PASSWORD="NEWKNISE"-->
+<!--		MAXACTIVE="20"-->
+<!--		MAXIDLE="10"-->
+<!--		MAXWAIT="-1"-->
+<!--		REMOVEABANDONED="TRUE"/>    -->
+<Manager className="org.apache.catalina.session.PersistentManager" debug="0" maxActiveSessions="-1" maxIdleBackup="-1" maxIdleSwap="-1" minIdleSwap="-1" saveOnRestart="true">
+                <Store className="org.apache.catalina.session.FileStore"/>
+    </Manager>
+</Context>

@@ -1,0 +1,295 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE sqlMap PUBLIC "-//iBATIS.com//DTD SQL Map 2.0//EN" "http://ibatis.apache.org/dtd/sql-map-2.dtd">
+
+<sqlMap namespace="Login">
+<typeAlias  alias="egovMap" type="egovframework.rte.psl.dataaccess.util.EgovMap"/>
+
+	<!-- 회사별로 포탈 로그인 가능여부에 따라 제한을 둔다 -->
+	<select id="loginDAO.checkPortalYn" parameterClass="map" remapResults="true" resultClass="int">
+		select count(0) from tz_member where userid = #userId#
+	</select>
+	
+<!--	비밀번호 변경시 이전의 비밀번호와 일치하는지를 확인한다.-->
+	<select id="loginDAO.userOldPwdCount" parameterClass="map" remapResults="true" resultClass="int">
+		select count(0) from tz_member where userid = #userid# 
+		
+		<isEqual property="p_d_type" compareValue="T">
+			and pwd = fn_base64sha256encryptor(#p_oldpw#)			
+		</isEqual>
+		<isEqual property="p_d_type" compareValue="O">
+			and pwd = fn_crypt('1', #p_oldpw#, 'knise')
+		</isEqual>
+		
+		
+	</select>
+	
+	<!-- 비밀번호 변경 수행 -->
+	<update id="loginDAO.updateUserPasswdChange">
+		update tz_member set
+		  <isEqual property="p_d_type" compareValue="T">
+			pwd = fn_base64sha256encryptor(#p_pw#)
+		  </isEqual>
+		  <isEqual property="p_d_type" compareValue="O">
+			pwd = fn_crypt('1', #p_pw#, 'knise')
+		  </isEqual>		  
+		, pwd_chdate = sysdatetime
+		, lgfail = 0
+		where userid = #userid#
+	</update>
+	
+	
+	
+	<!-- 로그인 회원정보 -->
+	<select id="loginDAO.login" parameterClass="map" resultClass="egovMap">
+		select a.userid,
+		       a.birth_date,
+		       a.name,
+		       a.email,
+		       --fn_crypt('2', pwd, 'knise') as pwd,
+		       pwd,
+		       pwd as o_pwd,
+		       fn_base64sha256encryptor(#pwd#) as base64sha256encryptorpwd,
+		       a.comp,
+		       get_compnm(a.comp) as compnm,
+		       a.hometel,
+		       a.lgfail,
+		       a.handphone,
+		       a.lgip,
+		       (
+		         select decode(nvl(min(b.gadmin), 'N'), 'N', 'N', 'A201', 'O', 'M1', 'O', 'T1', 'O', 'A1', 'Y', 'A2', 'Y', 'P')
+		           from tz_manager c, tz_gadmin b
+		          where c.gadmin = b.gadmin and c.userid = a.userid and c.isdeleted = 'N' and to_char(sysdate, 'yyyyMMdd') between c.fmon and c.tmon
+		       ) as gubun,
+		       (select grcode from tz_grcomp where comp = a.comp) as grcode,
+		       isretire,
+		       retire_date,
+		       get_codenm('0069', retire_type) as retire_type,
+		       retire_reason,
+		       job_cd,
+		       nvl(bon_adm, 'N') as bon_adm,
+		       hq_org_cd,
+		       emp_gubun,
+		       (select [domain] from tz_grcode where grcode = (select grcode from tz_grcomp where comp = a.comp)) as [domain],
+		       to_char(sysdatetime, 'yyyy.MM.dd hh24:mi:ss') today,
+		       nice_personal_num,
+		       dept_cd,
+		      <![CDATA[ 
+		        Case 
+				    When pwd_chdate Is Null Then 'Y' 
+				    When MONTHS_BETWEEN(sysdate, add_months(pwd_chdate, 3)) > 0 Then 'Y' -- 3개월이 지나면 비밀번호를 변경한다.
+				    Else 'N' 
+				End pwdchangeyn,
+				(
+                        select count(1) cnt   from tz_member
+                        where name 		= a.name
+                        and handphone 	= a.handphone
+                        and nvl(email, 'null') 			= nvl(a.email, 'null')
+                        and nvl(birth_date, 'null') 	= nvl(a.birth_date, 'null')
+                        and isretire        	= 'N'
+                        group by name, handphone, email, birth_date
+                 ) dupt_cnt,
+			  ]]>			       
+		        DECODE((select count(0) from   tz_eduorg where  orgid = a.dept_cd), 0, 'Y', 'N') as dept_cnt,
+                 DECODE((select count(0) from   tz_eduorg where  orgid = a.agency_cd), 0, 'Y', 'N') as agency_cnt,
+                 nvl(nice_num_allow_yn, 'N') as nice_num_allow_yn
+                 ,case when ( nvl(length(zip_cd), 0) > 5) then 6
+                 when ( nvl(length(zip_cd), 0) = 0) then 0
+                 else 5
+                 end ziplen,
+                case when (nvl(length(zip_cd1), 0) > 5 ) then 6
+                 when ( nvl(length(zip_cd1), 0) = 0) then 0
+                 else 5
+                 end ziplen1, 
+                 to_char(lgfail_date, 'yyyymmddhh24miss') as lgfail_date,
+                 case 
+				   when to_char(sysdatetime, 'yyyyMMddhh24Miss') >= to_char(decode(LGFAIL_DATE,null,to_datetime('20160929000000','YYYYMMDDHH24MISS'),LGFAIL_DATE)+5 DIV (24*60), 'yyyyMMddhh24Miss')
+				   then 'Y'
+				   else 'N'
+				   end  cur_date_5min 
+				   , to_char(to_datetime(lglast, 'yyyymmddhh24miss'), 'yyyy.mm.dd') lglast
+		  from tz_member a
+		 where a.userid = #userId#
+	</select>
+	
+	<!-- 로그인 회원정보 -->
+	<select id="loginDAO.loginCert" parameterClass="map" resultClass="egovMap">
+		select a.userid,
+		       a.birth_date,
+		       a.name,
+		       a.email,
+		       --fn_crypt('2', pwd, 'knise') as pwd,
+		       pwd,
+		       a.comp,
+		       get_compnm(a.comp) as compnm,
+		       a.hometel,
+		       a.lgfail,
+		       a.handphone,
+		       a.lgip,
+		       (
+		         select decode(nvl(min(b.gadmin), 'N'), 'N', 'N', 'A201', 'O', 'M1', 'O', 'T1', 'O', 'A1', 'Y', 'A2', 'Y', 'P')
+		           from tz_manager c, tz_gadmin b
+		          where c.gadmin = b.gadmin and c.userid = a.userid and c.isdeleted = 'N' and to_char(sysdate, 'yyyyMMdd') between c.fmon and c.tmon
+		       ) as gubun,
+		       (select grcode from tz_grcomp where comp = a.comp) as grcode,
+		       isretire,
+		       retire_date,
+		       get_codenm('0069', retire_type) as retire_type,
+		       retire_reason,
+		       job_cd,
+		       nvl(bon_adm, 'N') as bon_adm,
+		       hq_org_cd,
+		       emp_gubun,
+		       (select [domain] from tz_grcode where grcode = (select grcode from tz_grcomp where comp = a.comp)) as [domain],
+		       to_char(sysdatetime, 'yyyy.MM.dd hh24:mi:ss') today,
+		       nice_personal_num,
+                       dept_cd,
+               <![CDATA[ 
+		        Case 
+				    When pwd_chdate Is Null Then 'Y' 
+				    When MONTHS_BETWEEN(sysdate, add_months(pwd_chdate, 3)) > 0 Then 'Y' -- 3개월이 지나면 비밀번호를 변경한다.
+				    Else 'N' 
+				End pwdchangeyn,
+				(
+                        select count(1) cnt   from tz_member
+                        where name 		= a.name
+                        and handphone 	= a.handphone
+                        and nvl(email, 'null') 			= nvl(a.email, 'null')
+                        and nvl(birth_date, 'null') 	= nvl(a.birth_date, 'null')
+                        and isretire        	= 'N'
+                        group by name, handphone, email, birth_date
+                 ) dupt_cnt,
+			   ]]>
+		       a.birth_date,		       
+		         <![CDATA[ -- 기존코드가 존재한다면 0보다 크다. 사용자에게 업데이트를 요청한다. ]]> 
+                 DECODE((select count(0) from   tz_eduorg where  orgid = a.dept_cd), 0, 'Y', 'N') as dept_cnt,
+                 DECODE((select count(0) from   tz_eduorg where  orgid = a.agency_cd), 0, 'Y', 'N') as agency_cnt,
+                 nvl(nice_num_allow_yn, 'N') as nice_num_allow_yn
+                 ,case when ( nvl(length(zip_cd), 0) > 5 or nvl(length(zip_cd1), 0) > 5 ) then 6
+                 when ( nvl(length(zip_cd), 0) = 0) then 0
+                 else 5
+                 end ziplen,
+                 to_char(lgfail_date, 'yyyymmddhh24miss') as lgfail_date,
+                 case 
+				   when to_char(sysdatetime, 'yyyyMMddhh24Miss') >= to_char(decode(LGFAIL_DATE,null,to_datetime('20160929000000','YYYYMMDDHH24MISS'),LGFAIL_DATE)+5 DIV (24*60), 'yyyyMMddhh24Miss')
+				   then 'Y'
+				   else 'N'
+				   end  cur_date_5min 
+                 , to_char(TO_DATETIME(lglast, 'yyyymmddhh24miss'), 'yyyy.mm.dd') lglast
+		  from tz_member a
+		 where a.userid = #userId#
+		 and a.epki_dn = #dn#
+	</select>
+	
+	<!-- 최초 로그인 체크 -->
+	<select id="loginDAO.selectLoginCount" parameterClass="map" remapResults="true" resultClass="int">
+		select count(0) from tz_member where userid = #userId# and lgfirst is null
+	</select>
+	
+	<update id="loginDAO.updateLoginInfo">
+		update tz_member
+		   set lgcnt = lgcnt + 1
+		     , lglast = to_char(sysdatetime, 'yyyyMMddhh24miss')
+		     , lgip = #lgip#
+		<isNotEmpty property="loginFirstYn">
+		     , lgfirst = to_char(sysdatetime, 'yyyyMMddhh24miss')
+		</isNotEmpty>
+		 where userid = #userId#
+	</update>
+	
+	<!-- 로그인정보 삭제 -->
+	<delete id="loginDAO.deleteLoginId">
+		delete tz_loginid where userid = #userId#
+	</delete>
+	
+	<!-- 로그인정보 등록 -->
+	<insert id="loginDAO.insertLoginId">
+		insert into tz_loginid(
+			userid,
+			lgip,
+			ldate
+		)
+		values(
+			#userId#,
+			#lgip#,
+			to_char(sysdatetime, 'yyyyMMddhh24miss')
+		)
+	</insert>
+	
+	<!-- 로그인 대상자 기록 -->
+	<insert id="loginDAO.insertLoginLog">
+		insert into tz_login_log(
+			seq,
+			userid,
+			usernm,
+			comp,
+			lgip,
+			ldate
+		)
+		values(
+			login_log_seq.nextval,
+			#userId#,
+			#userNm#,
+			#comp#,
+			#lgip#,
+			to_char(sysdatetime, 'yyyyMMddhh24Miss')
+		)
+	</insert>
+	
+	<!-- 비밀번호 오류 회수 증가 -->
+	<update id="loginDAO.updateLoginFailCount">
+		update tz_member
+		<isEqual property="issuccess" compareValue="Y">
+		   set lgfail = 0
+		</isEqual>
+		<isEqual property="issuccess" compareValue="N">
+		   set lgfail = lgfail + 1
+		   ,LGFAIL_DATE = sysdatetime  
+		</isEqual>
+		
+		 where userid = #userId#
+	</update>
+	
+	<update id="loginDAO.tutorLogout">
+		update tz_tutorlog
+		   set logout = to_char(sysdatetime, 'yyyyMMddhh24miss')
+		     , dtime = to_char(sysdatetime, 'yyyyMMddhh24miss') - login
+		 where tuserid = #userid#
+		   and serno = #serno#
+	</update>
+	
+	<select id="loginDAO.selectUserIdNo" parameterClass="map" resultClass="java.lang.String">
+		<![CDATA[ 
+           select birth_date as id_no 
+           from tz_member
+           where userid = #userid#
+           and birth_date = #tIdNo#
+		]]>
+	</select>
+	
+	<update id="loginDAO.updateDn_S">
+        <![CDATA[
+            UPDATE tz_member
+            SET 
+                   EPKI_DN   =  #epkiDn#
+            WHERE  USERID=#userid#
+        ]]>
+    </update>
+    
+    <select id="loginDAO.epkiDnYn" parameterClass="map" resultClass="egovMap">
+		<![CDATA[ 
+           select userid, epki_dn 
+           from tz_member
+           where userid = #userId#
+		]]>
+	</select>
+	
+	<select id="loginDAO.checkDormantYn" parameterClass="map" remapResults="true" resultClass="int">
+		select count(0) cnt 
+		from tz_member 
+		where userid = #userId# and dormant_yn = 'E'
+		  and isretire = 'N'
+	</select>
+	
+	
+</sqlMap>
+

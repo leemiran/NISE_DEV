@@ -1,0 +1,169 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE sqlMap PUBLIC "-//iBATIS.com//DTD SQL Map 2.0//EN" "http://ibatis.apache.org/dtd/sql-map-2.dtd">
+
+<sqlMap namespace="PortalActionMain">
+<typeAlias  alias="egovMap" type="egovframework.rte.psl.dataaccess.util.EgovMap"/>
+<!--	권한리스트-->
+	<select id="portalActionMainDAO.selectAuthList" parameterClass="map" resultClass="egovMap">
+		select b.gadmin, b.gadminnm
+		  from tz_manager a, tz_gadmin b
+		 where a.gadmin = b.gadmin
+		   and a.userid = #userid#
+		   and a.isdeleted = 'N'
+		   and to_char(sysdate, 'yyyyMMdd') between a.fmon and a.tmon
+		 order by b.gadmin asc
+	</select>
+	
+<!--	공지사항 메인 리스트 Top 4-->
+	<select id="portalActionMainDAO.selectNoticeTopList" parameterClass="map" resultClass="egovMap">
+	<![CDATA[
+	select rownum, isall, seq, addate, adtitle, adname, cnt, luserid, ldate, type, 
+			notice_gubun_nm, notice_gubun 
+	from (			
+		select rownum, isall, seq, addate, adtitle, adname, cnt, luserid, ldate, type, 
+				notice_gubun_nm, notice_gubun
+		from(
+			select isall, seq, addate, adtitle, adname, cnt, luserid, ldate, type, 
+			get_codenm('0076', notice_gubun) notice_gubun_nm, notice_gubun from                      
+			( select rownum, a.seq, a.adtitle, a.adname, a.cnt, a.luserid, a.ldate, a.isall,
+			       a.useyn, a.popup, a.loginyn, a.gubun, a.aduserid, a.type, a.notice_gubun,
+			       addate,
+			       (select count(realfile) from tz_boardfile where tabseq = a.tabseq and seq = a.seq) as filecnt
+			  from tz_notice a
+			 where isall = 'Y'	
+			   and tabseq = '12'
+			 order by a.addate desc )
+			where rownum <= 3
+			union all
+			select isall, seq, addate, adtitle, adname, cnt, luserid, ldate, type, 
+			get_codenm('0076', notice_gubun) notice_gubun_nm, notice_gubun from                      
+			( select isall, rownum, seq, addate, adtitle, adname,  cnt, luserid, ldate, type, notice_gubun from TZ_NOTICE  
+			where  
+			tabseq = '12'
+			and useyn= 'Y'
+			and isall = 'N'	
+			and notice_gubun <> 'B'
+			and (popup = 'N' or (popup = 'Y' and uselist='Y') )
+		]]>
+			<isNotEmpty property="userid">
+				and ( loginyn = 'AL' or loginyn = 'Y' )
+			</isNotEmpty>
+			<isEmpty property="userid">
+				and ( loginyn = 'AL' or loginyn = 'N' )
+			</isEmpty>
+			
+			order by addate desc )
+		<![CDATA[
+			where rownum <= 7
+		
+		)
+		order by isall desc, addate desc
+		)
+	where rownum <= 5
+	]]>	
+	</select>
+	
+<!--	공지사항 팝업리스트-->
+	<select id="portalActionMainDAO.selectNoticePopUpList" parameterClass="map" resultClass="egovMap">
+		select         
+		rownum,      
+		seq,         
+		addate,      
+		adtitle,     
+		adname,      
+		adcontent,   
+		cnt,         
+		uselist,     
+		useframe,    
+		popwidth,    
+		popheight,    
+		popxpos,    
+		popypos,    
+		luserid,     
+		ldate,        
+		type,         
+		tem_type      
+		from TZ_NOTICE 
+		where       
+		tabseq = '12'
+		and useyn= 'Y'			
+		and popup = 'Y'  
+	--	and to_char(sysdatetime,'YYYYMMDDHH24') between NVL(startdate, '')||'00' and NVL(enddate, '')||'24'
+		
+		<isNotEmpty property="userid">
+			and ( loginyn = 'AL' or loginyn = 'Y' )
+		</isNotEmpty>
+		<isEmpty property="userid">
+			and ( loginyn = 'AL' or loginyn = 'N' )
+		</isEmpty>
+		order by enddate desc
+		
+	</select>
+	
+	<select id="portalActionMainDAO.selectTrainingList" parameterClass="map" resultClass="egovMap">
+	<![CDATA[
+	select * from (
+		SELECT 
+			 (SELECT UPPERCLASS FROM TZ_SUBJ WHERE SUBJ = A.SUBJ) AS CLS,  --// PRF : 교원, PAR:학부모, EXT:보조인력 
+			 [year], 
+			  substr(subjseq,3,6) AS GISU, 
+			 (SELECT CLASSNAME FROM TZ_SUBJATT WHERE UPPERCLASS = (SELECT UPPERCLASS FROM TZ_SUBJ WHERE SUBJ = A.SUBJ)) AS TNM, 
+			 SUBJ, 
+			 SUBJNM, 
+			 PROPSTART,
+			 PROPEND, 
+			 0 AS GUBUN,
+             ISCHARGE,
+             SUBJSEQ 
+		 FROM    TZ_SUBJSEQ A 
+		 WHERE   ISDELETED = 'N' 
+			  AND ISVISIBLE = 'Y' 
+			  AND TO_CHAR(sysdatetime,'YYYYMMDDHH24') BETWEEN PROPSTART AND PROPEND
+		 UNION ALL 
+		 SELECT 
+			 (SELECT UPPERCLASS FROM TZ_SUBJ WHERE SUBJ = A.SUBJ) AS CLS,  --// PRF : 교원, PAR:학부모, EXT:보조인력 
+			 [year], 
+			  substr(subjseq,3,6) AS GISU, 
+			 (SELECT CLASSNAME FROM TZ_SUBJATT WHERE UPPERCLASS = (SELECT UPPERCLASS FROM TZ_SUBJ WHERE SUBJ = A.SUBJ)) AS TNM, 
+			 SUBJ, 
+			 SUBJNM, 
+			 PROPSTART,
+			 PROPEND, 
+			 1 AS GUBUN ,
+             ISCHARGE,
+             SUBJSEQ
+		 FROM    TZ_SUBJSEQ A 
+		 WHERE   ISDELETED = 'N' 
+			  AND ISVISIBLE = 'Y' 
+			  AND TO_CHAR(sysdatetime,'YYYYMMDDHH24') < PROPSTART
+			   ]]>
+		 /*
+		 <![CDATA[ 
+		 UNION ALL
+		 SELECT 
+			 (SELECT UPPERCLASS FROM TZ_SUBJ WHERE SUBJ = A.SUBJ) AS CLS,  --// PRF : 교원, PAR:학부모, EXT:보조인력 
+			 [year], 
+			  substr(subjseq,3,6)AS GISU, 
+			 (SELECT CLASSNAME FROM TZ_SUBJATT WHERE UPPERCLASS = (SELECT UPPERCLASS FROM TZ_SUBJ WHERE SUBJ = A.SUBJ)) AS TNM, 
+			 SUBJ, 
+			 SUBJNM, 
+			 PROPSTART,
+			 PROPEND, 
+			 2 AS GUBUN ,
+             ISCHARGE,
+             SUBJSEQ
+		 FROM    TZ_SUBJSEQ A 
+		 WHERE   ISDELETED = 'N' 
+			  AND ISVISIBLE = 'Y'
+			  AND TO_CHAR(sysdatetime,'YYYYMMDDHH24') > PROPEND 
+			  and [year] >= TO_CHAR(SYSDATE,'YYYY')
+		 ORDER BY GUBUN ASC, [year] DESC, PROPSTART, GISU
+		 ]]>
+		 */
+		<![CDATA[ 
+		 ) tb 
+		 where rownum <= 30
+	]]>
+	</select>
+</sqlMap>
+

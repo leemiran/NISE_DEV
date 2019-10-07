@@ -1,0 +1,99 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE sqlMap PUBLIC "-//iBATIS.com//DTD SQL Map 2.0//EN" "http://ibatis.apache.org/dtd/sql-map-2.dtd">
+
+<sqlMap namespace="adminAutoMember">
+	<typeAlias alias="egovMap" type="egovframework.rte.psl.dataaccess.util.EgovMap"/>
+	
+	<select id="getAutoMemberList" resultClass="egovMap">
+		select 
+			emp_gubun
+			, name
+			, nice_personal_num
+			, birth_date
+			, to_char(reg_date, 'yyyy-mm-dd hh24:mi:ss') reg_date
+		from 
+			tz_auto_member
+		where
+			subj = #ses_search_subj#
+			and [year] = #ses_search_year#
+			and subjseq = #ses_search_subjseq#
+		order by name
+	</select>
+	
+	<!-- <insert id="insertAutoMember" parameterClass="map">
+		insert all
+		<iterate property="autoMemberList">
+			into tz_auto_member (
+				emp_gubun
+				, name
+				<isNotEmpty property="autoMemberList[].nicePersonalNum">
+					, nice_personal_num
+				</isNotEmpty>
+				<isNotEmpty property="autoMemberList[].birthDate">
+					, birth_date
+				</isNotEmpty>
+				, reg_date
+				, subj
+				, [year]
+				, subjseq
+			)
+			values (
+				#autoMemberList[].empGubun#
+				, #autoMemberList[].name#
+				<isNotEmpty property="autoMemberList[].nicePersonalNum">
+					, #autoMemberList[].nicePersonalNum#
+				</isNotEmpty>
+				<isNotEmpty property="autoMemberList[].birthDate">
+					, #autoMemberList[].birthDate#
+				</isNotEmpty>
+				, sysdate
+				, #subj#
+				, #year#
+				, #subjseq#
+			)
+		</iterate>
+		SELECT * FROM DB_ROOT
+	</insert> -->
+	
+	<insert id="insertAutoMember" parameterClass="map">		
+		insert into tz_auto_member (
+			emp_gubun
+			, name
+			<isNotEmpty property="nicePersonalNum">
+				, nice_personal_num
+			</isNotEmpty>
+			<isNotEmpty property="birthDate">
+				, birth_date
+			</isNotEmpty>
+			, reg_date
+			, subj
+			, [year]
+			, subjseq
+		)
+		values (
+			#empGubun#
+			, #name#
+			<isNotEmpty property="nicePersonalNum">
+				, #nicePersonalNum#
+			</isNotEmpty>
+			<isNotEmpty property="birthDate">
+				, #birthDate#
+			</isNotEmpty>
+			, sysdate
+			, #subj#
+			, #year#
+			, #subjseq#
+		)
+	</insert>
+	
+	
+	<delete id="deleteAutoMember">
+		delete from tz_auto_member
+		where
+			subj = #subj#
+			and [year] = #year#
+			and subjseq = #subjseq#
+	</delete>
+	
+</sqlMap>
+

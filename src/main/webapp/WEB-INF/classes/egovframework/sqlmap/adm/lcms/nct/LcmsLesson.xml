@@ -1,0 +1,355 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE sqlMap PUBLIC "-//iBATIS.com//DTD SQL Map 2.0//EN" "http://ibatis.apache.org/dtd/sql-map-2.dtd">
+
+<sqlMap namespace="LcmsLesson">
+
+
+<typeAlias  alias="egovMap" type="egovframework.rte.psl.dataaccess.util.EgovMap"/>
+
+    <select id="lcmsLessonDAO.selectLcmsLessonPageList" parameterClass="map" resultClass="egovMap">
+        SELECT * 
+        FROM
+               (
+                SELECT TEMP.*, 
+                <isNotEmpty property="rowsPerPage">
+                       CEIL(ROWNUM / #rowsPerPage#) AS PAGE 
+                </isNotEmpty>
+                <isEmpty property="rowsPerPage">
+                       CEIL(ROWNUM / 10) AS PAGE 
+                </isEmpty>
+                FROM
+                      (
+                       SELECT 
+	        	              SUBJ,
+	        	              [MODULE],
+	        	              LESSON,
+	        	              LESSON_NAME,
+	        	              STARTING,
+	        	              EDU_TIME,
+	        	              EDU_TIME_YN,
+	        	              PAGE_COUNT,
+	        	              INUSERID,
+	        	              INDATE,
+	        	              LUSERID,
+	        	               LDATE
+        		       FROM   TB_LCMS_LESSON
+        		       <!--  APPEND WHERE CONDITION START  -->
+
+        		       <!--  APPEND WHERE CONDITION END    -->
+        		       <isNotEmpty property="orderBy">
+        			       $orderBy$
+        		       </isNotEmpty>
+        	          ) TEMP 
+               )
+        <isNotEmpty property="page">
+        WHERE PAGE = #page#
+        </isNotEmpty>
+        <isEmpty property="page">
+        WHERE PAGE = 1
+        </isEmpty>
+    </select>
+
+    <select id="lcmsLessonDAO.selectLcmsLessonList" parameterClass="map" resultClass="egovMap">
+        SELECT SUBJ,
+               [MODULE],
+               LESSON,
+               LESSON_NAME,
+               STARTING,
+               EDU_TIME,
+               EDU_TIME_YN,
+               PAGE_COUNT,
+               INUSERID,
+               INDATE,
+               LUSERID,
+               LDATE
+        FROM   TB_LCMS_LESSON
+    </select>
+
+    <select id="lcmsLessonDAO.selectLcmsLessonPageListTotCnt" parameterClass="map" resultClass="int">
+        SELECT COUNT(ROWNUM) AS [COUNT]
+        FROM   TB_LCMS_LESSON
+    </select>
+
+    <select id="lcmsLessonDAO.selectLcmsLesson" parameterClass="map" resultClass="egovMap">
+        SELECT SUBJ,
+               [MODULE],
+               LESSON,
+               LESSON_NAME,
+               STARTING,
+               EDU_TIME,
+               EDU_TIME_YN,
+               PAGE_COUNT,
+               INUSERID,
+               INDATE,
+               LUSERID,
+               LDATE
+        FROM   TB_LCMS_LESSON
+        WHERE  SUBJ = #subj#
+        AND    [MODULE] = #module#
+        AND    LESSON = #lesson#
+    </select>
+
+    <insert id="lcmsLessonDAO.insertLcmsLesson">
+        <selectKey resultClass="String" keyProperty="lesson">
+            select trim(to_char(nvl(max(lesson),0)+1, '000')) as lesson
+              from tb_lcms_lesson
+             where SUBJ = #subj#
+        </selectKey>
+        INSERT INTO TB_LCMS_LESSON
+        (
+            SUBJ,
+            [MODULE],
+            LESSON,
+            LESSON_CD,
+            OWNER,
+            [DEPTH],
+            ORDER_NUM,
+            LESSON_NAME,
+            STARTING,
+            EDU_TIME,
+            EDU_TIME_YN,
+            PROGRESS_YN,
+            PAGE_COUNT,
+            INUSERID,
+            LUSERID
+        )
+        VALUES
+        (
+            #subj#,
+            #module#,
+            #lesson#,
+            #lessonCd#,
+            #owner#,
+            #depth#,
+            #orderNum#,
+            #lessonName#,
+            #starting#,
+            #eduTime#,
+            #eduTimeYn#,
+            #progressYn#,
+            #pageCount#,
+            #suserId#,
+            #suserId#
+        )
+    </insert>
+    
+    <insert id="lcmsLessonDAO.insertLcmsLesson2">
+        INSERT INTO TB_LCMS_LESSON
+        (
+            SUBJ,
+            [MODULE],
+            LESSON,
+            LESSON_CD,
+            OWNER,
+            [DEPTH],
+            ORDER_NUM,
+            LESSON_NAME,
+            STARTING,
+            EDU_TIME,
+            EDU_TIME_YN,
+            PROGRESS_YN,
+            PAGE_COUNT,
+            INUSERID,
+            LUSERID
+        )
+        VALUES
+        (
+            #subj#,
+            #module#,
+            #lesson#,
+            #lessonCd#,
+            #owner#,
+            #depth#,
+            #orderNum#,
+            #lessonName#,
+            #starting#,
+            #eduTime#,
+            #eduTimeYn#,
+            #progressYn#,
+            #pageCount#,
+            #suserId#,
+            #suserId#
+        )
+    </insert>
+    <insert id="lcmsLessonDAO.insertLcmsLessonXinics">
+        <selectKey resultClass="String" keyProperty="lesson">
+            select trim(to_char(nvl(max(lesson),0)+1, '000')) as lesson
+              from tb_lcms_lesson
+             where SUBJ = #subj#
+        </selectKey>
+        INSERT INTO TB_LCMS_LESSON
+        (
+            SUBJ,
+            [MODULE],
+            LESSON,
+            LESSON_CD,
+            OWNER,
+            ORDER_NUM,
+            LESSON_NAME,
+            STARTING,
+            INUSERID,
+            INDATE,
+            LUSERID,
+            LDATE
+        )
+        VALUES
+        (
+            #subj#,
+            #module#,
+            #lesson#,
+            #lesson#,
+            '00',
+            #orderNum#,
+            #lessonName#,
+            #starting#,
+            #userId#,
+            sysdate,
+            #userId#,
+            sysdate
+        )
+    </insert>
+
+    <update id="lcmsLessonDAO.updateLcmsLesson">
+        UPDATE TB_LCMS_LESSON
+        SET    LESSON_NAME 	= #lessonName#,
+               STARTING 	= #starting#,
+               PAGE_COUNT	= #pageCount#,
+               EDU_TIME     = #eduTime#,
+               LUSERID 		= #userid#,
+               LDATE 		= sysdate
+        WHERE  SUBJ 		= #subj#
+        AND    [MODULE] 		= #module#
+        AND    LESSON 		= #lesson#
+    </update>
+
+    <delete id="lcmsLessonDAO.deleteLcmsLesson">
+        DELETE FROM TB_LCMS_LESSON
+        WHERE  SUBJ = #subj#
+        AND    [MODULE] = #module#
+        AND    LESSON = #lesson#
+    </delete>
+
+
+	<!-- 차시삭제일경우 모든 레슨삭제	-->
+    <delete id="lcmsLessonDAO.deleteLcmsLessonAll">
+        DELETE FROM TB_LCMS_LESSON
+        WHERE  SUBJ = #subj#
+        AND    [MODULE] in <iterate property="module" conjunction="," open="(" close=")">#module[]#</iterate>
+    </delete>
+
+    <select id="lcmsLessonDAO.existLcmsLesson" resultClass="long">
+        SELECT COUNT(ROWNUM) 
+        FROM   TB_LCMS_LESSON
+        WHERE  SUBJ = #subj#
+        AND    [MODULE] = #module#
+        AND    LESSON = #lesson#
+    </select>
+    
+    <select id="lcmsLessonDAO.selectLessonData" parameterClass="map" resultClass="egovMap">
+    	select lesson, lesson_name, page_count, starting, edu_time,
+    		   (select contenttype from tz_subj where SUBJ = #subj#) as content_type
+    	  from tb_lcms_lesson
+    	 where subj = #subj#
+    	   and [MODULE]   = #module#
+    	   and lesson   = #lesson#
+    </select>
+    
+    
+    <!-- 학습창 자이닉스 -->
+    <select id="lcmsLessonDAO.selectLcmsLessonXinics" parameterClass="map" resultClass="egovMap">
+        SELECT SUBJ,
+               [MODULE],
+               LESSON,
+               LESSON_NAME,
+               STARTING,
+               EDU_TIME,
+               EDU_TIME_YN,
+               PAGE_COUNT,
+               (select count(lesson)
+                FROM   TB_LCMS_LESSON
+			    WHERE  SUBJ = #subj#
+			    AND    [MODULE] = #module# ) AS LESSON_CNT
+        FROM   TB_LCMS_LESSON
+        WHERE  SUBJ = #subj#
+        AND    [MODULE] = #module#
+        AND    LESSON = #lesson#
+    </select>
+    
+    <!-- 학습창  중공교-->
+    <select id="lcmsLessonDAO.selectLcmsLessonCoti" parameterClass="map" resultClass="egovMap">
+		SELECT A.[MODULE], 
+		       A.MODULE_NAME, 
+		       B.LESSON,
+		       B.LESSON_CD,
+		       B.OWNER, 
+		       B.[DEPTH], 
+		       B.STARTING, 
+		       B.EDU_TIME, 
+		       B.EDU_TIME_YN,
+		       B.PROGRESS_YN, 
+		       B.PAGE_COUNT, 
+		       B.LESSON_NAME,
+		       B.ORDER_NUM,
+		       ROW_NUMBER() OVER (ORDER BY LESSON_CD )-1 AS ORDERING
+		  FROM TB_LCMS_MODULE A, TB_LCMS_LESSON B
+		 WHERE A.SUBJ = #subj#
+		   AND A.SUBJ = B.SUBJ
+		   AND A.[MODULE]   = B.[MODULE]
+		   AND A.[MODULE]   = #module#
+		 ORDER BY LESSON_CD 
+    </select>
+    
+    <!-- 학습창  Normal-->
+    <select id="lcmsLessonDAO.selectLcmsLessonNormal" parameterClass="map" resultClass="egovMap">
+		SELECT A.[MODULE], 
+		       A.MODULE_NAME, 
+		       B.LESSON,
+		       B.LESSON_CD,
+		       B.OWNER, 
+		       B.[DEPTH], 
+		       B.STARTING, 
+		       B.EDU_TIME, 
+		       B.EDU_TIME_YN,
+		       B.PROGRESS_YN, 
+		       B.PAGE_COUNT, 
+		       B.LESSON_NAME,
+		       B.ORDER_NUM,
+		       ROW_NUMBER() OVER (ORDER BY LESSON_CD )-1 AS ORDERING,
+		       to_number(lesson) -1 as ORDERINGPAGE
+		  FROM TB_LCMS_MODULE A, TB_LCMS_LESSON B
+		 WHERE A.SUBJ = #subj#
+		   AND A.SUBJ = B.SUBJ
+		   AND A.[MODULE]   = B.[MODULE]
+		   AND A.[MODULE]   = #module#
+		 ORDER BY LESSON
+    </select>
+    <!-- 학습창  Normal-->
+    <select id="lcmsLessonDAO.selectLcmsLessonNormalOld" parameterClass="map" resultClass="egovMap">
+		SELECT A.[MODULE], 
+		       A.SDESC AS MODULE_NAME, 
+		       B.LESSON,
+		       B.LESSON AS LESSON_CD,
+		       B.OWNER, 
+		       1 AS [DEPTH], 
+		       B.STARTING, 
+		       Nvl(B.EDU_TIME, 1) EDU_TIME, 
+		       B.EDU_TIME_YN,
+		       'Y' AS PROGRESS_YN, 
+		       0 AS PAGE_COUNT, 
+		       B.SDESC AS LESSON_NAME,
+		       ROWNUM AS ORDER_NUM,
+		       ROW_NUMBER() OVER (ORDER BY LESSON )-1 AS ORDERING,
+		       to_number(B.LESSON) -1 as ORDERINGPAGE
+		  FROM TZ_SUBJMODULE A, TZ_SUBJLESSON B
+		 WHERE A.SUBJ = #subj#
+		   AND A.SUBJ = B.SUBJ
+		   AND A.[MODULE]   = B.[MODULE]
+		   AND A.[MODULE]   = #module#
+		 ORDER BY LESSON
+    </select>
+    
+    <delete id="lcmsLessonDAO.deleteLessonAll">
+    	delete tb_lcms_lesson where SUBJ = #subj#
+    </delete>
+</sqlMap>
+

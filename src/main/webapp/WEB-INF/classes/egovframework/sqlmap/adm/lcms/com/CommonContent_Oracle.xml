@@ -1,0 +1,88 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE sqlMap PUBLIC "-//iBATIS.com//DTD SQL Map 2.0//EN" "http://ibatis.apache.org/dtd/sql-map-2.dtd">
+
+<sqlMap namespace="CommonContent">
+<typeAlias  alias="egovMap" type="egovframework.rte.psl.dataaccess.util.EgovMap"/>
+
+
+	<select id="commonContentDAO.selectMasterformData" parameterClass="map" resultClass="egovMap">
+		select a.subj, a.subjnm,
+		       nvl( iscentered, 'Y' ) as iscentered,
+		       nvl( mftype, 'ND' )    as mftype,
+		       nvl( width, '800' ) as width,
+		       nvl(height, '600' ) as height,
+		       nvl( otbgcolor, 'FFFFFF' ) as otbgcolor,
+		       nvl( contenttype, 'N' ) as contenttype,
+		       nvl( eduprocess, 'N' ) as eduprocess,
+		       nvl( ismfmenuimg, 'N' ) as ismfmenuimg,
+		       dir, isuse, mfdlist, mfgrdate,
+		       server, port, eduurl, preurl, cp,
+		       vodurl, isoutsourcing, content_cd, subj_gu,
+		       nvl( mfchat, 'N' ) as mfchat,
+		       b.cont_yn, b.reasons, b.cont_url_info,
+		       c.codenm as contenttypenm
+		  from tz_subj a, tz_subjcontInfo b, tz_code c
+		 where a.subj = #subj#
+		   and a.subj = b.subj(+)
+		   and a.contenttype = c.code(+)
+           and c.gubun(+) = '0007'
+	</select>
+	
+	<select id="commonContentDAO.selectMFMenuList" parameterClass="map" resultClass="egovMap">
+		select menu, menunm, isrequired, pgm, pgmtype, pgram1, pgram2, pgram3,
+		       pgram4, pgram5, isuse, luserid, ldate
+		  from tz_mfmenu
+		 where isuse = 'Y'
+		   and menu not in (select menu from tz_mfsubj where subj = #subj#)
+		 order by isrequired desc, menu asc
+	</select>
+	
+	<select id="commonContentDAO.selectMFSubjList" parameterClass="map" resultClass="egovMap">
+		select b.menu, b.menunm, b.pgm, b.pgmtype, b.pgram1, b.pgram2, b.pgram3,
+		       b.pgram4, b.pgram5, b.orders, b.luserid, b.ldate, a.isrequired, a.isuse
+		  from tz_mfmenu a, tz_mfsubj b
+		 where isuse = 'Y'
+		   and a.menu = b.menu
+		   and b.subj = #subj#
+		 order by b.orders asc
+	</select>
+	
+	<update id="commonContentDAO.updateMasterform">
+		update tz_subj
+		   set width = #p_width#,
+		       height = #p_height#
+		 where subj = #subj#
+	</update>
+	
+	<delete id="commonContentDAO.deleteMFSubjList">
+		delete tz_mfsubj where subj = #subj#
+	</delete>
+	
+	<insert id="commonContentDAO.insertMFSubjList">
+		insert into tz_mfsubj(
+			subj, menu, menunm, pgm, pgram1, pgram2, pgram3, pgram4, pgram5, orders, pgmtype, luserid, ldate
+		)
+		select #subj#, a.menu, menunm, pgm, pgram1, pgram2, pgram3, pgram4, pgram5, b.idx, pgmtype, #userid#, to_char(sysdatetime, 'yyyyMMddhh24miss')
+		  from tz_mfmenu a,
+		       (
+				select substr(menu, instr(menu, '@')+1, length(menu)) as menu,
+				       substr(menu, 0, instr(menu, '@')-1)+1 as idx
+				  from (
+						 <dynamic prepend=" select ">
+							<iterate property="menu" conjunction=" from DB_ROOT union all select ">
+								#menu[]# as menu
+							</iterate>
+						</dynamic>
+						from DB_ROOT
+				       )
+		       ) b
+		 where a.menu = b.menu
+		 order by b.idx
+	</insert>
+	
+
+
+
+	
+</sqlMap>
+

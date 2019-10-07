@@ -1,0 +1,141 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE sqlMap PUBLIC "-//iBATIS.com//DTD SQL Map 2.0//EN" "http://ibatis.apache.org/dtd/sql-map-2.dtd">
+
+<sqlMap namespace="LcmsNonScormManage">
+<typeAlias  alias="egovMap" type="egovframework.rte.psl.dataaccess.util.EgovMap"/>
+
+    <select id="lcmsNonScormManageDAO.selectContentPath" parameterClass="map" resultClass="String">
+		select substr(starting, 0, instr(starting,'/',-1)-1) as starting
+		  from tb_lcms_lesson
+		 where subj = #subj#
+		   and [MODULE] = #module#
+		   and lesson = #lesson#
+    </select>
+    
+    
+    <select id="lcmsNonScormManageDAO.selectNonScormListTotCnt" parameterClass="map" resultClass="int">
+		select count(0) as cnt
+		  from tz_subj a
+		 where isonoff = 'ON'
+		   and contenttype IN ('N', 'P', 'C')
+		   and substr(indate, 0, 8) >= '20120501'
+		<isNotEmpty property="search_cour"> 
+		   and upperclass = #search_cour#
+		</isNotEmpty>
+		<isNotEmpty property="search_contenttype"> 
+		   and contenttype = #search_contenttype#
+		</isNotEmpty>
+		<isNotEmpty property="search_subjnm">
+		   and subjnm like '%'||#search_subjnm#||'%'
+		</isNotEmpty>
+		<isNotEmpty property="search_subj">
+		   and subj like '%'||#search_subj#||'%'
+		</isNotEmpty>
+		and a.iscontentsuse = 'Y'
+    </select>
+    
+	<select id="lcmsNonScormManageDAO.selectNonScormList" parameterClass="map" resultClass="egovMap">
+ 		select * from (
+ 		
+		select rownum as num, subj, subjnm, contenttype,org_count, contenttypenm
+		      ,classname
+		      ,conyear
+		      ,fyear
+		      ,conrenum
+		  from (
+				select subj, subjnm, contenttype, b.codenm as contenttypenm,
+				       (select count(0) from tb_lcms_module where subj = a.subj) as org_count
+				       ,c.classname
+				       ,a.conyear 	
+				       ,(select min([year]) from tz_subjseq where subj=a.subj) as fyear
+				       ,conrenum		
+				  from tz_subj a, tz_code b
+				      ,tz_subjatt c
+				 where isonoff = 'ON'
+				   and contenttype IN ('N', 'P', 'C')
+				   and a.contenttype = b.code
+				   and b.gubun = '0007'
+				   and substr(indate, 0, 8) >= '20120501'
+				<isNotEmpty property="search_cour"> 
+				   and upperclass = #search_cour#
+				</isNotEmpty>
+				<isNotEmpty property="search_contenttype"> 
+				   and contenttype = #search_contenttype#
+				</isNotEmpty>
+				<isNotEmpty property="search_subjnm">
+				   and subjnm like '%'||#search_subjnm#||'%'
+				</isNotEmpty>
+				<isNotEmpty property="search_subj">
+				   and subj like '%'||#search_subj#||'%'
+				</isNotEmpty>
+				and a.iscontentsuse = 'Y'
+				and a.upperclass = c.upperclass
+		         order by nvl(conyear,0) desc, decode(a.upperclass,'PRF','1','EXT','2','PAR','3','COUR','4','OTH','5'), subjnm, conrenum, indate desc
+		        )
+		        
+		        
+		)
+		where num BETWEEN #firstIndex# + 1 AND #firstIndex# + #recordCountPerPage#
+	</select>
+	
+	<select id="lcmsNonScormManageDAO.selectContentCodeList" parameterClass="map" resultClass="egovMap">
+		select code, codenm
+		  from tz_code
+		 where gubun = '0007'
+		   and code not in ('S', 'X')
+		 order by orders
+	</select>
+	
+	<select id="lcmsNonScormManageDAO.selectNonScormOrgList" parameterClass="map" resultClass="egovMap">
+		select a.[MODULE], a.module_name, b.lesson, b.[DEPTH], b.starting, b.edu_time, b.edu_time_yn,
+		       b.progress_yn, b.page_count, b.lesson_name
+		  from tb_lcms_module a, tb_lcms_lesson b
+		 where a.subj = #subj#
+		   and a.subj = b.subj
+		   and a.[MODULE] = b.[MODULE]
+		 order by to_number(a.[MODULE]), to_number(b.lesson)
+	</select>
+	
+	<select id="lcmsNonScormManageDAO.selectCotiExcelList" parameterClass="map" resultClass="egovMap">
+		select [MODULE], owner, lesson_cd, [DEPTH], order_num, lesson_name, starting, progress_yn, page_count
+		  from (
+		        select [MODULE], owner, lesson_cd, [DEPTH], order_num, lesson_name, 
+		                nvl(substr(starting, instr(starting,'/',-1)+1, length(starting)),'NA') as starting, progress_yn, page_count
+		          from tb_lcms_lesson
+		         where subj = #subj#
+		        union
+		        select [MODULE], '00' as owner, [MODULE] as lesson_cd, 1 as [DEPTH], to_number([MODULE]) as order_number,
+		                module_name as lesson_name, 'NA' as starting, 'N' as progress_yn,
+		                (select sum(page_count) from tb_lcms_lesson where subj = a.subj and [MODULE] = a.[MODULE]) as page_count
+		          from tb_lcms_module a
+		         where subj = #subj#
+		        )
+		 order by to_number([MODULE]), lesson_cd
+	</select>
+	<select id="lcmsNonScormManageDAO.selectExcelList" parameterClass="map" resultClass="egovMap">
+		select a.[MODULE], a.module_name, b.lesson, b.lesson_name, b.starting
+		  from tb_lcms_module a, tb_lcms_lesson b
+		 where a.subj = #subj#
+		   and a.subj = b.subj
+		   and a.[MODULE] = b.[MODULE]
+		 order by to_number([MODULE]), to_number(lesson)
+	</select>
+	
+	<select id="lcmsNonScormManageDAO.selectProgressLogList" parameterClass="map" resultClass="egovMap">
+		select a.[MODULE], a.lesson, a.lesson_name, decode(b.lessonstatus, 'Y', '학습완료', '학습중') as lessonstatus,
+		       b.lesson_count, to_date(substr(b.ldate,1,8)) as ldate
+		  from tb_lcms_lesson a, tb_lcms_progress b
+		 where a.subj = #subj#
+		   and a.[MODULE] in <iterate property="arrOrgSeq" conjunction="," open="(" close=")">#arrOrgSeq[]#</iterate>
+		   and a.subj = b.subj
+		   and a.[MODULE] = b.[MODULE]
+		   and a.lesson = b.lesson
+		 order by a.lesson_cd
+	</select>
+	
+	<delete id="lcmsNonScormManageDAO.deletePorgressLog">
+		delete tb_lcms_progress where subj = #subj# and [MODULE] in <iterate property="arrOrgSeq" conjunction="," open="(" close=")">#arrOrgSeq[]#</iterate> and userid = #userid#
+	</delete>
+
+</sqlMap>
+

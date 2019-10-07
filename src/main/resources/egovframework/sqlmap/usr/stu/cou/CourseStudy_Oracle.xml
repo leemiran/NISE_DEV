@@ -1,0 +1,516 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE sqlMap PUBLIC "-//iBATIS.com//DTD SQL Map 2.0//EN" "http://ibatis.apache.org/dtd/sql-map-2.dtd">
+
+<sqlMap namespace="CourseStudy">
+<typeAlias  alias="egovMap" type="egovframework.rte.psl.dataaccess.util.EgovMap"/>
+
+	<select id="courseStudyDAO.selectListSubjGong" parameterClass="map" resultClass="egovMap">
+		select tg.subj, tg.[year], tg.subjseq, (select subjnm from tz_subj where subj = tg.subj) as subjnm,
+		       tg.seq , tg.types, tg.addate, tg.title , tg.userid, tg.adcontent, tg.isimport, tsg.edustart, tsg.eduend,
+		       get_name(ts.userid) as name, decode(tg.gadmin, 'ZZ', 'ZZ', 'P1', '강사',  '운영자') gadmin
+		  from tz_gong tg, tz_student ts, tz_subjseq tsg
+		 where tg.subj = ts.subj
+		   and tg.[year] = ts.[year]
+		   and tg.subjseq = ts.subjseq
+		   and tg.subj    = tsg.subj
+		   and tg.[year]    = tsg.[year]
+		   and tg.subjseq = tsg.subjseq
+		   and tsg.eduend >= to_char(sysdatetime, 'yyyyMMddhh24')
+		   and ts.userid  = #userid#
+		<isNotEmpty property="p_subj">
+		   and tg.subj    = #p_subj#
+		</isNotEmpty>
+		 order by tg.addate desc
+	</select>
+	
+	
+	
+	
+	<select id="courseStudyDAO.selectListSubjGongTotCnt" parameterClass="map" resultClass="int">
+		select count(0) cnt
+		  from tz_gong tg, tz_student ts, tz_subjseq tsg
+		 where tg.subj = ts.subj
+		   and tg.[year] = ts.[year]
+		   and tg.subjseq = ts.subjseq
+		   and tg.subj    = tsg.subj
+		   and tg.[year]    = tsg.[year]
+		   and tg.subjseq = tsg.subjseq
+		   and tsg.eduend >= to_char(sysdatetime, 'yyyyMMddhh24')
+		   and ts.userid  = #userid#
+		<isNotEmpty property="p_sel_subj">
+		   and tg.subj    = #p_sel_subj#
+		</isNotEmpty>
+		 order by tg.addate desc
+	</select>
+	
+	
+	
+	
+	<select id="courseStudyDAO.selectListSubjGongPageList" parameterClass="map" resultClass="egovMap">
+		select * from (
+			select  rownum as rn,  subj, [year], subjseq, subjnm,
+			       seq , types, addate, title , userid, adcontent, isimport, edustart, eduend,
+			       name, gadmin
+			from (
+				select tg.subj, tg.[year], tg.subjseq, (select subjnm from tz_subj where subj = tg.subj) as subjnm,
+				       tg.seq , tg.types, tg.addate, tg.title , tg.userid, tg.adcontent, tg.isimport, tsg.edustart, tsg.eduend,
+				       get_name(ts.userid) as name, decode(tg.gadmin, 'ZZ', 'ZZ', 'P1', '강사',  '운영자') gadmin
+				  from tz_gong tg, tz_student ts, tz_subjseq tsg
+				 where tg.subj = ts.subj
+				   and tg.[year] = ts.[year]
+				   and tg.subjseq = ts.subjseq
+				   and tg.subj    = tsg.subj
+				   and tg.[year]    = tsg.[year]
+				   and tg.subjseq = tsg.subjseq
+				   and tsg.eduend >= to_char(sysdatetime, 'yyyyMMddhh24')
+				   and ts.userid  = #userid#
+				   and tg.subj = #subj#
+				   and tg.[year] = #year#
+				   and tg.subjseq = #subjseq#
+				<isNotEmpty property="p_sel_subj">
+				   and tg.subj    = #p_sel_subj#
+				</isNotEmpty>
+				 order by tg.addate desc
+		  	)
+		       
+		) where rn BETWEEN #firstIndex# + 1 AND #firstIndex# + #recordCountPerPage#
+	</select>
+	
+	
+	
+	
+	
+	
+	<select id="courseStudyDAO.selectEducationSubjectList" parameterClass="map" resultClass="egovMap">
+	 select CONTENTTYPE,
+        COURSE,
+        CYEAR,
+        COURSESEQ,
+        COURSENM,
+        SUBJ,
+        [YEAR],
+        SUBJSEQ,
+        GRCODE,
+        ISGRADUATED,
+        BRANCH,
+        STUDYSTART,
+        STUDYEND,
+        EDUURL,
+        ISONOFF,
+        ISONOFFNM,
+        SUBJNM,
+        SUBJCLASS,
+        UPPERCLASS,
+        MIDDLECLASS,
+        LOWERCLASS,
+        CNAME,
+        CPSUBJ,
+        CPSUBJSEQ,
+        PROCEDUFLAG,
+        TSTEP,
+        SUBJ_GU,
+        ISOUTSOURCING,
+        HEIGHT,
+        WIDTH,
+        REMAIN_DAYS,
+        LCMSTYPE,
+        MYPROGRESS,
+        MOBILE,
+        ISCHARGE,
+        DELIVERY_STATUS,
+        DELIVERY_COMP,
+        DELIVERY_URL,
+        DELIVERY_NUMBER,
+        DELIVERY_DATE,
+        USEBOOK,
+        LEC_SEL_NO,
+        APPDATE,
+        POINT
+   from (
+		select tsj.contenttype
+		     , tss.course
+		     , tss.cyear
+		     , tss.courseseq
+		     , tss.coursenm
+		     , tst.subj
+		     , tst.[year]
+		     , tst.subjseq
+		     , tss.grcode
+		     , tst.isgraduated
+		     , tst.branch
+		     , substr(tss.edustart, 0, 8) studystart
+		     , substr(tss.eduend,   0, 8) studyend
+		     , tsj.eduurl 
+		     , tsj.isonoff 
+		     , get_codenm('0004', tsj.isonoff ) as isonoffnm
+		     , tsj.subjnm 
+		     , tsj.subjclass 
+		     , tsj.upperclass 
+		     , tsj.middleclass 
+		     , tsj.lowerclass 
+		     , get_subjclassnm(tsj.upperclass, tsj.middleclass, tsj.lowerclass) as cname 
+		     , tsj.cpsubj 
+		     , tss.cpsubjseq 
+		     , case when to_char(sysdatetime, 'yyyymmddhh24') between tss.edustart  and tss.eduend  then 'E' 
+		            when to_char(sysdatetime, 'yyyymmddhh24') between tss.propstart and tss.propend then 'R' 
+		            else ''
+		        end as proceduflag 
+		     , tst.tstep 
+		     , tsj.subj_gu 
+		     , tsj.isoutsourcing 
+		     , tsj.height 
+		     , tsj.width 
+		     , to_date(substr(tss.eduend,0,8), 'YYYYMMdd') - to_date(to_char(sysdate, 'YYYYMMdd'), 'YYYYMMdd') as remain_days
+		     , case when substr(tsj.indate, 0, 8) >= '20120501'
+		            then 'NEW'
+		            else 'OLD'
+		        end as lcmstype
+		        
+		    ,Round((
+	          SELECT COUNT (0) completed_educheck_cnt
+	                  FROM tb_lcms_progress
+	                 where subj    = tst.subj
+	                   and [year]    = tst.[year]
+	                   and subjseq = tst.subjseq
+	                   and userid  = tst.userid
+	                   and lessonstatus = 'Y'
+	          ) * 100        
+	          /(
+	          
+	          select Decode(count(0), 0, 1,count(0))  total_cnt
+	                   from tb_lcms_lesson
+	                  where subj = tst.subj and progress_yn = 'Y'
+	          ) , 2)  myprogress
+              , tsj.mobile
+			  , tss.ischarge
+              , (select codenm 
+		            from tz_code a 
+		            where a.code=tbd.delivery_status 
+		            and gubun='0111' 
+		            and code=tbd.delivery_status
+		         ) as delivery_status, 
+		         (select codenm 
+		            from tz_code a 
+		            where a.code=tbd.delivery_comp 
+		            and gubun='0112' 
+		            and code=tbd.delivery_comp
+		           ) as delivery_comp,
+		         (select url
+		            from tz_code a 
+		            where a.code=tbd.delivery_comp 
+		            and gubun='0112' 
+		            and code=tbd.delivery_comp
+		           ) as delivery_url,  
+		         tbd.delivery_number, 
+		         tbd.delivery_date,
+		         tss.usebook   		        
+		         , tp.lec_sel_no
+		         , to_char(to_datetime(tp.appdate, 'yyyymmddhh24miss'), 'yyyy-mm-dd') appdate
+		         , tsj.point
+		  from tz_student tst 
+		     , vz_scsubjseq tss 
+		     , tz_stold tsd 
+		     , tz_subj tsj 
+		     , tz_bookdelivery tbd
+		     , tz_propose tp
+		 where tst.userid      = #userid#
+		   and tst.subj        = tss.subj 
+		   and tst.[year]        = tss.[year] 
+		   and tst.subjseq     = tss.subjseq 
+		   and tst.subj        = tsd.subj(+) 
+		   and tst.[year]        = tsd.[year](+)
+		   and tst.subjseq     = tsd.subjseq(+) 
+		   and tst.userid      = tsd.userid(+)
+		   and tst.subj = tbd.subj(+)
+           and tst.[year] = tbd.[year](+)
+           and tst.subjseq = tbd.subjseq(+)
+           and tst.userid = tbd.userid(+) 
+		   and tst.subj        = tsj.subj 
+		   and tst.userid = tp.userid
+ 		   and tst.subj        = tp.subj 
+		   and tst.[year]        = tp.[year] 
+		   and tst.subjseq     = tp.subjseq 
+		<isNotEmpty property="p_sel_subj">
+		   and tsj.subj		   = #p_sel_subj#
+		</isNotEmpty>
+		   and tss.edustart    <![CDATA[<=]]> to_char(sysdatetime,'yyyymmddhh24') 
+		   and tss.eduend      <![CDATA[>=]]> to_char(sysdatetime,'yyyymmddhh24') 
+ 		   and tsd.isgraduated is null 
+<!--		   모바일경우는 모바일과정만 불러온다.-->
+		   <isEqual property="isMobile" compareValue="Y">
+		   	and  (tsj.upperclass = 'MBL' Or tsj.mobile = 'Y')	   	
+		   </isEqual>
+		   
+		   
+   		 union all 
+   		
+        select b.contenttype,c.course,c.cyear,c.courseseq,c.coursenm,a.subj,c.[year],c.subjseq,c.grcode,'N',99,c.edustart,c.eduend,'',b.isonoff,
+        	   get_codenm('0004', b.isonoff ) as isonoffnm, b.subjnm,subjclass,upperclass,middleclass,lowerclass,  
+   		       get_subjclassnm(b.upperclass, b.middleclass,b.lowerclass) as cname,  
+   		       '', '', 'B', 0, '', 'N', 0, 0, to_date(substr(c.edustart,0,8), 'YYYYMMdd') - to_date(to_char(sysdate, 'YYYYMMdd'), 'YYYYMMdd') as remain_days
+   		       , case when substr(b.indate, 0, 8) >= '20120501'
+		            then 'NEW'
+		            else 'OLD'
+		        end as lcmstype
+		       , 0 as  myprogress
+		       , b.mobile
+		       , c.ischarge
+		       , '', '', '', '', '', '', '', '', 0
+   		  from tz_subjman a, tz_subj b,vz_scsubjseq c   
+		 where a.userid = #userid#
+		   and a.gadmin ='P101'
+		   and a.subj   = b.subj
+		   and a.subj   = c.subj
+		   and c.[year]   = to_char(sysdate,'yyyy')
+		   and substr(c.edustart,1,6) =  to_char(sysdate,'yyyymm')
+		   
+<!--		   모바일경우는 모바일과정만 불러온다.-->
+		   <isEqual property="isMobile" compareValue="Y">
+		   	and  (b.upperclass = 'MBL' Or b.mobile = 'Y')
+		   </isEqual>
+		)   
+   		 order by course, studystart desc, subjnm
+	</select>
+	
+	<select id="courseStudyDAO.selectStudingSubjList" parameterClass="map" resultClass="egovMap">
+		select distinct a.subj, b.subjnm
+		  from tz_student a, tz_subj b, tz_subjseq c
+		 where a.subj    = b.subj
+		   and a.subj    = c.subj
+		   and a.[year]    = c.[year]
+		   and a.subjseq = c.subjseq
+		   and b.isonoff != 'OFF'
+		   and to_char(sysdatetime, 'yyyyMMddhh24') between c.edustart and c.eduend
+		   and a.userid  = #userid#
+	</select>
+	
+	<select id="courseStudyDAO.selectGraduationSubjectList" parameterClass="map" resultClass="egovMap">
+		select 
+			<![CDATA[
+			 case when tss.eduend < to_char(sysdatetime, 'yyyymmddhh24') then 'Y'
+			 else 'N'
+			 end review_study_yn
+			 ]]>
+			 , tss.contenttype
+		     , tss.course
+		     , tss.cyear
+		     , tss.courseseq
+		     , tss.coursenm
+		     , tss.subj
+		     , tss.[year]
+		     , tss.subjseq
+		     , tst.userid
+		     , tss.edustart
+		     , tss.eduend
+		     , tss.isclosed
+		     , tsd.isrestudy
+		     , tsd.isgraduated
+		     , (case when tsd.isgraduated = 'Y' then '수료' else '미수료' end) isgraduated_value
+		     , tss.subjseqisablereview
+		     , to_char(to_date(substr(tss.eduend, 1, 8), 'yyyymmdd')+1,'yyyymmdd') as studystart
+		     , to_char(add_months(to_date(substr(tss.eduend, 1, 8), 'yyyymmdd'), tss.subjseqreviewdays),'yyyymmdd') as studyend
+		     , get_compnm(tsd.comp) as compnm
+		     , (case when to_char(sysdate, 'yyyymmdd') <![CDATA[<=]]> add_months(to_date(substr(tss.eduend, 1, 8), 'yyyymmdd'), tss.subjseqreviewdays) then 'Y' else 'N' end) as isreview
+		     , tss.subjnm
+		     , tss.scsubjclass as subjclass
+		     , tss.scupperclass as upperclass
+		     , tss.scmiddleclass as middleclass
+		     , tss.sclowerclass as lowerclass
+		     , tss.isonoff
+		     , get_codenm('0004', tss.isonoff) as isonoffnm
+		     , tss.cpsubj
+		     , tss.cpsubjseq
+		     , tsd.userid	gubun
+		     , tss.subjseqisablereview
+		     , tss.isoutsourcing
+		     , tss.subj_gu
+		     , tsd.notgraducd
+		     , tss.isgoyong
+		     , to_char(sysdatetime, 'yyyyMMddhh24') as today
+		     , tss.ischarge
+		     , ts.point
+		     , tp.lec_sel_no
+		     , decode(tsd.score, null, tst.score, tsd.score) score
+		  from (SELECT * FROM tz_stold WHERE userid = #userid#) tsd, vz_scsubjseq tss ,tz_student tst, tz_subj ts, tz_propose tp
+		 where tst.userid 	    = #userid#
+		   and tsd.subj(+)		= tst.subj
+		   and tsd.[year](+)		= tst.[year]
+		   and tsd.subjseq(+)	= tst.subjseq
+		   and tsd.userid(+) 	= tst.userid
+		   and tst.subj         = tss.subj
+		   and tst.[year]         = tss.[year]
+		   and tst.subjseq      = tss.subjseq
+		   and tst.subj         = ts.subj
+		   and tss.subj         = tp.subj
+		   and tss.[year]         = tp.[year]
+		   and tss.subjseq      = tp.subjseq
+		   and tst.userid = tp.userid
+		   and tss.eduend <![CDATA[<]]> TO_CHAR(sysdate, 'YYYYMMDD')
+		   and tss.eduend   <![CDATA[>]]>=(case when to_number(substr(tss.eduend,1,4)) <![CDATA[<=]]> 2008 then tss.eduend else to_char(add_months(to_date(substr(tss.eduend, 1, 8), 'yyyymmdd'), -tss.subjseqreviewdays),'yyyymmdd') end)
+		<isNotEmpty property="p_stoldyear">
+		   and tsd.[year]         = #p_stoldyear#
+		</isNotEmpty>
+		 order by tss.course, tss.edustart desc, tss.subjnm
+	</select>
+	
+	<select id="courseStudyDAO.selectGraduationYearList" parameterClass="map" resultClass="egovMap">
+		select distinct [year]
+		  from tz_stold
+		 where userid = #userid#
+		union
+		select to_char(sysdate, 'yyyy') as [year]
+		  from DB_ROOT
+		 order by [year] desc
+	</select>
+	
+	<select id="courseStudyDAO.selectProposeSubjectList" parameterClass="map" resultClass="egovMap">
+		<![CDATA[
+		select a.subj,
+		       a.[year],
+		       a.subjseq,
+		       a.userid,
+		       b.subjseqgr,
+		       b.scupperclass,
+		       b.scmiddleclass,
+		       b.isonoff,
+		       b.course,
+		       b.cyear,
+		       b.courseseq,
+		       b.coursenm,
+		       b.subj,
+		       b.[year],
+		       b.subjseq,
+		       b.subjnm,
+		       b.propstart,
+		       b.propend,
+		       b.edustart,
+		       b.eduend,
+		       b.eduurl,
+		       b.subjtarget,
+		       a.chkfinal,
+		       a.cancelkind,
+		       b.contenttype,
+		       b.preurl,
+		       get_subjclassnm(b.scupperclass, b.scmiddleclass, '000') as middleclassnm,
+		       b.subj_gu,
+		       b.usebook,
+		       b.bookname,
+		       get_codenm('0004', b.isonoff) as isonoffvalue
+		  from tz_propose a, vz_scsubjseq b
+		 where a.subj    = b.subj
+		   and a.[year]    = b.[year]
+		   and a.subjseq = b.subjseq
+		   and a.userid  = #userid#
+		   and (
+		             (a.chkfinal = 'Y' and (to_char(sysdatetime, 'yyyyMMddhh24') < b.edustart))
+		          or (a.chkfinal = 'N' and (to_char(sysdatetime, 'yyyyMMddhh24') < to_char(TO_DATETIME(substr(b.edustart, 1, 8)) +10, 'yyyyMMddhh24')))
+		          or (a.chkfinal = 'B' and (to_char(sysdatetime, 'yyyyMMddhh24') < b.propend))
+		          or (a.chkfinal = 'B' and (to_char(sysdatetime, 'yyyyMMddhh24') < b.edustart))
+		       )
+		   and nvl(a.cancelkind, ' ') not in ( 'P', 'F' )
+		 order by b.course, b.edustart desc, b.subjnm
+		
+		]]>
+	</select>
+	
+	<select id="courseStudyDAO.selectstoldCommentList2" parameterClass="map" resultClass="egovMap">
+	<![CDATA[
+	select * from (
+		select rownum as rn, seq, subj, [year], subjseq, userid, comments, ldate, name, hidden_yn
+		 from (
+					select a.seq, a.subj, a.[year], a.subjseq, a.userid, a.comments, a.ldate,
+					       get_name(a.userid) name, a.hidden_yn
+					  from tz_stold_comments a
+					 where a.subj =  #p_subj#          
+					   and (a.hidden_yn = 'Y' or a.userid = #p_userid#)
+						 order by a.ldate desc
+		       )
+		) where rn BETWEEN #firstIndex# + 1 AND #firstIndex# + #recordCountPerPage#		
+	]]>
+	</select>
+	
+	<select id="courseStudyDAO.selectstoldCommentList2TotCnt"  parameterClass="map" resultClass="int">
+	<![CDATA[
+	select count(*) as cnt  
+		 from tz_stold_comments
+		where subj =  #p_subj#          
+		  and (hidden_yn = 'Y' or userid = #p_userid#)
+	]]>
+	</select>
+	
+	<insert id="courseStudyDAO.whenSubjCommentsInsert">
+	<![CDATA[
+		insert into tz_stold_comments 
+    			 (
+    			 	seq, 
+    			 	subj, 
+    				[year],
+    			    subjseq,
+    			    userid,
+    			    comments,
+    			    ldate,
+    			    hidden_yn 
+    			  )
+    			  values
+    			  (
+    			   (select nvl(max(seq),0)+1 from tz_stold_comments), 
+    				#p_subj#, 
+    				#p_year#,
+    			    #p_subjseq#,
+    			    #p_userid#,
+    			    #p_comments#,
+    				to_char(sysdatetime,'yyyymmddhh24miss') ,
+    			    'Y' ) 
+	]]>
+	</insert>
+	
+	<delete id="courseStudyDAO.whenSubjCommentsDelete">
+	<![CDATA[
+	delete from tz_stold_comments 
+    	where  seq = #p_seq#
+    	  and  userid = #p_userid#
+	]]>
+	</delete>
+	
+	<select id="courseStudyDAO.selectnicePersonalNum" parameterClass="map" resultClass="String">
+	select nice_personal_num
+	from tz_member
+	where userid = #userid#
+	</select>
+	
+	<select id="courseStudyDAO.selectEducationSubjectDList" parameterClass="map" resultClass="egovMap">
+		select 
+			to_char(to_datetime(p.appdate, 'yyyymmddhh24miss'), 'yyyy-mm-dd') appdate
+			, s.upperclass
+			, ss.course
+			, ss.subjnm
+			, s.point
+			, to_char(to_datetime(ss.edustart, 'yyyymmddhh24'), 'yyyy-mm-dd') edustart
+			, to_char(to_datetime(ss.eduend, 'yyyymmddhh24'), 'yyyy-mm-dd') eduend
+			, p.lec_sel_no
+			, p.chkfinal
+			, decode(p.chkfinal, 'B', '미처리', 'Y', '승인', 'N', '반려') chkfinal_nm
+			, ss.subj
+			, ss.[year]
+			, ss.subjseq
+			, (select count(0) from tz_subjseq where grcode = cs.grcode AND gyear = cs.gyear AND grseq = cs.grseq) coursecount
+		from
+			tz_subj s
+			, tz_subjseq ss
+			, tz_propose p
+			, tz_courseseq cs
+		where s.subj = ss.subj
+			and ss.subj = p.subj
+			and ss.[year] = p.[year]
+			and ss.subjseq = p.subjseq
+			and to_char(sysdatetime, 'yyyyMMddhh24') &lt; ss.edustart
+			and ss.course = cs.course
+			and ss.cyear = cs.cyear
+			and ss.courseseq = cs.courseseq
+			and p.userid = #userid#
+		order by
+			p.appdate desc, decode(s.upperclass, 'PRF', 1, 'EXT', 2, 'PAR', 3, 4), to_number(ss.subjseq), cs.course desc, ss.[year] desc, ss.subj, ss.edustart desc, ss.subjnm
+	</select>
+	
+	
+</sqlMap>

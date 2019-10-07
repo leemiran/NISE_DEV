@@ -1,0 +1,676 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE sqlMap PUBLIC "-//iBATIS.com//DTD SQL Map 2.0//EN" "http://ibatis.apache.org/dtd/sql-map-2.dtd">
+
+<sqlMap namespace="sulmunQuestDAO">
+<typeAlias  alias="egovMap" type="egovframework.rte.psl.dataaccess.util.EgovMap"/>
+
+	
+	
+<!--	설문 문제 리스트 -->
+	<select id="sulmunQuestDAO.sulmunAllQuestList" parameterClass="map" resultClass="egovMap">
+		  SELECT   a.subj,
+		           a.sulnum,
+		           a.grcode,
+		           a.distcode,
+		           b.codenm distcodenm,
+		           a.sultype,
+		           c.codenm sultypenm,
+		           a.sultext
+		    FROM   tz_sul a, tz_code b, tz_code c
+		   WHERE       a.distcode = b.code
+		           AND a.sultype = c.code
+		           AND a.grcode = 'ALL'
+		           AND b.gubun = '0054'
+		           AND c.gubun = '0011'
+		           AND c.levels = 1
+		<isNotEmpty property="p_search_distcode">
+			and a.distcode = #p_search_distcode#
+		</isNotEmpty>
+		ORDER BY   a.sulnum
+	</select>
+	
+	
+	
+	<!--	설문 문제정보 보기 -->
+	<select id="sulmunQuestDAO.selectTzSulmunView" parameterClass="map" resultClass="egovMap">
+		SELECT   
+			a.subj, a.sulnum, a.distcode, a.sultype, a.sultext, a.sulreturn, a.selmax, a.scalecode
+		from tz_sul     a  
+       	where a.subj   	= 'ALL'
+         and a.grcode   = 'ALL'
+         and a.sulnum 	= #p_sulnum#
+	</select>
+	
+	
+	<!--	설문 보기 리스트 -->
+	<select id="sulmunQuestDAO.selectTzSulmunSelectList" parameterClass="map" resultClass="egovMap">
+		SELECT   
+			b.selnum, b.seltext, b.selpoint
+		from tz_sul     a, 
+             tz_sulsel  b  
+       	where a.subj   = b.subj(+)    
+         and a.sulnum = b.sulnum(+)  
+         and a.grcode = b.grcode(+)  
+         and a.subj   = 'ALL'
+         and a.grcode   = 'ALL'
+         and a.sulnum = #p_sulnum#
+       order by b.selnum
+	</select>
+	
+	
+	
+<!--	설문문제등록-->
+	<insert id="sulmunQuestDAO.insertTzSulmun">
+		<selectKey resultClass="int" keyProperty="p_sulnum">
+			select NVL(Max(sulnum), 0) + 1 maxno From tz_sul
+				Where subj   = #p_subj#
+         		and grcode   = #p_grcode#
+		</selectKey>
+		insert into TZ_SUL(subj, grcode, sulnum, distcode, sultype, sultext, selcount, selmax, sulreturn, scalecode, luserid, ldate)
+		values (
+			  #p_subj#
+			, #p_grcode#
+			, #p_sulnum#
+			, #p_distcode#
+			, #p_sultype#
+			, #p_sultext#
+			, #p_selcount#
+			, #p_selmax#
+			, #p_sulreturn#
+			, #p_scalecode#
+			, #p_luserid#
+			, to_char(sysdatetime, 'YYYYMMDDHH24MISS')
+		)
+	</insert>
+	
+<!--	설문문제 수정-->
+	<update id="sulmunQuestDAO.updateTzSulmun">
+		update TZ_SUL 
+                set distcode 	= #p_distcode#, 
+                    sultype  	= #p_sultype#,  
+                    sultext  	= #p_sultext#,  
+                    selcount  	= #p_selcount#,  
+                    selmax  	= #p_selmax#,  
+                    sulreturn  	= #p_sulreturn#,  
+                    scalecode  	= #p_scalecode#,  
+                    luserid  	= #p_luserid#, 
+                    ldate    = to_char(sysdatetime, 'YYYYMMDDHH24MISS') 
+              where subj     = #p_subj# 
+                and grcode   = #p_grcode# 
+                and sulnum   = #p_sulnum#
+	</update>
+	
+<!--	설문문제 삭제-->
+	<delete id="sulmunQuestDAO.deleteTzSulmun">
+		delete from TZ_SUL
+			where subj     = #p_subj# 
+            and grcode   = #p_grcode# 
+            and sulnum   = #p_sulnum#
+	</delete>
+	
+<!--	설문문제보기 등록-->
+	<insert id="sulmunQuestDAO.insertTzSulmunSelect">
+		insert into TZ_SULSEL(subj, grcode, sulnum, selnum, seltext, selpoint, luserid, ldate) values 
+		(
+			  #p_subj#
+			, #p_grcode#
+			, #p_sulnum#
+			, #p_selnum#
+			, #p_seltext#
+			, #p_selpoint#
+			, #p_luserid#
+			, to_char(sysdatetime, 'YYYYMMDDHH24MISS')
+		)
+	</insert>
+	
+	
+	<delete id="sulmunQuestDAO.deleteTzSulmunSelect">
+		delete from TZ_SULSEL 
+            where subj     = #p_subj# 
+            and grcode   = #p_grcode# 
+            and sulnum   = #p_sulnum#
+	
+	</delete>
+	
+	<!--	설문문제가 설문지에서 사용되었는지를 검사하는 쿼리-->
+	<select id="sulmunQuestDAO.selectTzSulPaperCount" parameterClass="map" resultClass="int">
+		select count(0) cnt 
+		from tz_sulpaper where subj='ALL' AND grcode='ALL'
+		and ((sulnums like '%' || #p_sulnum# || ',%') 
+		or (sulnums  like '%,' || #p_sulnum# || ',%') 
+		or (sulnums = #p_sulnum#) 
+		or (sulnums like '%,' || #p_sulnum# || '%')) 
+	</select>
+	
+	
+	
+	
+	
+	
+	
+	<!--	설문  척도 리스트 -->
+	<select id="sulmunQuestDAO.selectScaleList" parameterClass="map" resultClass="egovMap">	
+		select a.scalecode,  a.grcode, 
+		a.s_gubun, a.scaletype, a.scalename 
+		from tz_scale    a 
+		where a.isdel = 'N'  
+		and a.scaletype    = 'S'
+		order by a.ldate desc
+	</select>
+	
+<!--	설문척도 보기-->
+	<select id="sulmunQuestDAO.selectScaleView" parameterClass="map" resultClass="egovMap">	
+		select 
+			a.scalecode, a.s_gubun, a.scalename, b.selnum, b.selpoint, b.seltext 
+            from tz_scale     a, 
+                 tz_scalesel  b  
+            where a.scalecode  = b.scalecode(+)    
+            and a.scalecode = #p_scalecode#
+            order by b.selnum
+	</select>
+	
+<!--	설문척도 등록-->
+	<insert id="sulmunQuestDAO.insertScale">
+		<selectKey resultClass="int" keyProperty="p_scalecode">
+			select NVL(Max(scalecode), 0) + 1 maxno From tz_scale
+		</selectKey>
+		insert into TZ_SCALE(scalecode, grcode, s_gubun, scaletype, scalename, luserid, ldate, isdel) values (
+		#p_scalecode#,
+		#p_grcode#,
+		#p_sgubun#,
+		#p_scaletype#,
+		#p_scalename#,
+		#userid#,
+		to_char(sysdatetime, 'YYYYMMDDHH24MISS'),
+		'N'
+		)
+	</insert>
+	
+<!--	설문척도 수정-->
+	<update id="sulmunQuestDAO.updateScale">
+		update TZ_SCALE set 
+			s_gubun = #p_sgubun#
+			, scaletype = #p_scaletype#
+			, scalename = #p_scalename#
+			, luserid = #userid#
+			, ldate = to_char(sysdatetime, 'YYYYMMDDHH24MISS')
+		where scalecode = #p_scalecode# 
+	</update>
+	
+<!--	설문척도 삭제-->
+	<delete id="sulmunQuestDAO.deleteScale">
+		delete from TZ_SCALE where scalecode = #p_scalecode# 
+	</delete>
+	
+	
+<!--	설문척도 보기 등록-->
+	<insert id="sulmunQuestDAO.insertScaleSel">
+		insert into TZ_SCALESEL(scalecode, selnum, selpoint, seltext, luserid, ldate) values (
+			#p_scalecode#,
+			#p_selnum#,
+			#p_selpoint#,
+			#p_seltext#,
+			#userid#,
+			to_char(sysdatetime, 'YYYYMMDDHH24MISS')
+		)
+	</insert>
+	
+<!--	설문척도 보기 삭제-->
+	<delete id="sulmunQuestDAO.deleteScaleSel">
+		delete from TZ_SCALESEL where scalecode = #p_scalecode#
+	</delete>
+	
+<!--	설문척도가 설문에서 사용되었는지를 검사하는 쿼리-->
+	<select id="sulmunQuestDAO.selectSulScaleCount" parameterClass="map" resultClass="int">
+		select count(0) cnt from tz_sul where scalecode = #p_scalecode#
+	</select>
+	
+	
+	
+	
+<!--	설문지리스트-->
+	<select id="sulmunQuestDAO.selectSulPaperList" parameterClass="map" resultClass="egovMap">
+	  SELECT   grcode,
+	           subj,
+	           subjseq,
+	           sulpapernum,
+	           sulpapernm,
+	           [year],
+	           totcnt,
+	           sulnums,
+	           sulmailing,
+	           sulstart,
+	           sulend,
+	           progress,
+	           sultype,
+	           'COMMON' subjnm,
+	           sulgubun,
+	           (
+					select                                                          
+					  count(*) cnt                                                  
+					from                                                            
+					  tz_suleach                                                    
+					where grcode != 'ALL' and ( subj != 'COMMON' and subj != 'TARGET' and subj != 'CP' ) 
+					and sulpapernum = a.sulpapernum
+				) as sulapplycnt
+	    FROM   tz_sulpaper a 
+	   WHERE   grcode = 'ALL' 
+	   AND subj = 'ALL'
+	   <isNotEmpty property="p_sulpapernum">
+	   	and sulpapernum = #p_sulpapernum#
+	   </isNotEmpty>
+	ORDER BY   subj, sulpapernum
+	</select>
+	
+	
+	<!--	설문지 문제리스트 정보-->
+	<select id="sulmunQuestDAO.selectSulPaperAllQuestList" parameterClass="map" resultClass="egovMap">
+	    SELECT     a.subj,
+		           a.sulnum,
+		           a.grcode,
+		           a.distcode,
+		           b.codenm distcodenm,
+		           a.sultype,
+		           (SELECT   codenm
+		              FROM   tz_code
+		             WHERE   a.sultype = code AND gubun = '0011' AND levels = 1)
+		              sultypenm,
+		           a.sultext
+		    FROM   tz_sul a, tz_code b
+		   WHERE       a.distcode = b.code
+		           AND a.grcode = 'ALL'
+		           AND b.gubun = '0054'
+		           AND subj = 'ALL'
+		           AND b.levels = 1
+<!--		  설문지에 등록된 번호 정보 모두          -->
+		  <isNotEmpty property="p_getSulnums">
+		  	and a.sulnum in ( $p_getSulnums$ )
+		  </isNotEmpty>
+		        
+<!--		        설문문항 등록 순서대로 정렬하기   -->
+		  	<isNotEmpty property="p_getSulnumsOrderBy">
+		  		Order by Decode(a.sulnum, $p_getSulnumsOrderBy$)
+		  	</isNotEmpty>
+		  
+		  	<isEmpty property="p_getSulnumsOrderBy">
+				ORDER BY   a.sulnum
+			</isEmpty>
+	</select>
+	
+	
+<!--	설문미리보기 문제 리스트 전체-->
+	<select id="sulmunQuestDAO.selectSulPaperPreviewList" parameterClass="map" resultClass="egovMap">
+		select a.subj,    
+			a.sulnum, a.selmax, 
+			a.distcode, c.codenm distcodenm, 
+			a.sultype,  d.codenm sultypenm, 
+			a.sultext,  b.selnum, b.seltext, b.selpoint 
+		  from tz_sul     a, 
+			   tz_sulsel  b, 
+			   tz_code    c, 
+			   tz_code    d  
+		 where a.subj     = b.subj(+)    
+		   and a.sulnum   = b.sulnum(+)  
+		   and a.grcode = b.grcode(+) 
+		   and a.distcode = c.code 
+		   and a.sultype  = d.code 
+		   and a.subj     = 'ALL'
+		   and a.grcode   = 'ALL'
+		   and a.sulnum in ( $p_getSulnums$ )
+		   and c.gubun    = '0054'
+		   and d.gubun    = '0011'
+		   and d.levels   =  1
+		   		   
+		   <isNotEmpty property="p_sulTypeNumber">
+		   	and a.sultype = #p_sulTypeNumber#		   
+		   </isNotEmpty>
+		   
+		 Order by Decode(a.sulnum, $p_getSulnumsOrderBy$), b.selnum desc
+	</select>
+	
+	
+	<!--	설문지 등록-->
+	<insert id="sulmunQuestDAO.insertSulPaper">
+		<selectKey resultClass="int" keyProperty="p_sulpapernum">
+			select 
+				NVL(Max(sulpapernum), 0) + 1 maxno 
+			From tz_sulpaper
+			where grcode     = 'ALL'  
+        	and subj       = 'ALL' 
+		</selectKey>
+		
+		
+		insert into TZ_SULPAPER 
+            (grcode, subj,  [year],  subjseq, sulpapernum, sulpapernm,     
+             totcnt, sulnums,  luserid,  ldate, progress, sultype, sulgubun )   
+             values (
+             	'ALL',
+             	'ALL',
+             	to_char(sysdate, 'YYYY'),
+             	'0001',
+             	#p_sulpapernum#,
+             	#p_sulpapernm#,
+             	#p_totcnt#,
+             	#p_sulnums#,
+             	#userid#,
+             	to_char(sysdatetime, 'YYYYMMDDHH24MISS'),
+             	0,
+             	#p_sultype#,
+             	#p_sulgubun#
+             )
+	</insert>
+	
+<!--	설문지 수정-->
+	<update id="sulmunQuestDAO.updateSulPaper">
+		update TZ_SULPAPER 
+                set sulpapernm   = #p_sulpapernm#, 
+                    [year]         = to_char(sysdate, 'YYYY'), 
+                    totcnt       = #p_totcnt#, 
+                    sulnums      = #p_sulnums#,  
+                    luserid      = #userid#, 
+                    ldate        = to_char(sysdatetime, 'YYYYMMDDHH24MISS'), 
+                    progress     = 0,             
+                    sultype      = #p_sultype#,             
+                    sulgubun     = #p_sulgubun#              
+              where grcode       = 'ALL'  
+                and subj         = 'ALL'  
+                and sulpapernum  = #p_sulpapernum#
+	</update>
+	
+<!--	설문지 삭제-->
+	<delete id="sulmunQuestDAO.deleteSulPaper">
+		delete from TZ_SULPAPER 
+        where grcode     = 'ALL'  
+        and subj       = 'ALL'  
+        and sulpapernum = #p_sulpapernum#
+	</delete>
+	
+	
+	<!--	설문지가 과정에서 사용되었는지를 검사하는 쿼리-->
+	<select id="sulmunQuestDAO.selectSulPaperCount" parameterClass="map" resultClass="int">
+	 select  
+	 	count(0) cnt 
+	 from tz_subjseq 
+	 where grcode     = 'ALL'  
+        and subj       = 'ALL'  
+	 	and sulpapernum = #p_sulpapernum#
+	</select>
+	
+<!--	과정의 대한 설문지의 번호를 모두 가져온다.-->
+	<select id="sulmunQuestDAO.selectSulResultSulNumsList" parameterClass="map" resultClass="egovMap">
+		  select                                                                   
+	       distinct a.sulnums
+	       , a.sulpapernum                                                                                                                           
+		 from    tz_sulpaper     a                                                                        
+		     ,   tz_subjseq      c                                                        
+		 where  a.sulpapernum = c.sulpapernum    
+		 and     c.grcode    = 'N000001'                      
+		 and     c.[year] = #ses_search_gyear#
+		 and     c.grseq = #ses_search_grseq#
+		 
+		 <isNotEmpty property="ses_search_subj">
+		 	and c.subj = #ses_search_subj#
+		 </isNotEmpty>
+		 
+		 <isNotEmpty property="ses_search_subjseq">
+		 	and c.subjseq = #ses_search_subjseq#
+		 </isNotEmpty>
+	 
+	</select>
+	
+	
+	
+<!--	수강생 설문 답변 리스트-->
+	<select id="sulmunQuestDAO.selectSulResultAnswersList" parameterClass="map" resultClass="egovMap">
+	 select                                                                   
+       a.answers    
+       , a.userid
+       , b.name
+       , Decode(b.sex,'M', '남자', '여자') as sex
+       , Decode(d.emp_gubun,'T', '교원', 'E', '보조인력', 'R', '교육전문직', 'P', '일반회원') as emp_nm
+       , birth_date
+       , Floor(months_between(sysdate, to_date(birth_date, 'YYYYMMDD'))/12) as age
+       , get_deptnm(b.dept_cd) as postion_nm                                                                                                                   
+	 from    tz_suleach      a                                                                       
+	     ,   tz_subjseq      c
+	     ,   tz_member       b 
+	     ,   tz_student      d                                                           
+	 where   a.subj = c.subj                                                          
+	     and a.subjseq = c.subjseq                           
+	     and a.[year] = c.[year]   
+	     and a.grcode = c.grcode
+	     and a.sulpapernum = c.sulpapernum
+	     and a.userid=b.userid
+		 and     c.grcode    = 'N000001'
+		
+	 	 and     c.[year] = #ses_search_gyear#
+	 	 and     c.grseq = #ses_search_grseq#
+	 	 and 	 c.sulpapernum = #p_sulpapernum#
+	 	 and a.subj = d.subj	
+	 	 and a.subjseq = d.subjseq
+	 	 and a.[year] = d.[year]
+	 	 and a.userid = d.userid
+	 		
+	 	<isNotEmpty property="ses_search_subj">
+	 		and c.subj = #ses_search_subj#
+	 	</isNotEmpty>
+	 
+	 	<isNotEmpty property="ses_search_subjseq">
+	 		and c.subjseq = #ses_search_subjseq#
+	 	</isNotEmpty>
+		 	
+	</select>
+	
+	
+	<select id="sulmunQuestDAO.selectSulStudentMemberCount" parameterClass="map" resultClass="int">
+			select count(*) cnt 
+                from tz_subjseq    a, 
+                     tz_student    b, 
+                     tz_member     c  
+               where a.subj    = b.subj  
+                 and a.[year]    = b.[year]  
+                 and a.subjseq = b.subjseq  
+                 and b.userid  = c.userid 
+            	and     a.[year] = #ses_search_gyear#
+	 	 		and     a.grseq = #ses_search_grseq#
+	 	
+			 <isNotEmpty property="ses_search_subj">
+			 	and a.subj = #ses_search_subj#
+			 </isNotEmpty>
+			 
+			 <isNotEmpty property="ses_search_subjseq">
+			 	and a.subjseq = #ses_search_subjseq#
+			 </isNotEmpty>
+	</select>           
+	
+	<select id="sulmunQuestDAO.selectHukiList" resultClass="egovMap">
+		select a.userid, b.name, a.comments, a.ldate
+		from tz_stold_comments a, tz_member b
+		    ,tz_student c
+		where a.userid = b.userid
+		and a.subj = #ses_search_subj#
+		and a.subjseq = #ses_search_subjseq#
+		and a.[year] = #ses_search_gyear#
+		and a.subj = c.subj
+ 		and a.subjseq = c.subjseq
+ 		and a.[year] = c.[year]
+ 		and a.userid = c.userid
+	</select>
+	
+	
+	<!-- 표준편차 -->
+	<select id="sulmunQuestDAO.selectSulResultStddev" parameterClass="map" resultClass="egovMap">
+		select avg(v_point) as avg_point
+		      ,STDDEV(v_point) as point_stddev
+		      ,max(v_point) as max_point
+		      ,min(v_point) as min_point
+		from (
+			select rownum as rn
+			      ,v_point
+			from(      
+				<dynamic prepend=" select ">
+		               <iterate property="param_v_point" conjunction=" from DB_ROOT union all select ">
+		                   #param_v_point[]# as v_point
+		               </iterate>
+		        </dynamic>
+		        from DB_ROOT
+	    	)	    	
+	    )
+	    <isEqual property="rn_num" compareValue="10"> 
+	    	where rn between 1 and 10
+	    </isEqual>
+	    
+	    <isEqual property="rn_num" compareValue="5"> 
+	    	where rn between 6 and 10
+	    </isEqual>
+	    
+	</select>
+	
+	<!-- 퍼센트	과정의 대한 설문지의 번호를 모두 가져온다.-->
+	<select id="sulmunQuestDAO.selectPerSulResultSulNumsList" parameterClass="map" resultClass="egovMap">
+		  select                                                                   
+	       distinct a.sulnums
+	       , a.sulpapernum                                                                                                                           
+		 from    tz_sulpaper     a                                                                        
+		     ,   tz_subjseq      c                                                        
+		 where  a.sulpapernum = c.sulpapernum    
+		 and     c.grcode    = 'N000001'                      
+		 and     c.[year] = #ses_search_gyear#
+		 
+		 <isEqual property="ses_search_gyear" compareValue="2017"> 
+		 	and a.sulpapernum = '15'
+		 </isEqual>
+		 <isNotEqual property="ses_search_gyear" compareValue="2017"> 
+		 	and a.sulpapernum = '11'
+		 </isNotEqual>
+		 
+	 
+	</select>
+	
+	<select id="sulmunQuestDAO.selectPerSulStudentMemberCount" parameterClass="map" resultClass="int">
+			select count(*) cnt 
+                from tz_subjseq    a, 
+                     tz_student    b, 
+                     tz_member     c  
+               where a.subj    = b.subj  
+                 and a.[year]    = b.[year]  
+                 and a.subjseq = b.subjseq  
+                 and b.userid  = c.userid 
+            	 and a.[year] = #ses_search_gyear#
+            	 and c.emp_gubun in ($temp_gubun$)
+            	
+	 	 		
+	</select>       
+	
+	
+	<!-- 퍼센트 수강생 설문 답변 리스트-->
+	<!-- select id="sulmunQuestDAO.selectPerSulResultAnswersList" parameterClass="map" resultClass="egovMap">
+	with temp as ( 
+		 select                                                                   
+	        count(1) over() as cnt
+           ,(count(1) over() * $p_per$)/100 as p_cnt
+           , b.emp_gubun as emp_gubun
+       	   , a.answers    
+	       , a.userid
+	       , b.name
+	       , Decode(b.sex,'M', '남자', '여자') as sex
+	       , Decode(b.emp_gubun,'T', '교원', 'E', '보조인력', 'R', '교육전문직', 'P', '일반회원') as emp_nm
+	       , birth_date
+	       , Floor(months_between(sysdate, to_date(birth_date, 'YYYYMMDD'))/12) as age
+	       , get_deptnm(b.dept_cd) as postion_nm                                                                                                                   
+		 from    tz_suleach      a                                                                       
+		     ,   tz_subjseq      c
+		     ,   tz_member       b 
+		     ,   tz_student      d                                                           
+		 where   a.subj = c.subj                                                          
+		     and a.subjseq = c.subjseq                           
+		     and a.[year] = c.[year]   
+		     and a.grcode = c.grcode
+		     and a.sulpapernum = c.sulpapernum
+		     and a.userid=b.userid
+			 and     c.grcode    = 'N000001'
+			
+		 	 and     c.[year] = #ses_search_gyear#
+		 	
+		 	 and 	 c.sulpapernum = #p_sulpapernum#
+		 	 and a.subj = d.subj	
+		 	 and a.subjseq = d.subjseq
+		 	 and a.[year] = d.[year]
+		 	 and a.userid = d.userid
+		 	 and b.emp_gubun in ($temp_gubun$)
+		 
+		 	
+		 	ORDER BY   DBMS_RANDOM.RANDOM
+		)
+		select *
+		from(
+			select ROWNUM as rn, temp.*
+			from temp			
+		)
+		where rn between 1 and p_cnt	
+		
+			
+	</select -->
+	
+	<select id="sulmunQuestDAO.selectPerSulResultAnswersList" parameterClass="map" resultClass="egovMap">
+		select *
+			from(
+				select ROWNUM as rn, temp.*
+				from ( 
+			 select                                                                   
+		        count(1) over() as cnt
+	           ,(count(1) over() * $p_per$)/100 as p_cnt
+	           , b.emp_gubun as emp_gubun
+	       	   , a.answers    
+		       , a.userid
+		       , b.name
+		       , Decode(b.sex,'M', '남자', '여자') as sex
+		       , Decode(d.emp_gubun,'T', '교원', 'E', '보조인력', 'R', '교육전문직', 'P', '일반회원') as emp_nm
+		       , birth_date
+		       , Floor(months_between(sysdate, to_date(birth_date, 'YYYYMMDD'))/12) as age
+		       --, get_deptnm(b.dept_cd) as postion_nm
+		       ,(select org_nm into v_deptnm from (
+	                select org_nm from (
+	                    select 0 as idx, org_nm from   tz_school_org where  org_cd = b.dept_cd
+	                    union all
+	                    select 1 as idx,  org_nm from   tz_eduorg where  orgid = b.dept_cd
+	                ) order by idx
+	            ) where rownum = 1) postion_nm                                                                                                                   
+			 from    tz_suleach      a                                                                       
+			     ,   tz_subjseq      c
+			     ,   tz_member       b 
+			     ,   tz_student      d                                                           
+			 where   a.subj = c.subj                                                          
+			     and a.subjseq = c.subjseq                           
+			     and a.[year] = c.[year]   
+			     and a.grcode = c.grcode
+			     and a.sulpapernum = c.sulpapernum
+			     and a.userid=b.userid
+				 and     c.grcode    = 'N000001'
+				
+			 	 and     c.[year] = #ses_search_gyear#
+			 	
+			 	 and 	 c.sulpapernum = #p_sulpapernum#
+			 	 and a.subj = d.subj	
+			 	 and a.subjseq = d.subjseq
+			 	 and a.[year] = d.[year]
+			 	 and a.userid = d.userid
+			 	 and b.emp_gubun in ($temp_gubun$)
+			 
+			 	
+			 	ORDER BY random()
+			) temp			
+		)
+		where rn between 1 and p_cnt	
+		
+			
+	</select>
+	
+	
+	 
+</sqlMap>
+
+ 
+
+
+

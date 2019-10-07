@@ -1,0 +1,317 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE sqlMap PUBLIC "-//iBATIS.com//DTD SQL Map 2.0//EN" "http://ibatis.apache.org/dtd/sql-map-2.dtd">
+
+<sqlMap namespace="Learning">
+
+<typeAlias  alias="egovMap" type="egovframework.rte.psl.dataaccess.util.EgovMap"/>
+
+    <select id="LearningDAO.selectLearningCrsInfo" parameterClass="map" resultClass="egovMap">    
+		select subj,
+		       subjnm,
+		       width,
+		       height,
+		       contenttype,
+		       edulimit,
+		       decode(contenttype, 'X', 'N', 'Y') as tree_view_yn,
+		       case when substr(indate, 0, 8) >= '20120501' then 'NEW' else 'OLD' end study_type,
+		       left_content_item_list_view
+		  from tz_subj
+		 where subj = #subj#
+    </select>
+    
+    <select id="LearningDAO.selectLcmsLearningCrsSqCode" parameterClass="map" resultClass="egovMap">    
+		SELECT  CRS_CODE,
+				CRS_NAME,
+				CONTENTS_WIDTH,
+				CONTENTS_HEIGHT,
+				CONTENTS_TYPE_CODE,
+				EDULIMIT,
+				TREE_VIEW_YN
+		FROM    EC_CRS
+		WHERE   CRS_CODE =#crsCode#
+    </select>
+    
+    <select id="LearningDAO.selectNonScormProgressData" parameterClass="map" resultClass="egovMap">
+    	select lesson, lessonstatus, session_time, total_time, lesson_count, location
+		  from tb_lcms_progress
+		 where subj = #subj#
+		   and [year] = #year#
+		   and subjseq = #subjseq#
+		   and [MODULE] = #module#
+		   and lesson = #lesson#
+		   and userid = #userid#
+    </select>
+    
+    <select id="LearningDAO.selectNonScormProgressOldData" parameterClass="map" resultClass="egovMap">
+    	select lesson, lessonstatus, session_time, total_time, lesson_count, '' as location
+		  from tz_progress
+		 where subj = #subj#
+		   and [year] = #year#
+		   and subjseq = #subjseq#
+		   and lesson = #lesson#
+		   and userid = #userid#
+    </select>
+    
+    <select id="LearningDAO.checkNonScormEduLimit" parameterClass="map" resultClass="egovMap">
+    <![CDATA[
+		select case when edu_limit = 0 then 'PLAY'
+                    else case when progress_limit >= edu_limit then 'STOP' else 'PLAY' end
+		        end as edu_limit
+		  from (
+		        select round((count(0) * 100 / (select count(0) from tb_lcms_lesson where subj = a.subj)) , 2) as progress_limit,
+		               (select edulimit from tz_subjseq where subj = a.subj and [year] = a.[year] and subjseq = a.subjseq) as edu_limit
+		          from tb_lcms_progress$nowYear$ a
+		         where a.subj     	= #subj#
+		           and a.[year]  		= #year#
+		           and a.subjseq    = #subjseq#
+		           and a.userid    = #userid#
+		           and a.lessonstatus = 'Y'
+		           and substr(a.indate,0,8) = to_char(sysdate,'YYYYMMDD')
+		         group by a.subj, a.[year], a.subjseq
+		        )
+	]]> 
+    </select>
+    
+    <select id="LearningDAO.checkNonScormEduLimitOld" parameterClass="map" resultClass="egovMap">
+    <![CDATA[
+		select case when edu_limit = 0 then 'PLAY'
+                    else case when progress_limit >= edu_limit then 'STOP' else 'PLAY' end
+		        end as edu_limit
+		  from (
+		        select round((count(0) * 100 / (select count(0) from tz_subjlesson where subj = a.subj)) , 2) as progress_limit,
+		               (select edulimit from tz_subjseq where subj = a.subj and [year] = a.[year] and subjseq = a.subjseq) as edu_limit
+		          from tz_progress a
+		         where a.subj     	= #subj#
+		           and a.[year]  		= #year#
+		           and a.subjseq    = #subjseq#
+		           and a.userid    = #userid#
+		           and a.lessonstatus = 'Y'
+		           and substr(a.first_edu,0,8) = to_char(sysdate,'YYYYMMDD')
+		         group by a.subj, a.[year], a.subjseq
+		        )
+	]]> 
+    </select>
+    
+    <select id="LearningDAO.selectMasterform" parameterClass="map" resultClass="egovMap">
+    	select a.subj, subjnm,
+    	       nvl(iscentered, 'Y') as iscentered,
+    	       nvl(mftype, 'ND') as mftype,
+    	       nvl(width, '99999') as width,
+    	       nvl(height, '99999') as height
+    	       nvl(otbgcolor, 'FFFFFF') as otbgcolor,
+    	       NVL (contenttype, 'N') contenttype,
+    	       NVL (eduprocess, 'N') eduprocess,
+    	       NVL (ismfmenuimg, 'N') ismfmenuimg,
+    	       dir, isuse, mfdlist, mfgrdate,
+    	       server, port, eduurl, preurl,cp,
+    	       vodurl, isoutsourcing, content_cd, subj_gu, NVL (mfchat, 'N') mfchat,
+    	       b.cont_yn , b.reasons, b.cont_url_info
+    	  from tz_subj a, tz_subjcontinfo b
+    	 where a.subj = b.subj(+)
+    	   and a.subj = #p_subj# 
+    </select>
+    
+    <select id="LearningDAO.selectStudyCount" parameterClass="map" resultClass="int">
+    	select count(0) cnt
+    	  from tz_studycount
+    	 where grcode  = #grcode#
+    	   and subj    = #p_subj#
+    	   and [year]    = #p_year#
+    	   and subjseq = #p_subjseq#
+    	   and menu    = #p_menu#
+    	   and userid  = #userid#
+    </select>
+    
+    <update id="LearningDAO.updateStudyCount">
+    	update tz_studycount
+    	   set cnt = cnt+1
+    	 where grcode  = #grcode#
+    	   and subj    = #p_subj#
+    	   and [year]    = #p_year#
+    	   and subjseq = #p_subjseq#
+    	   and menu    = #p_menu#
+    	   and userid  = #userid#
+    </update>
+    
+    <insert id="LearningDAO.insertStudyCount">
+    	insert into tz_studycount(
+    		grcode, subj, [year], subjseq, menu, userid, cnt
+    	)
+    	values(
+    		#grcode#,
+    		#p_subj#,
+    		#p_year#,
+    		#p_subjseq#,
+    		#p_menu#,
+    		#userid#,
+    		1
+    	)
+    </insert>
+    
+    <select id="LearningDAO.selectEduScore" parameterClass="map" resultClass="egovMap">
+    	select a.score, a.tstep, a.htest, a.mtest, a.ftest, a.report, a.act, a.etc1, a.etc2, a.avtstep,
+    	       a.avhtest, a.avmtest, a.avftest, a.avreport, a.avact, a.avetc1, a.avetc2, b.gradscore, b.gradstep, b.gradexam,
+    	       b.gradhtest, b.gradftest, b.gradreport, b.wstep, b.wmtest, b.wftest, b.whtest, b.wreport, b.wact, b.wetc1, b.wetc2,
+    	       b.gradftest_flag, b.gradhtest_flag, b.gradexam_flag, b.gradreport_flag, b.gradstep, a.isgraduated, b.edustart edustart, b.eduend eduend, b.study_count
+    	       (
+    	       	 select count(*) cnt
+    	       	   from tz_subjloginid
+    	       	  where subj = a.subj
+    	       	    and [year] = a.[year]
+    	       	    and subjseq= a.subjseq
+    	       	    and userid = a.userid
+    	       ) as cnt,
+    	       decode(c.userid, null, 'N', 'Y') as realgraduated, b.isclosed,a.editscore
+    	  from tz_student a, tz_subjseq b, tz_stold c
+    	 where a.subj    = #p_subj#
+    	   and a.[year]    = #p_year#
+    	   and a.subjseq = #p_subjseq#
+    	   and a.userid  = #userid#
+    	   and a.subj    = b.subj
+    	   and a.[year]    = b.[year]
+    	   and a.subjseq = b.subjseq
+    	   and a.subj    = c.subj(+)
+    	   and a.[year]    = c.[year](+)
+    	   and a.subjseq = c.subjseq(+)
+    	   and a.userid  = c.userid(+)
+    </select>
+    
+    <select id="LearningDAO.selectEduScore2" parameterClass="map" resultClass="egovMap">
+    	select a.gradexam, a.gradftest, a.gradreport, a.wetc1,
+    	       b.avmtest as mmtest,
+    	       b.avftest as mftest,
+    	       b.avreport as mreport,
+    	       b.avetc2 as mect2,
+    	       b.avact as mact2,
+    	       b.score as mscore,
+    	       b.editscore as meditscore,
+    	       a.wmtest, a.wftest, a.wreport, a.wetc2,
+    	       (select edutimes from tz_subj b where a.subj = b.subj ) as edutimes
+    	  from tz_subjseq a, tz_student b
+    	 where a.subj    = #p_subj#
+    	   and a.[year]    = #p_year#
+    	   and a.subjseq = #p_subjseq#
+    	   and a.subj    = b.subj(+)
+    	   and a.[year]    = b.[year](+)
+    	   and a.subjseq = b.subjseq(+)
+    	   and b.userid(+) = #userid#
+    </select>
+    
+    <select id="LearningDAO.selectUserPage" parameterClass="map" resultClass="egovMap">
+    	select count(0) as cnt
+    	  from tz_student
+    	 where subj    = #p_subj#
+    	   and [year]    = #p_year#
+    	   and subjseq = #p_subjseq#
+    	   and userid  = #userid#
+    </select>
+    
+    <select id="LearningDAO.SelectEduList" parameterClass="map" resultClass="egovMap">
+    	select a.lesson, a.sdesc, a.[MODULE], b.sdesc as modulenm, a.isbranch, a.starting,
+    	       c.first_edu, c.first_end, c.session_time, c.total_time, c.lesson_count,
+    	       (select pagenum from tz_subjlesson_page where subj=c.subj and lesson=c.lesson and substr(starting, instr(starting, '/', -1) + 1) = c.stu_page) stu_page_cnt,
+    	       (select pagenum from tz_subjlesson_page where subj=c.subj and lesson=c.lesson) stu_page_cnt,
+    	       (select count(*) from tz_subjlesson_page where subj=a.subj and lesson=a.lesson) total_page_cnt
+    	  from tz_subjlesson a, tz_subjmodule b, tz_progress c
+    	 where a.subj    = #p_subj#
+    	   and a.subj    = b.subj(+)
+    	   and a.[MODULE]  = b.[MODULE](+)
+    	   and c.subj(+) = a.subj
+    	   and c.[year](+) = #p_year#
+    	   and c.subjseq(+) = #p_subjseq#
+    	   and c.userid(+)  = #userid#
+    	   and c.lesson(+)  = a.lesson
+    	 order by a.lesson 
+    </select>
+    
+    <select id="LearningDAO.selectEduTimeCountOBC" parameterClass="map" resultClass="egovMap">
+    	select trunc(
+	    	           (
+	    	               sum(to_number(substr(total_time, 1, (instr(total_time, ':', 1)-1 )) )) * 60 * 60 +
+	    	               sum(to_number(substr(total_time, (instr(total_time, ':', 3)+1 ), 2) )) * 60 +
+	    	               sum(to_number(substr(total_time, (instr(total_time, ':', 6)+1 ), 2) ))
+	    	           ) DIV (60*60)
+	    	           , 0
+	    	        ) as total_time,
+	    	   trunc(
+	    	           mod(
+	    	                 (
+	    	                    sum(to_number(substr(total_time, 1, (instr(total_time, ':', 1)-1 )) )) * 60 * 60 +
+	    	                    sum(to_number(substr(total_time, (instr(total_time, ':', 3)+1 ), 2) )) * 60 +
+	    	                    sum(to_number(substr(total_time, (instr(total_time, ':', 6)+1 ), 2) ))
+	    	                 ) DIV 60
+	    	                 , 60
+	    	              )
+	    	           , 0
+	    	        ) as total_minute,
+	    	   mod(
+	    	          sum(
+	    	                to_number(substr(total_time, 1, (instr(total_time, ':', 1)-1 )) ) * 60 * 60 +
+	    	                to_number(substr(total_time, (instr(total_time, ':', 3)+1 ), 2) ) * 60 +
+	    	                to_number(substr(total_time, (instr(total_time, ':', 6)+1 ), 2) )
+	    	             )
+	    	          , 60
+	    	      ) as total_sec,
+	    	   max(substr(first_end, 1, 8)) as edudt,
+	    	   sum(lesson_count) AS [COUNT]
+		  from tz_progress
+		 where subj    = #p_subj#
+		   and [year]    = #p_year#
+		   and subjseq = #p_subjseq#
+		   and userid  = #userid#
+    </select>
+    
+    <select id="LearningDAO.isReportMAssign" parameterClass="map" resultClass="egovMap">
+    	select count(0) as cnt
+    	  from tz_projassign
+    	 where subj      = #p_subj#
+    	   and [year]      = #p_year#
+    	   and subjseq   = #p_subjseq#
+    	   and userid    = #userid#
+    	   and grpseq in (
+							select grpseq
+					    	  from tz_projgrp
+					    	 where 1 = 1
+					    	   and projgubun = #p_projgubun#
+					    	   and subj      = #p_subj#
+					    	   and [year]      = #p_year#
+					    	   and subjseq   = #p_subjseq#
+    	   				 )
+    </select>
+    
+    <select id="LearningDAO.selectProjseq" parameterClass="map" resultClass="egovMap">
+    	select a.subj, a.[year], a.subjseq, a.grpseq,
+    	       (select count(*) from tz_projassign x where a.subj = x.subj and a.[year] = x.[year] and a.subjseq = x.subjseq and a.grpseq = x.grpseq) pcnt
+    	  from tz_projgrp a
+    	 where a.subj      = #p_subj#
+    	   and a.[year]      = #p_year#
+    	   and a.subjseq   = #p_subjseq#
+    	   and a.projgubun = #p_projgubun#
+    	 group by subj, [year], subjseq, grpseq
+    	 order by pcnt, grpseq
+    </select>
+    
+    <insert id="LearningDAO.insertProjassign">
+    	insert into tz_projassign(
+    		subj, [year], subjseq, userid, grpseq
+    	)
+    	select subj, [year], subjseq, v_userid, grpseq
+    	  from tz_projgrp
+    	 where subj    = #p_subj#
+    	   and [year]    = #p_year#
+    	   and subjseq = #p_subjseq#
+    	   and grpseq  = #v_projseq#
+    </insert>
+    
+    <select id="LearningDAO.selectSubjseq" parameterClass="map" resultClass="egovMap">
+    	select to_char(sysdate,'yyyymmdd') today, substr(edustart,0,8) edustart, substr(eduend,0,8) eduend
+    	, Case When to_char(sysdate,'yyyymmdd') between substr(edustart,0,8) and substr(eduend,0,8) Then 'Y'
+    	  Else 'N' End edustatus
+    	  ,(select content_lesson_all_view from tz_subj where subj = #p_subj#)  as contentlessonallview
+    	  from tz_subjseq
+    	 where subj    = #p_subj#
+    	   and [year]    = #p_year#
+    	   and subjseq = #p_subjseq#
+    </select>
+</sqlMap>
+

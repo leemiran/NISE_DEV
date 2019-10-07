@@ -1,0 +1,162 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE sqlMap PUBLIC "-//iBATIS.com//DTD SQL Map 2.0//EN" "http://ibatis.apache.org/dtd/sql-map-2.dtd">
+
+<sqlMap namespace="LcmsCourseMap">
+
+
+<typeAlias  alias="egovMap" type="egovframework.rte.psl.dataaccess.util.EgovMap"/>
+
+    <select id="lcmsCourseMapDAO.selectLcmsCourseMapPageList" parameterClass="map" resultClass="egovMap">
+        SELECT * 
+        FROM
+               (
+                SELECT TEMP.*, 
+                <isNotEmpty property="rowsPerPage">
+                       CEIL(ROWNUM / #rowsPerPage#) AS PAGE 
+                </isNotEmpty>
+                <isEmpty property="rowsPerPage">
+                       CEIL(ROWNUM / 10) AS PAGE 
+                </isEmpty>
+                FROM
+                      (
+                       SELECT 
+	        	              COURSE_MAP_SEQ,
+	        	              COURSE_CD,
+	        	              LMS_YEAR,
+	        	              LMS_TERM,
+	        	              LMS_WEEK_CD,
+	        	              LMS_COURSE_CD,
+	        	              SERVICE_YN,
+	        	              YN_LMS,
+	        	              LMS_SUBJECT_CD,
+	        	               ORG_SEQ
+        		       FROM   TB_LCMS_COURSE_MAP
+        		       <!--  APPEND WHERE CONDITION START  -->
+
+        		       <!--  APPEND WHERE CONDITION END    -->
+        		       <isNotEmpty property="orderBy">
+        			       $orderBy$
+        		       </isNotEmpty>
+        	          ) TEMP 
+               )
+        <isNotEmpty property="page">
+        WHERE PAGE = #page#
+        </isNotEmpty>
+        <isEmpty property="page">
+        WHERE PAGE = 1
+        </isEmpty>
+    </select>
+
+    <select id="lcmsCourseMapDAO.selectLcmsCourseMapList" parameterClass="map" resultClass="egovMap">
+        SELECT COURSE_MAP_SEQ,
+               COURSE_CD,
+               LMS_YEAR,
+               LMS_TERM,
+               LMS_WEEK_CD,
+               LMS_COURSE_CD,
+               SERVICE_YN,
+               YN_LMS,
+               LMS_SUBJECT_CD,
+               ORG_SEQ
+        FROM   TB_LCMS_COURSE_MAP
+    </select>
+
+    <select id="lcmsCourseMapDAO.selectLcmsCourseMapPageListTotCnt" parameterClass="map" resultClass="int">
+        SELECT COUNT(ROWNUM) AS [COUNT]
+        FROM   TB_LCMS_COURSE_MAP
+    </select>
+
+    <select id="lcmsCourseMapDAO.selectLcmsCourseMap" parameterClass="map" resultClass="egovMap">
+        SELECT COURSE_MAP_SEQ,
+               COURSE_CD,
+               LMS_YEAR,
+               LMS_TERM,
+               LMS_WEEK_CD,
+               LMS_COURSE_CD,
+               SERVICE_YN,
+               YN_LMS,
+               LMS_SUBJECT_CD,
+               ORG_SEQ
+        FROM   TB_LCMS_COURSE_MAP
+        WHERE  COURSE_MAP_SEQ = #courseMapSeq#
+    </select>
+
+    <insert id="lcmsCourseMapDAO.insertLcmsCourseMap">
+        <selectKey resultClass="int" keyProperty="courseMapSeq">
+            select sq_course_map_seq.nextval ascourseMapSeq from DB_ROOT
+        </selectKey>
+        INSERT INTO TB_LCMS_COURSE_MAP
+        (
+            COURSE_MAP_SEQ,
+            SUBJ,
+            [year],
+            SUBJSEQ,
+            LMS_YEAR,
+            LMS_TERM,
+            LMS_WEEK_CD,
+            LMS_COURSE_CD,
+            SERVICE_YN,
+            YN_LMS,
+            LMS_SUBJECT_CD,
+            ORG_SEQ
+        )
+        VALUES
+        (
+            #courseMapSeq#,
+            #subj#,
+            #year#,
+            #subjseq#,
+            #lmsYear#,
+            #lmsTerm#,
+            #lmsWeekCd#,
+            #lmsCourseCd#,
+            #serviceYn#,
+            #ynLms#,
+            #lmsSubjectCd#,
+            #orgSeq#
+        )
+    </insert>
+
+    <update id="lcmsCourseMapDAO.updateLcmsCourseMap">
+        UPDATE TB_LCMS_COURSE_MAP
+        SET    SUBJ = #subj#,
+               [year] = #year#,
+               SUBJSEQ = #subjseq#
+        WHERE  COURSE_MAP_SEQ = #courseMapSeq#
+    </update>
+
+    <delete id="lcmsCourseMapDAO.deleteLcmsCourseMap">
+        delete tb_lcms_course_map where org_seq in 
+        <iterate property="orgSeq" conjunction="," open="(" close=")">$orgSeq[]$</iterate>
+    </delete>
+
+    <delete id="lcmsCourseMapDAO.deleteLcmsCourseMapAll">
+        DELETE FROM TB_LCMS_COURSE_MAP
+        <dynamic prepend="WHERE COURSE_MAP_SEQ IN ">
+            <isNotEmpty property="courseMapSeq">
+                <iterate property="courseMapSeq" open="(" close=")" conjunction=",">
+                    #courseMapSeq[]#
+                </iterate>
+            </isNotEmpty>
+            <isEmpty property="courseMapSeq">
+                ('')
+            </isEmpty>
+        </dynamic>
+    </delete>
+
+    <select id="lcmsCourseMapDAO.existLcmsCourseMap" resultClass="long">
+        SELECT COUNT(ROWNUM) 
+        FROM   TB_LCMS_COURSE_MAP
+        WHERE  COURSE_MAP_SEQ = #courseMapSeq#
+    </select>
+    
+    <select id="lcmsCourseMapDAO.getCourseMapSeq" resultClass="int">
+    	select course_map_seq
+    	  from tb_lcms_course_map
+    	 where subj = #subj#
+    	   and [year] = #year#
+    	   and subjseq = #subjseq#
+    </select>
+
+</sqlMap>
+

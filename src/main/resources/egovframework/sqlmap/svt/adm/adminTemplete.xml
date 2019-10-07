@@ -1,0 +1,78 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE sqlMap PUBLIC "-//iBATIS.com//DTD SQL Map 2.0//EN" "http://ibatis.apache.org/dtd/sql-map-2.dtd">
+
+<sqlMap namespace="adminTemplete">
+	<typeAlias alias="egovMap" type="egovframework.rte.psl.dataaccess.util.EgovMap"/>
+	
+	<resultMap id="templeteForm" class="egovframework.rte.psl.dataaccess.util.EgovMap">
+		<result property="templete_seq" column="templete_seq" />
+	   	<result property="title" column="title" />
+	   	<result property="use_yn" column="use_yn" />
+	   	<result property="content" column="content" jdbcType="CLOB" javaType="java.lang.String"/>
+	</resultMap>
+	
+	<select id="getTempleteList" resultClass="egovMap">
+		select
+			templete_seq
+			, title
+			, use_yn
+			, to_char(TO_DATETIME(ldate, 'yyyymmddhh24miss'), 'yyyy-mm-dd') ldate
+		from
+			tz_newsletter_templete
+		order by templete_seq desc
+	</select>
+	
+	<insert id="insertTemplete" parameterClass="map">
+		insert into tz_newsletter_templete
+		(
+			templete_seq
+			, title
+			, use_yn
+			, content
+			, luserid
+			, ldate
+		)
+		values
+		(
+			(select nvl(max(templete_seq), 0) + 1 from tz_newsletter_templete)
+			, #title#
+			, #useYn#
+			, #content#
+			, #userid#
+			, to_char(sysdatetime, 'yyyymmddhh24miss')
+		)
+	</insert>
+	
+	<!-- <select id="getTempleteDetail" parameterClass="string" resultMap="templeteForm"> -->
+	<select id="getTempleteDetail" parameterClass="string" resultClass="egovMap">
+		select
+			templete_seq
+			, title
+			, use_yn
+			, content
+		from
+			tz_newsletter_templete
+		where
+			templete_seq = #templeteSeq#
+	</select>
+	
+	<update id="updateTemplete" parameterClass="map">
+		update tz_newsletter_templete
+		set
+			title = #title#
+			, use_yn = #useYn#
+			, content = #content#
+			, luserid = #userid#
+			, ldate = to_char(sysdatetime, 'yyyymmddhh24miss')
+		where
+			templete_seq = #templeteSeq#
+	</update>
+	
+	<delete id="deleteTemplete" parameterClass="map">
+		delete from tz_newsletter_templete
+		where
+			templete_seq = #templeteSeq#
+	</delete>
+	
+</sqlMap>
+

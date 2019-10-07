@@ -1,0 +1,29 @@
+body { margin-left : 0; margin-top : 0; margin-right : 0; margin-bottom : 0; SCROLLBAR-FACE-COLOR : #FFFFFF; SCROLLBAR-SHADOW-COLOR : #C0C0C0; SCROLLBAR-DARKSHADOW-COLOR : #FFFFFF; SCROLLBAR-HIGHLIGHT-COLOR : #C0C0C0; SCROLLBAR-3DLIGHT-COLOR : #FFFFFF; SCROLLBAR-TRACK-COLOR : #FFFFFF; SCROLLBAR-ARROW-COLOR : #C0C0C0; }
+td { font-family : ±¼¸²; font-size : 9pt; line-height : 18px; }
+.glo_title {
+	font-family: "±¼¸²";
+	font-size: 9pt;
+	font-style: normal;
+	line-height: normal;
+	font-weight: bold;
+	font-variant: normal;
+	color: #339933;
+	text-decoration: none;
+}
+.glo_info {
+	font-family: Arial, Helvetica, sans-serif;
+	font-size: 9pt;
+	font-style: normal;
+	line-height: normal;
+	font-weight: bold;
+	color: #339999;
+}
+.glo_search {
+	font-size: 9pt;
+	font-style: normal;
+	font-weight: bold;
+	color: #666666;
+	text-decoration: none;
+	line-height: 30px;
+}
+.pop_searchtxt {color: #4a636c}

@@ -1,0 +1,17 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE sqlMap PUBLIC "-//iBATIS.com//DTD SQL Map 2.0//EN" "http://ibatis.apache.org/dtd/sql-map-2.dtd">
+
+<sqlMap namespace="StudyData">
+<typeAlias  alias="egovMap" type="egovframework.rte.psl.dataaccess.util.EgovMap"/>
+
+	<select id="studyDataDAO.selectSDTableseq" parameterClass="map" resultClass="int">
+		 select nvl((select tabseq
+		  from tz_bds
+		 where type    = #p_type#
+		   and subj    = #p_subj#
+		   and [year]    = #p_year#
+		   and subjseq = #p_subjseq#
+		  ), 0) from DB_ROOT
+	</select>
+	
+</sqlMap>

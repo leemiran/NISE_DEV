@@ -1,0 +1,153 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE sqlMap PUBLIC "-//iBATIS.com//DTD SQL Map 2.0//EN" "http://ibatis.apache.org/dtd/sql-map-2.dtd">
+
+<sqlMap namespace="lifetime">
+	<typeAlias alias="egovMap" type="egovframework.rte.psl.dataaccess.util.EgovMap"/>
+	
+	<select id="getCompleteStudentList" parameterClass="map" resultClass="egovMap">
+		select
+			a.userid
+			, a.upperclass_nm
+			, a.subj
+			, a.subjseq
+			, a.[year]
+			, a.subjnm
+			, '국립특수교육원부설 원격교육연수원' org_nm
+			, a.edustart
+			, a.eduend
+			, a.edutimes_min
+			, a.serno
+		from (
+			select 
+				ts.userid
+				, s.upperclass
+				, case 
+					when s.upperclass = 'PRF' then '교원직무연수'
+					when s.upperclass = 'EXT' then '보조인력연수'
+					when s.upperclass = 'PAR' then '교양연수'
+					when s.upperclass = 'SCP' then '학부모연수'
+					when s.upperclass = 'OTH' then '시범연수'
+					else '기타연수'
+				end upperclass_nm
+				, s.subj
+				, ts.[year]
+				, ts.subjseq
+				, s.subjnm
+				, substr(ss.edustart, 0, 8) edustart
+				, substr(ss.eduend, 0, 8) eduend
+				, s.edutimes
+				, s.edutimes * 60 edutimes_min
+				, get_isu_no(ts.subj, ts.[year], ts.subjseq, ts.userid) serno
+			from 
+				tz_student ts,
+				tz_subjseq ss,
+				tz_subj s,
+				tz_member m
+			where 
+				ts.subj = ss.subj
+				and ts.[year] = ss.[year]
+				and ts.subjseq = ss.subjseq
+				and ts.subj = s.subj
+				and ts.subj = #subj#
+				and ts.[year] = #year#
+				and ts.subjseq	= #subjseq#
+				and ts.isgraduated = 'Y'
+				and ts.lifetime_yn = 'N'
+				and ts.userid = m.userid
+			) a
+	</select>
+	
+	<update id="updateLifetimeSubj" parameterClass="map">
+		update tz_student set
+			lifetime_yn = #lifetimeYn#
+			, lifetime_result = #lifetimeResult#
+		where
+			subj = #subj#
+			and [year] = #year#
+			and subjseq = #subjseq#
+			and userid = #userid#
+	</update>
+	
+		
+	<select id="selectSubjInfoDetailLifetime" parameterClass="map" resultClass="egovMap">
+					SELECT  upperclass
+					         ,subj
+					         ,subjnm
+					         ,year_subj_subjseq
+					         ,subjnm_subjseq
+					         ,grseqnm
+					         ,subjseq
+					         ,edustart
+					         ,eduend
+							 ,eduperiod
+							 ,edutimes
+							 ,intro
+							 ,class_url 						 
+							 ,gradexam	--수료기준 출석시험
+							 ,wmtest		--가중치 출석시험	
+							 ,gradftest	--수료기준 온라인시험 
+							 ,wftest		--가중치 온라인시험 
+							 ,gradreport	--수료기준 온라인과제 
+							 ,wreport	--가중치 온라인과제 
+ 						     ,wetc1		--수료기준 학습진도율  
+ 						     ,wetc2		--가중치 학습진도율   	
+ 						     ,gradexam_nm || ' ' || gradftest_nm || ' ' || gradreport_nm || ' ' || wetc1_nm AS eval_method
+				FROM(
+					 	SELECT 
+							 a.upperclass
+					         ,a.subj
+					         ,a.subjnm
+					          ,b.[year]||'_'||b.subj||'_'||b.subjseq AS year_subj_subjseq
+					         ,a.subjnm  ||' - '|| TO_NUMBER(b.subjseq) ||'기' AS subjnm_subjseq
+					         ,c.grseqnm
+					         ,b.subjseq
+					         ,TO_CHAR(TO_DATETIME(b.edustart, 'YYYYMMDDHH24'),'YYYYMMDD') AS edustart
+					         ,TO_CHAR(TO_DATETIME(b.eduend, 'YYYYMMDDHH24'),'YYYYMMDD') AS eduend
+							 ,a.eduperiod
+							 ,a.edutimes
+							 ,a.intro
+							 ,'http://iedu.nise.go.kr/usr/subj/subjInfoViewPopUp.donullp_subj='||	a.subj AS class_url 						 
+							  ,b.gradexam	 --수료기준 출석시험
+							  ,b.wmtest		 --가중치 출석시험	
+							  ,b.gradftest	 --수료기준 온라인시험 
+							  ,b.wftest		 --가중치 온라인시험 
+							  ,b.gradreport	--수료기준 온라인과제 
+							  ,b.wreport		--가중치 온라인과제 
+ 						      ,b.wetc1		--수료기준 학습진도율  
+ 						      ,b.wetc2		--가중치 학습진도율   						      
+							 ,case WHEN b.gradexam>0 OR b.wmtest>0 THEN '출석시험'
+							 		 ELSE ''	
+							 		 END gradexam_nm							 
+							 ,case WHEN b.gradftest>0 OR b.wftest>0 THEN '온라인시험'
+							 		 ELSE ''	
+							 		 END gradftest_nm							 
+							 ,case WHEN b.gradreport>0 OR b.wreport>0 THEN '온라인과제'
+							 		 ELSE ''	
+							 		 END gradreport_nm							
+							 ,case WHEN b.wetc1>0 OR b.wetc2>0THEN '학습진도율'
+							 		 ELSE ''	
+							 		 END wetc1_nm
+					FROM tz_subj a 
+					         ,tz_subjseq b
+					         ,tz_grseq c
+					WHERE 1=1
+					<isNotEmpty property="startDate">
+						<isNotEmpty property="endDate">					
+							AND  TO_CHAR(b.edustart, 'yyyymmdd') BETWEEN #startDate#  AND #endDate#
+						</isNotEmpty>
+					</isNotEmpty>
+					<isEmpty property="startDate">
+						<isEmpty property="endDate">
+							AND to_char(sysdatetime, 'yyyymmddhh24') BETWEEN b.edustart  AND b.eduend
+						</isEmpty>
+					</isEmpty>	
+					
+					AND a.subj = b.subj
+					AND b.grseq = c.grseq
+					AND b.[year] = c.gyear
+	 		)
+	 		order by edustart, subjnm
+	</select>
+	
+</sqlMap>
+

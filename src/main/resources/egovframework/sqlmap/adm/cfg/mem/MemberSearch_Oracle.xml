@@ -1,0 +1,1852 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE sqlMap PUBLIC "-//iBATIS.com//DTD SQL Map 2.0//EN" "http://ibatis.apache.org/dtd/sql-map-2.dtd">
+
+<sqlMap namespace="MemberSearch">
+<typeAlias  alias="egovMap" type="egovframework.rte.psl.dataaccess.util.EgovMap"/>
+
+	<select id="memberSearchDAO.selectMemberList" parameterClass="map" resultClass="egovMap">
+		select comp,
+		       --fn_crypt('2', pwd, 'knise') as pwd,
+		       pwd,
+		       userid,
+		       name,
+		       hometel,
+		       handphone,
+		       to_char(to_date(substr(lglast, 1, 8), 'yyyyMMdd'), 'yyyy-MM-dd') as lglast,
+		       birth_date,
+		       get_compnm(comp) as compnm,
+		       post_nm as jikwinm,
+		       position_nm,
+		       to_char(to_date(substr(indate, 1, 8), 'yyyyMMdd'), 'yyyy-MM-dd') as indate,
+		       lvl_nm,
+		       isretire,
+		       email,
+		       decode( emp_gubun, 'T', '교원', 'E', '보조인력', 'R', '교육 전문직', 'P', '일반회원(학부모 등)', 'O', '공무원' , 'A', '방과후교사 등(돌봄교사, 문예체 전문강사)') as gb,
+		       decode( emp_gubun, 'T', user_path, 'E', user_path, 'R', '교육 전문직', 'P', '일반회원(학부모 등)', 'O', '공무원', 'A', '방과후교사 등(돌봄교사, 문예체 전문강사)') as snm,
+		       decode(hrdc, 'C', '직장(학교)', '자택') as rv, cert,
+		       nice_personal_num
+		  from tz_member
+		 where 1 = 1
+		<isNotEmpty property="p_searchtext">
+			<isEqual property="p_search" compareValue="birth_date">
+			and birth_date like '%' || upper(#p_searchtext#) || '%'
+			</isEqual>
+			<isNotEqual property="p_search" compareValue="birth_date">
+		    and replace(upper($p_search$),'-','') like '%' || replace(upper(#p_searchtext#),'-', '') || '%' 
+			</isNotEqual>
+		</isNotEmpty>
+        <isNotEmpty property="p_company">
+        	<isNotEqual property="p_company" compareValue="ALL">
+        	and comp = #p_company#
+        	</isNotEqual>
+        </isNotEmpty>
+        <isEmpty property="p_searchtext">
+        	and userid is null
+        </isEmpty>
+         order by comp, name, birth_date    
+	</select>
+	
+	<select id="memberSearchDAO.selectSearchMemberLogListTotCnt" parameterClass="map" resultClass="int">
+		select count(0) as cnt
+		  from tz_membersearchlog a, tz_gadmin b
+		 where a.gadmin = b.gadmin
+		<isNotEmpty property="p_searchtext_id">
+		   and userid like '%' || #p_searchtext_id# || '%'
+		</isNotEmpty>
+		<isNotEmpty property="p_searchtext_name">
+		   and name like '%' || #p_searchtext_name# || '%'
+		</isNotEmpty>
+	</select>
+	<select id="memberSearchDAO.selectSearchMemberLogList" parameterClass="map" resultClass="egovMap">
+		select rn, seq, logdate, userid, name, target_userid, target_name, ip, gadminnm ,TARGET_URL , LOG_ACTION, user_path
+		  from (
+				select rownum as rn, seq, logdate, userid, name, target_userid, target_name, ip, gadminnm ,TARGET_URL , LOG_ACTION, user_path
+				  from (
+						select a.seq, a.userid, a.name, a.target_userid, a.target_name, a.ip, b.gadminnm,
+						       to_char(TO_DATETIME(a.logdate, 'yyyyMMdd hh24miss'), 'yyyy.MM.dd hh24:mi:ss') as logdate 
+						       ,TARGET_URL , LOG_ACTION, c.user_path
+						  from tz_membersearchlog a, tz_gadmin b
+						      ,tz_member c
+						 where a.gadmin = b.gadmin
+						 AND a.target_userid = c.userid
+						<isNotEmpty property="p_searchtext_id">
+						   and a.userid like '%' || #p_searchtext_id# || '%'
+						</isNotEmpty>
+						<isNotEmpty property="p_searchtext_name">
+						   and a.name like '%' || #p_searchtext_name# || '%'
+						</isNotEmpty>
+						 order by logdate desc
+				       )
+		       )
+		 where rn between #firstIndex# + 1 and #firstIndex# + #recordCountPerPage#
+	</select>
+	
+	<select id="memberSearchDAO.selectReissueMemberPwdListTotCnt" parameterClass="map" resultClass="int">
+		select count(0) as cnt
+		  from tz_pwdsearchlist
+		 where 1 = 1
+		<isNotEmpty property="p_userid">
+		   and userid like '%' || #p_userid# || '%'
+		</isNotEmpty>
+		<isNotEmpty property="p_success">
+		   and success_yn = #p_success#
+		</isNotEmpty>
+	</select>
+	<select id="memberSearchDAO.selectReissueMemberPwdList" parameterClass="map" resultClass="egovMap">
+		select rn, userid, ldate, success_yn, admin_yn, admin_id
+		  from (
+				select rownum as rn, userid, ldate, success_yn, admin_yn, admin_id
+				  from (
+						select userid, success_yn, admin_yn, admin_id,
+						       to_char(TO_DATETIME(ldate, 'yyyyMMdd hh24miss'), 'yyyy.MM.dd hh24:mi:ss') as ldate
+						  from tz_pwdsearchlist
+						 where 1 = 1
+						<isNotEmpty property="p_userid">
+						   and userid like '%' || #p_userid# || '%'
+						</isNotEmpty>
+						<isNotEmpty property="p_success">
+						   and success_yn = #p_success#
+						</isNotEmpty>
+						 order by ldate desc
+				       )
+		       )
+		 where rn between #firstIndex# + 1 and #firstIndex# + #recordCountPerPage#
+	</select>
+	
+	<select id="memberSearchDAO.getStatusCount" parameterClass="map" resultClass="egovMap">
+		select sum(case when success_yn = 'Y' then 1 else 0 end) as success,
+		       sum(case when success_yn = 'N' then 1 else 0 end) as fail
+		  from tz_pwdsearchlist
+		 where 1 = 1
+		<isNotEmpty property="p_userid">
+		   and userid like '%' || #p_userid# || '%'
+		</isNotEmpty>
+		<isNotEmpty property="p_success">
+		   and success_yn = #p_success#
+		</isNotEmpty>
+	</select>
+	
+	<select id="memberSearchDAO.selectMemberLoginLogListTotCnt" parameterClass="map" resultClass="int">
+		select count(0) as cnt
+		  from tz_loginid a, tz_member b
+		 where a.userid = b.userid
+		   and a.userid in <iterate property="arrUserid" conjunction="," open="(" close=")">#arrUserid[]#</iterate>
+	</select>
+	<select id="memberSearchDAO.selectMemberLoginLogList" parameterClass="map" resultClass="egovMap">
+		select rn, userid, lgip, ldate, name, comp, compnm, position_nm, lvl_nm, user_path
+		  from (
+				select rownum as rn, userid, lgip, ldate, name, comp, compnm, position_nm, lvl_nm, user_path
+				  from (
+						select a.userid, a.lgip, b.name, b.comp, (select compnm    from tz_compclass     where comp= b.comp) as compnm, b.position_nm, b.lvl_nm,
+						       to_char(TO_DATETIME(a.ldate, 'yyyyMMdd hh24miss'), 'yyyy.MM.dd hh24:mi:ss') as ldate,
+						       user_path
+						  from tz_loginid a, tz_member b
+						 where a.userid = b.userid
+						   and a.userid in <iterate property="arrUserid" conjunction="," open="(" close=")">#arrUserid[]#</iterate>
+						 order by a.userid, ldate desc
+				       )
+		       )
+		 where rn between #firstIndex# + 1 and #firstIndex# + #recordCountPerPage#
+	</select>
+	
+	<select id="memberSearchDAO.selectExcelPrintLogListTotCnt" parameterClass="map" resultClass="int">
+		select count(0) as cnt
+		  from tz_srchmemberlog a
+	</select>
+	<select id="memberSearchDAO.selectExcelPrintLogList" parameterClass="map" resultClass="egovMap">
+		select rn, userid, srchword, rowcnt, name, logdate
+		  from (
+				select rownum as rn, userid, srchword, rowcnt, name, logdate
+				  from (
+						select a.userid, a.srchword, a.rowcnt, (select name from tz_member where userid = a.userid) as name,
+						       to_char(TO_DATETIME(a.logdate, 'yyyyMMdd hh24miss'), 'yyyy.MM.dd hh24:mi:ss') as logdate
+						  from tz_srchmemberlog a
+						 order by a.logdate desc
+				       )
+		       )
+		 where rn between #firstIndex# + 1 and #firstIndex# + #recordCountPerPage#
+	</select>
+	
+	<select id="memberSearchDAO.memberSearchExcelList" parameterClass="map" resultClass="egovMap">
+		select comp,
+			   /* fn_crypt('2', pwd, 'knise') as pwd, */
+			   pwd,
+			   userid,
+			   name,
+			   hometel,
+			   address as addr,
+			   zip_cd as post,
+			   handphone,
+			   handphone_no,
+			   email,
+			   ismailling,
+			   get_compnm(comp) as compnm,
+			   position_nm,
+			   lvl_nm,
+			   zip_cd,
+			   zip_cd1,
+			   address,
+			   address1,
+			   decode(hrdc, 'C', '직장(학교)', '자택') as rv,
+			   issms,
+			   lglast,
+			   indate,
+			   ldate,
+			   (select codenm from tz_code where gubun = '0115' and code = a.job_cd) as lic,
+			   decode(emp_gubun, 'T', '교원/보조인력', 'E', '보조인력', '학부모') as gb,
+			   decode(emp_gubun, 'T', user_path, 'E', user_path, '학부모') as snm
+		  from tz_member a
+		 where 1 = 1
+		<isNotEmpty property="p_searchtext">
+			<isEqual property="p_search" compareValue="birth_date">
+			and birth_date like '%' || upper(#p_searchtext#) || '%'
+			</isEqual>
+			<isNotEqual property="p_search" compareValue="birth_date">
+		    and replace(upper($p_search$),'-','') like '%' || replace(upper(#p_searchtext#),'-', '') || '%' 
+			</isNotEqual>
+		</isNotEmpty>
+        <isNotEmpty property="p_company">
+        	<isNotEqual property="p_company" compareValue="ALL">
+        	and comp = #p_company#
+        	</isNotEqual>
+        </isNotEmpty>
+         order by comp, name
+	</select>
+	
+	<insert id="memberSearchDAO.insertMember">
+		insert into tz_member(
+			comp, userid, pwd, name, email, ismailling, zip_cd, address, handphone, hometel,
+			position_nm, lgcnt, lgfail, ldate, indate, emp_gubun, lvl_nm, issms
+		)
+		values(
+			'1001',
+			#parameter1#,
+			fn_base64sha256encryptor(#parameter4#),			
+			#parameter2#,
+			fn_crypt('1', #parameter3#, 'knise'),
+			#parameter11#,
+			#parameter12#,
+			#parameter5#||'-'||#parameter6#,
+			#parameter7#||' '||#parameter8#,
+			#parameter10#,
+			#parameter9#,
+			#parameter13#,
+			0,
+			0,
+			to_char(sysdatetime, 'YYYYMMDDHH24MISS'),
+			to_char(sysdatetime, 'YYYYMMDDHH24MISS'),
+			'',
+			'Y',
+			#parameter14#
+		)
+	</insert>
+	
+<!--	강사등록시 회원등록하는 프로세스-->
+	<insert id="memberSearchDAO.insertTutorInMember">
+		insert into tz_member(
+			userid                                           /* 아이디 */
+           , pwd                                                /*  비밀번호 */
+           , name                                               /* 이름 */
+           , email                                              /* 이메일 */
+           , zip_cd                                             /* 우편번호 */
+           , address                                            /*  주소1 */
+           , hometel                                            /* 집전화번호 */
+           , handphone                                          /* 휴대폰번호 */
+           , indate                                             /* 등록일 */
+           , ldate                                              /* 등록일 */
+           , lgcnt                                              /* 로그인횟수 */
+           , lgfail                                             /* 비밀번호오류횟수 */
+           , comp                                               /* 소속 */
+           , position_nm                                        /* 소속 */
+           , emp_gubun
+           , zip_cd1                                            /* 우편번호 */
+           , address1                                           /* 주소1 */
+		)
+		values(
+			#p_userid#,
+			fn_base64sha256encryptor(#p_loginpw#),
+			#p_name#,
+			#p_email#,
+			#p_post1#,
+			#p_addr#,
+			#p_phone#,
+			#p_handphone#,
+			to_char(sysdatetime, 'YYYYMMDDHH24MISS'),
+			to_char(sysdatetime, 'YYYYMMDDHH24MISS'),
+			0,
+			0,
+			'1001',
+			'무소속'
+			, 'P'
+			, #p_post1#
+			, #p_addr#
+		)
+	</insert>
+	
+	
+	
+	<select id="memberSearchDAO.selectExistId" parameterClass="map" resultClass="int">
+		select count(0) from tz_member where userid = #p_userid#
+	</select>
+	
+	<select id="memberSearchDAO.selectResnoCheck" parameterClass="map" resultClass="int">
+		select count(0) 
+		from tz_member
+		
+		<isNotEmpty property="virtualNo">
+			where virtualno = #virtualNo# 
+			and  name = #realName# 
+			and birth_date = #birthDate#
+		</isNotEmpty> 
+		
+		<isEmpty property="virtualNo">
+			<isEmpty property="p_virtualNo">
+				<isNotEmpty property="realName">
+					where name = #realName#
+					and birth_date = #birthDate#
+				</isNotEmpty>
+				<isEmpty property="realName">
+					where name = #p_name#
+					and birth_date = #p_birthDate#
+					and email = #p_email1#||'@'||#p_email2#
+				</isEmpty>
+			</isEmpty>
+		</isEmpty>
+		
+	</select>
+	
+	<insert id="memberSearchDAO.insertMemberData">
+		insert into tz_member(
+			userid, pwd, name, hometel, email, handphone, lgcnt, lgfail, ldate,
+			zip_cd, address, ismailling, post_nm, indate, emp_gubun, comp, position_nm, lvl_nm, issms, birth_date, regadminid
+			, zip_cd1, address1, nice_personal_num, job_cd, user_path, handphone_no, dept_cd, agency_cd, career, subject, division_nm, handicap_yn
+			<isEqual property="p_emp_gubun" compareValue="T">
+				, nice_num_allow_yn
+			</isEqual>
+		)
+		values(
+			#p_userid#,
+			fn_base64sha256encryptor(#p_pwd#),
+			#p_name#,
+			#p_hometel#,
+			#p_email1#||'@'||#p_email2#,
+			#p_handphone#,
+			0,
+			0,
+			to_char(sysdatetime, 'YYYYMMDDHH24MISS'),
+			#p_post1#,
+			#p_addr#,
+			<isEmpty property="p_email_get">
+				'N',
+			</isEmpty>
+			<isNotEmpty property="p_email_get">
+				#p_email_get#,
+			</isNotEmpty>
+			#p_post_nm#,
+			to_char(sysdatetime, 'YYYYMMDDHH24MISS'),
+			#p_emp_gubun#,
+			'1001',
+			#p_position_nm#,
+			#p_lvl_nm#,
+			<isEmpty property="p_issms">
+				'N',
+			</isEmpty>
+			<isNotEmpty property="p_issms">
+				#p_issms#,
+			</isNotEmpty>
+			#p_birthDate#,
+			#userid#
+			
+			, #p_spost1#
+			, #p_saddr#
+			, #p_nicePersonalNum#
+			, #p_job_cd#
+			, #p_user_path#
+			, #p_handphone_no#
+			, #p_dept_cd#
+			, #p_agency_cd#
+			, #p_career#
+			, #p_subject#
+			, #p_division_nm#
+			, #p_handicap_yn#
+			<isEqual property="p_emp_gubun" compareValue="T">
+				, #p_niceNumAllowYn#
+			</isEqual>
+		)
+  			
+	</insert>
+	
+	
+	<select id="memberSearchDAO.selectMemberView" parameterClass="map" resultClass="egovMap">
+		select                                             
+			SUBSTR(hometel, 1, INSTR(hometel, '-', 1) - 1) hometel1,  
+	        SUBSTR(hometel, INSTR(hometel, '-', 1) + 1, INSTR(hometel, '-', 6) - INSTR(hometel, '-', 1) - 1) hometel2,
+	        SUBSTR(hometel, INSTR(hometel, '-', 6) + 1) hometel3,
+	        hometel as hometel_, 
+	        SUBSTR(handphone, 1, INSTR(handphone, '-', 1) - 1) handphone1,  
+	        SUBSTR(handphone, INSTR(handphone, '-', 1) + 1, INSTR(handphone, '-', 6) - INSTR(handphone, '-', 1) - 1) handphone2,
+	        SUBSTR(handphone, INSTR(handphone, '-', 6) + 1) handphone3,
+	        handphone as handphone_,
+	        SUBSTR(handphone_no, 1, INSTR(handphone_no, '-', 1) - 1) handphone_no1,  
+	        SUBSTR(handphone_no, INSTR(handphone_no, '-', 1) + 1, INSTR(handphone_no, '-', 6) - INSTR(handphone_no, '-', 1) - 1) handphone_no2,
+	        SUBSTR(handphone_no, INSTR(handphone_no, '-', 6) + 1) handphone_no3,
+	        handphone_no as handphone_no_,
+			userid,                                         
+			birth_date,
+			pwd,	
+			user_path,                                       
+			name,                                           
+			email,                                          
+			zip_cd,
+			Case When Length(zip_cd) > 5 Then substr(zip_cd, 0, 3) 
+	        Else
+	            replace(zip_cd, '-', '')
+	        End zip_cd1,
+	        Case When Length(zip_cd) > 5 Then substr(zip_cd, 5) 
+	        Else ''
+	        End zip_cd2,                                       
+	        address,     
+	        Case When Length(zip_cd1) > 5 Then substr(zip_cd1, 0, 3) 
+	        Else
+	            replace(zip_cd1, '-', '')
+	        End szip_cd1,
+	        Case When Length(zip_cd1) > 5 Then substr(zip_cd1, 5) 
+	        Else ''
+	        End szip_cd2, 	                                
+			address1, 		                                
+			hometel,                                        
+			handphone,                                      
+			get_compnm(comp) compnm,						
+			get_deptnm(dept_cd) deptnm,						
+			get_agencynm(agency_cd) agencynm,						
+			comp,                                           
+			indate,                                         
+			nvl(lgcnt, 0) lgcnt,                                          
+			lglast,
+			nvl(lgfail,0) lgfail,                                       
+			lgip,                                           
+			ismailling,
+			issms,                                 
+			get_postnm(post) as jikupnm,                    
+			isretire,                                       
+			retire_date,                                    
+			( select codenm                                 
+			 from tz_code                                  
+			 where code = a.retire_type                    
+			 and gubun = '0069'                            
+			) retire_type,                                  
+			bon_adm, 										
+			position_nm,
+			post_nm,
+			division_nm,
+			work_place_nm,
+			subject,									
+			lvl_nm, cert ,dept_cd, agency_cd
+			,job_cd
+	        ,handphone_no
+	        ,Case When Length(zip_cd1) > 5 Then substr(zip_cd1, 0, 3) 
+	        Else
+	            replace(zip_cd1, '-', '')
+	        End zip_cd3
+	        ,Case When Length(zip_cd1) > 5 Then substr(zip_cd1, 5) 
+	        Else ''
+	        End zip_cd4
+	        ,emp_gubun
+	        ,hrdc
+	        ,epki_dn
+	        ,nice_personal_num
+	        ,career
+	        ,nice_num_allow_yn
+	        ,chkvalue
+	        ,handicap_yn
+	        ,dormant_yn
+		FROM                                                
+		TZ_MEMBER a                                     
+		WHERE userid = #p_userid# 
+	</select>
+	
+<!--회원정보 업데이트	-->
+	<update id="memberSearchDAO.updateMemberInfo">
+		UPDATE tz_member SET
+			name = #p_name#
+			<isNotEmpty property="p_birth_date">
+				,birth_date = #p_birth_date#
+			</isNotEmpty>
+			, isretire = #p_isretire#
+			, hometel = #p_hometel#
+			, handphone = #p_handphone#
+			, email = #p_email#
+			<isEmpty property="p_issms">
+				, issms = 'N'
+			</isEmpty>
+			<isNotEmpty property="p_issms">
+				, issms = #p_issms#
+			</isNotEmpty>
+			<isEmpty property="p_ismailling">
+				, ismailling = 'N'
+			</isEmpty>
+			<isNotEmpty property="p_ismailling">
+				, ismailling = #p_ismailling#
+			</isNotEmpty>
+			, zip_cd = #p_post1#
+			, address = #p_addr#
+			
+			, emp_gubun = #p_emp_gubun#
+			, zip_cd1 = #p_spost1#
+			, address1 = #p_saddr#
+			, nice_personal_num = #p_nicePersonalNum#
+			, job_cd = #p_job_cd#
+			, user_path = #p_user_path#
+			, handphone_no = #p_handphone_no#
+			, dept_cd = #p_dept_cd#
+			, agency_cd = #p_agency_cd#
+			, career = #p_career#
+			, subject = #p_subject#
+			, position_nm = #p_position_nm#
+			, division_nm = #p_division_nm#
+			, post_nm = #p_post_nm#
+			<isEqual property="p_emp_gubun" compareValue="T">
+				, nice_num_allow_yn = #p_niceNumAllowYn#
+			</isEqual>
+			, lvl_nm = #p_lvl_nm#
+			, bon_adm = 'N'
+			<isNotEmpty property="p_pwd">
+				, pwd = fn_base64sha256encryptor(#p_pwd#)
+			</isNotEmpty>
+			, handicap_yn = #p_handicap_yn#
+			, dormant_yn = #p_dormant_yn#
+		WHERE userid = #p_userid#
+	</update>
+	
+<!--	회원 비밀번호 오류횟수 업데이트	-->
+	<update id="memberSearchDAO.updateLoginFail">
+		UPDATE tz_member SET       		
+			lgfail = 0
+		WHERE   userid      	= #p_userid#
+	</update>
+	
+<!--	회원 탈퇴상태 변경 -->
+	<update id="memberSearchDAO.updateMemberOutAndIn">
+		UPDATE  tz_member SET 
+		<isEqual property="p_isretire" compareValue="Y">
+				isretire   		= 	'Y'
+			,   retire_date   	= 	to_char(sysdatetime, 'YYYYMMDDHH24MISS')
+		</isEqual>
+		<isNotEqual property="p_isretire" compareValue="Y">
+				isretire   		= 	'N'
+			,   retire_date   	= 	''
+		</isNotEqual>
+		WHERE   userid    	= 	#p_userid#
+	</update>
+	
+<!--	회원정보 변경시 뒤따르는 강사도 같이 정보업데이트 한다.(해당 아이의 해당하는 회원이 강사일때)-->
+	<update id="memberSearchDAO.updateMemberInTutorInfo">
+		UPDATE  tz_tutor SET 
+			 handphone   	= 	#p_handphone#       
+		  ,   post1       	= 	#p_post1#     
+		  ,   post2       	= 	#p_post2#        
+		  ,   add1        	=  	#p_addr#          
+		  ,   email       	= 	#p_email#          
+		WHERE   userid    	= 	#p_userid#
+	</update>
+	
+	<insert id="memberSearchDAO.insertMemberSearchLog">
+	Insert into tz_membersearchlog (
+	seq, logdate, userid, name, gadmin,target_userid, target_name, ip ,TARGET_URL , LOG_ACTION
+	)
+	values(
+	(select nvl(max(seq), 0) + 1 from tz_membersearchlog)
+	, to_char(sysdatetime, 'YYYYMMDDHH24MISS') 
+	, #userid# 
+	, #name#
+	, #gadmin#
+	, #p_userid#
+	, (select name from tz_member where userid = #p_userid#)
+	, #buserip#
+	, #targetUrl#
+	, #logAction#
+	)
+	</insert>
+	
+	
+<!--	개인별 수강신청 리스트-->
+	<select id="memberSearchDAO.selectProposeList" parameterClass="map" resultClass="egovMap">
+	<![CDATA[
+		select a.grcode, a.gyear, a.grseq, a.course, a.cyear, a.courseseq, a.coursenm, a.subj 
+			  , a.subjnm, a.[year], a.subjseq, a.subjseqgr, a.isonoff, a.edustart, a.eduend, b.appdate, b.chkfirst, b.chkfinal 
+			  , (select grcodenm from tz_grcode where grcode=a.grcode) as grcodenm, a.isonoff   
+			  , (select grseqnm from tz_grseq where grcode = a.grcode and gyear=a.gyear and grseq=a.grseq) as grseqnm 
+			  , isproposeapproval 
+		 from   vz_scsubjseq a, tz_propose b 
+		 where  b.userid =  #p_userid#
+		 and    a.subj = b.subj 
+		 and    a.[year] = b.[year] 
+		 and    a.subjseq = b.subjseq 
+		 and    ((b.chkfinal = 'Y' and (to_char(sysdatetime,'YYYYMMDDHH24') < a.edustart))  
+				or (b.chkfinal='N' and (to_char(sysdatetime,'YYYYMMDDHH24') < to_char(ADDDATE(TO_DATETIME(a.edustart, 'YYYYMMDDHH24'), INTERVAL 10 DAY),'YYYYMMDDHH24')))    
+				or b.chkfinal='B') 
+		 and    nvl(b.cancelkind,' ') not in ('P','F') 
+		 order by A.course,A.cyear,A.courseseq,A.subj,A.[year],A.subjseq	
+	]]>
+	</select>
+	
+<!--	개인별 수강과목-->
+	<select id="memberSearchDAO.selectEducationList" parameterClass="map" resultClass="egovMap">
+	<![CDATA[
+		select a.grcode, a.gyear, a.grseq, a.course, a.cyear, a.courseseq, a.coursenm 
+			  , a.subj,a.[year], a.subjnm, a.subjseq 
+			  , a.isonoff, a.edustart, a.eduend 
+			  , b.avtstep, b.score, a.point 
+			  , b.study_count, b.study_time 
+	
+		  , nvl(ROUND (( 
+				  SELECT COUNT (0) completed_educheck_cnt 
+				  FROM tz_progress 
+				  WHERE subj =  a.subj 
+			AND [year] = a.[year] 
+			AND subjseq = a.subjseq  
+			AND userid = b.userid  
+		)	/ 	(Case When 
+					( 
+					SELECT COUNT (0) total_cnt FROM TZ_SUBJLESSON  
+					WHERE subj = a.subj and lesson != '00' and lesson != '99' 
+					) > 0 Then  ( 
+					SELECT COUNT (0) total_cnt FROM TZ_SUBJLESSON  
+					WHERE subj = a.subj and lesson != '00' and lesson != '99' 
+					) Else 1 End 
+				) * 100, 2), 0) as tstep  
+	
+				/* 가중치적용 */
+			      , b.avmtest mtest, b.avftest ftest 
+			      , b.avreport report 
+			      , b.avetc1 etc1, b.avetc2 etc2 
+			      , b.avact act 
+	
+			  , (select grcodenm from tz_grcode where grcode=A.grcode) as grcodenm 
+			  , a.isonoff 
+			  , (select grseqnm from tz_grseq where grcode = a.grcode and gyear=a.gyear and grseq=a.grseq) as grseqnm 
+			  , b.isgraduated , a.isoutsourcing
+		 from   vz_scsubjseq a, tz_student b, tz_stold c 
+		 where  b.userid =  #p_userid#
+		 and    a.subj=b.subj 
+		 and    a.[year]=b.[year] 
+		 and    a.subjseq=b.subjseq 
+		 and    b.subj = c.subj(+) 
+		 and    b.[year] = c.[year](+) 
+		 and    b.subjseq = c.subjseq(+) 
+		 and    b.userid = c.userid(+) 
+		 and    a.edustart    <= to_char(sysdatetime,'yyyymmddhh24') 
+		 and    c.isgraduated is null 
+		/* order  by substr(a.edustart, 1, 6) desc,  a.subjnm */
+		 order by course, cyear, courseseq, substr(a.edustart, 1, 6) DESC,  A.subjnm	
+	]]>
+	</select>
+
+
+<!--	개인별 수료과정-->
+	<select id="memberSearchDAO.selectGraduationList" parameterClass="map" resultClass="egovMap">
+	<![CDATA[
+	select *
+	from   (
+		select a.grcode , a.gyear , a.grseq , a.course , a.cyear, a.courseseq , a.coursenm
+			 , a.subj , a.[year] , a.subjseq, a.subjseqgr, a.subjnm, a.isonoff
+			 , a.edustart , a.eduend
+			 , b.tstep , b.avtstep , b.score , a.point, b.act
+			 , b.study_count, b.study_time
+			 /*  가중치적용 */
+			 , b.avmtest mtest, b.avftest ftest
+				 , b.avetc1 etc1, b.avetc2 etc2
+		 , (select grcodenm from tz_grcode where grcode=a.grcode) as grcodenm
+			 , (select grseqnm from tz_grseq where grcode = a.grcode and gyear=a.gyear and grseq=a.grseq) as grseqnm
+			 , b.credit ,  b.creditexam
+			 , decode(b.isgraduated, 'Y', '수료', '미수료') graduatxt, report , a.isoutsourcing
+		from   vz_scsubjseq a, tz_stold b
+		where  b.userid = #p_userid#
+		and    a.subj = b.subj
+		and    a.[year] = b.[year]
+		and    a.subjseq = b.subjseq
+	   ) a
+	order  by substr(a.edustart, 1, 6) desc,  a.subjnm	
+	]]>
+	</select>
+
+
+<!--	개인별 상담리스트-->
+	<select id="memberSearchDAO.selectCounselList" parameterClass="map" resultClass="egovMap">
+		select a.[no], a.userid, a.cuserid, b.name, a.title, a.mcode, c.codenm mcodenm, a.etime,  
+			a.ftext, a.ctext, a.status, a.sdate, a.ldate, a.subj, a.[year], a.subjseq, a.gubun 
+		from TZ_SANGDAM a, TZ_MEMBER b, TZ_CODE c         
+		where a.cuserid = b.userid                         
+		and a.mcode   = c.code                           
+		and c.gubun   = '0047'
+		and a.userid  = #p_userid#
+		<isNotEmpty property="search_mcode">
+			and a.mcode = #search_mcode#
+		</isNotEmpty>
+		order by [NO] desc
+	</select>
+
+	<!--	개인별 상담 보기-->
+	<select id="memberSearchDAO.selectCounselView" parameterClass="map" resultClass="egovMap">
+	 	select [NO], userid, cuserid, title, ftext, ctext, subj, status, ldate, 
+               etime, mcode, sdate, subj, [year], subjseq, gubun, remote        
+               from TZ_SANGDAM                                                     
+              where userid  = #p_userid#
+              <isNotEmpty property="p_no">
+              	and [NO]      = #p_no#
+              </isNotEmpty>
+              <isEmpty property="p_no">
+              	and [NO]      = -1
+              </isEmpty>
+              
+	</select>
+
+
+<!--	상담등록-->
+	<insert id="memberSearchDAO.insertCounsel">
+		<selectKey keyProperty="p_no" resultClass="int">
+			select nvl(max([NO]), 0) + 1 from TZ_SANGDAM 
+		</selectKey>
+		insert into TZ_SANGDAM([NO], userid, cuserid, title, ftext, ctext, status, mcode, etime, sdate, ldate ,subj, [year], subjseq, gubun, remote) 
+		values (
+			#p_no#, 
+			#p_userid#, 
+			#userid#, 
+			#p_title#, 
+			#p_ftext#, 
+			#p_ctext#, 
+			#p_status#, 
+			#p_mcode#, 
+			#p_etime#, 
+			#p_sdate#, 
+			to_char(sysdatetime, 'YYYYMMDDHH24MISS'), 
+			#p_subj#, 
+			#v_year#, 
+			#v_subjseq#, 
+			#p_gubun#, 
+			#p_remote#
+		)  
+	</insert>
+
+<!--	상담업데이트 -->
+	<update id="memberSearchDAO.updateCounsel">
+		 update TZ_SANGDAM set 
+		 title = #p_title#, 
+		 ftext = #p_ftext# , 
+		 ctext = #p_ctext# , 
+		 status = #p_status# , 
+		 mcode = #p_mcode#, 
+		 etime = #p_etime#, 
+		 sdate = #p_sdate#,  
+	     ldate = to_char(sysdatetime, 'YYYYMMDDHH24MISS'), 
+	     subj = #v_subj#, 
+	     [year] = #v_year#, 
+	     subjseq = #v_subjseq#, 
+	     gubun = #p_gubun#, 
+	     remote = #p_remote#   
+	     where userid = #p_userid# 
+	     and [NO] = #p_no#
+	</update>
+
+<!--상담삭제-->
+	<delete id="memberSearchDAO.deleteCounsel">
+		delete from TZ_SANGDAM            
+        where userid = #p_userid# 
+        and [NO] = #p_no#
+	</delete>
+	
+<!--	회원가입 회원등록-->
+	<insert id="memberSearchDAO.insertMemberUser">
+		INSERT INTO TZ_MEMBER  							
+		(	  USERID								
+			, PWD									
+			, NAME									
+			, HOMETEL								
+			, EMAIL									
+			, HANDPHONE								
+			, LGCNT   								
+			, LGFAIL   								
+			, LDATE   								
+			, ZIP_CD 								
+			, ADDRESS								
+			, ISMAILLING							
+			, POST_NM								
+			, INDATE								
+			, LVL_NM								
+			, JOB_NM								
+			, ISSMS							    	
+			, COMP							    	
+			, POSITION_NM							
+			, ISRETIRE	
+			, workplaceinfo						    
+			, JOB_CD							    
+			, USER_PATH	
+			, HRDC								    
+			, HANDPHONE_NO							
+			, ZIP_CD1							    
+			, ADDRESS1							    
+			, DEPT_CD							    
+			, AGENCY_CD							    
+			, EMP_GUBUN					    	    
+			, virtualNo					    	    
+			, authInfo
+			, pwd_chdate
+			, agreement1
+			, agreement2
+			, agreement3
+			, agreement4
+			, nice_personal_num
+			, sex
+			, birth_date
+			, subject
+			, division_nm
+			, work_place_nm
+			, career
+			, sciphertime
+			, req_seq
+			, res_seq
+			, auth_type
+			, di
+			, ci
+			, nationainfo
+			, certgubun
+			, epki_dn
+			, chkvalue
+		)											
+		VALUES 										
+		(	 #p_userid#						
+			,fn_base64sha256encryptor(#p_pwd#)		    			  										
+			,#p_name# 										
+			,#p_hometel# 										
+			,#p_email1# || '@' || #p_email2#									
+			,#p_handphone# 										
+			,'0' 									
+			,'0'									
+			,to_char(sysdatetime, 'YYYYMMDDHH24MISS')	
+			
+			
+			,#p_post1# <isNotEmpty property="p_post2">|| '-' || #p_post2#</isNotEmpty>									
+			,#p_address1# || ' ' || #p_address2#									
+			
+			<isNotEmpty property="p_ismailling">
+			,'Y' 	
+			</isNotEmpty>
+			<isEmpty property="p_ismailling">
+			,'N'	
+			</isEmpty>
+												
+			,#p_post_nm# 										
+			,to_char(sysdatetime, 'YYYYMMDDHH24MISS')	
+			,#p_lvl_nm# 										
+			,#p_job_nm# 										
+			<isNotEmpty property="p_issms">
+			,'Y' 	
+			</isNotEmpty>
+			<isEmpty property="p_issms">
+			,'N'	
+			</isEmpty> 		
+			, '1001'								
+			,#p_position_nm# 										
+			,'N'
+			, #p_wp_gubun#		
+			<isEmpty property="p_emp_gubun">
+			,#p_job_cd# 
+			,#p_user_path# 	
+				,#p_hrdc1#
+				,#p_handphone_no1#		
+				,#p_post1# <isNotEmpty property="p_post2">|| '-' || #p_post2#</isNotEmpty> 										
+				,#p_address1# || ' ' || #p_address2#	
+					
+			</isEmpty>
+			<isNotEmpty property="p_emp_gubun">
+				<isEqual property="p_emp_gubun" compareValue="T">
+				,#p_job_cd# 
+				,#p_user_path# 	
+					,#p_hrdc1#
+					,#p_handphone_no1#		
+					,#p_mpost1# <isNotEmpty property="p_mpost2">|| '-' || #p_mpost2#</isNotEmpty> 										
+					,#p_maddress1# || ' ' || #p_maddress2#	
+				</isEqual>
+				
+				<isEqual property="p_emp_gubun" compareValue="E">
+				,#p_job_cd2# 
+				,#p_user_path2# 	
+					,#p_hrdc3# 
+					,#p_handphone_no3#		
+					,#p_mpost21# <isNotEmpty property="p_mpost22">|| '-' || #p_mpost22#</isNotEmpty> 										
+					,#p_maddress21# || ' ' || #p_maddress22#	
+				</isEqual>	
+				
+				<isEqual property="p_emp_gubun" compareValue="R">
+				,#p_job_cd# 
+				,#p_user_path4# 	
+					,#p_hrdc2# 
+					,#p_handphone_no2#		
+					,#p_spost1# <isNotEmpty property="p_spost2">|| '-' || #p_spost2#</isNotEmpty> 										
+					,#p_saddress1# || ' ' || #p_saddress2#	
+				</isEqual>
+				
+				<isEqual property="p_emp_gubun" compareValue="P">
+				,#p_job_cd# 
+				,#p_user_path# 	
+					,#p_hrdc2# 
+					,#p_handphone_no2#		
+					,#p_spost1# <isNotEmpty property="p_spost2">|| '-' || #p_spost2#</isNotEmpty>									
+					,#p_saddress1# || ' ' || #p_saddress2#	
+				</isEqual>
+				<isEqual property="p_emp_gubun" compareValue="O">
+				,#p_job_cd# 
+				,#p_user_path# 	
+					,#p_hrdc2# 
+					,#p_handphone_no2#		
+					,#p_spost1# <isNotEmpty property="p_spost2">|| '-' || #p_spost2#</isNotEmpty>									
+					,#p_saddress1# || ' ' || #p_saddress2#	
+				</isEqual>
+
+				<isEqual property="p_emp_gubun" compareValue="A">
+				,#p_job_cd1# 
+				,#p_user_path# 	
+					,#p_hrdc1#
+					,#p_handphone_no1#		
+					,#p_mpost1# <isNotEmpty property="p_mpost2">|| '-' || #p_mpost2#</isNotEmpty> 										
+					,#p_maddress1# || ' ' || #p_maddress2#		
+				</isEqual>
+					
+			</isNotEmpty>									
+											
+			,#p_dept_cd# 										
+			,#p_agency_cd# 										
+													
+			,#p_emp_gubun# 										
+			,#p_virtualNo# 										
+			,#p_authInfo#
+			, sysdatetime
+			, 'Y'
+			, 'Y'
+			, 'Y'
+			, 'Y'	
+			, #p_nicePersonalNum#				
+			, #p_sex#				
+			, #p_birthDate#	
+			, #p_subject#			
+			, #p_division_nm#			
+			, #p_work_place_nm#	
+			, #p_career#	
+			, #sCipherTime#
+			, #reqSeq#
+			, #resSeq#
+			, #authType#
+			, #di#
+			, #ci#
+			, #nationainfo#
+			, #certgubun#	
+			, #p_dn#
+			, #p_overlap#
+		)
+	</insert>
+	
+	
+	
+<!--	아이디/비밀번호 찾기-->
+	<select id="memberSearchDAO.selectIdPwdSearch" parameterClass="map" resultClass="egovMap">
+		select 
+		decode(trim(handphone), '', 1, 0) as gubn    
+		, userid
+		, handphone
+		, birth_date as pwd
+		from tz_member 
+		
+		<isEqual property="p_mode" compareValue="pwdcheck">
+			where name = #p_name_1#  
+			and email = #p_email_1#
+			and userid = #p_userid_1#
+			and replace(replace(handphone,'-', ''), ' ', '') = replace(replace(#p_hp#,'-', ''), ' ', '')
+		</isEqual>
+		
+		<isNotEqual property="p_mode" compareValue="pwdcheck">
+			where name = #p_name#  
+			and email = #p_email#
+		</isNotEqual>
+		
+	</select>
+	
+	
+<!--	비밀번호 초기화-->
+	<update id="memberSearchDAO.updatePwdReset">
+		update tz_member set
+		pwd =  fn_base64sha256encryptor(birth_date)
+		where userid = #p_userid_1#
+	</update>
+	
+	
+	
+<!--	회원정보 수정 - 사용자-->
+<!--	회원정보 수정 - 사용자-->
+	<update id="memberSearchDAO.updateMemberUser"> 
+		update tz_member set
+		<!-- 	 pwd = fn_crypt('1', #p_pwd#, 'knise')
+			,pwd_chdate = sysdatetime	 -->							
+			<!--,birth_date = #p_birth_date# 	-->									
+			<!-- name = #p_name# --> 										
+			hometel = #p_hometel# 										
+			,email = #p_email1# || '@' || #p_email2#									
+			,handphone = #p_handphone# 										
+			
+			,zip_cd = #p_post1# <isNotEmpty property="p_post2">|| '-' || #p_post2#</isNotEmpty> 										
+			,address = #p_address1#							
+			
+			<isNotEmpty property="p_ismailling">
+			,ismailling = 'Y' 	
+			</isNotEmpty>
+			<isEmpty property="p_ismailling">
+			,ismailling = 'N'	
+			</isEmpty>
+												
+			,post_nm = #p_post_nm# 										
+			,lvl_nm = #p_lvl_nm# 										
+			,job_nm = #p_job_nm# 										
+			<isNotEmpty property="p_issms">
+			,issms = 'Y' 	
+			</isNotEmpty>
+			<isEmpty property="p_issms">
+			,issms = 'N'	
+			</isEmpty> 		
+			,comp = '1001'								
+			,position_nm = #p_position_nm# 										
+			,isretire = 'N'					
+				
+			<isEmpty property="p_emp_gubun">
+				,zip_cd1 = #p_post1# <isNotEmpty property="p_post2">|| '-' || #p_post2#</isNotEmpty> 								
+				,address1 = #p_address1#
+				,hrdc = #p_hrdc1# 
+				,handphone_no = #p_handphone_no1# 						
+			</isEmpty>
+			<isNotEmpty property="p_emp_gubun">
+				<isEqual property="p_emp_gubun" compareValue="T">
+				,job_cd = #p_job_cd# 
+				,user_path = #p_user_path# 	
+				,zip_cd1 = #p_mpost1# <isNotEmpty property="p_mpost2">|| '-' || #p_mpost2#</isNotEmpty>								
+				,address1 = #p_maddress1#	
+				,hrdc = #p_hrdc1# 	
+				,handphone_no = #p_handphone_no1# 
+				,subject = #p_subject#
+				,nice_personal_num = UPPER(#p_nicePersonalNum#)
+				,dept_cd = #p_dept_cd# 										
+				,agency_cd = #p_agency_cd# 
+				,workplaceinfo = #p_wp_gubun#
+				</isEqual>
+				<isEqual property="p_emp_gubun" compareValue="E">
+				,job_cd = #p_job_cd2# 
+				,user_path = #p_user_path2# 	
+				,zip_cd1 = #p_mpost21# <isNotEmpty property="p_mpost22">|| '-' || #p_mpost22#</isNotEmpty>									
+				,address1 = #p_maddress21#
+				,hrdc = #p_hrdc3# 	
+				,handphone_no = #p_handphone_no3# 	
+				,nice_personal_num = ''
+				,dept_cd = #p_dept_cd# 										
+				,agency_cd = #p_agency_cd# 
+				,workplaceinfo = ''
+				</isEqual>	
+				
+				<isEqual property="p_emp_gubun" compareValue="P">
+					,zip_cd1 = #p_spost1# <isNotEmpty property="p_spost2">|| '-' || #p_spost2#</isNotEmpty>									
+					,address1 = #p_saddress1#	
+					,hrdc = #p_hrdc2# 	
+					,handphone_no = #p_handphone_no2# 	
+					,division_nm = #p_division_nm# 	
+					,work_place_nm = #p_work_place_nm# 
+					,nice_personal_num = ''	
+					,dept_cd = ''										
+					,agency_cd = ''
+					,workplaceinfo = ''
+				</isEqual>
+				<isEqual property="p_emp_gubun" compareValue="R">					 
+					,zip_cd1 = #p_spost1# <isNotEmpty property="p_spost2">|| '-' || #p_spost2#</isNotEmpty>										
+					,address1 = #p_saddress1#	
+					,hrdc = #p_hrdc2# 	
+					,handphone_no = #p_handphone_no2# 	
+					,division_nm = #p_division_nm# 	
+					,work_place_nm = #p_work_place_nm# 
+					,nice_personal_num = UPPER(#p_nicePersonalNum#)	
+					
+					,user_path = #p_user_path4#
+					,dept_cd = #p_dept_cd#										
+					,agency_cd = #p_agency_cd#
+					,workplaceinfo = ''
+				</isEqual>
+				
+				<isEqual property="p_emp_gubun" compareValue="O">
+					,zip_cd1 = #p_spost1# <isNotEmpty property="p_spost2">|| '-' || #p_spost2#</isNotEmpty>									
+					,address1 = #p_saddress1#	
+					,hrdc = #p_hrdc2# 	
+					,nice_personal_num = UPPER(#p_nicePersonalNum#)
+					,handphone_no = #p_handphone_no2# 	
+					,division_nm = #p_division_nm# 	
+					,work_place_nm = #p_work_place_nm#						
+					,dept_cd = ''										
+					,agency_cd = ''
+					,workplaceinfo = ''
+				</isEqual>
+								
+				<isEqual property="p_emp_gubun" compareValue="A">
+				/* 
+				,job_cd = ##p_job_cd2## 
+				,user_path = ##p_user_path2##	
+				,zip_cd1 = ##p_mpost21## <isNotEmpty property="p_mpost22">|| '-' || ##p_mpost22##</isNotEmpty>									
+				,address1 = ##p_maddress21##
+				,hrdc = ##p_hrdc3## 	
+				,handphone_no = ##p_handphone_no3## 	
+				,nice_personal_num = ''
+				,dept_cd = ##p_dept_cd## 										
+				,agency_cd = ##p_agency_cd## 
+				*/
+				
+				,job_cd = #p_job_cd3# 
+				,user_path = #p_user_path# 	
+				,zip_cd1 = #p_mpost1# <isNotEmpty property="p_mpost2">|| '-' || #p_mpost2#</isNotEmpty>								
+				,address1 = #p_maddress1#	
+				,hrdc = #p_hrdc1# 	
+				,handphone_no = #p_handphone_no1# 
+				,subject = #p_subject#
+				,nice_personal_num = ''
+				,dept_cd = #p_dept_cd# 										
+				,agency_cd = #p_agency_cd# 
+				,workplaceinfo = ''
+				</isEqual>
+
+			</isNotEmpty>														
+			,emp_gubun = #p_emp_gubun# 			
+			,career = #p_career#
+			,chkvalue = #chkvalue#							
+		where userid = #userid#
+	</update>
+	
+	<select id="memberSearchDAO.selectSearchSchool" parameterClass="map" resultClass="egovMap">
+		 select full_org_nm, 
+             org_nm, 
+             (select org_nm from tz_school_org where org_cd = a.snd_org_cd) as snd_org_nm,
+             (select org_nm from tz_school_org where org_cd = a.fst_org_cd) as fst_org_nm,
+             tel_no, org_cd, snd_org_cd, fst_org_cd                    
+             from TZ_SCHOOL_ORG a
+              where USE_YN = '0' AND full_org_nm like '%' || #p_school_nm# || '%'
+		
+	</select>
+	
+	<select id="memberSearchDAO.selectSubjectList" parameterClass="map" resultClass="egovMap">
+		select code, codenm, url, levels
+		  from tz_code
+		 where gubun = '0115'
+		 and use_yn = 'Y'
+		 order by orders, code
+		
+	</select>
+	<select id="memberSearchDAO.selectAreaList" parameterClass="map" resultClass="egovMap">
+		select code, codenm, url, levels
+		  from tz_code
+		 where gubun = '0119'
+		 and use_yn = 'Y'
+		 order by orders, code
+		
+	</select>
+	<select id="memberSearchDAO.selectJicWiList" parameterClass="map" resultClass="egovMap">
+		select code, codenm, url, levels
+		  from tz_code
+		 where gubun = '0120'
+		 and use_yn = 'Y'
+		 order by orders, code
+		
+	</select>
+	<!--	아이디 통합을 위한 아이디 내역 조회-->
+	<select id="memberSearchDAO.idIntergrationIdSearch" parameterClass="map" resultClass="egovMap">
+	<![CDATA[
+		SELECT rownum rn, 
+				userid, 
+		        name, 
+		        handphone,
+		        hometel,
+		        email,
+		        birth_date ,
+		        address,
+		        nice_personal_num,
+		        isretire
+		        
+		FROM tz_member
+		WHERE 	 userid    != #userid#                      
+			and  name 		= #name#
+		    AND handphone 	= #handphone#
+		    AND email 		= #email_id#
+		    AND birth_date 	= #birthDate#    
+    ]]>
+		<isEqual property="search_type" compareValue="id">
+			and userid like '%'||#search_text#||'%' 
+		</isEqual>
+		<isEqual property="search_type" compareValue="name">
+			and name like '%'||#search_text#||'%' 
+		</isEqual>
+		  
+			order BY userid	
+		
+	</select>
+	
+	<parameterMap id="idParamMap" class="java.util.Map">
+    <parameter property="p_userId" 			javaType="java.lang.String" 	jdbcType="VARCHAR" 	mode="IN" />
+    <parameter property="t_userId"  			javaType="java.lang.String" 	jdbcType="VARCHAR"	mode="IN" />
+    <parameter property="result" 				javaType="java.lang.String" 	jdbcType="VARCHAR" 	mode="OUT" />
+  </parameterMap>
+	 
+	 <procedure id="memberSearchDAO.idIntergrationIdAction" parameterClass="map" >	  
+	   <![CDATA[
+	   call USERID_MERGE(#p_userId#,#t_userId#)
+	   ]]>
+	</procedure>
+	
+	<update id="memberSearchDAO.updateMemberAddress">
+		update tz_member set
+		<isEqual property="p_hrdc2" compareValue="H">
+		zip_cd = #p_post1# <isNotEmpty property="p_post2">|| '-' || #p_post2#</isNotEmpty>,
+		address = #p_address1#
+		</isEqual>
+		<isEqual property="p_hrdc2" compareValue="C">
+		zip_cd1 = #p_post1# <isNotEmpty property="p_post2">|| '-' || #p_post2#</isNotEmpty>,
+		address1 = #p_address1#
+		</isEqual>
+		where userid = #userid#
+	</update>
+	
+	
+	<select id="memberSearchDAO.selectSearchEducationOfficePop" parameterClass="map" resultClass="egovMap">
+	select 	fst_org_cd
+			      ,fst_org_nm
+			      ,snd_org_cd 
+			      ,snd_org_nm
+	from (			      
+		 select fst_org_cd
+			      ,fst_org_nm
+			      ,snd_org_cd 
+			      ,snd_org_nm
+			from
+			    (      
+			    select a.org_cd as fst_org_cd
+			          ,a.org_nm as fst_org_nm
+			          ,a.org_cd as snd_org_cd 
+			          ,a.org_nm as snd_org_nm
+				from tz_school_org a
+				where org_cd = fst_org_cd
+				and org_nm like '%교육청'
+				union all
+			    select a.org_cd as fst_org_cd
+			          ,a.org_nm as fst_org_nm
+			          ,b.org_cd as snd_org_cd 
+			          , b.org_nm as snd_org_nm
+			    from (select *
+			            from tz_school_org a
+			            where use_yn = '0' 
+			                AND org_nm like '%교육청') a 
+			         , tz_school_org b
+			    where a.use_yn = '0' 
+			        and a.org_cd = b.fst_org_cd
+			        and b.org_nm like '%지원청'
+			    )			    
+			    union all
+            	select a.org_cd as fst_org_cd
+                      ,a.org_nm as fst_org_nm
+                      ,b.org_cd as snd_org_cd 
+                      , b.org_nm as snd_org_nm
+                from tz_school_org a
+                   , tz_school_org b
+                where a.org_cd = b.fst_org_cd
+                 and b.org_nm = '교육부'
+                  
+     )          
+	 where fst_org_nm like '%' || #p_school_nm# || '%' 
+	 order by fst_org_cd, snd_org_cd, fst_org_nm, snd_org_nm 
+	</select>
+	
+	
+	<select id="memberSearchDAO.selectMemberSearchList" parameterClass="map" resultClass="egovMap">
+		<![CDATA[
+		select rn
+	         , comp
+		     , pwd
+		     , userid
+		     , to_char(add_months(sysdatetime, 3)) as rdate
+		     , name
+		     , hometel
+		     , handphone
+		     , lglast
+		     , birth_date
+		     --, get_compnm(comp) as compnm
+		     , (select compnm from tz_compclass a where a.comp=comp) as compnm
+		     , jikwinm
+		     , position_nm
+		     , indate
+		     , lvl_nm
+		     , isretire
+		     , email
+		     , gb
+		     , snm
+		     , rv
+		     , cert
+		     , nice_personal_num
+   		     --, get_compnm(comp) as companynm 
+   		     , (select compnm from tz_compclass a where a.comp=comp) as companynm
+   		     , emp_gubun                 	                                            
+		     , course																 
+		     , cyear																	
+		     , courseseq																
+		     , coursenm                                                              
+		     , subj                                                                  		    		
+		     , [year]                                                                  
+		     , subjnm                                                                
+		     , subjseq                                                               
+		     , subjseqgr                                                             
+		     , edustart                                                              
+		     , eduend                                                                
+		     , isclosed                                                              
+		     , isgoyong                                                              
+		     , biyong                                                                --수강료
+		     , goyongpricemajor                                                      --대기업
+		     , goyongpriceminor                                                      --우선지원
+		     , goyongpricestand		      
+		     --, get_codenm('0004',isonoff) isonoff
+		     , (select  codenm
+			   into  v_codenm
+			   from  tz_code
+			  where gubun = '0004'
+			     and  code  = isonoff) AS isonoff             
+		     , appdate 
+		     , approvaldate                                                              
+		     --, get_cpnm((select cp from tz_subj where subj=scsubj)) cpnm
+		     ,  (select compnm from tz_compclass a where a.comp=(select cp from tz_subj where subj=scsubj)) as companynm                 
+		     , chkfirst                                                              
+		     , chkfinal                                                              
+		     , grdvalue
+		     , grdvaluenm                     
+		     , notgraducd                                                            
+		     , rejectpossible 
+		     , eduterm
+		     , HRDC 
+		     , ZIP_CD 
+		     , ADDRESS 
+		     , ZIP_CD1 
+		     , ADDRESS1 
+		     , USER_PATH 
+		     , ISMAILLING 
+		     , ISSMS		 
+		     , examnum 
+		     , order_id
+		     , chkfinalnm
+	         , pay
+             , paycd
+           from(     
+	       select  rownum as rn
+	         , b.comp
+		     --, fn_crypt('2', b.pwd, 'knise') as pwd
+		     , b.pwd
+		     , b.userid
+		     , b.name
+		     , b.hometel
+		     , b.handphone
+		     , to_char(to_date(substr(b.lglast, 1, 8), 'yyyyMMdd'), 'yyyy-MM-dd') as lglast
+		     , b.birth_date
+		     --, get_compnm(b.comp) as compnm
+		     , b.post_nm as jikwinm
+		     , b.position_nm
+		     , to_char(to_date(substr(b.indate, 1, 8), 'yyyyMMdd'), 'yyyy-MM-dd') as indate
+		     , b.lvl_nm
+		     , b.isretire
+		     , b.email
+		     , decode( b.emp_gubun, 'T', '교원', 'E', '보조인력', 'R', '교육 전문직', 'P', '일반회원(학부모 등)', 'O', '공무원', 'A', '방과후교사 등(돌봄교사, 문예체 전문강사)') as gb
+		     , decode( b.emp_gubun, 'T', user_path, 'E', user_path, 'R', '교육 전문직', '일반회원(학부모 등)') as snm
+		     , decode(b.hrdc, 'C', '직장(학교)', '자택') as rv
+		     , b.cert
+		     , b.nice_personal_num
+   		     --, get_compnm(b.comp) as companynm 
+   		     , b.emp_gubun                 	                                            
+		     , c.course																 
+		     , c.cyear																	
+		     , c.courseseq																
+		     , c.coursenm                                                              
+		     , c.subj                                                                  		    		
+		     , c.[year]                                                                  
+		     , c.subjnm                                                                
+		     , c.subjseq                                                               
+		     , c.subjseqgr                                                             
+		     , c.edustart                                                              
+		     , c.eduend                                                                
+		     , c.isclosed                                                              
+		     , c.isgoyong                                                              
+		     , c.biyong                                                                --수강료
+		     , c.goyongpricemajor                                                      --대기업
+		     , c.goyongpriceminor                                                      --우선지원
+		     , c.goyongpricestand                                                      
+		     --, get_codenm('0004',c.isonoff) isonoff
+		     , c.isonoff          
+		     , a.appdate 
+		     , decode(a.chkfinal,'Y',a.ldate,'') as approvaldate                                                              
+		     --, get_cpnm((select cp from tz_subj where subj=c.scsubj)) cpnm
+		     , c.scsubj             
+		     , a.chkfirst                                                              
+		     , a.chkfinal                                                              
+		     , nvl(d.isgraduated,'M') as grdvalue
+		     , Decode(nvl(d.isgraduated,'M'), 'Y', '수료','N','미수료','미처리') grdvaluenm                     
+		     , d.notgraducd                                                            
+		     , decode(d.isgraduated, null, (case when to_char(sysdatetime,'yyyymmddhhmm') >= c.edustart then 'Y' else 'N' end), 'Y') as rejectpossible 
+		     , case                                                                     
+		            when c.edustart <= to_char(sysdatetime,'yyyymmddhh') and c.eduend  > to_char(sysdatetime,'yyyymmddhh') then 
+		                 '4' --교육기간                                                
+		            when c.eduend <= to_char(sysdatetime,'yyyymmddhh') then                 
+		                 '5' --교육종료후                                                
+		            when to_char(sysdatetime,'yyyymmddhh') < c.propstart then                 
+		                 '1' --수강신청전                                                
+		            when c.propstart <= to_char(sysdatetime,'yyyymmddhh') and c.propend  > to_char(sysdatetime,'yyyymmddhh') then 
+		                 '2' --수강신청기간                                            
+		            when c.propend <= to_char(sysdatetime,'yyyymmddhh') and c.edustart  > to_char(sysdatetime,'yyyymmddhh') then 
+		                 '3' --교육대기기간                                            
+		            when c.propstart is null and c.propend is null then                 
+		                 '0'                                                             
+		       end as eduterm                                                            
+		
+		-- 추가요청 교재 배송을 위한 정보
+		      , HRDC 
+		      , ZIP_CD 
+		      , ADDRESS 
+		      , ZIP_CD1 
+		      , ADDRESS1 
+		      , USER_PATH 
+		      , ISMAILLING 
+		      , ISSMS 
+		--        , ( select examnum from tz_student ts where ts.userid=b.userid and ts.subj = a.subj) examnum 
+		      , ts.examnum 
+		      , decode(a.order_id, '', '0', a.order_id) as order_id
+		      , Decode(a.chkfinal , 'B', '미처리', 'Y', '승인', 'N', '반려') as chkfinalnm
+	         , (
+                 select decode(trim(type), 'OB','교육청일괄납부','PB','무통장','RE','재수강','SC0010','신용카드','SC0030','계좌이체','SC0040','가상계좌', 'FE', '무료',type) 
+                 from pa_payment pa where pa.order_id = a.order_id and pa.useyn='Y' and pa.userid=a.userid
+                 ) as pay 
+             
+               , (select type from pa_payment pa where pa.order_id = a.order_id and pa.useyn='Y' and pa.userid=a.userid) as paycd
+                
+		from   tz_propose   a                                                          
+		     , tz_member    b                                                          
+		     , vz_scsubjseq c                                                          
+		     , tz_stold d                                                              
+		     , tz_student ts                                                              
+		where  a.userid  = b.userid                                                    
+		and    a.subj    = c.subj                                                      
+		and    a.[year]    = c.[year]                                                      
+		and    a.subjseq = c.subjseq                                                   
+		and    a.subj    = d.subj(+)                                                   
+		and    a.[year]    = d.[year](+)                                                   
+		and    a.subjseq = d.subjseq(+)                                                
+		and    a.userid  = d.userid(+)                                                 
+		and    a.userid =ts.userid(+)                                                 
+		and    a.subj= ts.subj(+)                                                  
+		and    a.subjseq=ts.subjseq(+)                                                   
+		and    a.[year]=ts.[year](+) 
+		
+		
+		and    c.grcode = 'N000001'
+		and    b.comp ='1001'		
+	 ]]>
+	 
+	 
+	 <isNotEmpty property="p_emp_gubun">
+	  and    b.emp_gubun      = #p_emp_gubun#	--회원구분
+	 </isNotEmpty>
+	 
+	 <isNotEmpty property="p_search_lglast">
+	  and    b.lglast like #p_search_lglast# || '%'	--최근접속일
+	 </isNotEmpty>
+	 
+	 <isNotEmpty property="ses_search_indate">
+       	and b.indate like #ses_search_indate# || '%' 	--가입연도
+     </isNotEmpty>
+     
+	 <isNotEmpty property="ses_search_grseq">
+		and    c.grseq        =  #ses_search_grseq#	--교육기수
+	 </isNotEmpty>	 
+	   
+	 <isNotEmpty property="ses_search_gyear">
+		and    c.gyear =  #ses_search_gyear#	--연도
+	 </isNotEmpty>
+	 
+	 
+	 <isNotEmpty property="ses_search_att">
+		and    c.oriupperclass =  #ses_search_att#	--과정분류
+	 </isNotEmpty>
+	 
+	 
+	 
+	 <isNotEmpty property="ses_search_subj">
+	  and    c.scsubj         = #ses_search_subj#	
+	 </isNotEmpty>
+	  
+	 <isNotEmpty property="ses_search_subjseq">
+	  and    c.scsubjseq      = #ses_search_subjseq#	
+	 </isNotEmpty>
+	 
+	 <isNotEmpty property="ses_search_year">
+	  and    c.[year]      = #ses_search_year#
+	 </isNotEmpty>
+	  
+	   
+	  
+	 <isNotEmpty property="search_appstatus">
+	   and    a.chkfinal = #search_appstatus#
+	 </isNotEmpty>
+	  
+	 <isNotEmpty property="search_payType">
+	 	<isEqual property="search_payType" compareValue="etc">
+			and (select trim(type) from pa_payment pa  where pa.order_id = a.order_id and pa.useyn='Y')  not in ('PB','RE','OB','SC0010','SC0030','SC0040')	 	 
+	 	</isEqual>
+	 	<isNotEqual property="search_payType" compareValue="etc">
+	 		and (select trim(type) from pa_payment pa  where pa.order_id = a.order_id and pa.useyn='Y')  = #search_payType#
+	 	</isNotEqual>
+	 </isNotEmpty>
+	 
+	 --학습자 검색
+	 <isNotEmpty property="p_searchtext">
+		<isEqual property="p_search" compareValue="birth_date">
+		and b.birth_date like '%' || upper(#p_searchtext#) || '%'	--생일
+		</isEqual>
+		<isNotEqual property="p_search" compareValue="birth_date">
+	    and replace(upper($p_search$),'-','') like '%' || replace(upper(#p_searchtext#),'-', '') || '%' 
+		</isNotEqual>
+	</isNotEmpty>
+	 
+	 
+	 
+	 
+     
+     <isNotEmpty property="ses_search_stold_year">
+       	and d.[year] = #ses_search_stold_year# 	--연수 최종 이수연도
+     </isNotEmpty>
+     
+     <isNotEmpty property="p_job_cd">
+       	and b.job_cd = #p_job_cd#	-- 교원자격등급
+     </isNotEmpty>
+	 
+     
+     <isNotEmpty property="p_tstep">
+       	<![CDATA[
+       		and ts.tstep <= #p_tstep#	-- 참여율
+       	]]>
+     </isNotEmpty>
+     
+     <isNotEmpty property="p_tavftest">
+     	<![CDATA[
+       		and ts.avftest <= #p_tavftest#	-- 온라인평가 점수
+       	]]>
+     </isNotEmpty>
+     
+     <isEmpty property="p_searchtext">
+      -- 	and b.userid is null
+     </isEmpty>
+     
+        
+	 	<isNotEmpty property="search_orderColumn">
+		 	order by C.course, C.cyear, C.courseseq, $search_orderColumn$ $search_orderType$, c.scsubj, c.scsubjseq,b.name,b.birth_date, B.userid 
+ 		</isNotEmpty>
+       	<isEmpty property="search_orderColumn">
+       		order by C.course, C.cyear, C.courseseq, C.subjnm,C.[year],C.subjseq,b.name,b.birth_date,B.userid
+      	</isEmpty>
+      	
+      	)
+      	<!-- where rn between #firstIndex# + 1 and #firstIndex# + #recordCountPerPage# -->
+        
+      
+	</select>
+	
+	<select id="memberSearchDAO.selectMemberSearchListTotCnt" parameterClass="map" resultClass="int">
+		<![CDATA[
+		select count(0) as cnt 
+		from   tz_propose   a                                                          
+		     , tz_member    b                                                          
+		     , vz_scsubjseq c                                                          
+		     , tz_stold d                                                              
+		     , tz_student ts                                                              
+		where  a.userid  = b.userid                                                    
+		and    a.subj    = c.subj                                                      
+		and    a.[year]    = c.[year]                                                      
+		and    a.subjseq = c.subjseq                                                   
+		and    a.subj    = d.subj(+)                                                   
+		and    a.[year]    = d.[year](+)                                                   
+		and    a.subjseq = d.subjseq(+)                                                
+		and    a.userid  = d.userid(+)                                                 
+		and    a.userid =ts.userid(+)                                                 
+		and    a.subj= ts.subj(+)                                                  
+		and    a.subjseq=ts.subjseq(+)                                                   
+		and    a.[year]=ts.[year](+) 
+		
+		
+		and    c.grcode = 'N000001'
+		and    b.comp ='1001'		
+	 ]]>
+	 
+	 
+	 <isNotEmpty property="p_emp_gubun">
+	  and    b.emp_gubun      = #p_emp_gubun#	--회원구분
+	 </isNotEmpty>
+	 
+	 <isNotEmpty property="p_search_lglast">
+	  and    b.lglast like #p_search_lglast# || '%'	--최근접속일
+	 </isNotEmpty>
+	 
+	 <isNotEmpty property="ses_search_indate">
+       	and b.indate like #ses_search_indate# || '%' 	--가입연도
+     </isNotEmpty>
+     
+	 <isNotEmpty property="ses_search_grseq">
+		and    c.grseq        =  #ses_search_grseq#	--교육기수
+	 </isNotEmpty>	 
+	   
+	 <isNotEmpty property="ses_search_gyear">
+		and    c.gyear =  #ses_search_gyear#	--연도
+	 </isNotEmpty>
+	 
+	 
+	 <isNotEmpty property="ses_search_att">
+		and    c.oriupperclass =  #ses_search_att#	--과정분류
+	 </isNotEmpty>
+	 
+	 
+	 
+	 <isNotEmpty property="ses_search_subj">
+	  and    c.scsubj         = #ses_search_subj#	
+	 </isNotEmpty>
+	  
+	 <isNotEmpty property="ses_search_subjseq">
+	  and    c.scsubjseq      = #ses_search_subjseq#	
+	 </isNotEmpty>
+	 
+	 <isNotEmpty property="ses_search_year">
+	  and    c.[year]      = #ses_search_year#
+	 </isNotEmpty>
+	  
+	   
+	  
+	 <isNotEmpty property="search_appstatus">
+	   and    a.chkfinal = #search_appstatus#
+	 </isNotEmpty>
+	  
+	 <isNotEmpty property="search_payType">
+	 	<isEqual property="search_payType" compareValue="etc">
+			and (select trim(type) from pa_payment pa  where pa.order_id = a.order_id and pa.useyn='Y')  not in ('PB','RE','OB','SC0010','SC0030','SC0040')	 	 
+	 	</isEqual>
+	 	<isNotEqual property="search_payType" compareValue="etc">
+	 		and (select trim(type) from pa_payment pa  where pa.order_id = a.order_id and pa.useyn='Y')  = #search_payType#
+	 	</isNotEqual>
+	 </isNotEmpty>
+	 
+	 --학습자 검색
+	 <isNotEmpty property="p_searchtext">
+		<isEqual property="p_search" compareValue="birth_date">
+		and b.birth_date like '%' || upper(#p_searchtext#) || '%'	--생일
+		</isEqual>
+		<isNotEqual property="p_search" compareValue="birth_date">
+	    and replace(upper($p_search$),'-','') like '%' || replace(upper(#p_searchtext#),'-', '') || '%' 
+		</isNotEqual>
+	</isNotEmpty>
+	 
+	 
+	 
+	 
+     
+     <isNotEmpty property="ses_search_stold_year">
+       	and d.[year] = #ses_search_stold_year# 	--연수 최종 이수연도
+     </isNotEmpty>
+     
+     <isNotEmpty property="p_job_cd">
+       	and b.job_cd = #p_job_cd#	-- 교원자격등급
+     </isNotEmpty>
+	 
+     
+     <isNotEmpty property="p_tstep">
+       	<![CDATA[
+       		and ts.tstep <= #p_tstep#	-- 참여율
+       	]]>
+     </isNotEmpty>
+     
+     <isNotEmpty property="p_tavftest">
+     	<![CDATA[
+       		and ts.avftest <= #p_tavftest#	-- 온라인평가 점수
+       	]]>
+     </isNotEmpty>
+     
+     <isEmpty property="p_searchtext">
+       	--and b.userid is null
+     </isEmpty>
+     
+        
+	 	<isNotEmpty property="search_orderColumn">
+		 	order by C.course, C.cyear, C.courseseq, $search_orderColumn$ $search_orderType$, c.scsubj, c.scsubjseq,b.name,b.birth_date, B.userid 
+ 		</isNotEmpty>
+       	<isEmpty property="search_orderColumn">
+       		order by C.course, C.cyear, C.courseseq, C.subjnm,C.[year],C.subjseq,b.name,b.birth_date,B.userid
+      	</isEmpty>
+	</select>
+	
+	<select id="memberSearchDAO.selectDormantCnt" parameterClass="map" resultClass="int">
+		SELECT COUNT(*) AS CNT  
+		  FROM TZ_MEMBER
+		WHERE INDATE IS NOT NULL
+		  AND LGLAST IS NOT NULL
+		  AND ISRETIRE = 'N'
+		    AND DORMANT_YN = 'N'		    
+		<![CDATA[
+		   AND TO_DATE(TO_CHAR(SYSDATE,'YYYYMMDD'),'YYYYMMDD') - TO_DATE(SUBSTR(LGLAST,1,8),'YYYYMMDD') > 365
+		]]>
+	</select>
+	
+	
+	<update id="memberSearchDAO.updateDormantYn">
+		UPDATE TZ_MEMBER
+		   SET DORMANT_YN = 'Y',
+		       DORMANT_DATE = SYSDATE  
+		 WHERE  INDATE IS NOT NULL
+		   AND LGLAST IS NOT NULL
+		   AND ISRETIRE = 'N'
+		   AND DORMANT_YN = 'N'		   
+<![CDATA[  		   
+		   AND TO_DATE(TO_CHAR(SYSDATE,'YYYYMMDD'),'YYYYMMDD') - TO_DATE(SUBSTR(LGLAST,1,8),'YYYYMMDD') > 365
+]]>	
+	</update>
+	
+	<update id="memberSearchDAO.updateDormantYnE">
+		UPDATE TZ_MEMBER
+		   SET DORMANT_YN = 'E'
+		      -- , DORMANT_USERID = SUBSTR(USERID, 0, LENGTH(USERID)-2)||'**'
+		       , DORMANT_DATE = SYSDATE  
+		 WHERE INDATE IS NOT NULL
+		   AND LGLAST IS NOT NULL
+		   AND ISRETIRE = 'N'
+		   AND DORMANT_YN = 'Y'		   
+<![CDATA[  				   
+		    AND TO_DATE(TO_CHAR(SYSDATE,'YYYYMMDD'),'YYYYMMDD') - TO_DATE(SUBSTR(LGLAST,1,8),'YYYYMMDD') > 365
+		    AND MONTHS_BETWEEN(sysdate, add_months(DORMANT_DATE, 3)) > 0
+		 
+]]>	
+	</update>
+	
+	<update id="memberSearchDAO.updateUserDelYn">
+		UPDATE TZ_MEMBER
+		   SET isretire   		= 	'Y'
+			,  retire_date   	= 	to_char(sysdatetime, 'YYYYMMDDHH24MISS')
+			, DORMANT_YN = 'K'
+		 WHERE INDATE IS NOT NULL
+		   AND LGLAST IS NOT NULL
+		   AND ISRETIRE = 'N'
+		   AND DORMANT_YN = 'E'
+<![CDATA[  				   
+ 		  AND TO_DATE(TO_CHAR(SYSDATE,'YYYYMMDD'),'YYYYMMDD') - TO_DATE(SUBSTR(LGLAST,1,8),'YYYYMMDD') > 365
+ 		  AND MONTHS_BETWEEN(sysdate, add_months(DORMANT_DATE, 12)) > 0
+]]>	
+	</update>
+	
+		
+<!--	아이디/비밀번호 찾기-->
+	<select id="memberSearchDAO.selectIdPwdSearchOk" parameterClass="map" resultClass="egovMap">
+		select 
+		decode(trim(handphone), '', 1, 0) as gubn    
+		, userid
+		, handphone
+		, birth_date as pwd
+		from tz_member 
+		where userid = #p_userid_ok#
+		  and birth_date = #birthDate#	
+		
+		
+	</select>
+	<select id="memberSearchDAO.selectDormantOk" parameterClass="map" resultClass="int">
+		select 
+			count(*) cnt
+		from tz_member 
+		where userid = #p_userid_ok#
+		  and birth_date = #birthDate#	
+	</select>
+	
+	<update id="memberSearchDAO.updateDormantReset">
+		UPDATE TZ_MEMBER
+		   SET DORMANT_YN   		= 	'N'
+			--,   DORMANT_USERID   	= null
+		where userid = #p_userid_ok#
+		  and birth_date = #birthDate#	
+	</update>
+	
+	
+	<select id="memberSearchDAO.selectMemberMergeList" parameterClass="map" resultClass="egovMap">
+		SELECT *
+		FROM (
+		select a.userid,
+				       a.birth_date,
+				       a.name,
+				       a.email,
+				       a.handphone,
+				       a.ldate,
+				       a.indate,
+						(
+		                        select count(1) cnt   
+		                        from tz_member
+		                        where name 		= a.name
+		                        and handphone 	= a.handphone
+		                        and nvl(email, 'null') 			= nvl(a.email, 'null')
+		                        and nvl(birth_date, 'null') 	= nvl(a.birth_date, 'null')
+		                        and isretire        	= 'N'
+		                        	                        
+		                        group by name, handphone, email, birth_date
+		                 ) dupt_cnt
+				  from tz_member a
+		)
+		WHERE dupt_cnt>1	
+		<isNotEmpty property="p_searchtext">
+			<isEqual property="p_search" compareValue="birth_date">
+				and birth_date like '%' || upper(#p_searchtext#) || '%'
+			</isEqual>
+			<isNotEqual property="p_search" compareValue="birth_date">
+		    	and replace(upper($p_search$),'-','') like '%' || replace(upper(#p_searchtext#),'-', '') || '%' 
+			</isNotEqual>
+		</isNotEmpty>
+        <isNotEmpty property="p_company">
+        	<isNotEqual property="p_company" compareValue="ALL">
+        	and comp = #p_company#
+        	</isNotEqual>
+        </isNotEmpty>
+        <isEmpty property="p_searchtext">
+        	and userid is null
+        </isEmpty>		
+		ORDER BY name, birth_date, userid 
+	</select>
+	
+	<!-- 관리자	아이디 통합을 위한 아이디 내역 조회-->
+	<select id="memberSearchDAO.selectMemberMergeDetailList" parameterClass="map" resultClass="egovMap">
+	<![CDATA[
+		SELECT rownum rn, 
+				userid, 
+		        name, 
+		        handphone,
+		        hometel,
+		        email,
+		        birth_date ,
+		        address,
+		        nice_personal_num,
+		        isretire		        
+		FROM tz_member
+		WHERE name = #p_name#
+		    AND handphone 	= #p_handphone#
+		    AND email 		= #p_email_id#
+		    AND birth_date 	= #p_birthDate#    
+    ]]>
+		<isEqual property="search_type" compareValue="id">
+			and userid like '%'||#search_text#||'%' 
+		</isEqual>
+		<isEqual property="search_type" compareValue="name">
+			and name like '%'||#search_text#||'%' 
+		</isEqual>
+		  
+			order BY userid	
+		
+	</select>
+
+</sqlMap>
+

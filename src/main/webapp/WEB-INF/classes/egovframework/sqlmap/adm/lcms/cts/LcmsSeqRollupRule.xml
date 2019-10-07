@@ -1,0 +1,151 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE sqlMap PUBLIC "-//iBATIS.com//DTD SQL Map 2.0//EN" "http://ibatis.apache.org/dtd/sql-map-2.dtd">
+
+<sqlMap namespace="LcmsSeqRollupRule">
+	<typeAlias  alias="egovMap" type="egovframework.rte.psl.dataaccess.util.EgovMap"/>
+
+    <select id="lcmsSeqRollupRuleDAO.selectLcmsSeqRollupRulePageList" parameterClass="map" resultClass="egovMap">
+        SELECT * 
+        FROM
+               (
+                SELECT TEMP.*, 
+                <isNotEmpty property="rowsPerPage">
+                       CEIL(ROWNUM / #rowsPerPage#) AS PAGE 
+                </isNotEmpty>
+                <isEmpty property="rowsPerPage">
+                       CEIL(ROWNUM / 10) AS PAGE 
+                </isEmpty>
+                FROM
+                      (
+                       SELECT 
+	        	              RR_IDX_NUM,
+	        	              CHILD_ACTIVITY_SET,
+	        	              MINIMUM_COUNT,
+	        	              MINIMUM_PERCENT,
+	        	              ROLLUP_ACTION,
+	        	              CONDITION_COMBINATION,
+	        	              userid,
+	        	              UPDATE_DT,
+	        	              SEQ_IDX_NUM,
+	        	               BEFORE_RR_IDX_NUM
+        		       FROM   TB_LCMS_SEQ_ROLLUP_RULE
+        		       <!--  APPEND WHERE CONDITION START  -->
+
+        		       <!--  APPEND WHERE CONDITION END    -->
+        		       <isNotEmpty property="orderBy">
+        			       $orderBy$
+        		       </isNotEmpty>
+        	          ) TEMP 
+               )
+        <isNotEmpty property="page">
+        WHERE PAGE = #page#
+        </isNotEmpty>
+        <isEmpty property="page">
+        WHERE PAGE = 1
+        </isEmpty>
+    </select>
+
+    <select id="lcmsSeqRollupRuleDAO.selectLcmsSeqRollupRuleList" parameterClass="map" resultClass="egovMap">
+        SELECT RR_IDX_NUM,
+               CHILD_ACTIVITY_SET,
+               MINIMUM_COUNT,
+               MINIMUM_PERCENT,
+               ROLLUP_ACTION,
+               CONDITION_COMBINATION,
+               userid,
+               UPDATE_DT,
+               SEQ_IDX_NUM,
+               BEFORE_RR_IDX_NUM
+        FROM   TB_LCMS_SEQ_ROLLUP_RULE
+    </select>
+
+    <select id="lcmsSeqRollupRuleDAO.selectLcmsSeqRollupRulePageListTotCnt" parameterClass="map" resultClass="long">
+        SELECT COUNT(ROWNUM) AS [COUNT]
+        FROM   TB_LCMS_SEQ_ROLLUP_RULE
+    </select>
+
+    <select id="lcmsSeqRollupRuleDAO.selectLcmsSeqRollupRuleMaxNum" parameterClass="map" resultClass="int">
+        select nvl(max(rr_idx_num),0)+1 as seq from tb_lcms_seq_rollup_rule
+    </select>
+
+    <select id="lcmsSeqRollupRuleDAO.selectLcmsSeqRollupRule" parameterClass="map" resultClass="egovMap">
+        SELECT RR_IDX_NUM,
+               CHILD_ACTIVITY_SET,
+               MINIMUM_COUNT,
+               MINIMUM_PERCENT,
+               ROLLUP_ACTION,
+               CONDITION_COMBINATION,
+               userid,
+               UPDATE_DT,
+               SEQ_IDX_NUM,
+               BEFORE_RR_IDX_NUM
+        FROM   TB_LCMS_SEQ_ROLLUP_RULE
+        WHERE  RR_IDX_NUM = #rrIdxNum#
+    </select>
+
+    <insert id="lcmsSeqRollupRuleDAO.insertLcmsSeqRollupRule">
+        INSERT INTO TB_LCMS_SEQ_ROLLUP_RULE
+        (
+            RR_IDX_NUM,
+            SEQ_IDX_NUM,
+            CHILD_ACTIVITY_SET,
+            MINIMUM_COUNT,
+            MINIMUM_PERCENT,
+            ROLLUP_ACTION,
+            CONDITION_COMBINATION,
+            userid,
+            UPDATE_DT
+        )
+        VALUES
+        (
+            #rrIdxNum#,
+            #seqIdxNum#,
+            #childActivitySet#,
+            #minimumCount#,
+            #minimumPercent#,
+            #rollupAction#,
+            #conditionCombination#,
+            #userid#,
+            sysdate
+        )
+    </insert>
+
+    <update id="lcmsSeqRollupRuleDAO.updateLcmsSeqRollupRule">
+        UPDATE TB_LCMS_SEQ_ROLLUP_RULE
+        SET    CHILD_ACTIVITY_SET = #childActivitySet#,
+               MINIMUM_COUNT = #minimumCount#,
+               MINIMUM_PERCENT = #minimumPercent#,
+               ROLLUP_ACTION = #rollupAction#,
+               CONDITION_COMBINATION = #conditionCombination#,
+               userid = #userId#,
+               UPDATE_DT = #updateDt#,
+               SEQ_IDX_NUM = #seqIdxNum#,
+               BEFORE_RR_IDX_NUM = #beforeRrIdxNum#
+        WHERE  RR_IDX_NUM = #rrIdxNum#
+    </update>
+
+    <delete id="lcmsSeqRollupRuleDAO.deleteLcmsSeqRollupRule">
+        delete tb_lcms_seq_rollup_rule
+         where seq_idx_num in (
+                 select seq_idx_num from tb_lcms_scorm_sequence
+                  where org_seq in <iterate property="orgSeq" conjunction="," open="(" close=")">$orgSeq[]$</iterate>
+               )
+    </delete>
+
+    <delete id="lcmsSeqRollupRuleDAO.deleteLcmsSeqRollupRuleAll">
+        DELETE FROM TB_LCMS_SEQ_ROLLUP_RULE
+        <dynamic prepend="WHERE RR_IDX_NUM IN ">
+            <isNotEmpty property="rrIdxNum">
+                <iterate property="rrIdxNum" open="(" close=")" conjunction=",">
+                    #rrIdxNum[]#
+                </iterate>
+            </isNotEmpty>
+            <isEmpty property="rrIdxNum">
+                ('')
+            </isEmpty>
+        </dynamic>
+    </delete>
+
+
+</sqlMap>
+

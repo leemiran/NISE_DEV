@@ -1,0 +1,342 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE sqlMap PUBLIC "-//iBATIS.com//DTD SQL Map 2.0//EN" "http://ibatis.apache.org/dtd/sql-map-2.dtd">
+
+<sqlMap namespace="Manager">
+<typeAlias  alias="egovMap" type="egovframework.rte.psl.dataaccess.util.EgovMap"/>
+
+	<select id="managerDAO.selectManagerList" parameterClass="map" resultClass="egovMap">
+		select a.userid,
+		       a.gadmin,
+		       c.gadminnm,
+		       a.comp,
+		       a.isdeleted,
+		       a.fmon,
+		       a.tmon,
+		       a.commented,
+		       a.luserid,
+		       (SELECT NAME FROM tz_member WHERE userid= a.luserid ) AS lname,
+		       TO_CHAR(TO_DATETIME(A.LDATE, 'YYYYMMDDHH24MISS'),'YYYY-MM-DD') ldate,
+		       b.name
+		  from tz_manager a, tz_member b, tz_gadmin c
+		 where a.userid = b.userid
+		   and a.gadmin = c.gadmin
+		   and a.isdeleted = 'N'
+		   and isview = 'Y'
+		<isNotEmpty property="p_searchtext">
+		<isEqual property="p_search" compareValue="name">
+		   and b.name like '%' || #p_searchtext# || '%'
+		</isEqual>
+		<isEqual property="p_search" compareValue="userid">
+		   and upper(b.userid) like '%' || upper(#p_searchtext#) || '%'
+		</isEqual>
+		</isNotEmpty>
+		<isNotEmpty property="ss_gadmin">
+		<isNotEqual property="ss_gadmin" compareValue="ALL">
+		   and c.gadmin = #ss_gadmin#
+		</isNotEqual>
+		</isNotEmpty>
+		 order by a.gadmin asc, name asc
+	</select>
+	
+	<select id="managerDAO.selectGadminList" parameterClass="map" resultClass="egovMap">
+		select gadmin,
+		       gadminnm,
+		       isneedgrcode,
+		       isneedsubj,
+		       isneedcomp,
+		       isneeddept,
+		       seq
+		  from tz_gadmin
+		 where isview = 'Y'
+		 order by seq asc, gadmin asc
+	</select>
+	
+	<select id="managerDAO.selectManagerView" parameterClass="map" resultClass="egovMap">
+		select a.userid,
+		       a.gadmin,
+		       c.gadminnm,
+		       a.comp,
+		       a.isdeleted,
+		       a.fmon,
+		       a.tmon,
+		       a.commented,
+		       c.isneedgrcode,
+		       c.isneedsubj,
+		       c.isneedcomp,
+		       c.isneeddept,
+		       a.luserid,
+		       a.ldate,
+		       b.name
+		  from tz_manager a, tz_member b, tz_gadmin c
+		 where a.userid = b.userid
+		   and a.gadmin = c.gadmin
+		   and a.userid = #p_userid#
+		   and a.gadmin = #p_gadmin#
+	</select>
+	
+	<select id="managerDAO.selectManagerViewGrcode" parameterClass="map" resultClass="egovMap">
+		select a.grcode,
+		       b.grcodenm
+		  from tz_grcodeman a, tz_grcode b
+		 where a.grcode = b.grcode
+		   and a.userid = #p_userid#
+		   and a.gadmin = #p_gadmin#
+		 order by a.grcode asc
+	</select>
+	
+	<select id="managerDAO.selectManagerViewSubj" parameterClass="map" resultClass="egovMap">
+		select substr(a.ldate,1,4) as [year],
+		       a.subj,
+		       b.subjnm
+		  from tz_subjman a, tz_subj b
+		 where a.subj = b.subj
+		   and a.userid = #p_userid#
+		   and a.gadmin = #p_gadmin#
+		 order by [year] desc, a.subj asc
+	</select>
+	
+	<select id="managerDAO.selectManagerViewComp" parameterClass="map" resultClass="egovMap">
+		select a.comp,
+		       '' as groupsnm,
+		       b.compnm as companynm,
+		       b.compnm
+		  from tz_compman a, tz_compclass b
+		 where a.comp = b.comp
+		   and a.userid = #p_userid#
+		   and a.gadmin = #p_gadmin#
+		 order by a.comp asc
+	</select>
+	
+	<update id="managerDAO.updateManagerInfo">
+		update tz_manager
+		   set comp 	 = #p_comp#,
+		       fmon 	 = Replace(#p_fmon#, '-', ''),
+		       tmon      = Replace(#p_tmon#, '-', ''),
+		       commented = #p_commented#,
+		       luserid   = #userid#,
+		       ldate     = to_char(sysdatetime, 'yyyyMMddhh24miss')
+		 where userid    = #p_userid#
+		   and gadmin    = #p_gadmin#
+	</update>
+	
+	<select id="managerDAO.selectBranchList" parameterClass="map" resultClass="egovMap">
+		select branchcode, branchnm
+		  from tz_branch
+	</select>
+	
+	<select id="managerDAO.getGadminSelectNop" parameterClass="map" resultClass="egovMap">
+		select gadmin, gadminnm, isneedgrcode, isneedsubj, isneedcomp, isneeddept, isneedoutcomp
+		  from tz_gadmin
+		 where substr(gadmin, 1, 1) != 'P'
+		   and isview = 'Y'
+		 order by gadmin asc
+	</select>
+	
+	<select id="managerDAO.checkManagerCount" parameterClass="map" resultClass="int">
+		select count(0)
+		  from tz_manager
+		 where userid = #p_userid#
+		   and gadmin = #p_gadminview#
+	</select>
+	
+	<insert id="managerDAO.managerInsert">
+		insert into tz_manager(
+			userid,
+			gadmin,
+			isdeleted,
+			fmon,
+			tmon,
+			commented,
+			luserid,
+			ldate
+		)
+		values(
+			#p_userid#,
+			#p_gadminview#,
+			'N',
+			replace(#p_fmon#, '-'),
+			replace(#p_tmon#, '-'),
+			#p_commented#,
+			#userid#,
+			to_char(sysdatetime, 'yyyyMMddhh24miss')
+		)
+	</insert>
+	
+	<insert id="managerDAO.insertGrcode">
+		insert into tz_grcodeman(
+			userid, gadmin, grcode, luserid, ldate
+		)
+		values(
+			#p_userid#, #p_gadminview#, #pp_grcode#, #userid#, to_char(sysdatetime, 'yyyyMMddhh24miss')
+		)
+	</insert>
+	<insert id="managerDAO.insertSubj">
+		insert into tz_subjman(
+			userid, gadmin, subj, luserid, ldate
+		)
+		values(
+			#p_userid#, #p_gadminview#, #pp_subj#, #userid#, to_char(sysdatetime, 'yyyyMMddhh24miss')
+		)
+	</insert>
+	<insert id="managerDAO.insertComp">
+		insert into tz_compman(
+			userid, gadmin, comp, luserid, ldate
+		)
+		values(
+			#p_userid#, #p_gadminview#, #pp_comp#, #userid#, to_char(sysdatetime, 'yyyyMMddhh24miss')
+		)
+	</insert>
+	<delete id="managerDAO.deleteMenuAuth">
+		delete from tz_adminmenuauth where userid = #p_userid#
+	</delete>
+	<insert id="managerDAO.insertMenuAuth">
+		insert into tz_adminmenuauth
+		select grcode,
+		       menu,
+		       menusubseq,
+		       #p_userid#,
+		       control,
+		       #userid#,
+		       to_char(sysdatetime, 'yyyyMMddhh24miss')
+		  from tz_menuauth
+		 where gadmin = #p_gadminview#
+	</insert>
+	
+	<delete id="managerDAO.deleteManager">
+		delete tz_manager where userid = #p_userid# and gadmin = #p_gadmin#
+	</delete>
+	<delete id="managerDAO.deleteGrcode">
+		delete tz_grcodeman where userid = #p_userid# and gadmin = #p_gadmin#
+	</delete>
+	<delete id="managerDAO.deleteSubj">
+		delete tz_subjman where userid = #p_userid# and gadmin = #p_gadmin#
+	</delete>
+	<delete id="managerDAO.deleteComp">
+		delete tz_compman where userid = #p_userid# and gadmin = #p_gadmin#
+	</delete>
+	
+	<insert id="managerDAO.managerInsertLog">
+		insert into tz_manager_log(
+			userid,
+			gadmin,
+			isdeleted,
+			fmon,
+			tmon,
+			commented,
+			luserid,
+			ldate,
+			logmode
+		)
+		values(
+			#p_userid#,
+			#p_gadmin#,
+			'N',
+			replace(#p_fmon#, '-'),
+			replace(#p_tmon#, '-'),
+			#p_commented#,
+			#userid#,
+			to_char(sysdatetime, 'yyyyMMddhh24miss'),
+			#p_logmode#
+		)
+	</insert>
+	
+	<!--	권한 로그 전체갯수 -->
+	<select id="managerDAO.selectManagerLogTotCnt" parameterClass="map" resultClass="int">
+		    select count(*) as cnt
+			 from tz_manager_log a, tz_member b, tz_gadmin c
+		 where a.userid = b.userid
+		   and a.gadmin = c.gadmin
+		<isNotEmpty property="p_searchtext">
+		<isEqual property="p_search" compareValue="name">
+		   and b.name like '%' || #p_searchtext# || '%'
+		</isEqual>
+		<isEqual property="p_search" compareValue="userid">
+		   and upper(b.userid) like '%' || upper(#p_searchtext#) || '%'
+		</isEqual>
+		</isNotEmpty>
+		<isNotEmpty property="ss_gadmin">
+		<isNotEqual property="ss_gadmin" compareValue="ALL">
+		   and c.gadmin = #ss_gadmin#
+		</isNotEqual>
+		</isNotEmpty>	
+		
+		<isNotEmpty property="p_search_from">
+			<isNotEmpty property="p_search_to">				
+				and a.ldate between replace(#p_search_from#,'.','')||'000000' and replace(#p_search_to#,'.','')||'235959'		
+			</isNotEmpty>
+		</isNotEmpty>
+		
+	</select>
+	
+	
+	<select id="managerDAO.selectManagerLogList" parameterClass="map" resultClass="egovMap">
+	select * from (
+		select  rownum as num,		 
+		       userid,
+		       gadmin,
+		       gadminnm,
+		       comp,
+		       isdeleted,
+		       fmon,
+		       tmon,
+		       commented,
+		       luserid,
+		       lname,
+		      ldate,
+		      name,
+		      logmode
+		from (
+		select a.userid,
+		       a.gadmin,
+		       c.gadminnm,
+		       a.comp,
+		       a.isdeleted,
+		       a.fmon,
+		       a.tmon,
+		       a.commented,
+		       a.luserid,
+		       (SELECT NAME FROM tz_member WHERE userid= a.luserid ) AS lname,
+		      TO_CHAR(TO_DATETIME(A.LDATE, 'YYYYMMDDHH24MISS'),'YYYY-MM-DD') ldate,
+		       b.name,
+		       CASE WHEN a.logmode = 'I' THEN '입력'
+				WHEN a.logmode = 'U' THEN '수정'
+				WHEN a.logmode = 'D' THEN '삭제'
+				ELSE '' END logmode
+		  from tz_manager_log a, tz_member b, tz_gadmin c
+		 where a.userid = b.userid
+		   and a.gadmin = c.gadmin
+		   and a.isdeleted = 'N'
+		   and isview = 'Y'
+		<isNotEmpty property="p_searchtext">
+		<isEqual property="p_search" compareValue="name">
+		   and b.name like '%' || #p_searchtext# || '%'
+		</isEqual>
+		<isEqual property="p_search" compareValue="userid">
+		   and upper(b.userid) like '%' || upper(#p_searchtext#) || '%'
+		</isEqual>
+		</isNotEmpty>
+		<isNotEmpty property="ss_gadmin">
+		<isNotEqual property="ss_gadmin" compareValue="ALL">
+		   and c.gadmin = #ss_gadmin#
+		</isNotEqual>
+		</isNotEmpty>
+		
+		<isNotEmpty property="p_search_from">
+			<isNotEmpty property="p_search_to">				
+				and a.ldate between replace(#p_search_from#,'.','')||'000000' and replace(#p_search_to#,'.','')||'235959'				
+			</isNotEmpty>
+		</isNotEmpty>
+		
+		 order by a.gadmin asc, name asc
+		 )
+	
+	)
+	<isEmpty property="excelDown">
+		 where num BETWEEN #firstIndex# + 1 AND #firstIndex# + #recordCountPerPage#
+	</isEmpty>
+	
+	
+	</select>
+	
+</sqlMap>
+

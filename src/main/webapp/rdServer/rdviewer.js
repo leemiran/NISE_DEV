@@ -1,0 +1,1 @@
+document.write('<object id=Rdviewer name=Rdviewer width=100% height=100% classid="clsid:ADB6D20D-80A1-4aa4-88AE-B2DC820DA076" codebase="http://localhost:8080/RDServer/rdviewer50.cab#version=5,0,0,258"></object>');

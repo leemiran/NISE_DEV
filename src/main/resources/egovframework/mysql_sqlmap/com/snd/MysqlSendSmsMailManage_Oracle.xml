@@ -1,0 +1,44 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE sqlMap PUBLIC "-//iBATIS.com//DTD SQL Map 2.0//EN" "http://ibatis.apache.org/dtd/sql-map-2.dtd">
+
+<sqlMap namespace="mysqlSendSmsMailManageDAO">
+<typeAlias  alias="egovMap" type="egovframework.rte.psl.dataaccess.util.EgovMap"/>
+	
+	<select id="mysqlSendSmsMailManageDAO.selectSendMailListCnt" parameterClass="map"  remapResults="true" resultClass="int">
+		select count(*) cnt
+		from im_rsv_list a
+           , im_result_list b		
+		WHERE a.idx = b.rsv_idx
+          and b.send_order = '99'		
+	</select>
+
+	<select id="mysqlSendSmsMailManageDAO.selectSendMailList" parameterClass="map" resultClass="egovMap">
+		select a.idx
+			  , a.subject
+			  , a.sdate
+			  , b.edate
+			  , b.total
+			  , b.success
+			  , (b.total - b.success) as falsecnt
+		from im_rsv_list a
+			, im_result_list b		
+		WHERE a.idx = b.rsv_idx
+			and b.send_order = '99'
+		order by CAST(a.idx AS UNSIGNED) desc
+		limit $firstIndex$, $recordCountPerPage$
+	</select>
+	
+	<select id="mysqlSendSmsMailManageDAO.selectSendMailContent" parameterClass="map" resultClass="egovMap">
+		select
+			li.subject
+			, cn.content 
+		from 
+			im_rsv_content cn
+			, im_rsv_list li
+		where 
+			cn.idx = li.idx
+			and li.idx = #idx#
+	</select>
+	
+
+</sqlMap>

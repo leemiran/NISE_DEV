@@ -1,0 +1,1681 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE sqlMap PUBLIC "-//iBATIS.com//DTD SQL Map 2.0//EN" "http://ibatis.apache.org/dtd/sql-map-2.dtd">
+
+<sqlMap namespace="FinishManage">
+<sql id="selectStoldY">(select count(0) from tz_stold where subj = a.subj and [year] = a.[year] and subjseq = a.subjseq and isgraduated = 'Y')</sql>
+<sql id="selectStoldN">(select count(0) from tz_stold where subj = a.subj and [year] = a.[year] and subjseq = a.subjseq and isgraduated = 'N')</sql>
+<typeAlias  alias="egovMap" type="egovframework.rte.psl.dataaccess.util.EgovMap"/>
+
+	<!-- 이수관리 리스트 -->
+	<select id="finishManageDAO.selectFinishCourseList" parameterClass="map" resultClass="egovMap">
+	SELECT SUBJ,
+	       [YEAR],
+	       SUBJSEQ,
+	       SUBJSEQGR,
+	       SUBJNM,
+	       ISCLOSED,
+		   get_codenm('0004', isonoff) as isonoffval,       
+	       TODAY,
+	       EDUSTART,
+	       EDUEND,
+	       ISONOFF,
+	       ISCPRESULT,
+	       ISCPFLAG,
+	       ISOUTSOURCING,
+	       STUDENTCNT,
+	       STOLDYCNT,
+	       STOLDYCNT1,
+	       STOLDNCNT,
+	       STOLDNCNT1,
+	       STOLDDATE,
+	       RECALCUDATE,
+	       COURSE,
+	       CYEAR,
+	       COURSESEQ,
+	       COURSENM,
+	       COURSE_STOLDDATE,
+	       SUROYPRINT,
+	       LIFETIME_Y_CNT
+	FROM(  
+		select a.subj, a.[year], a.subjseq, a.subjseqgr, a.subjnm, a.isclosed, to_char(sysdate, 'yyyyMMdd') as today, a.edustart, a.eduend,
+		       a.isonoff
+		       --, get_codenm('0004', a.isonoff) as isonoffval
+		       , a.iscpresult, a.iscpflag, a.isoutsourcing,
+		       ( select count(0) from tz_student where subj = a.subj and [year] = a.[year] and subjseq = a.subjseq ) as studentcnt,
+		       decode(a.isclosed, 'Y', <include refid="selectStoldY" />, 0) as stoldycnt,
+		       decode(a.isclosed, 'N', <include refid="selectStoldY" />, 0) as stoldycnt1,
+		       decode(a.isclosed, 'Y', <include refid="selectStoldN" />, 0) as stoldncnt,
+		       decode(a.isclosed, 'N', <include refid="selectStoldN" />, 0) as stoldncnt1,
+		       (select max(ldate) from tz_stold where subj = a.subj and [year] = a.[year] and subjseq = a.subjseq) as stolddate,
+		       (select recalcudate from tz_subjseq where subj = a.subj and [year] = a.[year] and subjseq = a.subjseq) recalcudate,
+		       a.course, a.cyear, a.courseseq, a.coursenm, b.ldate as course_stolddate,
+		       a.suroyprint,
+		       ( select count(0) from tz_student where subj = a.subj and [year] = a.[year] and subjseq = a.subjseq and lifetime_yn='Y') as lifetime_y_cnt
+		  from vz_scsubjseq a,
+		       ( 
+		          select course, cyear, courseseq, max(ldate) as ldate
+		            from tz_coursestold
+		           group by course, cyear, courseseq
+		       ) b
+		 where a.course    = b.course(+)
+		   and a.cyear     = b.cyear(+)
+		   and a.courseseq = b.courseseq(+)
+		<isNotEmpty property="ses_search_gyear">
+		   and a.gyear = #ses_search_gyear#
+		</isNotEmpty>
+		<isNotEmpty property="ses_search_grseq">
+		   and a.grseq = #ses_search_grseq#
+		</isNotEmpty>
+		<isNotEmpty property="ses_search_att">
+		   and a.oriupperclass = #ses_search_att#
+		</isNotEmpty>
+		<isNotEmpty property="ses_search_subj">
+		   and a.scsubj = #ses_search_subj#
+		</isNotEmpty>
+		<isNotEmpty property="ses_search_subjseq">
+		   and a.scsubjseq = #ses_search_subjseq#
+		</isNotEmpty>
+		)
+		order BY course, cyear, courseseq, subjnm, subjseq, edustart desc
+	</select>
+	
+	<!-- 패키지과정의 로우수 -->
+	<select id="finishManageDAO.selectPackage" parameterClass="map" resultClass="egovMap">
+		select count(subj) as rowspan, 
+		       sum(case when isclosed = 'Y' then 1 else 0 end) as [sum]
+		  from tz_subjseq
+		 where 1 = 1
+		   and course = #course#
+		   and courseseq = #courseseq#
+		<isNotEmpty property="ses_search_gyear">
+		   and a.gyear = #ses_search_gyear#
+		</isNotEmpty>
+		<isNotEmpty property="ses_search_grseq">
+		   and a.grseq = #ses_search_grseq#
+		</isNotEmpty>
+	</select>
+	
+	<!-- 이수과정 수강생정보 -->
+	<select id="finishManageDAO.selectFinishStudentList" parameterClass="map" resultClass="egovMap">
+		--select row_number() over(order by a.score desc, a.avmtest desc, a.avreport desc, a.avftest desc, a.avetc2 desc, birth_date asc) as ranking,
+		select rank() over(order by a.score desc, a.avmtest desc, a.avreport desc, a.avftest desc, a.avetc2 desc) as ranking,
+		       --(select count(*) as cnt 
+		       --   from  tz_attendance f , vz_scsubjseq c
+		       --  where a.subj=f.subj and a.[year]=f.[year] and b.userid=f.userid and f.subj=c.subj and f.subjseq=c.subjseq and f.[year]=c.[year] and isattend ='O' 
+		       --     and  f.attdate between  substr(c.EDUSTART,0,8) and substr(c.EDUEND,0,8)) as etc1,
+		       (select count(*) as cnt 
+		          from  tz_attendance f
+		          -- , vz_scsubjseq c
+		         where a.subj=f.subj 
+		           and a.[year]=f.[year] 
+		           and b.userid=f.userid 
+		          -- and f.subj=c.subj
+		           and f.subj=a.subj 
+		          -- and f.subjseq=c.subjseq 
+		           and f.subjseq=a.subjseq
+		          -- and f.[year]=c.[year]
+		          and f.[year]=a.[year] 
+		           and isattend ='O' 
+		          -- and  f.attdate between  substr(c.EDUSTART,0,8) and substr(c.EDUEND,0,8)
+		       ) as etc1,
+		       a.userid, a.score, a.tstep, a.mtest, a.ftest, a.htest, a.act, a.report, a.etc2, a.avtstep, a.avmtest, a.avftest, a.avhtest, a.avact, a.avreport, a.avetc1,
+		       a.avetc2, a.isgraduated, decode(a.isgraduated, 'Y', '수료', '미수료') as isgraduateddesc, '' as branchnm, a.ldate, nvl(b.position_nm, '-') as position_nm,
+		       b.lvl_nm, a.study_count, a.study_time, b.name, b.hometel, b.handphone, b.email
+		      -- , get_compnm(b.comp) as compnm
+		       , (select compnm from tz_compclass where comp=b.comp) as compnm
+		       , a.subj, a.[year], a.subjseq,
+		       b.birth_date, b.user_path, b.cert, a.editlink, a.editscore,
+		<isEqual property="selectTable" compareValue="A">
+		       a.notgraduce, a.notgraduetc, get_codenm('0028', a.notgraduetc) as samtotal, a.serno
+		  from tz_stold a
+		</isEqual>
+		<isNotEqual property="selectTable" compareValue="A">
+		       (select notgraducd from tz_stold where subj = a.subj and [year] = a.[year] and subjseq = a.subjseq and userid = a.userid) as notgraducd,
+		       a.notgraduetc, get_codenm('0028', a.notgraduetc) as notgraduetcdesc, a.samtotal, serno
+		  from tz_student a
+		</isNotEqual>
+		     , tz_member b
+		 where a.userid		= b.userid(+)
+		   and a.subj		= #p_subj#
+		   and a.[year]		= #p_year#
+		   and a.subjseq	= #p_subjseq#
+		   and a.score <![CDATA[>=]]> 60
+		   and etc2 <![CDATA[<>]]> 0
+		 order by a.score desc,a.avmtest desc, a.avreport desc, a.avftest desc, a.avetc2 desc --, b.birth_date asc  
+	</select>
+	
+	<select id="finishManageDAO.selectBookList" parameterClass="map" resultClass="egovMap">
+		select a.[MONTH], a.bookcode, decode(nvl(b.subj, 'N'), 'N', 'N', 'Y') as exam_yn,
+		       nvl(c.final_yn, 'N') as final_yn, nvl(c.marking_yn, 'N') as marking_yn,
+		       to_char(nvl(c.totalscore, 0), '000.0') as totalscore
+		  from tz_proposebook a, tz_bookexam_paper b, tz_bookexam_result c
+		 where a.subj 		= b.subj(+)
+		   and a.[year] 		= b.[year](+)
+		   and a.subjseq 	= b.subjseq(+)
+		   and a.[MONTH] 		= b.[MONTH](+)
+		   and a.bookcode 	= b.bookcode(+)
+		   and a.subj 		= c.subj(+)
+		   and a.[year] 		= c.[year](+)
+		   and a.subjseq 	= c.subjseq(+)
+		   and a.[MONTH] 		= c.[MONTH](+)
+		   and a.bookcode 	= c.bookcode(+)
+		   and a.userid 	= c.userid(+)
+		   and a.subj 		= #subj#
+		   and a.[year] 		= #[year]#
+		   and a.subjseq 	= #subjseq#
+		   and a.userid 	= #userid#
+	</select>
+	
+	<select id="finishManageDAO.selectExamList" parameterClass="map" resultClass="egovMap">
+	SELECT PROJ_CNT,
+       PROJ_USER_CNT,
+       EXAM_CNT_M,
+       EXAM_CNT_E,
+       EXAM_USER_CNT_M,
+       EXAM_USER_CNT_E,
+       EXAM_USERTEMP_CNT_M,
+       EXAM_USERTEMP_CNT_E,
+       EMP_GUBUN,
+       RANKING,
+       ETC1,
+       USERID,
+       SCORE,
+       TSTEP,
+       MTEST,
+       FTEST,
+       HTEST,
+       ACT,
+       REPORT,
+       ETC2,
+       AVTSTEP,
+       AVMTEST,
+       AVFTEST,
+       AVHTEST,
+       AVACT,
+       AVREPORT,
+       AVETC1,
+       AVETC2,
+       ISGRADUATED,
+       ISGRADUATEDDESC,
+       BRANCHNM,
+       LDATE,
+       POSITION_NM,
+       LVL_NM,
+       STUDY_COUNT,
+       STUDY_TIME,
+       NAME,
+       HOMETEL,
+       HANDPHONE,
+       EMAIL,
+       COMPNM,
+       SUBJ,
+       [YEAR],
+       SUBJSEQ,
+       BIRTH_DATE,
+       USER_PATH,
+       CERT,
+       EDITLINK,
+       EDITSCORE,
+       NOTGRADUCD,
+       NOTGRADUETC,
+       SAMTOTAL,
+       SERNO,
+      -- get_codenm('0028', notgraduetc) as notgraduetcdesc,
+       (select  codenm from  tz_code  where gubun = '0028' and  code = notgraduetc) as notgraduetcdesc,       
+      -- get_codenm('0028', notgraduetc) as samtotal,
+       (select  codenm from  tz_code  where gubun = '0028' and  code = notgraduetc) as samtotal,
+       LIFETIME_YN,
+       LIFETIME_RESULT
+FROM(   
+		select (
+		         select count(distinct projgubun)
+		           from tz_projgrp
+		          where subj = t.subj and [year] = t.[year] and subjseq = t.subjseq
+		       ) as proj_cnt,
+		       (
+		         select count(distinct grpseq)
+		           from tz_projrep
+		          where subj = t.subj and [year] = t.[year] and subjseq = t.subjseq and projid = t.userid
+		       ) as proj_user_cnt,
+		       (
+		         select count(papernum)
+		           from tz_exampaper
+		          where subj = t.subj and [year] = t.[year] and subjseq = t.subjseq and examtype = 'M'
+		       ) as exam_cnt_m,
+		       (
+		         select count(papernum)
+		           from tz_exampaper
+		          where subj = t.subj and [year] = t.[year] and subjseq = t.subjseq and examtype = 'E'
+		       ) as exam_cnt_e,
+		       (
+		         select count(score)
+		           from tz_examresult
+		          where subj = t.subj and [year] = t.[year] and subjseq = t.subjseq and examtype = 'M' and userid = t.userid
+		       ) as exam_user_cnt_m,
+		       (
+		         select count(score)
+		           from tz_examresult
+		          where subj = t.subj and [year] = t.[year] and subjseq = t.subjseq and examtype = 'E' and userid = t.userid
+		       ) as exam_user_cnt_e,
+		       (
+		         select count(score)
+		           from tz_examresulttemp
+		          where subj = t.subj and [year] = t.[year] and subjseq = t.subjseq and examtype = 'M' and userid = t.userid
+		       ) as exam_usertemp_cnt_m,
+		       (
+		         select count(score)
+		           from tz_examresulttemp
+		          where subj = t.subj and [year] = t.[year] and subjseq = t.subjseq and examtype = 'E' and userid = t.userid
+		       ) as exam_usertemp_cnt_e,		       
+		       t.*
+		  from (
+		  
+		  
+				 --select row_number() over(order by a.score desc, a.avmtest desc, a.avreport desc, a.avftest desc, a.avetc2 desc, b.birth_date asc) as ranking,
+				 select rank() over(order by a.score desc, a.avmtest desc, a.avreport desc, a.avftest desc, a.avetc2 desc) as ranking,
+				       (select count(*) as cnt 
+				          from  tz_attendance f
+				          -- , vz_scsubjseq c
+				         where a.subj=f.subj 
+				           and a.[year]=f.[year] 
+				           and b.userid=f.userid 
+				          -- and f.subj=c.subj
+				           and f.subj=a.subj 
+				          -- and f.subjseq=c.subjseq 
+				           and f.subjseq=a.subjseq
+				          -- and f.[year]=c.[year]
+				          and f.[year]=a.[year] 
+				           and isattend ='O' 
+				          -- and  f.attdate between  substr(c.EDUSTART,0,8) and substr(c.EDUEND,0,8)
+				       ) as etc1,
+				       a.userid, a.score, a.tstep, a.mtest, a.ftest, a.htest, a.act, a.report, a.etc2, a.avtstep, a.avmtest, a.avftest, a.avhtest, a.avact, a.avreport, a.avetc1,
+				       a.avetc2, a.isgraduated, decode(a.isgraduated, 'Y', '수료', '미수료') as isgraduateddesc, '' as branchnm, a.ldate, nvl(b.position_nm, '-') as position_nm,
+				       b.lvl_nm, a.study_count, a.study_time, b.name, b.hometel, b.handphone, b.email
+				       -- , get_compnm(b.comp) as compnm
+				       , (select compnm from tz_compclass where comp=b.comp) as compnm
+				       , a.subj, a.[year], a.subjseq,
+				       b.birth_date, b.user_path, b.cert, a.editlink, a.editscore,
+				<isEqual property="selectTable" compareValue="A">
+				       a.notgraduce, a.notgraduetc
+				       , get_codenm('0028', a.notgraduetc) as samtotal
+				       , a.serno, a.emp_gubun
+				  from tz_stold a
+				</isEqual>
+				<isNotEqual property="selectTable" compareValue="A">
+				       (select notgraducd from tz_stold where subj = a.subj and [year] = a.[year] and subjseq = a.subjseq and userid = a.userid) as notgraducd,
+				       a.notgraduetc
+				       --, get_codenm('0028', a.notgraduetc) as notgraduetcdesc
+				       , a.samtotal, serno, a.emp_gubun
+				       , a.lifetime_yn
+				       , a.lifetime_result
+				  from tz_student a
+				</isNotEqual> 
+				     , tz_member b
+				 where a.userid		= b.userid(+)
+				   and a.subj		= #p_subj#
+				   and a.[year]		= #p_year#
+				   and a.subjseq	= #p_subjseq#
+				  
+				 
+			    ) t
+			)				    
+			order BY score desc, avmtest desc, avreport desc, avftest desc, avetc2 desc --, b.birth_date asc      
+	</select>
+	
+	<select id="finishManageDAO.SelectSubjseqInfoDbox" parameterClass="map" resultClass="egovMap">
+		select case 
+        		when instr(a.subjnm,'학부모가 알아야 할 특수교육개론',1) > 0 
+        		then 1
+        		when instr(a.subjnm,'가정에서의 장애학생 지원 방안',1) > 0 
+        		then 2
+        		when instr(a.subjnm,'학부모가 알아야할 치료지원 서비스',1) > 0 
+        		then 3
+        		else 0 end schoolparent
+		    , b.isclosed, b.edustart, b.eduend
+			, nvl(b.wstep, 0) wstep
+			, nvl(b.wmtest, 0) wmtest
+			, nvl(b.wftest, 0) wftest
+			, nvl(b.whtest, 0) whtest
+			, nvl(b.wreport, 0) wreport
+			, nvl(b.wact, 0) wact
+			, nvl(b.wetc1, 0) wetc1
+			, nvl(b.wetc2, 0) wetc2
+			, nvl(a.ratewbt, 90) as ratewbt,
+		       b.gradscore, b.gradstep, b.gradexam, b.gradftest, b.gradhtest, b.gradreport, b.grcode, b.grseq, b.gyear, b.subjnm,
+		       b.isblended, b.gradftest_flag, b.gradhtest_flag, b.gradexam_flag, b.gradreport_flag, nvl(contenttype,'N') contenttype,
+		       DECODE(b.gradftest_flag , 'R', '필수', '선택') as gradftest_flagName  ,
+		       DECODE(b.gradhtest_flag , 'R', '필수', '선택') as gradhtest_flagName  ,
+		       DECODE(b.gradexam_flag  , 'R', '필수', '선택') as gradexam_flagName   ,
+		       DECODE(b.gradreport_flag, 'R', '필수', '선택') as gradreport_flagName ,
+		       a.isonoff, b.biyong, (select grcodenm from tz_grcode where grcode = b.grcode) grcodenm,
+		       a.isoutsourcing, b.iscpresult, b.subjseqgr, b.iscpflag, to_char(sysdate, 'yyyyMMdd') as today,
+		       (select count(*) from tz_student where subj=b.subj and [year]=b.[year] and subjseq=b.subjseq) studentcnt,
+		       (select count(*) from tz_stold where subj=b.subj and [year]=b.[year] and subjseq=b.subjseq) stoldcnt,
+		       (select count(*) from tz_stold where subj=b.subj and [year]=b.[year] and subjseq=b.subjseq and isgraduated='Y') stoldycnt,
+		       (select count(*) from tz_stold where subj=b.subj and [year]=b.[year] and subjseq=b.subjseq and isgraduated='N') stoldncnt,
+		       nvl(b.study_count,0) as study_count, nvl(b.study_time,0) as study_time, a.subj_gu, b.mtest_start, b.mtest_end,
+		       b.ftest_start, b.ftest_end, b.mreport_start, b.mreport_end, b.freport_start, b.freport_end, nvl(a.edutimes, 0) as edutimes
+		       , a.upperclass
+		  from tz_subj a, tz_subjseq b
+		 where a.subj = b.subj
+		   and b.subj = #p_subj#
+		   and b.[year] = #p_year#
+		   and b.subjseq = #p_subjseq#
+	</select>
+	
+	<select id="finishManageDAO.ScoreCntList" parameterClass="map" resultClass="egovMap">
+		select editscore, count(0) as cnt
+		  from tz_student
+		 where subj = #p_subj#
+		   and [year] = #p_year#
+		   and subjseq = #p_subjseq#
+		   and score <![CDATA[>=]]> 60
+		   and editscore <![CDATA[>=]]> 80
+		  -- and etc2 <![CDATA[<>]]> 0
+		 group by editscore
+		 order by editscore desc
+	</select>
+	
+	<select id="finishManageDAO.getCntBookMonth" parameterClass="map" resultClass="int">
+		select count(distinct [MONTH]) as cnt
+		  from tz_subjbook
+		 where subj = #p_subj#
+	</select>
+	
+	<select id="finishManageDAO.getCompleteSerno" parameterClass="map" resultClass="Object">
+		select serno
+		  from tz_student
+		 where subj = #p_subj#
+		   and [year] = #p_year#
+		   and subjseq = #p_subjseq#
+		   and userid = #p_userid#
+	</select>
+	
+	<select id="finishManageDAO.getMaxCompleteCode" parameterClass="map" resultClass="String">
+		select to_char(nvl(max(serno), 0)+1, '0000') as maxno
+		  from tz_stold
+		 where subj = #p_subj#
+		   and [year] = #p_year#
+		   and subjseq = #p_subjseq#
+	</select>
+	
+	<update id="finishManageDAO.graduatedUpdate">
+		update tz_stold
+		   set isgraduated 	= #p_isgraduated#,
+		       notgraducd  	= '',
+		       notgraduetc 	= '',
+		       serno		= #p_sserno#
+		 where subj 	= #p_subj#
+		   and [year] 	= #p_year#
+		   and subjseq 	= #p_subjseq#
+		   and userid	= #p_userid#
+	</update>
+	
+	<update id="finishManageDAO.updateStudentSerno">
+		update tz_student
+		   set serno 	= #p_sserno#
+		 where subj 	= #p_subj#
+		   and [year] 	= #p_year#
+		   and subjseq 	= #p_subjseq#
+		   and userid	= #p_userid#
+	</update>
+	
+	<update id="finishManageDAO.updateStudentIsgraduated">
+		update tz_student
+		   set isgraduated 	= #p_isgraduated#
+		 where subj 		= #p_subj#
+		   and [year] 		= #p_year#
+		   and subjseq 		= #p_subjseq#
+		<isNotEmpty property="p_userid">
+		   and userid 		= #p_userid#
+		</isNotEmpty>
+	</update>
+	
+	<delete id="finishManageDAO.deleteStroutProc">
+		delete tz_strout a
+		 where exists(
+		               select ''
+		                 from (
+		                        select userid, ldate
+		                          from tz_strout ts
+		                         where exists (
+		                                         select ''
+		                                           from tz_strout_setup tss
+		                                          where to_char(sysdate, 'yyyyMMdd') >= to_char(add_months(to_date(substr(ts.ldate, 1, 8), 'yyyyMMdd'), tss.duemonth), 'yyyyMMdd')
+		                                            and ts.isstrout = 'Y'
+		                                      )
+		                      ) v
+		                where a.userid = v.userid
+		                  and a.ldate <![CDATA[<=]]> v.ldate
+		             )
+	</delete>
+	
+	<delete id="finishManageDAO.deleteStroutYear">
+		delete from tz_strout where substr(ldate,1,4) <![CDATA[<]]> to_char(sysdate,'yyyy')
+	</delete>
+	
+	<delete id="finishManageDAO.deleteStoldTable">
+		delete tz_stold
+		 where subj		= #p_subj#
+		   and [year]		= #p_year#
+		   and subjseq	= #p_subjseq#
+	</delete>
+	
+	<select id="finishManageDAO.chkRemainReport" parameterClass="map" resultClass="int">
+		select count(distinct a.grpseq) notcnt
+          from  tz_projassign a, tz_projrep b
+         where  a.subj = b.subj
+           and  a.[year] = b.[year]
+           and  a.subjseq = b.subjseq
+           and  a.userid = b.projid
+           and  a.grpseq = b.grpseq
+           and  a.subj    = #p_subj#
+           and  a.[year]    = #p_year#
+           and  a.subjseq = #p_subjseq#
+           and  (a.totalscore is null or a.totalscore = '')
+           and  nvl(b.isfinal,'N') = 'Y'
+	</select>
+	
+	<!-- 이수대상 수강생리스트 -->
+	<select id="finishManageDAO.selectCompleteStudent" parameterClass="map" resultClass="egovMap">
+		 select subj, [year], subjseq, userid, name, comp, hometel, handphone, email, isb2c, samtotal, study_count,
+		        study_time, post, dept_cd, job_cd, editlink, editscore, examnum, exam_flag,
+		        tstep, avtstep, avact, mtest, htest, ftest, report, etc1, etc2,
+		        decode( contenttype, 'L', avmtest,  b_avmtest ) as avmtest,
+		        decode( contenttype, 'L', avftest,  b_avftest ) as avftest,
+		        decode( contenttype, 'L', avhtest,  b_avhtest ) as avhtest,
+		        decode( contenttype, 'L', avreport, b_avreport) as avreport,
+		        decode( contenttype, 'L', avetc1,   b_avetc1  ) as avetc1,
+		        decode( contenttype, 'L', avetc2,   b_avetc2  ) as avetc2,
+		        Case When tstep <![CDATA[ < ]]> 90 Then 
+		             nvl(decode( contenttype, 'L', avmtest,  b_avmtest ), 0) + nvl(decode( contenttype, 'L', avftest,  b_avftest ), 0) + nvl(avact, 0) +
+		             nvl(decode( contenttype, 'L', avhtest,  b_avhtest ), 0) + nvl(decode( contenttype, 'L', avreport, b_avreport), 0)
+		         else 
+		             nvl(decode( contenttype, 'L', avmtest,  b_avmtest ), 0) + nvl(decode( contenttype, 'L', avftest,  b_avftest ), 0) + nvl(avact, 0) +
+		             nvl(decode( contenttype, 'L', avhtest,  b_avhtest ), 0) + nvl(decode( contenttype, 'L', avreport, b_avreport), 0) +
+		             nvl(avetc2, 0) 
+		         end 
+		         as score
+		  from (
+		         select subj, [year], subjseq, userid, name, comp, hometel, handphone, email, isb2c, tstep, avtstep, avmtest, avftest, avhtest, avreport,
+		                avact, avetc1, samtotal, study_count, study_time, post, dept_cd, job_cd, editlink, editscore, examnum, htest,
+		                mtest, 
+		                report, etc1, etc2,
+		                round((htest * $p_whtest$)/100, 2) as b_avhtest,
+	                    decode( lastdate, null, 0, round(((ex3result_grade*100)/100), 2)) as ftest,
+	                    decode( lastdate, null, 0, round(((ex3result_grade*100)/100) * $p_wftest$ , 2)/100)  as b_avftest, 
+		                round(((mtest * 100)/100 * $p_wmtest$ ),2)/100 as b_avmtest,
+		                round(report * $p_wreport$, 2 )/100 as b_avreport,
+		                round(etc1 * $p_wetc1$, 2)/100 as b_avetc1,
+		                round(etc2 * wetc2, 2)/100 as b_avetc2,
+		                round(etc2 * wetc2, 2)/100 as avetc2,
+		                
+		                (select contenttype from tz_subj where subj = t.subj) as contenttype, exam_flag
+		                , wetc1, wetc2
+		          from (
+		                 select a.subj, a.[year], a.subjseq, a.userid, b.name, b.comp, b.hometel, b.handphone, b.email, a.isb2c, a.tstep,
+		                        a.avtstep, a.avmtest, a.avftest, a.avhtest, a.avreport, a.avact, a.avetc1, a.avetc2, a.samtotal, a.study_count,
+		                        a.study_time, b.post, b.dept_cd, b.job_cd, a.editlink, a.editscore, a.examnum, mtest, f.etc1, f.etc2,
+		                        
+		                        <![CDATA[
+		                        case when (select count(*)  from tz_exammaster where subj = a.subj and examtype = 'H') = 0 then 0
+		                        else
+		                        	Case When nvl(c.ex2result_grade, 0) < nvl(c_temp.ex2result_grade, 0)  Then
+		                        		((c_temp.ex2result_grade / (select count(*)  from tz_exammaster where subj = a.subj and examtype = 'H') *100)/100)
+		                        	Else
+		                        		 ((c.ex2result_grade / (select count(*)  from tz_exammaster where subj = a.subj and examtype = 'H') *100)/100)
+		                        	End
+			                    end as htest,
+		                        Case When nvl(d.ex3result_grade, 0) < nvl(d_temp.ex3result_grade, 0)  Then
+				                	d_temp.ex3result_grade
+				                Else
+				                    d.ex3result_grade
+		                       	End 
+		                        as ex3result_grade, 
+		                         ]]>
+		                         
+		                        e.report,
+		                        --(select lesson as lastdate from tz_exammaster where subj = a.subj and examtype = 'E') as lastdate,
+		                        '001' as lastdate,
+							   case when nvl(g.exam_cnt, 0) > nvl(h.user_cnt, 0) then 'N'
+						            else 'Y'
+						        end as exam_flag
+						        ,f.wetc1, f.wetc2
+		                  from tz_student a, tz_member b,
+		                        (
+		                            select subj, [year], subjseq, userid, sum(nvl(score,0)) ex2result_grade, count(0) cnt
+		                              from tz_examresult
+		                             where examtype= 'H'
+		                               and subj    = #p_subj#
+					                   and [year]    = #p_year#
+					                   and subjseq = #p_subjseq#
+		                             group by subj, [year], subjseq, userid
+		                        ) c,
+		                        (
+		                            select subj, [year], subjseq, userid, sum(nvl(score,0)) ex2result_grade, count(0) cnt
+		                              from tz_examresulttemp
+		                             where examtype= 'H'
+		                               and subj    = #p_subj#
+					                   and [year]    = #p_year#
+					                   and subjseq = #p_subjseq#
+		                             group by subj, [year], subjseq, userid
+		                        ) c_temp,
+		                        (
+		                            select subj, [year], subjseq, userid, sum(score) as ex3result_grade, count(0) as cnt2
+		                              from tz_examresult
+		                             where examtype= 'E'
+		                               and subj    = #p_subj#
+					                   and [year]    = #p_year#
+					                   and subjseq = #p_subjseq#
+		                             group by subj, [year], subjseq, userid
+		                        ) d,
+		                        (
+		                            select subj, [year], subjseq, userid, sum(score) as ex3result_grade, count(0) as cnt2
+		                              from tz_examresulttemp
+		                             where examtype= 'E'
+		                               and subj    = #p_subj#
+					                   and [year]    = #p_year#
+					                   and subjseq = #p_subjseq#
+		                             group by subj, [year], subjseq, userid
+		                        ) d_temp,
+		                        (
+		                            select subj, [year], subjseq, projid, sum(score) as report
+		                              from tu_projrep		                               
+		                             where grcode = 'N000001'
+		                               and subj    = #p_subj#
+					                   and [year]    = #p_year#
+					                   and subjseq = #p_subjseq#
+		                             group by subj, [year], subjseq, projid
+		                        ) e,
+		                        (
+		                         select y.subj, y.[year], y.subjseq, y.userid, y.etc1, y.wetc1, y.wetc2,
+		                               <![CDATA[
+		                                 case   when upperclass = 'OTH' then --기타연수
+                                                     case when y.tstep >=90 then y.tstep 
+                                                          else 0
+                                                     end
+                                                when upperclass = 'PAR' then --학부모연수
+                                                    case when y.tstep >=90 then y.tstep 
+                                                         else 0
+                                                    end
+                                         else
+                                                    case when y.times >= 60 and y.tstep >= 90 then y.tstep 
+                                                         when y.times <  60 and y.tstep >= 90  then y.tstep 
+                                                         else 0
+                                                    end 
+                                         end etc2
+                                         ]]>
+		                          from (
+		                                select t.subj, t.[year], t.subjseq, t.userid, t.etc1, t.wetc1, t.wetc2,
+		                                        (select nvl(edutimes,0) from tz_subj where subj = #p_subj#) as times,
+		                                        (select upperclass from tz_subj where subj = #p_subj#) as upperclass,
+		                                        tstep
+		                                  from (
+		                                            select a.subj, a.[year], a.subjseq, a.userid, b.wetc1, b.wetc2,
+		                                                    (
+		                                                     select count(0) from tz_attendance 
+		                                                      where subj = a.subj and [year] = a.[year] and subjseq = a.subjseq and userid = a.userid
+		                                                        and isattend = 'O'
+		                                                        and attdate between substr(b.edustart, 0, 8) and substr(b.eduend, 0, 8)
+		                                                    ) as etc1, tstep
+		                                              from  tz_student a, tz_subjseq b
+		                                             where a.subj      = #p_subj#
+		                                               and a.[year]      = #p_year#
+		                                               and a.subjseq   = #p_subjseq#
+		                                               and a.subj      = b.subj
+		                                               and a.[year]      = b.[year]
+		                                               and a.subjseq   = b.subjseq
+		                                        ) t
+		                                ) y
+		                        ) f,
+		                        (
+						          select subj, [year], subjseq, count(papernum) as exam_cnt
+						            from tz_exampaper
+						            where examtype = 'E'
+						           group by subj, [year], subjseq
+						        ) g,
+						        (
+						          select subj, [year], subjseq, userid, count(papernum) as user_cnt
+						            from tz_examresult
+						             where subj    = #p_subj#
+					                   and [year]    = #p_year#
+					                   and subjseq = #p_subjseq#
+						           group by subj, [year], subjseq, userid
+						        ) h 
+		                 where a.subj    = #p_subj#
+		                   and a.[year]    = #p_year#
+		                   and a.subjseq = #p_subjseq#
+		<isNotEmpty property="p_userid">
+						   and a.userid  = #p_userid#
+		</isNotEmpty>
+		                   and a.userid  = b.userid
+		                   and a.subj    = c.subj(+)     and a.[year]   = c.[year](+)    and a.subjseq = c.subjseq(+)
+		                   and a.subj    = d.subj(+)     and a.[year]   = d.[year](+)    and a.subjseq = d.subjseq(+)     and a.userid  = d.userid(+)
+		                   and a.subj    = c_temp.subj(+)     and a.[year]   = c_temp.[year](+)    and a.subjseq = c_temp.subjseq(+)
+		                   and a.subj    = d_temp.subj(+)     and a.[year]   = d_temp.[year](+)    and a.subjseq = d_temp.subjseq(+)     and a.userid  = d_temp.userid(+)
+		                   and a.subj    = e.subj(+)     and a.[year]   = e.[year](+)    and a.subjseq = e.subjseq(+)     and a.userid  = e.projid(+)
+		                   and a.subj    = f.subj(+)     and a.[year]   = f.[year](+)    and a.subjseq = f.subjseq(+)     and a.userid  = f.userid(+)
+						   and a.subj	 = g.subj(+)     and a.[year]	  = g.[year](+)    and a.subjseq = g.subjseq(+)
+						   and a.subj	 = h.subj(+)     and a.[year]	  = h.[year](+)    and a.subjseq = h.subjseq(+)     and a.userid  = h.userid(+)
+		                ) t
+		        )
+	</select>
+	
+	<!-- 이수처리 수강생 점수계산 -->
+	<update id="finishManageDAO.updateCompleteStudent">
+		merge into tz_student a
+		using ( select
+		                        a.score 		as a_score,
+		                        a.tstep 		as a_tstep,
+		                        a.ftest 		as a_ftest,
+		                        a.htest 		as a_htest,
+		                        a.report 		as a_report,
+		                        a.act 			as a_act,
+		                        a.etc1 			as a_etc1,
+		                        a.etc2 			as a_etc2,
+		                        a.avtstep 		as a_avtestep,
+		                        a.avmtest 		as a_avmtest,
+		                        a.avftest 		as a_avftest,
+		                        a.avhtest 		as a_avhtest,
+		                        a.avreport 		as a_avreport,
+		                        a.avact 		as a_avact,
+		                        a.avetc1 		as a_avetc1,
+		                        a.avetc2 		as a_avetc2,
+		                        a.isgraduated 	as a_isgraduated,
+		                        b.score         as b_score,
+		                        b.tstep         as b_tstep,
+		                        b.ftest         as b_ftest,
+		                        b.htest         as b_htest,
+		                        b.report        as b_report,
+		                        b.act           as b_act,
+		                        b.etc1          as b_etc1,
+		                        b.etc2          as b_etc2,
+		                        b.avtstep       as b_avtestep,
+		                        b.avmtest       as b_avmtest,
+		                        b.avftest       as b_avftest,
+		                        b.avhtest       as b_avhtest,
+		                        b.avreport      as b_avreport,
+		                        b.avact         as b_avact,
+		                        b.avetc1        as b_avetc1,
+		                        b.avetc2        as b_avetc2,
+		                        xx.b_isgraduated,
+		                        a.subj ,
+		                        a.[year],
+		                        a.userid,
+		                        a.subjseq		                        
+		                    from tz_student a,		                         
+		                         (
+	                        	
+						           select userid, 
+						           		  isgraduated as b_isgraduated 
+						           		  from tz_isgraduatedyn 
+						           		  where subj = #p_subj#
+									        and [year] = #p_year#
+									        and subjseq   = #p_subjseq#
+						         ) xx,						        
+		                         (
+									 select subj, [year], subjseq, userid, name, comp, hometel, handphone, email, isb2c, samtotal, study_count,
+									        study_time, post, dept_cd, job_cd, editlink, editscore, examnum, exam_flag,
+									        tstep, avtstep, avact, mtest, htest, ftest, report, etc1, etc2, wetc1, wetc2, act,
+									        decode( contenttype, 'L', avmtest,  b_avmtest ) as avmtest,
+									        decode( contenttype, 'L', avftest,  b_avftest ) as avftest,
+									        decode( contenttype, 'L', avhtest,  b_avhtest ) as avhtest,
+									        decode( contenttype, 'L', avreport, b_avreport) as avreport,
+									        decode( contenttype, 'L', avetc1,   b_avetc1  ) as avetc1,
+									        decode( contenttype, 'L', avetc2,   b_avetc2  ) as avetc2,
+                                            Case When tstep <![CDATA[ < ]]> 90 Then 
+                                                nvl(decode( contenttype, 'L', avmtest,  b_avmtest ), 0) + nvl(decode( contenttype, 'L', avftest,  b_avftest ), 0) + nvl(avact, 0) +
+                                                nvl(decode( contenttype, 'L', avhtest,  b_avhtest ), 0) + nvl(decode( contenttype, 'L', avreport, b_avreport), 0)
+                                            else 
+                                                nvl(decode( contenttype, 'L', avmtest,  b_avmtest ), 0) + nvl(decode( contenttype, 'L', avftest,  b_avftest ), 0) + nvl(avact, 0) +
+                                                nvl(decode( contenttype, 'L', avhtest,  b_avhtest ), 0) + nvl(decode( contenttype, 'L', avreport, b_avreport), 0) +
+                                                nvl(avetc2, 0) 
+                                            end 
+                                            as score
+									  from (
+									         select subj, [year], subjseq, userid, name, comp, hometel, handphone, email, isb2c, tstep, avtstep, avmtest, avftest, avhtest, avreport,
+									                avact, avetc1, samtotal, study_count, study_time, post, dept_cd, job_cd, editlink, editscore, examnum, htest, act,
+									                mtest, decode( lastdate, null, 0, round(((ex3result_grade*100)/100), 2)) as ftest, report, etc1, 
+									                round(etc2 * wetc2, 2)/100 as etc2, wetc1, wetc2,
+									                round((htest * $p_whtest$)/100, 2) as b_avhtest,
+									                decode( lastdate, null, 0, round(((ex3result_grade*100)/100) * $p_wftest$ , 2)/100) as b_avftest,
+									                round(((mtest * 100)/100 * $p_wmtest$ ),2)/100 as b_avmtest,
+									                round(report * $p_wreport$, 2 )/100 as b_avreport,
+									                round(etc1 * $p_wetc1$, 2)/100 as b_avetc1,
+									                round(etc2 * wetc2, 2)/100 as b_avetc2,
+									                round(etc2 * wetc2, 2)/100 as avetc2,
+									                (select contenttype from tz_subj where subj = t.subj) as contenttype, exam_flag
+									          from (
+									                 select a.subj, a.[year], a.subjseq, a.userid, b.name, b.comp, b.hometel, b.handphone, b.email, a.isb2c, a.tstep, a.act,
+									                        a.avtstep, a.avmtest, a.avftest, a.avhtest, a.avreport, a.avact, a.avetc1, a.avetc2, a.samtotal, a.study_count,
+									                        a.study_time, b.post, b.dept_cd, b.job_cd, a.editlink, a.editscore, a.examnum, mtest, f.etc1, f.etc2, f.wetc1, f.wetc2,
+									                        
+									                        
+									                         <![CDATA[
+										                        case when (select count(*)  from tz_exammaster where subj = a.subj and examtype = 'H') = 0 then 0
+										                        else
+										                        	Case When nvl(c.ex2result_grade, 0) < nvl(c_temp.ex2result_grade, 0)  Then
+										                        		((c_temp.ex2result_grade / (select count(*)  from tz_exammaster where subj = a.subj and examtype = 'H') *100)/100)
+										                        	Else
+										                        		 ((c.ex2result_grade / (select count(*)  from tz_exammaster where subj = a.subj and examtype = 'H') *100)/100)
+										                        	End
+											                    end as htest,
+										                        Case When nvl(d.ex3result_grade, 0) < nvl(d_temp.ex3result_grade, 0)  Then
+												                	d_temp.ex3result_grade
+												                Else
+												                    d.ex3result_grade
+										                       	End 
+										                        as ex3result_grade, 
+										                     ]]>
+									                         
+									                         
+									                         e.report,
+									                        --(select lesson as lastdate from tz_exammaster where subj = a.subj and examtype = 'E') as lastdate,
+									                        '001' as lastdate,
+														   case when nvl(g.exam_cnt, 0) > nvl(h.user_cnt, 0) then 'N'
+													            else 'Y'
+													        end as exam_flag 
+									                  from tz_student a, tz_member b,
+									                        (
+									                            select subj, [year], subjseq, userid, sum(nvl(score,0)) ex2result_grade, count(0) cnt
+									                              from tz_examresult
+									                             where examtype= 'H'
+									                               and subj    = #p_subj#
+												                   and [year]    = #p_year#
+												                   and subjseq = #p_subjseq#
+									                             group by subj, [year], subjseq, userid
+									                        ) c,
+									                        (
+									                            select subj, [year], subjseq, userid, sum(nvl(score,0)) ex2result_grade, count(0) cnt
+									                              from tz_examresulttemp
+									                             where examtype= 'H'
+									                               and subj    = #p_subj#
+												                   and [year]    = #p_year#
+												                   and subjseq = #p_subjseq#
+									                             group by subj, [year], subjseq, userid
+									                        ) c_temp,
+									                        (
+									                            select subj, [year], subjseq, userid, sum(score) as ex3result_grade, count(0) as cnt2
+									                              from tz_examresult
+									                             where examtype= 'E'
+									                               and subj    = #p_subj#
+												                   and [year]    = #p_year#
+												                   and subjseq = #p_subjseq#
+									                             group by subj, [year], subjseq, userid
+									                        ) d,
+									                        (
+									                            select subj, [year], subjseq, userid, sum(score) as ex3result_grade, count(0) as cnt2
+									                              from tz_examresulttemp
+									                             where examtype= 'E'
+									                               and subj    = #p_subj#
+												                   and [year]    = #p_year#
+												                   and subjseq = #p_subjseq#
+									                             group by subj, [year], subjseq, userid
+									                        ) d_temp,
+									                        (
+									                            select subj, [year], subjseq, projid, sum(score) as report
+									                              from tu_projrep
+									                             where grcode = 'N000001'
+									                               and subj    = #p_subj#
+												                   and [year]    = #p_year#
+												                   and subjseq = #p_subjseq#
+									                             group by subj, [year], subjseq, projid
+									                        ) e,
+									                        (
+									                         select y.subj, y.[year], y.subjseq, y.userid, y.etc1, wetc1, wetc2,
+									                                 <![CDATA[
+									                                 case   when upperclass = 'OTH' then --기타연수
+							                                                     case when y.tstep >=90 then y.tstep 
+                                                                                     else 0
+                                                                                end
+							                                                when upperclass = 'PAR' then --학부모연수
+							                                                    case when y.tstep >=90 then y.tstep 
+                                                                                     else 0
+                                                                                end
+							                                         else
+							                                                    case when y.times >= 60 and y.tstep >= 90 then y.tstep 
+                                                                                     when y.times <  60 and y.tstep >= 90  then y.tstep 
+							                                                         else 0
+							                                                     end 
+							                                         end etc2
+							                                         ]]>
+									                          from (
+									                                select t.subj, t.[year], t.subjseq, t.userid, t.etc1,
+									                                        (select nvl(edutimes,0) from tz_subj where subj = #p_subj#) as times,
+									                                        (select upperclass from tz_subj where subj = #p_subj#) as upperclass,
+									                                        (select nvl(wetc1,0) from tz_subjseq where subj = t.subj and subjseq=t.subjseq and [year]=t.[year]) as wetc1,
+                                                                            (select nvl(wetc2,0) from tz_subjseq where subj = t.subj and subjseq=t.subjseq and [year]=t.[year]) as wetc2,
+                                                                            tstep
+									                                  from (
+									                                            select a.subj, a.[year], a.subjseq, a.userid,
+									                                                    (
+									                                                     select count(0) from tz_attendance 
+									                                                      where subj = a.subj and [year] = a.[year] and subjseq = a.subjseq and userid = a.userid
+									                                                        and isattend = 'O'
+									                                                        and attdate between substr(b.edustart, 0, 8) and substr(b.eduend, 0, 8)
+									                                                    ) as etc1, tstep
+									                                              from  tz_student a, tz_subjseq b
+									                                             where a.subj      = #p_subj#
+									                                               and a.[year]      = #p_year#
+									                                               and a.subjseq   = #p_subjseq#
+									                                               and a.subj      = b.subj
+									                                               and a.[year]      = b.[year]
+									                                               and a.subjseq   = b.subjseq
+									                                        ) t
+									                                ) y
+									                        ) f,
+									                        (
+													          select subj, [year], subjseq, count(papernum) as exam_cnt
+													            from tz_exampaper
+													            where examtype = 'E'
+													           group by subj, [year], subjseq
+													        ) g,
+													        (
+													          select subj, [year], subjseq, userid, count(papernum) as user_cnt
+													            from tz_examresult
+													               where subj    = #p_subj#
+												                   and [year]    = #p_year#
+												                   and subjseq = #p_subjseq#
+													           group by subj, [year], subjseq, userid
+													        ) h
+									                 where a.subj    = #p_subj#
+									                   and a.[year]    = #p_year#
+									                   and a.subjseq = #p_subjseq#
+													<isNotEmpty property="p_userid">
+													   and a.userid  = #p_userid#
+													</isNotEmpty>
+									                   and a.userid  = b.userid
+									                   and a.subj    = c.subj(+)     and a.[year]   = c.[year](+)    and a.subjseq = c.subjseq(+)
+									                   and a.subj    = d.subj(+)     and a.[year]   = d.[year](+)    and a.subjseq = d.subjseq(+)     and a.userid  = d.userid(+)
+									                   and a.subj    = c_temp.subj(+)     and a.[year]   = c_temp.[year](+)    and a.subjseq = c_temp.subjseq(+)
+		                   							   and a.subj    = d_temp.subj(+)     and a.[year]   = d_temp.[year](+)    and a.subjseq = d_temp.subjseq(+)     and a.userid  = d_temp.userid(+)
+									                   and a.subj    = e.subj(+)     and a.[year]   = e.[year](+)    and a.subjseq = e.subjseq(+)     and a.userid  = e.projid(+)
+									                   and a.subj    = f.subj(+)     and a.[year]   = f.[year](+)    and a.subjseq = f.subjseq(+)     and a.userid  = f.userid(+)
+													   and a.subj	 = g.subj(+)     and a.[year]	  = g.[year](+)    and a.subjseq = g.subjseq(+)
+													   and a.subj	 = h.subj(+)     and a.[year]	  = h.[year](+)    and a.subjseq = h.subjseq(+)     and a.userid  = h.userid(+)
+													  
+									                ) t
+									        )
+								 ) b
+                           where a.subj = #p_subj#   and a.[year] = #p_year#      and a.subjseq = #p_subjseq#
+                        <isNotEmpty property="p_userid">
+						     and a.userid  = #p_userid#
+						</isNotEmpty>
+                             and a.subj = b.subj and a.[year] = b.[year] and a.subjseq = b.subjseq and a.userid = b.userid
+                             and b.userid = xx.userid
+		        		 ) b
+				on(
+					a.subj = #p_subj#   
+					and a.[year] = #p_year#      
+					and a.subjseq = #p_subjseq#
+                    <isNotEmpty property="p_userid">
+				    	and a.userid  = #p_userid#
+					</isNotEmpty>
+                    and a.subj = b.subj 
+                    and a.[year] = b.[year] 
+                    and a.subjseq = b.subjseq 
+                    and a.userid = b.userid
+				)
+				when matched then
+				update set
+				a.score         = b.b_score,
+				a.tstep         = b.b_tstep,
+				a.ftest         = b.b_ftest,
+				a.htest         = b.b_htest,
+				a.report        = b.b_report,
+				a.act           = b.b_act,
+				a.etc1          = b.b_etc1,
+				a.etc2          = b.b_etc2,
+				a.avtstep      = b.b_avtestep,
+				a.avmtest       = b.b_avmtest,
+				a.avftest       = b.b_avftest,
+				a.avhtest       = b.b_avhtest,
+				a.avreport      = b.b_avreport,
+				a.avact         = b.b_avact,
+				a.avetc1        = b.b_avetc1,
+				a.avetc2        = b.b_avetc2
+		<isEmpty property="p_userid">
+				, a.isgraduated   = b.b_isgraduated
+		</isEmpty>
+		
+	</update>
+	
+	
+	<!-- 이수정보 등록 -->
+	<insert id="finishManageDAO.insertStoldTable">
+		insert into tz_stold(
+			subj,
+			[year],
+			subjseq,
+			userid,
+			name,
+			comp,
+			score,
+			tstep,
+			mtest,
+			ftest,
+			report,
+			act,
+			etc1,
+			etc2,
+			avtstep,
+			avmtest,
+			avftest,
+			avreport,
+			avact,
+			avetc1,
+			avetc2,
+			isgraduated,
+			isb2c,
+			edustart,
+			eduend,
+			serno,
+			luserid,
+			ldate,
+			htest,
+			avhtest,
+			notgraducd,
+			study_count,
+			study_time,
+			post,
+			dept_cd,
+			job_cd,
+			editlink,
+			editscore
+		)
+		
+		select a.subj,
+		       a.[year],
+		       a.subjseq,
+		       a.userid,
+		       c.name,
+		       c.comp,
+		       a.score,
+		       a.tstep,
+		       a.mtest,
+		       a.ftest,
+		       a.report,
+		       a.act,
+		       a.etc1,
+		       a.etc2,
+		       a.avtstep,
+		       a.avmtest,
+		       a.avftest,
+		       a.avreport,
+		       a.avact,
+		       a.avetc1,
+		       a.avetc2,
+		       a.isgraduated,
+		       a.isb2c,
+		       b.edustart,
+		       b.eduend,
+		       <![CDATA[
+		       /* 20141007 변경
+		       case when a.isgraduated = 'Y'
+		            then case when a.serno is null or a.serno = ''
+		                      then (select to_char(nvl(max(serno), 0)+d.cnt, '0000') from tz_stold where subj = a.subj and [year] = a.[year] and subjseq = a.subjseq)
+		                      else a.serno
+		                  end
+		            else ''
+		        end as serno,
+		        */
+		        case when a.isgraduated = 'Y'
+                    then case when a.serno is null or a.serno = ''
+                              then 
+                              Case When  f.course <> '000000' Then
+                                    (
+                                    select  to_char(nvl(max(bb.serno), 0)+d.cnt, '0000') 
+                                    from vz_scsubjseq  aa inner join tz_stold bb on aa.subj=bb.subj and aa.[year]=bb.[year] and aa.subjseq=bb.subjseq
+                                    where aa.grseq = f.grseq
+                                    and aa.gyear = f.gyear
+                                    )                           
+                               Else                           
+                                (select to_char(nvl(max(serno), 0)+d.cnt, '0000') from tz_stold where subj = a.subj and [year] = a.[year] and subjseq = a.subjseq)
+                               End
+                               
+                              else a.serno
+                          end
+                    else ''
+                end as serno,
+		       ]]>
+		       #userid#,
+		       to_char(sysdatetime, 'yyyyMMddhhmiss'),
+		       a.htest,
+		       a.avhtest,
+		       e.notgraducd,
+		       a.study_count,
+		       a.study_time,
+		       c.post,
+		       c.dept_cd,
+		       c.job_cd,
+		       a.editlink,
+		       a.editscore
+		  from tz_student a, tz_subjseq b, tz_member c, vz_scsubjseq f, 
+		        (
+		            select a.subj, a.[year], a.subjseq, a.userid, a.isgraduated, row_number() over(partition by a.isgraduated order by a.serno) as cnt
+		              from tz_student a
+		             where a.subj 	 = #p_subj#
+		               and a.[year] 	 = #p_year#
+		               and a.subjseq = #p_subjseq#
+		        ) d,
+		        (
+					SELECT 	userid, notgraducd FROM tz_isgraduatedyn WHERE subj = #p_subj# AND [year] = #p_year# AND subjseq = #p_subjseq# AND userid = a.userid 	   
+		        ) e
+		 where a.subj 	 	= #p_subj#
+		   and a.[year]    	= #p_year#
+		   and a.subjseq 	= #p_subjseq#
+		   and a.subj 		= f.subj
+           and a.[year] 		= f.[year]
+           and a.subjseq 	= f.subjseq
+		   and a.subj 	 	= b.subj
+		   and a.[year] 	 	= b.[year]
+		   and a.subjseq 	= b.subjseq
+		   and a.userid  	= c.userid
+		   and a.subj 	 	= d.subj
+		   and a.[year] 	 	= d.[year]
+		   and a.subjseq 	= d.subjseq
+		   and a.userid  	= d.userid
+		   and a.userid  	= e.userid(+)
+		 
+	</insert>
+	
+	<!-- 수강생 수료증번호 발급 -->
+	<update id="finishManageDAO.updateStudentSernoAll">
+		merge into tz_student a
+		using ( 
+									select  a.subj
+									       ,a.[year]
+									       ,a.subjseq
+									       ,a.userid
+									       ,a.serno as a_serno
+									       ,a.emp_gubun as a_emp_gubun
+		                        		   ,b.serno as b_serno
+		                        		   ,c.emp_gubun as c_emp_gubun		                        			
+		                    from tz_student a
+		                           , tz_stold b
+		                           , tz_member c
+		                   where a.subj    = #p_subj#
+		                     and a.[year]    = #p_year#
+		                     and a.subjseq = #p_subjseq#
+		                     and a.subj    = b.subj
+		                     and a.[year]    = b.[year]
+		                     and a.subjseq = b.subjseq
+		                     and a.userid  = b.userid
+		                     and a.userid = c.userid
+		        ) b
+		        on (
+		        	      a.subj    = #p_subj#
+	                     and a.[year]    = #p_year#
+	                     and a.subjseq = #p_subjseq#
+	                     and a.subj    = b.subj
+	                     and a.[year]    = b.[year]
+	                     and a.subjseq = b.subjseq
+	                     and a.userid  = b.userid	                     
+		        )
+		   when matched then
+		   update set a.serno = b.b_serno
+		      		, a.emp_gubun = b.c_emp_gubun
+	</update>
+	
+	<update id="finishManageDAO.setCloseColumn">
+		update tz_subjseq
+		   set isclosed = #p_isclosed#
+		 where subj     = #p_subj#
+		   and [year]     = #p_year#
+		   and subjseq  = #p_subjseq#
+	</update>
+	
+	<!-- 외주과목 최종확인 -->
+	<update id="finishManageDAO.updateIsCpflag">
+		update tz_subjseq
+		   set iscpflag = #p_iscpflag#
+		 where subj = #p_subj#
+		   and [year] = #p_year#
+		   and subjseq = #p_subjseq#
+	</update>
+	
+	
+	<update id="finishManageDAO.updateOutSubjReject">
+		update tz_subjseq
+		   set iscpresult = 'N',
+		       iscpflag   = 'N'
+		 where subj    = #p_subj#
+		   and [year]    = #p_year#
+		   and subjseq = #p_subjseq#
+	</update>
+	
+	<update id="finishManageDAO.updateRecalcudate">
+		update tz_subjseq
+		   set recalcudate 	= to_char(sysdatetime, 'yyyyMMddhh24miss')
+		 where subj 		= #p_subj#
+		   and [year] 		= #p_year#
+		   and subjseq 		= #p_subjseq#
+		
+	</update>
+	
+	<select id="finishManageDAO.suRoyJeungPrintList" parameterClass="map" resultClass="egovMap">
+		select b.serno, a.subj, a.[year], a.subjseq, a.subjnm, get_codenm('0004', a.isonoff) as onoff_name, a.edutimes,
+		       a.edustart, a.eduend, c.name, c.birth_date, get_compnm(c.comp) as compnm,
+		       (to_date(substr(a.eduend, 0, 8), 'yyyyMMdd') - to_date(substr(a.edustart, 0, 8), 'yyyyMMdd')) +1 as eduday,
+		       to_char(TO_DATETIME(a.eduend, 'yyyymmddhh24'), 'yyyy') as grad_year,
+               to_char(TO_DATETIME(a.eduend, 'yyyymmddhh24'), 'mm') as grad_month,
+               to_char(TO_DATETIME(a.eduend, 'yyyymmddhh24'), 'dd') as grad_day,
+		       (select trim(lec_sel_no) from tz_propose where subj = a.subj and [year] = a.[year] and subjseq = a.subjseq and userid = b.userid) as lecselno,
+		       -- (select get_subjclass_fullnm(subjclass) from tz_subj where subj = a.subj) as upperclassnm,
+		      case when a.[year] = '2012' and a.subj = 'PRF120005'
+		       		then (select get_subjclass_fullnm('012000000') from tz_subj where subj = a.subj)
+		       		else (select get_subjclass_fullnm(subjclass) from tz_subj where subj = a.subj)
+		       		end upperclassnm,
+		       (select point from tz_subj where subj = a.subj) as point,
+		       to_char(b.editscore) as score, c.cert, c.birth_date, emp_gubun
+		  from vz_scsubjseq a, tz_stold b, tz_member c
+		 where a.subj 		= #p_subj#
+		   and a.[year] 		= #p_year#
+		   and a.subjseq 	= #p_subjseq#
+		   and a.subj 		= b.subj
+		   and a.[year] 		= b.[year]
+		   and a.subjseq 	= b.subjseq
+		   and b.userid 	= c.userid
+		   and b.isgraduated = 'Y'
+		<isNotEmpty property="p_userid">
+		   and b.userid 	= #p_userid#
+		</isNotEmpty>
+		
+		order by c.name, c.userid, b.serno, b.score desc, b.avreport desc, b.avftest desc, b.avetc2 desc
+	</select>
+	
+	<update id="finishManageDAO.updateStudentEditlink">
+		merge into	  tz_student a
+		 using	       (
+								select a.subj, a.[year], a.subjseq, a.userid,
+								       --row_number() over(order by a.score desc, a.avmtest desc, a.avreport desc, a.avftest desc, a.avetc2 desc, b.birth_date asc) as elink
+								       rank() over(order by a.score desc, a.avmtest desc, a.avreport desc, a.avftest desc, a.avetc2 desc) as elink
+								  from tz_student a, tz_member b
+								 where a.userid  = b.userid(+)
+								   and a.subj    = #p_subj#
+								   and a.[year]    = #p_year#
+								   and a.subjseq = #p_subjseq# 
+								   and a.score   <![CDATA[>=]]> 60
+								 --  and a.etc2    <![CDATA[<>]]> 0
+						       ) b
+						on (a.subj    = b.subj
+						   and a.[year]    = b.[year]
+						   and a.subjseq = b.subjseq
+						   and a.userid  = b.userid
+		                )
+		                when matched then
+		                update SET  a.editlink = b.elink
+	</update>
+	
+	<select id="finishManageDAO.selectScoreVarList" parameterClass="map" resultClass="egovMap">
+		<![CDATA[select score,var from tz_crt_log_tbl WHERE score < 91 order by score asc]]>
+	</select>
+	
+	<select id="finishManageDAO.selectCrtVarList" parameterClass="map" resultClass="egovMap">
+		select rslt, count(rslt) as cnt
+		  from tz_crt_var
+		 where subj    = #p_subj#
+		   and [year]    = #p_year#
+		   and subjseq = #p_subjseq#
+		 group by rslt
+		 order by rslt desc
+	</select>
+	
+	<select id="finishManageDAO.selectStudentTotalCnt" parameterClass="map" resultClass="int">
+		select count(0) as cnt
+		  from tz_student
+		 where subj    = #p_subj#
+		   and [year]    = #p_year#
+		   and subjseq = #p_subjseq#
+		   and score   <![CDATA[>=]]> 60
+		   -- and etc2    <![CDATA[<>]]> 0
+	</select>
+	
+	<select id="finishManageDAO.selectVarSumCnt" parameterClass="map" resultClass="int">
+		select nvl(sum(prv_num), 0)
+		  from tz_crt_var
+		 where subj    = #p_subj#
+		   and [year]    = #p_year#
+		   and subjseq = #p_subjseq#
+	</select>
+	
+	<delete id="finishManageDAO.deleteLank">
+		delete tz_crt_lank
+		 where subj    = #p_subj#
+		   and [year]    = #p_year#
+		   and subjseq = #p_subjseq#
+	</delete>
+	
+	<update id="finishManageDAO.setNum">
+		update tz_crt_var
+		   set last_num = #lst#
+		 where subj     = #p_subj#
+		   and [year]     = #p_year#
+		   and subjseq  = #p_subjseq#
+		   and score    = #score#
+	</update>
+	
+	<insert id="finishManageDAO.setLank">
+		insert into tz_crt_lank(
+			subj, [year], subjseq, lank, score
+		)
+		values(
+			#p_subj#,
+			#p_year#,
+			#p_subjseq#,
+			#lank#,
+			#score#
+		)
+	</insert>
+	
+	<select id="finishManageDAO.selectScoreList" parameterClass="map" resultClass="egovMap">
+		select score, var
+		  from tz_crt_log_tbl
+		 order by to_number(score) asc
+	</select>
+	
+	<select id="finishManageDAO.selectCrtVarCount" parameterClass="map" resultClass="int">
+		select count(0)
+		  from tz_crt_var
+		 where subj    = #p_subj#
+		   and [year]    = #p_year#
+		   and subjseq = #p_subjseq#
+	</select>
+	
+	<delete id="finishManageDAO.deleteCrtVar">
+		delete tz_crt_var
+		 where subj    = #p_subj#
+		   and [year]    = #p_year#
+		   and subjseq = #p_subjseq#
+	</delete>
+	
+	<insert id="finishManageDAO.insertCrtVar">
+		insert into tz_crt_var(
+			subj, [year], subjseq, score, var, ratio, prv_num, rslt
+		)
+		values(
+			#p_subj#,
+			#p_year#,
+			#p_subjseq#,
+			#score#,
+			#var#,
+			#ratio#,
+			#prv_num#,
+			#rslt#
+		)
+	</insert>
+	
+	<update id="finishManageDAO.updateStudentEditscore">
+		merge into	  tz_student a
+		 using	(
+					        select a.subj, a.[year], a.subjseq, a.userid, b.score
+					          from tz_student a, tz_crt_lank b
+					         where a.subj    = #p_subj#
+							   and a.[year]    = #p_year#
+							   and a.subjseq = #p_subjseq#
+					           and a.subj    = b.subj(+)
+					           and a.[year]    = b.[year](+)
+					           and a.subjseq = b.subjseq(+)
+					           and a.editlink= b.lank(+)
+						 ) b
+						 on( a.subj    = b.subj
+						   and a.[year]    = b.[year]
+						   and a.subjseq = b.subjseq
+						   and a.userid  = b.userid
+		                )
+		                when matched then
+		                update SET a.editscore = b.score
+	</update>
+	
+	<select id="finishManageDAO.selectStudyCount" parameterClass="map" resultClass="int">
+		select count(*) cnt from tz_student
+		 where subj    = #p_subj#
+		   and [year]    = #p_year#
+		   and subjseq = #p_subjseq#
+		   and userid  = #userid#
+	</select>
+	
+	
+	
+<!--	개인별 이수/미이수 리스트-->
+	<select id="finishManageDAO.selectMblUserSuryuList" parameterClass="map" resultClass="egovMap">
+	
+		   
+                 select 
+                       -- (select count(*) as cnt 
+                       --   from  tz_attendance f , vz_scsubjseq c
+                       --  where a.subj=f.subj and a.[year]=f.[year] and b.userid=f.userid and f.subj=c.subj and f.subjseq=c.subjseq and f.[year]=c.[year] and isattend ='O' 
+                       --     and  f.attdate between  substr(c.EDUSTART,0,8) and substr(c.EDUEND,0,8)) as etc1,
+                       (select count(*) as cnt 
+				          from  tz_attendance f
+				          -- , vz_scsubjseq c
+				         where a.subj=f.subj 
+				           and a.[year]=f.[year] 
+				           and b.userid=f.userid 
+				          -- and f.subj=c.subj
+				           and f.subj=a.subj 
+				          -- and f.subjseq=c.subjseq 
+				           and f.subjseq=a.subjseq
+				          -- and f.[year]=c.[year]
+				          and f.[year]=a.[year] 
+				           and isattend ='O' 
+				          -- and  f.attdate between  substr(c.EDUSTART,0,8) and substr(c.EDUEND,0,8)
+				       ) as etc1,
+                       a.userid, nvl(a.score, 0) score, a.tstep, a.mtest, a.ftest, a.htest, a.act, a.report, a.etc2, a.avtstep, a.avmtest, a.avftest, a.avhtest, a.avact, a.avreport, a.avetc1,
+                       a.avetc2,<!--   a.isgraduated,--> decode(a.isgraduated, 'Y', '수료', '미수료') as isgraduateddesc, '' as branchnm, a.ldate, nvl(b.position_nm, '-') as position_nm,
+                       b.lvl_nm, a.study_count, a.study_time, b.name, b.hometel, b.handphone, b.email
+                       --, get_compnm(b.comp) as compnm
+                       , (select compnm from tz_compclass where comp=b.comp) as compnm
+                       , a.subj, a.[year], a.subjseq,
+                       b.birth_date, b.user_path, b.cert, a.editlink, nvl(a.editscore, 0) editscore,
+                
+                      <!--   (select notgraducd from tz_stold where subj = a.subj and [year] = a.[year] and subjseq = a.subjseq and userid = a.userid) as notgraducd, -->
+                      (select isgraduated from tz_stold where subj = a.subj and [year] = a.[year] and subjseq = a.subjseq and userid = a.userid) as isgraduated,
+                       a.notgraduetc, get_codenm('0028', a.notgraduetc) as notgraduetcdesc, a.samtotal, serno
+                       , c.subjnm
+                       , get_subjclass_fullnm (c.subjclass) upperclassnm 
+                       , d.edustart, d.eduend
+                       , c.edutimes
+                       , get_codenm('0004', c.isonoff) as codenm 
+                  from tz_student a
+                     , tz_member b
+                     , tz_subj c
+                     , tz_subjseq d
+                     
+                 where a.userid        = b.userid
+                   and a.subj        = c.subj
+                   and c.subj       = d.subj
+                   and a.[year]        = d.[year]
+                   and a.subjseq    = d.subjseq
+                   and a.userid = #userid#
+                   <![CDATA[
+					and d.eduend < to_char(sysdatetime, 'YYYYMMDDHH24')
+				   ]]>
+				
+                 order by a.ldate desc
+	</select>
+	
+	
+	
+	
+	
+	
+	
+<!--	과거이수내역 전체개수 -->
+	<select id="finishManageDAO.selectFinishOldListTotCnt" parameterClass="map" resultClass="int">
+		select count(0) as cnt
+		  from tz_stold_old
+		  where 1=1
+					<isNotEmpty property="p_searchtext">
+						and $p_search$ like '%' || #p_searchtext# || '%'
+					</isNotEmpty>
+	</select>
+<!--	과거이수내역리스트-->
+	<select id="finishManageDAO.selectFinishOldList" parameterClass="map" resultClass="egovMap">
+		select * from (		/*finishManageDAO.selectFinishOldList*/
+		
+		select rownum as rn, 
+			SERNO, AREA, SOSOCK, 
+					   JICKNAME, NAME, JUMINNUM, 
+					   COUNAME, ST_DATE, ED_DATE, 
+					   GUBUN, EDUTIME, COMPNUMBER, 
+					   SCORE, EDUCOMPNAME, JICKYN, 
+					   SEQ
+		  from (
+					SELECT 
+					T.SERNO, T.AREA, T.SOSOCK, 
+					   T.JICKNAME, T.NAME, T.JUMINNUM, 
+					   T.COUNAME, T.ST_DATE, T.ED_DATE, 
+					   T.GUBUN, T.EDUTIME, T.COMPNUMBER, 
+					   T.SCORE, T.EDUCOMPNAME, T.JICKYN, 
+					   T.SEQ
+					FROM TZ_STOLD_OLD T
+					where 1=1
+					<isNotEmpty property="p_searchtext">
+						and $p_search$ like '%' || #p_searchtext# || '%'
+					</isNotEmpty>
+					order by seq desc
+		       )
+		       
+		) where rn BETWEEN #firstIndex# + 1 AND #firstIndex# + #recordCountPerPage#
+	</select>
+	
+<!--	과거이수내역보기 사용자-->
+	<select id="finishManageDAO.selectUserFinishOldList" parameterClass="map" resultClass="egovMap">
+			SELECT 
+			T.SERNO, T.AREA, T.SOSOCK, 
+			   T.JICKNAME, T.NAME, T.JUMINNUM, 
+			   T.COUNAME, T.ST_DATE, T.ED_DATE, 
+			   T.GUBUN, T.EDUTIME, T.COMPNUMBER, 
+			   T.SCORE, T.EDUCOMPNAME, T.JICKYN, 
+			   T.SEQ, T.LDATE
+			FROM TZ_STOLD_OLD T
+			where substr(Trim(replace(juminnum, '-','')),1,6) in (
+			    select 
+			    birth_date
+			    from tz_member where userid = #userid#
+			)
+
+	</select>
+	
+	
+<!--	과거이수내역보기 관리자-->
+	<select id="finishManageDAO.selectFinishOldView" parameterClass="map" resultClass="egovMap">
+			SELECT 
+			T.SERNO, T.AREA, T.SOSOCK, 
+			   T.JICKNAME, T.NAME, T.JUMINNUM, 
+			   T.COUNAME, T.ST_DATE, T.ED_DATE, 
+			   T.GUBUN, T.EDUTIME, T.COMPNUMBER, 
+			   T.SCORE, T.EDUCOMPNAME, T.JICKYN, 
+			   T.SEQ, T.LDATE
+			FROM TZ_STOLD_OLD T
+			where seq = #p_seq#
+	</select>
+	
+<!--	과거이수내역등록-->
+	<insert id="finishManageDAO.insertFinishOld">
+		<selectKey resultClass="int" keyProperty="p_seq">
+			select Max(Nvl(seq, 0)) + 1 from tz_stold_old
+		</selectKey>
+		
+		insert into tz_stold_old (
+		   serno, 
+		   area, 
+		   sosock, 
+		   jickname, 
+		   name, 
+		   juminnum, 
+		   couname, 
+		   st_date, 
+		   ed_date, 
+		   gubun, 
+		   edutime, 
+		   compnumber, 
+		   score, 
+		   educompname, 
+		   jickyn, 
+		   seq
+		   ) 
+		values ( 
+		   #p_serno#, 
+		   #p_area#, 
+		   #p_sosock#, 
+		   #p_jickname#, 
+		   #p_name#, 
+		   #p_juminnum#, 
+		   #p_couname#, 
+		   #p_st_date#, 
+		   #p_ed_date#, 
+		   #p_gubun#, 
+		   #p_edutime#, 
+		   #p_compnumber#, 
+		   #p_score#, 
+		   #p_educompname#, 
+		   #p_jickyn#, 
+		   #p_seq#
+			)
+	</insert>
+	
+<!--	과거이수내역 수정-->
+	<update id="finishManageDAO.updateFinishOld">
+		update tz_stold_old
+		set    serno       = #p_serno#,
+		       area        = #p_area#,
+		       sosock      = #p_sosock#,
+		       jickname    = #p_jickname#,
+		       name        = #p_name#,
+		       juminnum    = #p_juminnum#,
+		       couname     = #p_couname#,
+		       st_date     = #p_st_date#,
+		       ed_date     = #p_ed_date#,
+		       gubun       = #p_gubun#,
+		       edutime     = #p_edutime#,
+		       compnumber  = #p_compnumber#,
+		       score       = #p_score#,
+		       educompname = #p_educompname#,
+		       jickyn      = #p_jickyn#
+		where  seq         = #p_seq#
+	</update>
+	
+	
+<!--	과거이수내역삭제-->
+	<delete id="finishManageDAO.deleteFinishOld">
+		delete tz_stold_old
+		where  seq         = #p_seq#
+	</delete>
+
+	<!--이수관리 엑셀출력-->
+	<select id="finishManageDAO.finishStudentExcelList" parameterClass="map" resultClass="egovMap">
+		select
+		  RANKING,
+		       ETC1,
+		       USERID,
+		       SCORE,
+		       TSTEP,
+		       MTEST,
+		       FTEST,
+		       HTEST,
+		       ACT,
+		       REPORT,
+		       ETC2,
+		       AVTSTEP,
+		       AVMTEST,
+		       AVFTEST,
+		       AVHTEST,
+		       AVACT,
+		       AVREPORT,
+		       AVETC1,
+		       AVETC2,
+		       ISGRADUATED,
+		       ISGRADUATEDDESC,
+		       BRANCHNM,
+		       LDATE,
+		       POSITION_NM,
+		       LVL_NM,
+		       STUDY_COUNT,
+		       STUDY_TIME,
+		       NAME,
+		       HOMETEL,
+		       HANDPHONE,
+		       EMAIL,
+		       COMPNM,
+		       SUBJ,
+		       [YEAR],
+		       SUBJSEQ,
+		       BIRTH_DATE,
+		       USER_PATH,
+		       CERT,
+		       EDITLINK,
+		       EDITSCORE,
+		       NOTGRADUCD,
+		       NOTGRADUETC,
+		       --get_codenm('0028', notgraduetc) as notgraduetcdesc,
+		       (select  codenm FROM tz_code  where gubun = '0028'  and  code  =notgraduetc)  as notgraduetcdesc,  
+		       SAMTOTAL,
+		       SERNO,
+		       EDUTIMES
+		FROM (  			 
+			 --select row_number() over(order by a.score desc, a.avmtest desc, a.avreport desc, a.avftest desc, a.avetc2 desc, b.birth_date asc) as ranking,
+			 select rank() over(order by a.score desc, a.avmtest desc, a.avreport desc, a.avftest desc, a.avetc2 desc) as ranking,
+                      -- (select count(*) as cnt 
+                      --    from  tz_attendance f , vz_scsubjseq c
+                      --   where a.subj=f.subj and a.[year]=f.[year] and b.userid=f.userid and f.subj=c.subj and f.subjseq=c.subjseq and f.[year]=c.[year] and isattend ='O' 
+                      --      and  f.attdate between  substr(c.EDUSTART,0,8) and substr(c.EDUEND,0,8)) as etc1,
+                      (select count(*) as cnt 
+				          from  tz_attendance f
+				          -- , vz_scsubjseq c
+				         where a.subj=f.subj 
+				           and a.[year]=f.[year] 
+				           and b.userid=f.userid 
+				          -- and f.subj=c.subj
+				           and f.subj=a.subj 
+				          -- and f.subjseq=c.subjseq 
+				           and f.subjseq=a.subjseq
+				          -- and f.[year]=c.[year]
+				          and f.[year]=a.[year] 
+				           and isattend ='O' 
+				          -- and  f.attdate between  substr(c.EDUSTART,0,8) and substr(c.EDUEND,0,8)
+				       ) as etc1,
+                       a.userid, a.score, a.tstep, a.mtest, a.ftest, a.htest, a.act, a.report, a.etc2, a.avtstep, a.avmtest, a.avftest, a.avhtest, a.avact, a.avreport, a.avetc1,
+                       a.avetc2, a.isgraduated, decode(a.isgraduated, 'Y', '수료', '미수료') as isgraduateddesc, '' as branchnm, a.ldate, nvl(b.position_nm, '-') as position_nm,
+                       b.lvl_nm, a.study_count, a.study_time, b.name, b.hometel, b.handphone, b.email
+                       --, get_compnm(b.comp) as compnm
+                       , (select compnm from tz_compclass where comp=b.comp) as compnm
+                       , a.subj, a.[year], a.subjseq,
+                       b.birth_date, b.user_path, b.cert, a.editlink, a.editscore,
+                
+                       (select notgraducd from tz_stold where subj = a.subj and [year] = a.[year] and subjseq = a.subjseq and userid = a.userid) as notgraducd,
+                       a.notgraduetc, 
+                       --get_codenm('0028', a.notgraduetc) as notgraduetcdesc, 
+                       a.samtotal, serno,
+                       (select edutimes from tz_subj where subj = a.subj) edutimes
+                  from tz_student a
+                     , tz_member b
+                 where a.userid        = b.userid(+)
+                   and a.subj        = #p_subj#
+                   and a.[year]        = #p_year#
+                   and a.subjseq    = #p_subjseq#
+                 --order by a.score desc,a.avmtest desc, a.avreport desc, a.avftest desc, a.avetc2 desc, b.birth_date asc 
+     	)                 
+  		order BY score desc, avmtest desc, avreport desc, avftest desc, avetc2 DESC 
+	</select>
+	
+	<update id="finishManageDAO.suroyprintYnUpdate">
+		update tz_subjseq
+		   set suroyprint = #p_suroyprint#
+		 where subj 	= #p_subj#
+		   and [year] 	= #p_year#
+		   and subjseq 	= #p_subjseq#
+	</update>
+	
+	<delete id="finishManageDAO.deleteUsergraduated">
+		delete tz_isgraduatedyn
+		where subj = #p_subj#
+		  and [year] = #p_year#
+		  and subjseq = #p_subjseq#		
+	</delete>
+	
+	<!--	과거이수내역등록-->
+	<insert id="finishManageDAO.insertUsergraduated">		
+		insert into tz_isgraduatedyn (
+		   subj, 
+		   [year], 
+		   subjseq, 
+		   userid, 
+		   notgraducd, 
+		   isgraduated, 
+		   usergraduated
+		   ) 
+		values ( 
+		   #p_subj#, 
+		   #p_year#, 
+		   #p_subjseq#, 
+		   #pp_userid#, 
+		   #notgraducd#, 
+		   #isgraduated#, 
+		   #usergraduated#
+		)
+	</insert>
+	
+
+</sqlMap>

@@ -1,0 +1,1 @@
+rdservice64.exe -remove

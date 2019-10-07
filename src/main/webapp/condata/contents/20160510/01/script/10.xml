@@ -1,0 +1,12 @@
+<?xml version="1.0" encoding="EUC-KR" ?> 
+<ESMIL>
+
+<SYNC Start='0000'>  </SYNC>
+
+<SYNC Start='0002'>내레이션 : 이번 학습의 내용을 얼마나 이해했는지 간단히 평가해</SYNC>
+
+<SYNC Start='0004'>내레이션 : 보도록 하겠습니다. 준비가 되셨다면 스타트 버튼을 클릭해 보세요.</SYNC>
+
+<SYNC Start='0011'>자막을 지원하지 않습니다.</SYNC>
+
+</ESMIL> 

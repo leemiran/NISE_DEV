@@ -1,0 +1,12 @@
+<?xml version="1.0" encoding="euc-kr" ?> 
+<contentInformation>
+
+	<!--> flv 싱크<-->
+	<file_name value="00">
+		<moviePath value="웹주소">로컬주소</moviePath>  <!--> 웹주소는 value값에 로컬주소는 노드 값에 입력<-->
+			<cuePoint value="web"></cuePoint>   <!--> 웹용이면 "web" 로컬용이면 "local"<-->
+			<cuePoint value="0000"></cuePoint>
+			<frameName value="lable_0"></frameName>
+	</file_name>
+
+</contentInformation>

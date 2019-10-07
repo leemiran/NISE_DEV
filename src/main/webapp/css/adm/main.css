@@ -1,0 +1,7 @@
+@charset "utf-8";
+
+
+.m_box {border:1px solid #eaeaea; padding:10px;}
+.m_searchWrap {padding:7px; margin-bottom:10px; border:1px solid #d6d6d6;background:#f2f2f2; text-align:center; overflow:hidden; _zoom:1}
+.m_searchWrap .shTit {float:left; font-weight:bold; color:#555; padding-left:5px; padding-right:15px; margin-right:10px; background:url(/images/adm/ico/ico_tit.gif) no-repeat 0px 5px;}
+#m_contents {position:relative; margin:25px; }

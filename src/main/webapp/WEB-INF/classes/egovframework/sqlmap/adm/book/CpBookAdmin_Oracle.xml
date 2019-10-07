@@ -1,0 +1,232 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE sqlMap PUBLIC "-//iBATIS.com//DTD SQL Map 2.0//EN" "http://ibatis.apache.org/dtd/sql-map-2.dtd">
+
+<sqlMap namespace="CpBookAdmin">
+<typeAlias  alias="egovMap" type="egovframework.rte.psl.dataaccess.util.EgovMap"/>
+
+<select id="cpBookAdminDAO.selectList" parameterClass="map" resultClass="egovMap">
+SELECT  RNUM,
+       SUBJ,
+       SUBJNM,
+       CASE WHEN cp !=null THEN get_cpnm(cp) 
+       			ELSE ''
+       			END cpnm ,        
+       [YEAR],
+       SUBJSEQ,
+       EDUSTART,
+       EDUEND,
+        CASE WHEN comp !=null THEN get_compnm(comp) 
+       	ELSE ''
+       	END compnm,
+       USERID,
+       NAME,
+       DELIVERY_STATUS,
+       DELIVERY_STATUS_CODE,
+       DELIVERY_COMP,
+       DELIVERY_URL,
+       DELIVERY_NUMBER,
+       DELIVERY_DATE,
+       DNAME,
+       ZIP_CD,
+       ADDRESS,
+       HANDPHONE
+FROM(    
+		select  rownum as rnum,
+			a.subj, 
+			a.subjnm, 
+			--get_cpnm(a.cp) cpnm, 
+			a.cp,
+			a.[year], 
+			a.subjseq, 
+			a.edustart, 
+			a.eduend, 
+			a.bookname, 
+			--get_compnm(c.comp) compnm, 
+			c.comp,
+			c.userid, 
+			e.name,
+           (select codenm 
+            from tz_code a 
+            where a.code=d.delivery_status 
+            and gubun='0111' 
+            and code=d.delivery_status
+           ) as delivery_status, 
+           delivery_status as delivery_status_code,
+           (select codenm 
+            from tz_code a 
+            where a.code=d.delivery_comp 
+            and gubun='0112' 
+            and code=d.delivery_comp
+           ) as delivery_comp, 
+           (SELECT   url
+            FROM   tz_code a
+           WHERE       a.code = d.delivery_comp
+                   AND gubun = '0112'
+                   AND code = d.delivery_comp)
+            AS delivery_url,
+           d.delivery_number, 
+           d.delivery_date, 
+           d.name dname, 
+           e.zip_cd, 
+           e.address,
+           e.handphone 
+	from  vz_scsubjseq a,
+		  tz_student c, 
+		  tz_bookdelivery d, 
+		  tz_member e  
+	where  a.subj 	 = c.subj	                 
+	and  a.[year] 	 = c.[year]
+	and  a.subjseq = c.subjseq 
+	and  c.subj 	 = d.subj(+)
+	and  c.[year] 	 = d.[year](+)
+	and  c.subjseq = d.subjseq(+) 
+	and  c.userid  = d.userid(+)
+	and  c.userid  = e.userid
+	and  a.isuse 	 = 'Y'
+    and  a.usebook = 'Y'
+    and  a.gyear =  #ses_search_gyear#
+    
+    <isNotEmpty property="ses_search_grseq">
+		and   a.grseq = #ses_search_grseq#
+	 </isNotEmpty>
+	 
+	 <isNotEmpty property="ses_search_att">
+		and    a.oriupperclass =  #ses_search_att#
+	 </isNotEmpty>
+	 
+	 <isNotEmpty property="ses_search_subj">
+	  and    a.scsubj         = #ses_search_subj#
+	 </isNotEmpty>
+	  
+	 <isNotEmpty property="ses_search_subjseq">
+	  and    a.scsubjseq      = #ses_search_subjseq#
+	 </isNotEmpty>
+	 
+	 <isNotEmpty property="ses_search_year">
+	  and    a.[year]      = #ses_search_year#
+	 </isNotEmpty>
+	 
+	 <isNotEmpty property="search_text">
+	 	<isEqual property="search_group" compareValue="birth_date">
+	 		and e.birth_date Like UPPER('%' || REPLACE(#search_text#, '-', '') || '%')
+	 	</isEqual>
+	 	<isNotEqual property="search_group" compareValue="birth_date">
+	 		and UPPER(REPLACE(e.$search_group$, '-', '')) Like Upper('%' || REPLACE(#search_text#, '-', '') || '%')
+	 	</isNotEqual>
+	 </isNotEmpty>
+	)
+	 <isNotEmpty property="p_order">
+	 order by $p_order$$p_orderType$
+	 </isNotEmpty>
+	 <isEmpty property="p_order">
+	 order by userid
+	 </isEmpty>
+</select>
+
+<select id="cpBookAdminDAO.selectCPList" resultClass="egovMap">
+	select
+		cpseq,
+		cpnm
+	from tz_cpinfo
+	order by cpseq
+</select>
+
+<select id="cpBookAdminDAO.selectSubj" resultClass="egovMap">
+	select 
+		distinct a.subj, 
+		a.subjnm, 
+		a.cp, 
+		b.cpnm, 
+		b.userid, 
+		get_name(b.userid) as name, 
+		b.handphone
+	from tz_subj a, tz_cpinfo b
+	where a.cp = b.cpseq
+	and a.usebook = 'Y'
+	order by a.subjnm
+</select>
+
+<update id="cpBookAdminDAO.updateCpbookStatus">
+	update tz_bookdelivery set
+	delivery_status = #v_status#
+	where subj = #v_subj#
+	and [year] = #v_year#
+	and subjseq = #v_subjseq#
+	and userid = #v_userid#
+</update>
+
+<delete id="cpBookAdminDAO.deleteCpBook">
+	delete from tz_bookdelivery 
+	where subj = #v_subj#
+	and [year] = #v_year#
+	and subjseq = #v_subjseq#
+	and userid = #v_userid#
+</delete>
+
+<select id="cpBookAdminDAO.selectSubjInfo" resultClass="egovMap">
+	SELECT     DISTINCT
+	           a.subj,
+	           a.subjnm,
+	           b.[year],
+	           b.subjseq,
+	           TO_NUMBER (b.subjseq) AS number_subjseq,
+	           TO_CHAR (TO_DATE (SUBSTR (b.edustart, 1, 8), 'yyyyMMdd'),
+	                    'yyyy.MM.dd')
+	              AS edustart,
+	           TO_CHAR (TO_DATE (SUBSTR (b.eduend, 1, 8), 'yyyyMMdd'),
+	                    'yyyy.MM.dd')
+	              AS eduend
+	    FROM   tz_subj a, tz_subjseq b, tz_grsubj c
+	   WHERE       a.subj = b.subj
+	           AND b.subj = c.subjcourse
+	           AND b.grcode = c.grcode
+	           AND a.isuse = 'Y'
+	           AND b.[year] = #p_year#
+	           AND b.subjseq = #p_subjseq#
+	           and b.subj = #p_subj#
+	ORDER BY   a.subj, a.subjnm
+</select>
+
+<select id="cpBookAdminDAO.selectDeliveryCompExcelList" resultClass="egovMap">
+	SELECT  CODE, 
+			CODENM 
+	FROM TZ_CODE  
+	WHERE GUBUN ='0112' 
+	ORDER BY CODE 
+</select>
+
+<select id="cpBookAdminDAO.selectDeliveryMemberInfo" resultClass="egovMap">
+	select
+		userid,
+		name
+	from tz_bookdelivery
+	where subj = #v_subj#
+	and subjseq = #v_subjseq#
+	and [year] = #v_year#
+	and userid = #v_userid#
+	and name = #v_name#
+	
+</select>
+
+<insert id="cpBookAdminDAO.insertDeliveryMeber">
+	insert into tz_bookdelivery
+	(subj, [year], subjseq, userid, name, delivery_comp, delivery_number, delivery_status, luserid, delivery_date, ldate  ) 
+	values
+	(#v_subj#,#v_year#,#v_subjseq#,#v_userid#,#v_name#,#v_delivery_comp#,#v_delivery_number#,'A',#v_luserid#,to_char(sysdate,'yyyymmdd'),to_char(sysdatetime,'yyyymmddhh24miss'))
+</insert>
+
+<update id="cpBookAdminDAO.updateDeliveryMeber">
+	update tz_bookdelivery set
+		delivery_comp = #v_delivery_comp#,
+		delivery_number = #v_delivery_number#,
+		delivery_status = 'A',
+		delivery_date=to_char(sysdate,'yyyymmdd') 
+	where subj = #v_subj#
+	and subjseq = #v_subjseq#
+	and [year] = #v_year#
+	and userid = #v_userid#
+	and name = #v_name# 
+	
+</update>
+	
+</sqlMap>

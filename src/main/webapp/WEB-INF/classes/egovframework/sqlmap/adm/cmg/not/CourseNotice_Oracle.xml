@@ -1,0 +1,167 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE sqlMap PUBLIC "-//iBATIS.com//DTD SQL Map 2.0//EN" "http://ibatis.apache.org/dtd/sql-map-2.dtd">
+
+<sqlMap namespace="CourseNotice">
+<typeAlias  alias="egovMap" type="egovframework.rte.psl.dataaccess.util.EgovMap"/>
+
+	<resultMap id="boardResult" class="egovframework.rte.psl.dataaccess.util.EgovMap">
+		<result property="seq"      	column="seq" />
+	   	<result property="types"  		column="types" />
+	   	<result property="title"      	column="title" />
+	   	<result property="userid"       column="userid" />
+	   	<result property="addate"       column="addate" />
+	   	<result property="name"         column="name" />
+	   	<result property="gadmin"       column="gadmin" />
+	   	<result property="isimport"     column="isimport" />
+	   	<result property="upfile"       column="upfile" />
+	   	<result property="realfile"     column="realfile" />
+	   	<result property="cnt"          column="cnt" />
+	   	<result property="adcontent"    column="adcontent"  jdbcType="CLOB" javaType="java.lang.String"/>
+	</resultMap>
+	
+
+	<select id="courseNoticeDAO.selectcourseNoticeList" parameterClass="map" resultClass="egovMap">
+		select a.subj, a.subjnm, a.isonoff, a.subjseq, a.[year], to_number(a.subjseq) as seq
+		       $sql$
+		  from vz_scsubjseq a left outer join tz_gong c
+		       on a.subj = c.subj
+		       and a.[year] = c.[year]
+		       and a.subjseq = c.subjseq
+		 where 1 = 1
+		       <isEqual property="p_gadmin" compareValue="P1">
+			   	and	a.subj in (select subj from tz_subjman where userid = #userid# and  gadmin like 'P%')
+			   </isEqual>
+		
+		<isEmpty property="ses_search_gyear">
+		   and a.gyear = to_char(sysdate, 'yyyy')
+		</isEmpty>
+		
+		<isNotEmpty property="ses_search_gyear">
+		   and a.gyear = #ses_search_gyear#
+		</isNotEmpty>
+		<isNotEmpty property="ses_search_grseq">
+		   and a.grseq = #ses_search_grseq#
+		</isNotEmpty>
+		<isNotEmpty property="ses_search_att">
+		   and a.oriupperclass = #ses_search_att#
+		</isNotEmpty>
+		<isNotEmpty property="ses_search_subj">
+		   and a.scsubj = #ses_search_subj#
+		</isNotEmpty>
+		<isNotEmpty property="ses_search_subjseq">
+		   and a.scsubjseq = #ses_search_subjseq#
+		</isNotEmpty>
+		 group by a.subj, a.subjnm, a.isonoff, a.subjseq, a.[year]
+		 order by a.[year] desc, a.subjseq desc, a.subj, a.subjnm, a.isonoff
+	</select>
+	
+	<select id="courseNoticeDAO.selectNoticeSubList" parameterClass="map" resultClass="egovMap">
+		select tg.seq,
+		       tg.types,
+		       (select codenm from tz_code where gubun = '0008' and code = tg.types) as typesnm,
+		       to_char(to_date(substr(tg.addate, 1, 8), 'yyyyMMdd'), 'yyyy.MM.dd') as addate,
+		       tg.title,
+		       tg.userid,
+		       tg.adcontent,
+		       tm.name,
+		       tg.cnt,
+		       decode(tg.gadmin, 'ZZ', 'ZZ', 'P1', '강사', '운영자') as gadmin,
+		       tg.isimport
+		  from tz_gong tg, tz_member tm
+		 where tg.subj = #p_subj#
+		   and tg.[year] in <iterate property="arrYear" conjunction="," open="(" close=")">#arrYear[]#</iterate>
+		   and tg.subjseq in <iterate property="arrSubjseq" conjunction="," open="(" close=")">#arrSubjseq[]#</iterate>
+		   and tg.userid = tm.userid
+		<isNotEmpty property="search_text">
+			<isEqual property="search" compareValue="name">and lower(tm.name) like '%'||lower(#search_text#)||'%'</isEqual>
+			<isEqual property="search" compareValue="title">and lower(tg.title) like '%'||lower(#search_text#)||'%'</isEqual>
+			<isEqual property="search" compareValue="ldate">and substr(tg.addate, 1, 8) = replace(#search_text#, '.', '')</isEqual>
+			<isEqual property="search" compareValue="userid">and lower(tg.userid) = loser(#search_text#)</isEqual>
+		</isNotEmpty>
+         order by seq desc
+	</select>
+	
+	
+	<!-- <select id="courseNoticeDAO.selectNoticeView" parameterClass="map" resultMap="boardResult"> -->
+	<select id="courseNoticeDAO.selectNoticeView" parameterClass="map" resultClass="egovMap">
+		select a.seq, a.types, a.title, a.userid, a.adcontent, b.name,
+		       decode(a.gadmin, 'ZZ', 'ZZ', 'P1', '강사', '운영자') as gadmin,
+		       isimport, upfile, realfile, cnt,
+		       to_char(to_date(substr(a.addate, 1, 8), 'yyyyMMdd'), 'yyyy.MM.dd') as addate
+		  from tz_gong a, tz_member b
+		 where a.subj 		= #p_subj#
+		   and a.[year] 		= #p_year#
+		   and a.subjseq 	= #p_subjseq#
+		   and a.seq 		= #p_seq#
+		   and a.userid 	= b.userid
+	</select>
+	
+	<delete id="courseNoticeDAO.deleteNoticeData">
+		delete tz_gong where subj = #p_subj# and [year] = #p_year# and subjseq = #p_subjseq# and seq = #p_seq#
+	</delete>
+	
+	<update id="courseNoticeDAO.updateNoticeData">
+		update tz_gong
+		   set types 	= #p_types#,
+		       title	= #p_title#,
+		       adcontent= #p_adcontent:CLOB#,
+		       luserid	= #userid#,
+		       ldate	= to_char(sysdatetime, 'yyyyMMddhh24miss'),
+		       gadmin	= #gadmin#
+		<isNotEmpty property="p_isimport">
+		       , isimport = 'Y'
+		</isNotEmpty>
+		<isEmpty property="p_isimport">
+		       , isimport = 'N'
+		</isEmpty>
+		<isNotEmpty property="uploadFileName">
+		       , upfile = #uploadFileName#
+		       , realfile = #originalFileName#
+		</isNotEmpty>
+		<isEmpty property="uploadFileName">
+			<isNotEmpty property="p_filedel">
+		       , upfile = null
+		       , realfile = null
+			</isNotEmpty>
+		</isEmpty>
+		 where subj = #p_subj#
+		   and [year] = #p_year#
+		   and subjseq = #p_subjseq#
+		   and seq = #p_seq#
+	</update>
+	<select id="courseNoticeDAO.selectNextSeq" parameterClass="map" resultClass="int">
+		select nvl(max(seq),0) + 1 as seq
+		  from tz_gong
+		 where subj = #p_subj#
+		   and [year] = #p_year#
+		   and subjseq = #p_subjseq#
+	</select>
+	<insert id="courseNoticeDAO.insertNoticeData">
+		insert into tz_gong(
+			subj, [year], subjseq, seq, types, addate, title, userid, adcontent, luserid, ldate, gadmin, isimport
+		<isNotEmpty property="uploadFileName">
+	       , upfile, realfile
+		</isNotEmpty>
+		)
+		values(
+			#p_subj#,
+			#p_year#,
+			#p_subjseq#,
+			#seq#,
+			#p_types#,
+			to_char(sysdatetime, 'yyyyMMddhh24miss'),
+			#p_title#,
+			#userid#,
+			#p_adcontent:CLOB#,
+			#userid#,
+			to_char(sysdatetime, 'yyyyMMddhh24miss'),
+			#gadmin#,
+			#p_isimport#
+		<isNotEmpty property="uploadFileName">
+	       , #uploadFileName#
+	       , #originalFileName#
+		</isNotEmpty>
+		)
+	</insert>
+</sqlMap>
+

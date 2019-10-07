@@ -1,0 +1,39 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE sqlMap PUBLIC "-//iBATIS.com//DTD SQL Map 2.0//EN" "http://ibatis.apache.org/dtd/sql-map-2.dtd">
+
+<sqlMap namespace="LcmsFile">
+	<typeAlias  alias="egovMap" type="egovframework.rte.psl.dataaccess.util.EgovMap"/>
+
+    <insert id="lcmsFileDAO.insertLcmsFile">
+    	<selectKey resultClass="int" keyProperty="seq">
+            select nvl(max(lcms_file_seq),0)+1 from tb_lcms_file
+        </selectKey>
+    	insert into tb_lcms_file(
+    		lcms_file_seq,
+    		rsrc_seq,
+    		file_href,
+    		userid,
+    		update_dt,
+    		meta_location
+    	)
+    	values(
+    		#seq#,
+    		#rsrcSeq#,
+    		#fileHref#,
+    		#userid#,
+    		sysdate,
+    		#metaLocation#
+    	)
+    </insert>
+    
+    <delete id="lcmsFileDAO.deleteLcmsFile">
+    	delete tb_lcms_file
+		 where rsrc_seq in (
+		 		select rsrc_seq from tb_lcms_item
+		 		 where org_seq in <iterate property="orgSeq" conjunction="," open="(" close=")">$orgSeq[]$</iterate>
+		 )
+    </delete>
+    
+
+</sqlMap>
+

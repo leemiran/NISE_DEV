@@ -1,0 +1,159 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE sqlMap PUBLIC "-//iBATIS.com//DTD SQL Map 2.0//EN" "http://ibatis.apache.org/dtd/sql-map-2.dtd">
+
+<sqlMap namespace="LcmsSeqMapInfo">
+	<typeAlias  alias="egovMap" type="egovframework.rte.psl.dataaccess.util.EgovMap"/>
+
+    <select id="lcmsSeqMapInfoDAO.selectLcmsSeqMapInfoPageList" parameterClass="map" resultClass="egovMap">
+        SELECT * 
+        FROM
+               (
+                SELECT TEMP.*, 
+                <isNotEmpty property="rowsPerPage">
+                       CEIL(ROWNUM / #rowsPerPage#) AS PAGE 
+                </isNotEmpty>
+                <isEmpty property="rowsPerPage">
+                       CEIL(ROWNUM / 10) AS PAGE 
+                </isEmpty>
+                FROM
+                      (
+                       SELECT 
+	        	              RLC_IDX_NUM,
+	        	              MAP_INFO_ID,
+	        	              TARGET_OBJ_ID,
+	        	              READ_STATUS,
+	        	              READ_MEASURE,
+	        	              WRITE_STATUS,
+	        	              WRITE_MEASURE,
+	        	              userid,
+	        	              OBJECTIVE_IDX_NUM,
+	        	               UPDATE_DT
+        		       FROM   TB_LCMS_SEQ_MAP_INFO
+        		       <!--  APPEND WHERE CONDITION START  -->
+
+        		       <!--  APPEND WHERE CONDITION END    -->
+        		       <isNotEmpty property="orderBy">
+        			       $orderBy$
+        		       </isNotEmpty>
+        	          ) TEMP 
+               )
+        <isNotEmpty property="page">
+        WHERE PAGE = #page#
+        </isNotEmpty>
+        <isEmpty property="page">
+        WHERE PAGE = 1
+        </isEmpty>
+    </select>
+
+    <select id="lcmsSeqMapInfoDAO.selectLcmsSeqMapInfoList" parameterClass="map" resultClass="egovMap">
+        SELECT RLC_IDX_NUM,
+               MAP_INFO_ID,
+               TARGET_OBJ_ID,
+               READ_STATUS,
+               READ_MEASURE,
+               WRITE_STATUS,
+               WRITE_MEASURE,
+               userid,
+               OBJECTIVE_IDX_NUM,
+               UPDATE_DT
+        FROM   TB_LCMS_SEQ_MAP_INFO
+    </select>
+
+    <select id="lcmsSeqMapInfoDAO.selectLcmsSeqMapInfoPageListTotCnt" parameterClass="map" resultClass="long">
+        SELECT COUNT(ROWNUM) AS [COUNT]
+        FROM   TB_LCMS_SEQ_MAP_INFO
+    </select>
+
+    <select id="lcmsSeqMapInfoDAO.selectLcmsSeqMapInfoMaxNum" parameterClass="map" resultClass="int">
+        select nvl(max(rlc_idx_num),0)+1 as seq from tb_lcms_seq_map_info
+    </select>
+
+    <select id="lcmsSeqMapInfoDAO.selectLcmsSeqMapInfo" parameterClass="map" resultClass="egovMap">
+        SELECT RLC_IDX_NUM,
+               MAP_INFO_ID,
+               TARGET_OBJ_ID,
+               READ_STATUS,
+               READ_MEASURE,
+               WRITE_STATUS,
+               WRITE_MEASURE,
+               userid,
+               OBJECTIVE_IDX_NUM,
+               UPDATE_DT
+        FROM   TB_LCMS_SEQ_MAP_INFO
+        WHERE  RLC_IDX_NUM = #rlcIdxNum#
+    </select>
+
+    <insert id="lcmsSeqMapInfoDAO.insertLcmsSeqMapInfo">
+        INSERT INTO TB_LCMS_SEQ_MAP_INFO
+        (
+            RLC_IDX_NUM,
+            MAP_INFO_ID,
+            TARGET_OBJ_ID,
+            READ_STATUS,
+            READ_MEASURE,
+            WRITE_STATUS,
+            WRITE_MEASURE,
+            userid,
+            OBJECTIVE_IDX_NUM,
+            UPDATE_DT
+        )
+        VALUES
+        (
+            #rlcIdxNum#,
+            #mapInfoId#,
+            #targetObjId#,
+            #readStatus#,
+            #readMeasure#,
+            #writeStatus#,
+            #writeMeasure#,
+            #userid#,
+            #objectiveIdxNum#,
+            sysdate
+        )
+    </insert>
+
+    <update id="lcmsSeqMapInfoDAO.updateLcmsSeqMapInfo">
+        UPDATE TB_LCMS_SEQ_MAP_INFO
+        SET    MAP_INFO_ID = #mapInfoId#,
+               TARGET_OBJ_ID = #targetObjId#,
+               READ_STATUS = #readStatus#,
+               READ_MEASURE = #readMeasure#,
+               WRITE_STATUS = #writeStatus#,
+               WRITE_MEASURE = #writeMeasure#,
+               userid = #userId#,
+               OBJECTIVE_IDX_NUM = #objectiveIdxNum#,
+               UPDATE_DT = #updateDt#
+        WHERE  RLC_IDX_NUM = #rlcIdxNum#
+    </update>
+
+    <delete id="lcmsSeqMapInfoDAO.deleteLcmsSeqMapInfo">
+		delete tb_lcms_seq_map_info
+		 where rlc_idx_num in (
+		 	   select rlc_idx_num from tb_lcms_seq_rollup_condition 
+		 	    where rr_idx_num in(
+		 	          select rr_idx_num from tb_lcms_seq_rollup_rule 
+		 	           where seq_idx_num in (
+		 	                 select seq_idx_num from tb_lcms_scorm_sequence 
+		 	                  where org_seq in <iterate property="orgSeq" conjunction="," open="(" close=")">$orgSeq[]$</iterate>
+		 	           )
+		 	    )
+		 )
+    </delete>
+
+    <delete id="lcmsSeqMapInfoDAO.deleteLcmsSeqMapInfoAll">
+        DELETE FROM TB_LCMS_SEQ_MAP_INFO
+        <dynamic prepend="WHERE RLC_IDX_NUM IN ">
+            <isNotEmpty property="rlcIdxNum">
+                <iterate property="rlcIdxNum" open="(" close=")" conjunction=",">
+                    #rlcIdxNum[]#
+                </iterate>
+            </isNotEmpty>
+            <isEmpty property="rlcIdxNum">
+                ('')
+            </isEmpty>
+        </dynamic>
+    </delete>
+
+
+</sqlMap>
+

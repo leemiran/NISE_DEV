@@ -1,0 +1,77 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE sqlMap PUBLIC "-//iBATIS.com//DTD SQL Map 2.0//EN" "http://www.ibatis.com/dtd/sql-map-2.dtd">
+
+<sqlMap namespace="XinicsContent">
+
+	<typeAlias  alias="egovMap" type="egovframework.rte.psl.dataaccess.util.EgovMap"/>
+	
+	<!-- 코드 목록 총건수를 조회 -->
+	<select id="xinicsContentDAO.selectXinicsContentListTotCnt" parameterClass="map" remapResults="true" resultClass="int">
+		select count(0) as cnt
+		  from tz_subj a
+		 where isonoff = 'ON'
+		   and contenttype IN ('X')
+		   and substr(indate, 0, 8) >= '20120501'
+		<isNotEmpty property="search_cour">
+		   and upperclass = #search_cour#
+		</isNotEmpty>
+		<isNotEmpty property="search_subjnm">
+		   and subjnm like '%'||#search_subjnm#||'%'
+		</isNotEmpty>
+		<isNotEmpty property="search_subj">
+		   and subj like '%'||#search_subj#||'%'
+		</isNotEmpty>
+		and a.iscontentsuse = 'Y'
+	</select>
+
+	<!-- LCMS교과리스트 조회 -->
+ 	<select id="xinicsContentDAO.selectXinicsContentList" parameterClass="map" resultClass="egovMap">
+ 		select * from (
+ 		
+		select rownum as num, subj, subjnm, contenttype,org_count
+		      ,classname
+		      ,conyear
+		      ,fyear
+		      ,conrenum
+		  from (
+				select subj, subjnm, contenttype,
+				       (select count(0) from tb_lcms_module where subj = a.subj) as org_count
+				        ,c.classname
+				       ,a.conyear 	
+				       ,(select min([year]) from tz_subjseq where subj=a.subj) as fyear
+				       ,conrenum			
+				  from tz_subj a
+				      ,tz_subjatt c
+				 where isonoff = 'ON'
+				   and contenttype IN ('X')
+				   and substr(indate, 0, 8) >= '20120501'
+				   and a.upperclass = c.upperclass
+				<isNotEmpty property="search_cour">
+				   and upperclass = #search_cour#
+				</isNotEmpty>
+				<isNotEmpty property="search_subjnm">
+				   and subjnm like '%'||#search_subjnm#||'%'
+				</isNotEmpty>
+				<isNotEmpty property="search_subj">
+				   and subj like '%'||#search_subj#||'%'
+				</isNotEmpty>
+				and a.iscontentsuse = 'Y'
+		        order by nvl(conyear,0) desc, decode(a.upperclass,'PRF','1','EXT','2','PAR','3','COUR','4','OTH','5'), subjnm, conrenum, indate desc
+		        )
+		        
+		        
+		)
+		where num BETWEEN #firstIndex# + 1 AND #firstIndex# + #recordCountPerPage#
+	</select>
+	
+	<select id="xinicsContentDAO.selectXinicsOrgList" parameterClass="map" resultClass="egovMap">
+		select a.[MODULE], a.module_name, b.lesson, b.lesson_name,
+		       b.starting, b.edu_time, b.edu_time_yn, b.page_count,
+		       row_number() over(partition by a.subj, a.[MODULE], lesson order by lesson) as order_num
+		  from tb_lcms_module a, tb_lcms_lesson b
+		 where a.subj = #subj#
+		   and a.subj = b.subj
+		   and a.[MODULE] = b.[MODULE]
+	</select>
+
+</sqlMap>                            

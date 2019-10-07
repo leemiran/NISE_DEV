@@ -1,0 +1,36 @@
+<html>
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=euc-kr">
+<meta http-equiv="imagetoolbar" content="no"/>
+<TITLE>다운로드</TITLE>
+<style>
+body{
+	font:9pt;
+}
+
+</style>
+<script language="JavaScript">
+function init(){
+	url=document.location.href.split("?")[1].split("=")[1];
+	//alert(aa);
+	//document.location=aa;
+	bb=window.open(url);
+	//top.close();
+	
+}
+function down(){
+	aa=document.location.href.split("?")[1].split("=")[1];
+	window.open(aa,"");
+	//document.location.href=val;
+	top.close();
+}
+</script>
+<body bgcolor="#000000" onload="init();">
+<div align="center" style="color:#FFFFFF">
+	자동으로 파일 다운로드가 <br>
+	되지 않을 경우<br>
+	<a href="#" onclick="down();" style="color:#FF0000;"><b>여기</b></a>를 클릭하여 <br>
+	다운로드 받으시기 바랍니다.<br>
+</div>
+</body>
+</html>

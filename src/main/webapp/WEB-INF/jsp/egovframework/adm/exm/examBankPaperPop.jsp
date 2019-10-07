@@ -1,0 +1,206 @@
+<%@ page language="java" contentType="text/html; charset=utf-8" pageEncoding="utf-8"%>
+<%@ include file = "/WEB-INF/jsp/egovframework/adm/com/admPopup_head.jsp" %>
+
+
+<!-- popup wrapper 팝업사이즈 650*370-->
+<div id="popwrapper">
+	<div class="popIn">
+    	<div class="tit_bg">
+			<h2>평가문제지 등록</h2>
+		</div>
+		
+		<form name="<c:out value="${gsPopForm}"/>" id="<c:out value="${gsPopForm}"/>" method="post">		
+		<%@ include file="/WEB-INF/jsp/egovframework/adm/com/admCommonHidden.jsp"%>
+			<input type="hidden" id="pageIndex"  			name="pageIndex"				value="${pageIndex}"/>
+			<input type="hidden" id="search_orderColumn" 	name="search_orderColumn"		value="${search_orderColumn}">
+			<input type="hidden" id="search_orderType" 		name="search_orderType"			value="${search_orderType}">
+		
+		 	<input type="hidden" name="p_process" 		value="">
+			<input type="hidden" name="p_action"  		value="">
+			<input type="hidden" name="p_grcode"  		value="">
+			<input type="text" name="o_subj"			id="o_subj"			value="${p_subj}">
+			<input type="text" name="p_year"			id="p_year"			value="${p_year}">
+			<input type="text" name="p_gyear"			id="p_gyear"			value="${p_year}">
+			<input type="text" name="p_subjseq"			id="p_subjseq"			value="${p_subjseq}">
+			
+			<input type="hidden" name="p_subjnm"		id="p_subjnm"		value="">
+			<input type="hidden" name="p_examnum"  		value="">
+			<input type="hidden" name="p_examtype"  		value="">
+			<input type="hidden" name="p_chknum"  		value="">
+			<input type="hidden" name="p_updateMove"  	value="U">
+			<input type="hidden" name="p_type"  	value="">
+			<input type="text" name="p_exam_subj"	id="p_exam_subj"  	value="">
+			<input type="text" name="p_subj"			id="p_subj"			value="">
+			
+		            
+		   	<!-- 검색박스 시작-->
+			<c:import url="/com/sch/admSearchBars.do">
+				<c:param name="selectViewType"      value=""							>조회조건타입 : 타입별 세부조회조건		</c:param>
+				<c:param name="selectParameter"     value=""							>조회조건 추가 : admSearchParameter.jsp 추가	</c:param>
+			</c:import>
+			<!-- 검색박스 끝 -->
+			
+			<div class="searchWrap txtL MT10">
+				<ul class="datewrap">
+						<li><strong class="shTit">검색 : <select name="p_searchtype" class="input">
+			              <option value="1" <c:if test="${p_searchtype eq '1'}">selected</c:if>>문제 과정명</option>
+			            </select></strong></li>
+						
+						<li><input type="text" name="p_searchtext" id="p_searchtext" size="60" value="${p_searchtext}"/></li>
+						<li><a href="#none" class="btn_search" onclick="doPageList('1')"><span>검색</span></a></li>
+				</ul>
+			</div>
+		
+				<div class="listTop">
+		                <div class="btnR MR05">		               		
+		               		<a href="javascript:insertExamPaper();" class="btn01"><span>문제 과정선택</span></a>
+		                </div>
+				</div>
+				
+			  <!-- contents -->
+				<div class="tbList">
+					<table summary="" cellspacing="0" width="100%">
+		                <caption>목록</caption>
+		                <colgroup>
+						<col width="100px" />
+						<col width="100px" />
+						<col />
+						<col width="100px" />				
+						<col width="100px"/>					
+						<col width="100px"/>
+						<col width="100px"/>
+						<col width="100px"/>
+					</colgroup>
+					<thead>
+						<tr>
+							<th rowspan="2" scope="row">No</th>					
+							<th rowspan="2"  scope="row">문제 과정코드</th>
+							<th rowspan="2"  scope="row">문제 과정명</th>
+							<th rowspan="2"  scope="row">문제수</th>
+							<th colspan="3" scope="row">문항Type</th>
+							<th colspan="3" scope="row">난이도</th>		
+							<th  rowspan="2" scope="row">등록</th>					
+						</tr>
+						<tr>					
+							<th scope="row">객관식</th>	
+							<th scope="row">주관식</th>	
+							<th scope="row">OX</th>										
+							<th scope="row">상</th>
+							<th scope="row">중</th>
+							<th scope="row">하</th>
+						</tr>
+					</thead>
+					<tbody>
+					<c:forEach items="${list}" var="result" varStatus="status">
+						<tr>
+							<td><c:out value="${result.rn}"/></td>					
+							<td><c:out value="${result.examSubj}"/></td>
+							<td class="left"><a href="#" onclick="questionDetailList('${result.examSubj}');"><c:out value="${result.examSubjnm}"/></a></td>
+							<td><c:out value="${result.examCnt}"/></td>	
+							<td><c:out value="${result.examtype1Cnt}"/></td>
+							<td><c:out value="${result.examtype2Cnt}"/></td>
+							<td><c:out value="${result.examtype3Cnt}"/></td>
+							<td><c:out value="${result.levels1Cnt}"/></td>
+							<td><c:out value="${result.levels1Cnt}"/></td>
+							<td><c:out value="${result.levels1Cnt}"/></td>									
+							<td><input type="checkbox" name="p_checks" id="p_${result.examSubj}" class="p_subj" value="${result.examSubj}"></td>
+						</tr>
+					</c:forEach>
+					</tbody>
+				</table>
+				</div>
+		</form>
+
+			
+		
+
+		<!-- button -->
+		<ul class="btnCen">						
+			<li><a href="#" class="pop_btn01" onclick="window.close()"><span>닫기</span></a></li>
+		</ul>
+		<!-- // button -->
+		
+		<br/>
+	</div>
+</div>
+
+
+<%@ include file = "/WEB-INF/jsp/egovframework/adm/com/admPopupBottom.jsp" %>
+
+
+<!-- 페이지 스크립트 영역 -->
+<script type="text/javascript">
+<!--
+
+var thisForm = eval('document.<c:out value="${gsPopForm}"/>');
+
+$(function(){
+	$("input:checkbox").change(function(){
+		var subj = $(this).val();
+		var subjTrue = $(this).attr("checked");
+		$(".p_subj").attr("checked", false);			
+		if(subjTrue == true){
+			$("#p_"+subj).attr("checked", true);	
+		}else{
+			$("#p_subj").val("");
+		}
+	});
+});
+
+/* ********************************************************
+* 페이징처리 함수
+******************************************************** */
+function doPageList(pageNo) {
+
+	if(pageNo == "" || pageNo == undefined) pageNo = 1;	
+	thisForm.action = "/adm/exm/examBankPaperPop.do";
+	thisForm.pageIndex.value = pageNo;
+	thisForm.target = "_self";
+	thisForm.submit();
+}
+
+/* ********************************************************
+* 정렬처리 함수
+******************************************************** */
+function doOderList(column) {
+	
+	thisForm.search_orderType.value = (thisForm.search_orderType.value == "DESC") ? "ASC" : "DESC";
+	thisForm.search_orderColumn.value = column;
+	thisForm.action = "/adm/exm/examBankPaperPop.do";
+	thisForm.target = "_self";
+	thisForm.submit();	
+}
+ 
+//시험지 등록을 위한 문제과정 선택 
+function insertExamPaper() {	
+	$(".p_subj").each(function(){
+		if($(this).attr("checked") == true){
+			$("#p_exam_subj").val($(this).val());
+	 	}	 
+	});
+	
+	if($("#p_exam_subj").val() == ""){
+		alert("선택된 문제 과정이 없습니다.")
+		return;;
+	}
+	
+	opener.document.getElementById("p_exam_subj").value = thisForm.p_exam_subj.value;
+	opener.doPageList();
+	window.close();
+    
+    
+    
+}
+
+function questionDetailList(subj){
+	farwindow = window.open("", "examBankPopWindow", "toolbar=no,location=no,directories=no,status=yes,menubar=no,scrollbars=yes,resizable=yes,copyhistory=no, width = 900, height = 700, top=0, left=0");
+	thisForm.p_subj.value = subj;	
+	thisForm.action = "/adm/exm/examBankDetailList.do";
+    thisForm.target = "examBankPopWindow";
+	thisForm.submit();
+	thisForm.p_subj.value = "";
+    farwindow.window.focus(); 
+}
+
+//-->
+</script>	

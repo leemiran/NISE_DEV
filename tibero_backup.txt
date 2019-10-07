@@ -1,0 +1,11 @@
+[root@Epass_Knise_DB backup]# cat export.sh
+#!/bin/bash
+DATE="`date +%y%m%d`"
+cd /backup/
+find /backup/*.dmp -mtime +3 -exec rm {} \;
+tbexport username=sys password=tibero sid=tibero file=$DATE.dmp log=$DATE.log script=y full=y
+
+
+
+[root@Epass_Knise_DB backup]# cat arch_del.sh
+find /archive/ -name "*.arc" -mtime +7 -exec rm {} \;

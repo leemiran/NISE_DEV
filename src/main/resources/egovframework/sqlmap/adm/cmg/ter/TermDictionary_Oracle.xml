@@ -1,0 +1,86 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE sqlMap PUBLIC "-//iBATIS.com//DTD SQL Map 2.0//EN" "http://ibatis.apache.org/dtd/sql-map-2.dtd">
+
+<sqlMap namespace="TermDictionary">
+<typeAlias  alias="egovMap" type="egovframework.rte.psl.dataaccess.util.EgovMap"/>
+
+	<resultMap id="boardResult" class="egovframework.rte.psl.dataaccess.util.EgovMap">
+		<result property="words"      	column="words" />
+	   	<result property="groups"  		column="groups" />
+	   	<result property="descs"    	column="descs"  jdbcType="CLOB" javaType="java.lang.String"/>
+	</resultMap>
+	
+	<select id="termDictionaryDAO.selectTermDictionaryList" parameterClass="map" resultClass="egovMap">
+		select a.seq, a.subj, b.subjnm, a.words, a.groups, a.luserid, d.name,
+		       to_char(to_date(substr(a.ldate, 1, 8), 'yyyy.MM.dd'), 'yyyy.MM.dd') as ldate,
+		       (select substr(min(gadmin), 0, 1) from tz_manager where userid = a.luserid) as gadmin
+		  from tz_dic a, tz_subj b, tz_dicgroup c, tz_member d
+		 where a.subj = b.subj
+		   and a.groups = c.groups
+		   and a.luserid = d.userid(+)
+		   and a.gubun = '1'
+		<isNotEmpty property="ses_search_subj">
+		   and a.subj = #ses_search_subj#
+		</isNotEmpty>
+		<isNotEmpty property="search_text">
+		   and lower(a.words) like '%'||lower(#search_text#)||'%'
+		</isNotEmpty>
+		 order by a.subj asc, a.groups asc, a.words asc
+	</select>
+	
+	<select id="termDictionaryDAO.selectDictionaryData" parameterClass="map" resultMap="boardResult">
+		select a.words, a.descs, a.groups
+		  from tz_dic a, tz_subj b, tz_dicgroup c, tz_member d
+		 where a.subj = b.subj
+		   and a.groups = c.groups
+		   and a.luserid = d.userid(+)
+		   and a.gubun = '1'
+		   and a.subj = #p_subj#
+		   and a.seq  = #p_seq#
+	</select>
+	
+	<select id="termDictionaryDAO.selectDicGroup" parameterClass="map" resultClass="egovMap">
+		select groups
+		  from tz_dicgroup
+		 order by seq
+	</select>
+	
+	<select id="termDictionaryDAO.selectMaxSeq" parameterClass="map" resultClass="String">
+		select nvl(max(seq), 0) + 1 as seq
+		  from tz_dic
+		 where gubun = '1'
+		   and subj = #p_subj#
+	</select>
+	<insert id="termDictionaryDAO.insertTermDictionary">
+		insert into tz_dic(
+			gubun, subj, seq, words, descs, groups, luserid, ldate
+		)
+		values(
+			'1',
+			#p_subj#,
+			#seq#,
+			#p_words#,
+			#p_descs:CLOB#,
+			#p_groups#,
+			#userid#,
+			to_char(sysdatetime, 'yyyyMMddhh24miss')
+		)
+	</insert>
+	
+	<update id="termDictionaryDAO.updateTermDictionary">
+		update tz_dic
+		   set words	= #p_words#,
+		       descs	= #p_descs:CLOB#,
+		       groups	= #p_groups#,
+		       luserid	= #userid#,
+		       ldate	= to_char(sysdatetime, 'yyyyMMddhh24miss')
+		 where gubun = '1'
+		   and subj  = #p_subj#
+		   and seq   = #p_seq#
+	</update>
+	
+	<delete id="termDictionaryDAO.deleteTermDictionary">
+		delete tz_dic where gubun = '1' and subj = #p_subj# and seq = #p_seq#
+	</delete>
+</sqlMap>
+

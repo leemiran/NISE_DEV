@@ -1,0 +1,37 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE sqlMap PUBLIC "-//iBATIS.com//DTD SQL Map 2.0//EN" "http://ibatis.apache.org/dtd/sql-map-2.dtd">
+
+<sqlMap namespace="SmsSenderNumberManage">
+
+<!-- 
+	SmsSenderNumberManage_Oracle.xml
+	메뉴 : SMS
+	수정일			수정자				수정내용
+	==========================
+	유상도			2015.01.12		최초생성
+	-->
+
+<typeAlias  alias="egovMap" type="egovframework.rte.psl.dataaccess.util.EgovMap"/>
+	
+	<!-- 
+	ID   : SmsSenderNumberManageDAO.updateSendFromHandPhon
+	설명 : 문자 발송 전화 번호 수정
+	수정일			수정자				수정내용
+	==========================
+	유상도			2015.01.10		최초생성
+	-->
+	<update id="SmsSenderNumberManageDAO.updateSendFromHandPhon" parameterClass="map" >
+		<![CDATA[
+			UPDATE TZ_MEMBER
+			SET HOMETEL = #adminTel1#||'-'||#adminTel2#||'-'||#adminTel3#
+			WHERE USERID = 'smsuser'	
+		]]>
+	</update>
+	
+	
+</sqlMap>
+
+ 
+
+
+

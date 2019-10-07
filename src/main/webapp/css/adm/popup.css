@@ -1,0 +1,205 @@
+﻿@charset "utf-8";
+@import url(import.css);
+
+body {background:none}
+input[type="radio"] {border:0;}
+input[type="checkbox"]  {border:0;}
+/* popup style */
+#popwrapper {padding:3px; background:#696969;}
+#popwrapper .popIn {border:1px solid #f8f8f8; background:#fff; padding-bottom:10px; }
+#mystudy {background:#e4e4e4; padding:10px; width:785px;}
+.popIn .tit_bg {margin-bottom:5px; height:40px; background:url(/images/adm/common/pop_line.gif) repeat-x 2px top;}
+.popIn h2 {padding:10px 0px 0px 45px; margin-bottom:5px; height:32px; color:#333; font-size:14px; font-weight:bold; background:url(/images/adm/common/pop_tit.png) no-repeat 8px 5px; letter-spacing:-1px;}
+.popIn h3 {margin-top:20px; padding-left:15px; padding-bottom:10px; font-weight:bold; font-size:12px; background:url(/images/adm/common/tit_sbullet01.gif) no-repeat left top;}
+.con2 {padding:15px; border:1px solid #c4c4c4; background:#fff; overflow:hidden;}
+.popCon .tit_bg {height:40px;border-bottom:2px solid #333333;}
+.popCon h2 {float:left; padding:5px 0px 0px 35px; margin-bottom:5px; height:32px; color:#333; font-size:16px; font-weight:bold; background:url(/images/adm/study/pop_tit.png) no-repeat 0px 0px; letter-spacing:-1px;}
+
+.popCon .tbList1 {margin-top:10px; border-top:2px solid #333; overflow:hidden;}
+.popCon .tbList1 thead th {text-align:center; background:#f2f2f2; font-weight:bold;border:1px solid #d9d9d9}
+.popCon .tbList1 th, .popCon .tbList1 td {padding:6px 10px 4px; text-align:left;}
+.popCon .tbList1 td {padding:5px 10px 3px; border-bottom:1px solid #d9d9d9; text-align:center; border:1px solid #d9d9d9}
+.popCon .tbList1 .boR {border-right:1px solid #ebebeb}
+.popCon .tbList1 .left {text-align:left}
+.popCon .tbList1 td a { color:#777777; }
+.popCon .tbList1 a:hover {color:#4b7000; font-weight:bold; letter-spacing:-1px}
+.popCon .tbList1 img {vertical-align:middle}
+
+.popCon .popTb {margin:10px 20px 10px 10px;}
+.popCon .popTb thead th {text-align:center; font-weight:bold;}
+.popCon .popTb th, .popCon .popTb td {border:1px solid #dfdfdf; padding:5px 10px; text-align:left;}
+.popCon .popTb th {background:#979797; color:#fff;}
+.popCon .popTb .bold {background:#f0efef; border:1px solid #d7d7d7; color:#333;}
+.popCon .popTb .ct {text-align:center;}
+
+
+.popCon .popTb .style1 th {background:#fff; color:#333333; font-weight:bold; text-align:center;}
+.popCon .checkL2 li {display:inline; margin-right:20px;}
+.popCon .busline li {width:90px; overflow:hidden; display:inline-block; _display:inline}
+
+.sms {background:url(/images/adm/common/bg_sms.gif) no-repeat; width:234px; height:438px;}
+.sms .txt {padding:10px 0px 0px 50px;}
+.sms .btn {padding:24px 0px 0px 21px;}
+.sms_input {margin:83px 0px 0px 33px; font-size:12px; border:1px solid #97b0d8; padding:2px; vertical-align:top;  background-color:#bfcfe6; color:#152131; font-family:"돋움"; width:162px; height:170px;}
+
+.smsWrap {width:500px; padding:7px; overflow:hidden; _zoom:1}
+.smsWrap .shTit {float:left; font-weight:bold; color:#555; padding-left:5px; padding-right:15px; margin-right:10px; background:url(/images/adm/ico/ico_tit.gif) no-repeat 0px 5px;}
+.smsWrap .shTit table td {padding:5px;}
+
+.giWrap {overflow:hidden; margin-top:20px; width:500px; padding:7px; margin-bottom:10px;  margin-left:10px; border:1px solid #d6d6d6; background:#f2f2f2; height:50px;}
+.giWrap .shTit {float:left; color:#888888; padding-left:5px; padding-right:15px; margin-right:10px;}
+.pop_tit {margin:10px; padding-left:20px; font-weight:bold; font-size:14px; background:url(/images/adm/skin1/tit_bullet.gif) no-repeat left 1px;} 
+
+
+.popCon .popTb .iptxt {width:99%;}
+.popCon .popTb img {vertical-align:middle}
+.popCon .popTb .popDate .date {width:70px;}
+.popCon .popTb .dtecon {height:180px; vertical-align:top;}
+.popCon .popTb .txtC td {text-align:center;}
+.popIn .btnCen {padding-top:10px} 
+.btnArea {padding:25px 0 0;}
+.btnCen {padding:25px 0 0;}
+.tbAuto {height:148px;overflow: auto;}
+
+/* pop list */
+.popList {margin:10px; border-top:2px solid #555555; _zoom:1}
+.popList table {table-layout:fixed;}
+.popList thead th {padding:5px 0; font-weight:bold; color:#555555; text-align:center; border:1px solid #c2c2c2; background:#ececec; white-space:nowrap}
+.popList tbody th {text-align:center; padding:7px 0; color:#333; border:1px solid #d9d9d9;  word-wrap: break-word; background:#e0e0e0;}
+.popList tbody td {text-align:center; padding:7px 0; color:#333; border:1px solid #d9d9d9;  word-wrap: break-word;}
+.popList tbody td.num {color:#888888;}
+.popList tbody td.left {text-align:left; padding-left:15px; padding-right:10px;}
+.popList tbody td.left2 {text-align:left; padding-right:10px;}
+.popList tbody td.replay {text-align:left; padding-left:20px;}
+.popList tbody td.replay img {padding-right:5px;}
+.popList tbody td a {color:#333;}
+
+
+/* 용어사전 */
+.dictionary {text-align:left; margin-bottom:5px; _height:40px; _padding-top:3px;}
+.dictionary a {display:inline; font-size:12px; font-weight:bold; color:#fff; padding:2px; width:12px; height:12px; margin:0 3px; vertical-align:middle; border:1px solid #1d81d6; background:#2e96ed; }
+.dictionary a:hover {text-decoration:underline}
+
+.dictionary_eng {text-align:left; margin-bottom:5px; _height:40px; _padding-top:3px;}
+.dictionary_eng a {display:inline; font-size:12px; font-weight:bold; color:#fff; padding:2px 4px;  margin:0 3px; vertical-align:middle; border:1px solid #ff6000; background:#fe7421; }
+.dictionary_eng a:hover {text-decoration:underline}
+
+/* 나의 강의실 */
+.myheader {border-bottom:4px solid #3c3c3c; overflow:hidden; *zoom:1}
+.myheader .mytit {float:left; width:150px; padding:5px 0px 0px 35px; margin-bottom:5px; height:32px; color:#333; font-size:16px; font-weight:bold; background:url(/images/adm/study/pop_tit.png) no-repeat 0px 0px; letter-spacing:-1px; }
+.myheader .mytab {float:right; margin-right:23px; height:28px; }
+.mytab li {float:left; margin:0 0px; padding-top:14px;}
+.mytab li a {float:left; padding-left:15px; color:#fff; font-weight:bold;  background:url(/images/adm/common/study_tab.gif) no-repeat left top; }
+.mytab li a span {float:left;  padding-right:15px; line-height:30px; height:28px; background:url(/images/adm/common/study_tab.gif) no-repeat right center;  cursor:pointer}
+.mytab .w130 {width:130px; text-align:center;}
+.mytab .w80 {width:80px; text-align:center;}
+.mytab li a:hover {background:url(/images/adm/common/study_tab_on.gif) no-repeat left top;}
+.mytab li a:hover span {color:#fff; font-weight:bold;  background:url(/images/adm/common/study_tab_on.gif) no-repeat right top;}
+
+.mytab li .on {background:url(/images/adm/common/study_tab_on.gif) no-repeat left top; }
+.mytab li .on span {color:#426491; font-weight:bold;  background:url(/images/adm/common/study_tab_on.gif) no-repeat right top; }
+
+
+/*new myheader*/
+.myheader_n {border-bottom:0px solid #3c3c3c; overflow:hidden; *zoom:1}
+.myheader_n .mytit {  border:0px solid #1d81d6;float:left; width:120px; padding:12px 0px 0px 65px; margin-bottom:5px; height:32px; color:#2089c5; font-size:18px; font-weight:bold; background:url(/images/adm/study/pop_tit.png) no-repeat 0px 0px; letter-spacing:-1px; }
+.myheader_n .mytab {float:right; margin-right:63px; height:28px; }
+.mytab_n li {float:left; margin:0 0px; padding-top:6px; width:80px; text-align:center;  border:0px solid #1d81d6; }
+.mytab_n li a {float:left; color:#000; width:80px; text-align:center; font-weight:bold; text-decoration:none; }
+.mytab_n li a span {float:left;  width:80px; text-align:center; line-height:30px; height:28px;   cursor:pointer}
+.mytab_n .w130 {width:130px; text-align:center;}
+.mytab_n .w80 {width:80px; text-align:center;}
+.mytab_n li a:hover {background:url(/images/adm/common/study_tab_on.gif) no-repeat left top;}
+.mytab_n li a:hover span {color:#fff; font-weight:bold;  background:url(/images/adm/common/study_tab_on.gif) no-repeat right top;}
+.mytab_n li .on {background:url(/images/adm/common/study_tab_on.gif) no-repeat left top; }
+.mytab_n li .on span {color:#426491; font-weight:bold;  background:url(/images/adm/common/study_tab_on.gif) no-repeat right top; }
+
+.mycon {clear:both;}
+.mybox {padding:10px 10px 10px 15px; height:192px; width:744px; background:url(/images/adm/study/mystudy_bg_n.gif) no-repeat left top;}
+.mybox h3 {height:41px; padding:10px 10px 0px 120px; font-weight:bold; font-size:14px; color:#fff; background:url(/images/adm/study/mystudy_img01.png) no-repeat left top;}
+.mybox dl {clear:both; width:630px; overflow:hidden; border:0px solid #f8f8f8; float:right;}
+.mybox dt {padding:0px 0px 0px 6px; background:url(/images/adm/bullet_down.gif) no-repeat left 6px; color:#fff; font-weight:bold; float:left;}
+.mybox dd {color:#555; font-weight:bold; float:left; display:block; border:0px solid #f8f8f8; }
+.mybox dd.left {padding-right:0px;}
+.mybox dd.right {width:250px;}
+.mybox dd.dot {display:block; height:10px; clear:both; float:none; background:url(/images/adm/study/dot.gif) repeat-x left 3px;}
+.mybox dd .graph_1 {height:15px; clear:both; float:none; background:url(/images/adm/common/graph01_bg.gif);}
+.mybox dd .graph_2 {height:15px; clear:both; float:none; background:url(/images/adm/common/graph02_bg.gif);}
+
+.myincon {padding:10px 0; width:740px; overflow:hidden;}
+.myincon:after {content:""; display:block; clear:both; height:0; visibility:hidden;}
+.myincon .left {float:left; width:355px;}
+.myincon .right {float:right; width:355px;}
+.myincon .homtab {height:25px; background:url(/images/adm/common/line.gif) repeat-x left bottom; overflow:hidden;}
+.myincon .homtab .homtit1 {float:left; padding-right:5px; width:75px; height:25px; line-height:25px; font-weight:bold; text-align:center; background:url(/images/adm/study/mystudy_tab2bg.gif) no-repeat left top;}
+.myincon .homtab .homtit2 {float:left; padding-left:10px; line-height:20px;font-weight:bold; background:url(/images/adm/ico/ball_gray3.gif) no-repeat left center;}
+.myincon .homtab a {float:right; }
+.myincon .homList {margin-top:10px;}
+.myincon .homList li {padding-left:7px; padding-right:5px; background:url(/images/adm/ico/ball_gray2.gif) no-repeat left 5px; overflow:hidden}
+.myincon .homList li a {float:left;}
+.myincon .homList li a:hover {text-decoration:underline}
+.myincon .homList li img {vertical-align:middle; margin-left:5px;}
+.myincon .homList li .date {float:right; color:#888787;}
+
+#mystudy h4.tit {font-weight:bold; padding-left:20px; margin:10px 0; font-weight:bold; color:#333; background:url(/images/adm/skin1/sub_bullet.gif) no-repeat left top;}
+#mystudy .mybox2 {padding:15px; margin-bottom:20px; background:#f0f0f0; border:1px solid #cccccc; overflow:hidden; _zoom:1}
+#mystudy .mybox2 dt {float:left; width:90px; padding-top:3px;}
+#mystudy .mybox2 dd.per {float:left; width:70px; font-size:14px; font-weight:bold; color:#ff4900}
+#mystudy .mybox2 dd.bar {float:left; }
+#mystudy .mybox2 dd.bar .grpout {float:left; width:465px; height:20px; background:#dcdbdb}
+#mystudy .mybox2 dd.bar .grpout .grpin {height:20px; display:block; background:url(/images/adm/common/mystudy_img02.gif) repeat-x left top;}
+#mystudy .mybox2 dd.bar a {float:left; margin-left:5px;}
+#mystudy .txtblue {color:#0767c9}
+#mystudy .txtblue2 {color:#fff}
+#mystudy .txtred {color:#ff4900; font-weight:bold;}
+#mystudy .txtred2 {color:#fff; font-weight:bold;}
+#mystudy .thscroll {height:200px; overflow-y:auto; overflow-x:hidden}
+
+#mystudy .search_box {float:right; background:none; padding:0; margin-bottom:10px; height:auto; width:290px; text-align:right;}
+#mystudy .search_box select {float:left; width:90px; margin-right:5px;}
+#mystudy .search_box .input {float:right; padding-right:2px; overflow:hidden; text-align:right;}
+#mystudy .search_box input {float:left; width:130px; }
+
+#mystudy .search_box .btn_search {float:left; padding-left:0;}
+
+#mystudy .popCon .tbList1 .reply {display:block; margin-left:10px; padding-left:30px; background:url(/images/adm/ico/ico_reply.gif) no-repeat left 0;}
+#mystudy .conbul { clear:both; padding-left:10px; background:url(/images/adm/ico/ico_gryicon.gif) no-repeat left center;}
+
+.tbDetail {border-top:2px solid #333333; margin-bottom:15px }
+.tbDetail th {font-weight:bold; color:#3f5e89;}
+.tbDetail th, .tbDetail td {padding:5px 5px 5px 15px; border-bottom:1px solid #d9d9d9; text-align:left;}
+.tbDetail td {border-left:1px solid #d9d9d9;}
+.tbDetail td.noborderL {border-left:0; padding-left:0; text-align:center}
+.tbDetail td.noborderLB {border-left:none; border-bottom:0; padding:20px;}
+.tbDetail .borderR {border-right:1px solid #d9d9d9}
+.tbDetail .borderB {border-bottom:1px solid #d9d9d9 !important}
+.tbDetail .borderL {border-left:1px solid #d9d9d9}
+.tbDetail th {color:#666666; background:#f0f0f0;}
+.tbDetail td {color:#777777;}
+
+#mystudy2 {height:100%; min-height:100%; margin:0; padding:0 0 30px;}
+#mystudy2 .con {padding:15px 10px; background:url(/images/adm/cyber/top_bg.gif) repeat-x left top; clear:both; }
+#mystudy2 .leftcon {float:left; width:191px;}
+#mystudy2 .rightcon {margin-left:225px;}
+#mystudy2 .year {text-align:center; font-weight:bold; color:#fff; padding-top:7px; height:24px; width:191px; background:url(/images/adm/cyber/left_bg1.gif) no-repeat left top;}
+#mystudy2 .time {overflow:hidden;  padding:10px 7px 10px 7px; clear:both; background:#ffffe6; border:1px solid #c2c0c0; border-top:none; _zoom:1}
+#mystudy2 .time dt {float:left; padding-left:20px; color:#333; width:50px; padding-top:5px;}
+#mystudy2 .time dd {float:right; width:95px; margin-bottom:5px; text-align:left; padding:1px 3px;color:#fff; background:#858585; border:1px solid 6e6e6e;}
+#mystudy2 .time .tim1 {background:url(/images/adm/cyber/ico_plus.gif) no-repeat left 5px}
+#mystudy2 .time .tim2 {background:url(/images/adm/cyber/ico_minus.gif) no-repeat left 5px}
+#mystudy2 .time .tim3{background:url(/images/adm/cyber/ico_time.gif) no-repeat left 5px}
+
+#mystudy2 .lefttit {padding:15px 0;}
+#mystudy2 .leftcon table th {background:#f0f0f0; font-weight:bold;}
+#mystudy2 .leftcon table th, #mystudy2 .leftcon table td {border:1px solid #dad8d8; padding:2px 5px; text-align:center;}
+#mystudy2 .contit {font-weight:bold; border:1px solid #c2c0c0; border-top:6px solid #333; padding:15px 15px 15px 25px; background:#ffffe6 url(/images/adm/cyber/ico_arrow.gif) no-repeat 15px 20px}
+#mystudy2 .contit .tred {color:#fe5310; font-weight:bold}
+#mystudy2 .conbox {background:#efefef; border:1px solid #d1d1d1;}
+#mystudy2 .conbox .que1 {padding:10px 15px; border-bottom:1px solid #d1d1d1}
+#mystudy2 .conbox .que2 {padding:10px 15px; border-bottom:1px solid #d1d1d1; background:#fff; color:#1b5acd; font-size:14px; font-weight:bold}
+#mystudy2 .conbox .item  {padding:10px 15px; border-top:1px solid #fff; height:200px}
+#mystudy2 .conbox .item .checklist li {display:block; padding:3px 0; color:#000000}
+#mystudy2 .conbox .item .checklist li .chr {vertical-align:top; margin-top:2px;}
+
+.sch_date_div{line-height:1.8em;font-family:arial;background:#e0e4e5;width:61px;margin-right:-1px;border:1px solid #ddd;float:left;text-align:center;}
+.sch_date_div p{background:#fff;padding:.3em;}

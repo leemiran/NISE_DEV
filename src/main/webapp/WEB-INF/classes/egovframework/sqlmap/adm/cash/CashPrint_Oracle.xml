@@ -1,0 +1,93 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE sqlMap PUBLIC "-//iBATIS.com//DTD SQL Map 2.0//EN" "http://ibatis.apache.org/dtd/sql-map-2.dtd">
+
+<sqlMap namespace="CashPrint">
+<typeAlias  alias="egovMap" type="egovframework.rte.psl.dataaccess.util.EgovMap"/>
+
+<select id="cashPrintDAO.selectCashPrintList" parameterClass="map" resultClass="egovMap">
+	select
+		seq,
+		uname,
+		org_name,
+		subj_nm,
+		yonsu_name,
+		amount,
+		to_char(to_date(amount_date, 'yyyymmdd'), 'yyyy.mm.dd') as amount_date,
+		luserid,
+		(select name from tz_member a where a.userid = luserid) as name,
+		ldate
+	from  tz_cash_print 
+    where 1 = 1
+    <isNotEmpty property="v_subj_nm">
+		and   subj_nm like UPPER('%' || #v_subj_nm# || '%')  
+	</isNotEmpty>
+</select>
+
+<insert id="cashPrintDAO.insertCashPrint">
+	insert into tz_cash_print
+	(
+		seq,
+		uname,
+		org_name,
+		subj_nm,
+		yonsu_name,
+		amount,
+		amount_date,
+		luserid,
+		ldate
+	) values
+	( 
+		(select nvl(max(seq), 0) + 1 from tz_cash_print),
+		#p_uname#,
+		#p_org_name#,
+		#p_subj_nm#,
+		#p_yonsu_name#,
+		#p_amount#,
+		#p_amount_date#,
+		#userid#,
+		to_char(sysdate, 'yyyymmdd')
+	)
+</insert>
+
+<update id="cashPrintDAO.updateCashPrint">
+	update tz_cash_print set
+	uname = #p_uname#,
+	org_name = #p_org_name#,
+	subj_nm = #p_subj_nm#,
+	yonsu_name = #p_yonsu_name#,
+	amount = #p_amount#,
+	amount_date = #p_amount_date#
+	where seq = #p_seq#
+</update>
+
+<delete id="cashPrintDAO.deleteCashPrint">
+	delete from tz_cash_print
+	where seq = #p_seq# 
+</delete>
+
+<select id="cashPrintDAO.selectAdminCashPrint" parameterClass="map" resultClass="egovMap">
+	select
+		seq,
+		uname,
+		org_name,
+		subj_nm,
+		yonsu_name,
+		amount,
+		to_char(to_date(amount_date, 'yyyymmdd'), 'yyyy.mm.dd') as amount_date
+	from  tz_cash_print 
+	where seq = #p_seq#
+</select>
+
+<select id="cashPrintDAO.selectAdminCashPrintView" parameterClass="map" resultClass="egovMap">
+	select
+		seq,
+		uname,
+		org_name,
+		subj_nm,
+		yonsu_name,
+		amount,
+		amount_date
+	from  tz_cash_print 
+	where seq = #p_seq#
+</select>
+</sqlMap>

@@ -1,0 +1,61 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE sqlMap PUBLIC "-//iBATIS.com//DTD SQL Map 2.0//EN" "http://ibatis.apache.org/dtd/sql-map-2.dtd">
+
+<sqlMap namespace="LcmsSerializer">
+	<typeAlias  alias="egovMap" type="egovframework.rte.psl.dataaccess.util.EgovMap"/>
+	
+<resultMap id="serializerResult" class="egovframework.rte.psl.dataaccess.util.EgovMap">
+   <result property="idx"        column="IDX"  jdbcType="BLOB"/>
+   <result property="courseCd"   column="COURSE_CD"/>
+   <result property="courseSeq"   column="COURSE_SEQ"/>
+   <result property="orgSeq"     column="ORG_SEQ"/>
+   <result property="serializer" column="SERIALIZER"  jdbcType="BLOB"/>
+</resultMap>
+
+<resultMap id="LcmsSerializer" class="egovframework.adm.lcms.cts.domain.LcmsSerializer">
+	<result property="idx"        column="idx"        columnIndex="1"/>
+	<result property="courseSeq"  column="COURSE_SEQ" columnIndex="2"/>
+	<result property="orgSeq"     column="ORG_SEQ"    columnIndex="3"/>
+	<result property="serializer" column="SERIALIZER" columnIndex="4"/>
+</resultMap>
+
+
+<typeAlias  alias="loginVO" type="egovframework.adm.lgn.domain.LoginVO"/>
+
+	<!--  과정정보직렬화 등록 	-->
+	<insert id="lcmsSerializerDAO.insertLcmsSerializer">
+		<selectKey resultClass="int" keyProperty="idx">
+            select nvl(max(idx),0)+1 as idx from tb_lcms_serializer
+        </selectKey>
+		insert into tb_lcms_serializer(
+			idx,
+			course_seq,
+			org_seq,
+			serializer 
+			
+		)
+		values(
+			#idx#,
+			#courseSeq#,
+			#orgSeq#,
+			#serializer:BLOB#
+		)
+	</insert>
+	
+	<select id="lcmsSerializerDAO.selectLcmsSerializer" parameterClass="map" resultMap="LcmsSerializer">
+	
+     	SELECT SERIALIZER.IDX, 
+		       SERIALIZER.COURSE_SEQ, 
+		       SERIALIZER.ORG_SEQ, 
+		       SERIALIZER.SERIALIZER 
+		FROM   TB_LCMS_SERIALIZER SERIALIZER		     
+		WHERE  SERIALIZER.ORG_SEQ = #orgSeq#
+		ORDER BY IDX DESC
+    </select>
+    
+    <delete id="lcmsSerializerDAO.deleteLcmsSerializer">
+    	delete tb_lcms_serializer where org_seq in <iterate property="orgSeq" conjunction="," open="(" close=")">$orgSeq[]$</iterate>
+    </delete>
+	
+
+</sqlMap>

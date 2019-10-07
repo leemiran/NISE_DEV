@@ -1,0 +1,183 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE sqlMap PUBLIC "-//iBATIS.com//DTD SQL Map 2.0//EN" "http://ibatis.apache.org/dtd/sql-map-2.dtd">
+
+<sqlMap namespace="sendSmsMailManageDAO">
+<typeAlias  alias="egovMap" type="egovframework.rte.psl.dataaccess.util.EgovMap"/>
+
+	<resultMap id="mailForm" class="egovframework.rte.psl.dataaccess.util.EgovMap">
+		<result property="t_count"  		column="t_count" />
+		<result property="e_count"  		column="e_count" />
+	   	<result property="r_count"      	column="r_count" />
+	   	<result property="p_count"       column="p_count" />
+	   	<result property="mailtitle"       column="mailtitle" />
+	   	<result property="emp_gubun"       column="emp_gubun" />
+	   	<result property="mail_content"    column="mail_content"  jdbcType="CLOB" javaType="java.lang.String"/>
+	</resultMap>
+	
+	<select id="sendSmsMailManageDAO.getSendMemberInfo" parameterClass="map" resultClass="egovMap">
+		select a.userid,
+		       a.name,
+		       a.email,
+		       a.handphone,
+		       a.handphone_no,
+		       nvl(a.ismailling, 'Y') ismailling,
+		       nvl(a.issms, 'Y') issms
+		  from tz_member a
+		 where 1=1
+		 <isNotEmpty property="arrUserId">
+		 	and a.userid in 
+		 	<iterate property="arrUserId" conjunction="," open="(" close=")">#arrUserId[]#</iterate>
+		 </isNotEmpty>
+		 <isEmpty property="arrUserId">
+		 	and a.userid = '-1'
+		 </isEmpty>
+	</select>
+	
+	<insert id="sendSmsMailManageDAO.insertEmailLog">
+		insert into tz_email_log(
+			seq, tabseq, subj, [year], subjseq, sender_name, sender_email, receiver_name, receiver_email,
+			receiver_userid, email_title, email_contents, status, send_date
+		)
+		values(
+			tz_email_log_seq.nextval,
+			#p_subj#,
+			#p_year#,
+			#p_subjseq#,
+			#p_sender_name#,
+			#p_sender_email#,
+			#p_receiver_name#,
+			#p_receiver_email#,
+			#p_receiver_userid#,
+			#p_title#,
+			#p_content#,
+			1,
+			CURRENT_TIMESTAMP
+		)
+	</insert>
+	
+	<!-- 
+	ID   : sendSmsMailManageDAO.getSendFromHandPhon
+	설명 : sms발신자 정보 조회
+	수정일			수정자				수정내용
+	==========================
+	유상도			2015.01.12		최초생성
+	-->
+	<select id="sendSmsMailManageDAO.getSendFromHandPhon" parameterClass="map" resultClass="egovMap">
+		<![CDATA[
+		SELECT *
+		FROM TZ_MEMBER
+		WHERE USERID = 'smsuser'
+		
+		]]>
+	</select>
+	
+	
+	<select id="sendSmsMailManageDAO.selectMemberGubunCount" parameterClass="map" resultClass="egovMap">
+		<![CDATA[
+		select (select count(*)
+					from tz_member
+					where emp_gubun = 'T'
+					and ismailling ='Y'
+				) AS t_count,
+				(select count(*)
+					from tz_member
+					where emp_gubun = 'E'
+					and ismailling ='Y'
+				) AS e_count,
+				(select count(*)
+					from tz_member
+					where emp_gubun = 'R'
+					and ismailling ='Y'
+				) AS r_count,
+				(select count(*)
+					from tz_member
+					where emp_gubun = 'P'
+					and ismailling ='Y'
+				) AS p_count,
+				mailtitle,
+				mail_content,
+				emp_gubun			
+		from (
+			select mailtitle,
+				mail_content ,
+				emp_gubun
+				from tz_mail_form 
+				where mail_form_seq = (select max(mail_form_seq) from tz_mail_form )
+		)	
+		]]>
+	</select>
+	
+	<select id="sendSmsMailManageDAO.selectMemberGubunSendMailList" parameterClass="map" resultClass="egovMap">
+		<![CDATA[
+		select email
+			from tz_member
+			where emp_gubun = #p_emp_gubun#
+			and ismailling ='Y'			
+            and isretire = 'N'
+		]]>
+	</select>
+	
+	<insert id="sendSmsMailManageDAO.insertMemberGubunSendMailForm">
+		insert into tz_mail_form(
+			 mail_form_seq
+			,mail_content
+			,inuserid
+			,indate
+			,luserid
+			,ldate
+			,sendcnt
+			,mailtitle
+			,emp_gubun
+			,totaltime
+
+		)
+		values(
+			mail_form_seq.nextval,
+			#p_content:CLOB#,
+			#userid#,
+			to_char(sysdatetime, 'YYYYMMDDHH24MISS'),
+			#userid#,
+			to_char(sysdatetime, 'YYYYMMDDHH24MISS'),
+			#cnt#,
+			#p_title#,
+			#p_emp_gubun#,
+			#totaltime#
+		)
+	</insert>
+	
+	
+	<insert id="sendSmsMailManageDAO.insertMemberGubunSendMail">
+		<![CDATA[
+			insert into im_dmail_info_5 (seqidx, subject, qry, reject_slist_idx, block_group_idx, mailfrom, mailto, replyto, errorsto, html, encoding, charset, sdate, tdate, duration_set, click_set,  site_set, gubun, rname, msgflag, content, atc_set, mtype, u_idx, g_idx)
+	      	values (IM_SEQ_DMAIL_INFO_5.NEXTVAL,#p_title#,#mailsql#,1,0,#formNamaEmail#,'"[$$name$$]"<[$$email$$]>',#formNamaEmail#,#fromEmail#,1,0,'utf-8',to_char(sysdate, 'YYYYMMDD')||'000000',to_char(sysdate, 'YYYYMMDD')||'999999',1,1,0,' ','email,name,userid,rdate',0,#p_content#,0,0,1,1);
+      	]]>
+	</insert>
+	
+	<insert id="sendSmsMailManageDAO.insertMemberGubunDormantSendMail">
+		<![CDATA[
+			insert into im_dmail_info_5 (seqidx, subject, qry, reject_slist_idx, block_group_idx, mailfrom, mailto, replyto, errorsto, html, encoding, charset, sdate, tdate, duration_set, click_set,  site_set, gubun, rname, msgflag, content, atc_set, mtype, u_idx, g_idx)
+	      	values (IM_SEQ_DMAIL_INFO_5.NEXTVAL,#p_title#,#mailsql#,1,0,#formNamaEmail#,'"[$$name$$]"<[$$email$$]>',#formNamaEmail#,#fromEmail#,1,0,'utf-8',to_char(sysdate, 'YYYYMMDD')||'000000',to_char(sysdate, 'YYYYMMDD')||'999999',1,1,0,' ','email,name,userid,rdate',0,#p_content#,0,0,1,1);
+      	]]>
+	</insert>
+	
+	<update id="updateNoMemberGubunSendMail">
+		update tz_member
+		set ismailling = 'N'
+		where email = #noemail#
+	</update>
+	
+	<select id="sendSmsMailManageDAO.selectCloseUser" parameterClass="map" resultClass="egovMap">
+		<![CDATA[
+		sELECT USERID, NAME, EMAIL, ISRETIRE, DORMANT_YN, TO_CHAR(ADD_MONTHS(SYSDATE, 3)) AS DORMANT_DATE 
+		  FROM TZ_MEMBER
+	     WHERE indate is not null
+		   and lglast is not null
+		   and isretire = 'N'
+		   and dormant_yn = 'N'
+		   and to_date(to_char(sysdate,'yyyymmdd')) - TO_DATETIME(substr(lglast,1,8),'yyyymmddhh24miss') > 365
+		]]>
+	</select>
+	
+	
+</sqlMap>
+

@@ -1,0 +1,39 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE sqlMap PUBLIC "-//iBATIS.com//DTD SQL Map 2.0//EN" "http://ibatis.apache.org/dtd/sql-map-2.dtd">
+
+<sqlMap namespace="FinishInput">
+<typeAlias  alias="egovMap" type="egovframework.rte.psl.dataaccess.util.EgovMap"/>
+
+	<update id="finishInputDAO.insertExcelData">
+		merge into tz_student a
+		using (
+						select a.mtest, b.score, b.examnum
+						  from tz_student a,
+						       (
+								select substr(tmp, 0, instr(tmp, '!_')-1) as examnum,
+								       substr(tmp, instr(tmp, '!_')+2, length(tmp)) as score
+								  from (
+									<dynamic prepend=" select ">
+									    <iterate property="tmp" conjunction=" from DB_ROOT union all select ">
+									        #tmp[]# as tmp
+									    </iterate>
+									</dynamic>
+										   from DB_ROOT
+									   )
+						       ) b
+						 where a.subj    = #ses_search_subj#
+						   and a.[year]    = #ses_search_year#
+						   and a.subjseq = #ses_search_subjseq#
+						   and a.examnum = b.examnum
+		                ) b
+		     on (a.subj    = #ses_search_subj#
+					and a.[year]    = #ses_search_year#
+					and a.subjseq = #ses_search_subjseq#
+					and a.examnum = b.examnum)           
+		    when matched then
+		    update set a.mtest = b.score
+		    
+		    
+		    
+	</update>
+</sqlMap>

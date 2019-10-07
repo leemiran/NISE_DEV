@@ -1,0 +1,46 @@
+﻿<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+<meta http-equiv="content-type" content="text/html; charset=utf-8" />
+<head>
+<title>Innorix File Transfer Solution - InnoEX Plus Upload</title>
+<script type="text/javascript" src="../common/innorix.js"></script>
+
+<script>
+window.onload = function()
+{
+	innoInit({
+		ContainElementID : "innorix_component",	// 컴포넌트 출력객체 ID
+		UploadURL : "upload.jsp",				// 업로드 처리 페이지
+		CompleteURL : "plus_result.jsp",		// Plus 업로드 완료정보 전달 URL
+		MaxTotalSize : "5GB",					// 첨부가능 전체용량
+		MaxFileSize : "5GB",					// 첨부가능 1개파일 용량
+		MaxFileCount : "200",					// 첨부가능 파일개수
+		TransferMode : "innoexu"				// InnoEX 업로드 모드 설정		
+	});
+}
+
+function fileUpload()
+{
+	var no = File.GetTotalCount();
+
+	if (no > 0)
+	{
+		File.PlusUpload();
+	}
+	else
+	{
+		alert("파일을 선택해 주십시오.");
+		return true;
+	}			
+}
+</script>
+</head>
+
+<body>
+<div id="innorix_component" style="border: 1px solid #97b4cc; width:500px; height:200px"></div><br />
+
+<input class="innoBlueBtn" type="button" value="파일추가" onClick="File.OpenFileDialog();" />
+<input class="innoGreenBtn" type="button" value="Plus 전송하기" onClick="fileUpload();" />
+
+</body>
+</html>

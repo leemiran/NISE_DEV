@@ -1,0 +1,167 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE sqlMap PUBLIC "-//iBATIS.com//DTD SQL Map 2.0//EN" "http://www.ibatis.com/dtd/sql-map-2.dtd">
+
+<sqlMap namespace="ScormContent">
+
+	<typeAlias  alias="egovMap" type="egovframework.rte.psl.dataaccess.util.EgovMap"/>
+	
+	<resultMap id="boardResult" class="egovframework.rte.psl.dataaccess.util.EgovMap">
+	   <result property="serializer"      column="serializer"  jdbcType="BLOB"/>
+    </resultMap>
+	
+	<!-- 코드 목록 총건수를 조회 -->
+	<select id="scormContentDAO.selectScormContentListTotCnt" parameterClass="map" remapResults="true" resultClass="int">
+		select count(0) as cnt
+		  from tz_subj a
+		 where isonoff = 'ON'
+		   and contenttype = 'S'
+		   and substr(indate, 0, 8) >= '20120501'
+		<isNotEmpty property="search_cour">
+		   and upperclass = #search_cour#
+		</isNotEmpty>
+		<isNotEmpty property="search_subjnm">
+		   and subjnm like '%'||#search_subjnm#||'%'
+		</isNotEmpty>
+		<isNotEmpty property="search_subj">
+		   and subj like '%'||#search_subj#||'%'
+		</isNotEmpty>
+		and a.iscontentsuse = 'Y'
+	</select>
+
+	<!-- LCMS교과리스트 조회 -->
+ 	<select id="scormContentDAO.selectScormContentList" parameterClass="map" resultClass="egovMap">
+ 		select * from (
+ 		
+		select rownum as num, subj, subjnm, contenttype,org_count
+		      ,classname
+		      ,conyear
+		      ,fyear
+		      ,conrenum
+		  from (
+				select subj, subjnm, contenttype,
+				       (select count(0) from tb_lcms_course_org where subj = a.subj) as org_count
+				       ,c.classname
+				       ,a.conyear 	
+				       ,(select min([year]) from tz_subjseq where subj=a.subj) as fyear
+				       ,conrenum
+				  from tz_subj a
+				      ,tz_subjatt c
+				 where isonoff = 'ON'
+				   and contenttype = 'S'
+				   and substr(indate, 0, 8) >= '20120501'
+				<isNotEmpty property="search_cour">
+				   and upperclass = #search_cour#
+				</isNotEmpty>
+				<isNotEmpty property="search_subjnm">
+				   and subjnm like '%'||#search_subjnm#||'%'
+				</isNotEmpty>
+				<isNotEmpty property="search_subj">
+				   and subj like '%'||#search_subj#||'%'
+				</isNotEmpty>
+					and a.iscontentsuse = 'Y'
+					and a.upperclass = c.upperclass
+		         order by nvl(conyear,0) desc, decode(a.upperclass,'PRF','1','EXT','2','PAR','3','COUR','4','OTH','5'), subjnm, conrenum, indate desc
+		        )
+		        
+		        
+		)
+		where num BETWEEN #firstIndex# + 1 AND #firstIndex# + #recordCountPerPage#
+	</select>
+	
+	<select id="scormContentDAO.selectScormNewScoPageList" parameterClass="map" resultClass="egovMap">
+		select a.org_seq, a.subj, a.userid, a.reg_dttm,a.crs_org_no as org_no, b.course_type,
+        	   b.org_id, b.org_title, b.org_dir,b.org_structure, b.org_global_to_sys, b.group_seq,
+        	   b.meta_location, b.update_dt, b.org_window_full_view, b.org_button_view,
+        	   c.org_seq, c.item_seq, c.high_item_seq, c.org_item_no, c.item_id, c.item_id_ref,
+        	   c.item_title, c.item_type, c.item_open, c.item_tl_action, c.item_max_time, c.item_start_file,
+        	   c.item_lom_file, c.item_parameters, c.data_from_lms, c.item_threshold,
+               c.update_dt,c.rsrc_seq,c.course_cd,c.userid
+		  from tb_lcms_course_org a, tb_lcms_organization b, tb_lcms_item c
+		 where 1 = 1
+		   and a.subj = #subj#
+		   and a.org_seq = b.org_seq
+		   and b.org_seq = c.org_seq
+		 order by b.crs_org_no, c.org_item_no
+	</select>
+ 
+	<select id="scormContentDAO.selectScormScoList" parameterClass="map" resultClass="egovMap">
+		select a.org_seq, a.crs_org_no, b.org_id, b.org_title, c.item_seq, c.high_item_seq, c.org_item_no, c.item_id, c.item_id_ref,
+        	   c.item_title, c.item_type, c.item_open, c.item_tl_action, c.item_max_time, c.item_start_file, c.rsrc_seq,
+        	   (select count(0) from tb_lcms_scorm_sequence where org_seq = a.org_seq and item_seq = c.item_seq) as imsss,
+        	   (select count(0) from tb_lcms_item where org_seq = a.org_seq) as item_count
+		  from tb_lcms_course_org a, tb_lcms_organization b, tb_lcms_item c
+		 where 1 = 1
+		   and a.subj = #subj#
+		   and a.org_seq = b.org_seq
+		   and b.org_seq = c.org_seq
+		 order by a.crs_org_no, c.org_item_no
+	</select>
+ 
+	<select id="scormContentDAO.selectScormCreateInfo" parameterClass="map" resultClass="egovMap">
+		select b.name,
+		       to_char(to_date(substr(a.indate,1,8),'YYYYMMDD'),'YYYY.MM.DD') as indate
+		  from tz_subj a, tz_member b
+		 where a.subj = #subj#
+		   and a.inuserid = b.userid
+	</select>
+	
+	<select id="scormContentDAO.selectScormRsrcBaseDir" parameterClass="map" resultClass="String">
+		select substr(rsrc_base_dir, 0, instr(rsrc_base_dir, '/', -1)) as rsrc_base_dir
+  		  from tb_lcms_item_resource where rsrc_seq = #rsrcSeq#
+	</select>
+	
+	<select id="scormContentDAO.selectScormRsrcBaseDir2" parameterClass="map" resultClass="String">
+		select substr(rsrc_base_dir, 0, instr(rsrc_base_dir, '/', -1)) as rsrc_base_dir
+		  from tb_lcms_item_resource
+		 where rsrc_seq = (select  min(rsrc_seq) from tb_lcms_item where org_seq = $orgSeq$ and rsrc_seq != 0)
+	</select>
+ 
+ 
+ 	<select id="scormContentDAO.selectFileBaseDirList" parameterClass="map" resultClass="egovMap">
+ 		select rsrc_seq, rsrc_base_dir from tb_lcms_item_resource
+ 		where rsrc_seq in <iterate property="rsrcSeq" conjunction="," open="(" close=")">$rsrcSeq[]$</iterate>
+ 	</select>
+
+	<select id="scormContentDAO.selectProgressLogList" parameterClass="map" resultClass="egovMap">
+		 select obj.ORG_SEQ,obj.ITEM_ID,obj.LEARNER_ID,obj.LEARNER_NAME
+				,obj.TOTAL_TIME,obj.SCORE_SCALED,obj.COMPLETION_STATUS
+				,obj.COMPLETION_THRESHOLD,obj.ENTRY_INFO,obj.CREDIT
+				,obj.EXIT_STATUS,obj.LAUNCH_DATA,obj.LOCATION
+				,obj.MAX_TIME_ALLOWED,obj.MODE_INFO,obj.PROGRESS_MEASURE * 100 as progress_measure
+				,obj.SCALED_PASSING_SCORE,obj.SUCCESS_STATUS,obj.SUSPEND_DATA
+				,obj.TIME_LIMIT_ACTION,obj.SCORE_RAW,obj.SCORE_MAX
+				,obj.SCORE_MIN,obj.LEARNER_PREFERENCE_AUDIO_LEVEL
+				,obj.LEARNER_PREFERENCE_LANGUAGE,obj.LEARNER_PREFERENCE_DELIVERY_SP
+				,obj.LEARNER_PREFERENCE_AUDIO_CAPTI,obj.USERID
+				,obj.UPDATE_DT,obj.ATTEMPT,obj.COURSE_MAP_SEQ,
+		        (select item_title from tb_lcms_item where item_id = obj.item_id and org_seq = obj.org_seq) item_title,
+                (substr(substr(total_time, 0, instr(total_time, 'H') -1), 3, instr(total_time, 'H'))*60)*60 +
+                substr(substr(total_time, 0, instr(total_time, 'M')-1), instr(total_time, 'H')+1, instr(total_time, 'M')) * 60 +
+                substr(substr(total_time, 0, instr(total_time, 'S')-1), instr(total_time, 'M')+1, instr(total_time, 'S')) as total_second,
+                decode( completion_status, 'completed', 1, 0) as completion_cnt,
+                (select count(0) from tb_lcms_item where org_seq = obj.org_seq and rsrc_seq != 0) as item_cnt,
+                (select avg(progress_measure * 100) from tb_lcms_cmi_objectinfo where learner_id = obj.learner_id and org_seq = obj.org_seq) as total_avg
+		   from tb_lcms_cmi_objectinfo obj 
+		  where learner_id	= #userid#
+		    and org_seq		in <iterate property="check" conjunction="," open="(" close=")">$check[]$</iterate>
+	</select>
+	
+	<delete id="scormContentDAO.deleteLog">
+		delete tb_lcms_cmi_objectinfo 
+		 where learner_id	= #userid#
+		   and org_seq		in <iterate property="check" conjunction="," open="(" close=")">$check[]$</iterate>
+	</delete>
+	<delete id="scormContentDAO.deleteTocLog">
+		delete tb_lcms_toc 
+		 where idx in (select idx from tb_lcms_serializer where org_seq in <iterate property="check" conjunction="," open="(" close=")">$check[]$</iterate>)
+		   and userid = #userid#
+	</delete>
+	
+	<select id="scormContentDAO.selectScormRsrcInfo" parameterClass="map" resultClass="egovMap">
+		select item_id||'@@'||rsrc_seq as old_item, to_char(rsrc_seq) as rsrc_seq,
+		       item_id_ref, to_char(high_item_seq) as high_item_seq
+		  from tb_lcms_item
+		 where org_seq = $orgSeq$
+		 order by org_item_no
+	</select>
+</sqlMap>                            

@@ -1,0 +1,1190 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE sqlMap PUBLIC "-//iBATIS.com//DTD SQL Map 2.0//EN" "http://ibatis.apache.org/dtd/sql-map-2.dtd">
+
+<sqlMap namespace="ReceiptMoneyManage">
+
+<!-- 
+	ReceiptMoneyManage_Oracle.xml
+	메뉴 : 결제관리
+	수정일			수정자				수정내용
+	==========================
+	유상도			2015.01.10		최초생성
+	-->
+
+<typeAlias  alias="egovMap" type="egovframework.rte.psl.dataaccess.util.EgovMap"/>
+	
+	<!-- 
+	ID   : CyberCourseNotationMagDAO.selectCourseList
+	설명 : 과정별입금내역 조회(결제관리>과정별입금내역)
+	수정일			수정자				수정내용
+	==========================
+	유상도			2015.01.10		최초생성
+	-->
+	<select id="ReceiptMoneyManageDAO.selectSubjReceiptMoneyList" parameterClass="map" resultClass="egovMap">
+		<![CDATA[
+
+							
+							SELECT 
+									 z.upperclassno
+									,Z.SUBJ
+                                    ,Z.SUBJNM
+                                    ,LAG(TO_NUMBER(Z.SUBJSEQ)) OVER(ORDER BY SUBJ,SUBJSEQ,DEPT_IDX,PAY) 	AS SUBJSEQ_LAG
+                                    ,TO_NUMBER(Z.SUBJSEQ) AS SUBJSEQ
+                                    ,LEAD(TO_NUMBER(Z.SUBJSEQ)) OVER(ORDER BY SUBJ,SUBJSEQ,DEPT_IDX,PAY) AS SUBJSEQ_LEAD
+                                    ,Z.EDUSTART                        																														/*연수시작일*/
+                                    ,Z.EDUEND                            																														/*연수종료일*/
+                                    ,Z.EDUTIMES                        																														/*시간*/
+                                    ,Z.BIYONG
+                                    ,Z.BIYONG2                            																														/*수강료*/
+                                    ,Z.EDUMANS                        																														/*대상*/
+                                    ,Z.DEPT_NM                        																														/*입금자*/
+                                    ,Z.PAY                      																														/*입금방법*/
+                                    ,LAG(Z.PAY_NM) OVER(ORDER BY SUBJ,SUBJSEQ,DEPT_IDX,PAY) 						AS PAY_LAG
+                                    ,Z.PAY_NM
+                                    ,LEAD(Z.PAY_NM) OVER(ORDER BY SUBJ,SUBJSEQ,DEPT_IDX,PAY) 					AS PAY_LEAD
+                                    ,Z.PAY_CNT                        																														/*입금방법별인원*/
+                                    ,Z.ISGRADUATED_Y_CNT        																														/*이수인원(내역전체)*/
+                                    ,Z.ISGRADUATED_N_CNT        																														/*미이수인원(내역전체)*/
+                                    ,SUM(ISGRADUATED_Y_CNT) OVER(PARTITION BY SUBJ,SUBJSEQ,DEPT_NM)     	AS ISGRADUATED_Y_DEPTCNT        	/*이수인원(입금자별)*/
+                                    ,SUM(ISGRADUATED_N_CNT) OVER(PARTITION BY SUBJ,SUBJSEQ,DEPT_NM)     	AS ISGRADUATED_N_DEPTCNT        	/*미이수인원(입금자별)*/
+                                    ,SUM(ISGRADUATED_Y_CNT) OVER(PARTITION BY SUBJ,SUBJSEQ)                 	AS ISGRADUATED_Y_SUBJSEQCNT    	/*이수인원(기수별)*/
+                                    ,SUM(ISGRADUATED_N_CNT) OVER(PARTITION BY SUBJ,SUBJSEQ)                 	AS ISGRADUATED_N_SUBJSEQCNT    	/*미이수인원(기수별)*/
+                                    ,SUM(PAY_CNT) OVER(PARTITION BY SUBJ,SUBJSEQ,DEPT_NM)                     	AS PAY_DEPT_CNT                        	/*징수인원(입금자별)*/
+                                    ,SUM(PAY_CNT) OVER(PARTITION BY SUBJ,SUBJSEQ)                                     AS PAY_SUBJSEQ_CNT                    	/*징수인원(입금자별)*/
+                                    ,SUM(PAY_CNT) OVER(PARTITION BY SUBJ)                                                 	AS PAY_SUBJ_CNT                        	/*징수인원(과정별)*/
+                                    ,SUM(PAY_CNT) OVER()                                                                         	AS PAY_TOTAL_CNT                        /*징수인원(내역전체)*/
+                                    ,SUM(TOT) OVER(PARTITION BY SUBJ,SUBJSEQ)                                         	AS SUBJSEQ_TOT                            /*수강인원(기수별)*/
+                                    ,Z.TOT_CNT                                                                                                                                        		/*수강인원(내역전체)*/
+                                    ,Z.PAY_AMOUNT                                                                                                                                    		/*입금액(내역전체)*/
+                                    ,SUM(PAY_AMOUNT) OVER(PARTITION BY SUBJ,SUBJSEQ,CASE WHEN PAY = '교육청일괄납부' THEN '교육청' ELSE '개인' END)                 AS DEPT_AMOUNT                        /*입금액(입금자별)*/
+                                    ,SUM(dp_PAY_AMOUNT) OVER(PARTITION BY SUBJ,SUBJSEQ,CASE WHEN PAY = '교육청일괄납부' THEN '교육청' ELSE '개인' END)                 AS DP_DEPT_AMOUNT                        /*교육청 수납 입금액(입금자별)*/
+                                    ,SUM(PAY_AMOUNT) OVER(PARTITION BY SUBJ,SUBJSEQ)                             	AS SUBJSEQ_AMOUNT                    	/*입금액(기수별)*/
+                                    ,SUM(dp_PAY_AMOUNT) OVER(PARTITION BY SUBJ,SUBJSEQ)                                 AS dp_SUBJSEQ_AMOUNT                        /*교육청 수납입금액(기수별)*/
+                                    ,SUM(PAY_AMOUNT) OVER(PARTITION BY SUBJ)                                         	AS SUBJ_AMOUNT                        	/*입금액(과정별)*/
+                                    ,SUM(PAY_AMOUNT) OVER()                                                                     	AS TOTAL_AMOUNT                        	/*입금액(내역전체)*/
+                                    ,SUM(dp_PAY_AMOUNT) OVER()                                                                         AS dp_TOTAL_AMOUNT                            /*입금액(내역전체)*/                                
+                                    ,LAG(DEPT_IDX) OVER(ORDER BY SUBJ,SUBJSEQ,DEPT_IDX,PAY)                     	AS DEPT_LAG
+                                    ,Z.DEPT_IDX
+                                    ,LEAD(DEPT_IDX) OVER(ORDER BY SUBJ,SUBJSEQ,DEPT_IDX,PAY)                     AS DEPT_LEAD
+                                    ,COUNT(1) OVER(PARTITION BY SUBJ,SUBJSEQ)                                         	AS ALL_SUBJSEQ_CNT
+                                    ,COUNT(1) OVER(PARTITION BY SUBJ,SUBJSEQ,CASE WHEN PAY = '교육청일괄납부' THEN '교육청' ELSE '개인' END)                             	AS ALL_DEPT_PAY_CNT
+                                    ,COUNT(1) OVER(PARTITION BY SUBJ,SUBJSEQ,DEPT_NM)                             	AS ALL_DEPT_CNT
+                                    ,SUM(CHKFINAL_Y_CNT) OVER(PARTITION BY SUBJ,SUBJSEQ,DEPT_NM)             AS DEPT_CNT                                	/*수강인원(입금자별)*/
+                                    ,Z.AUTH_DATE
+                                    ,type
+                                    ,o_subjseq
+                                    ,dept_cd
+                                    ,[year]
+                                    ,deposit_date
+                                    ,sum(reamount) over(partition by subj, subjseq) as reamount
+                                    ,sum(reamountcnt) over(partition by subj, subjseq) as reamountcnt
+							FROM
+							(
+							SELECT      upperclassno
+							           ,SUBJ
+									   ,SUBJSEQ
+									   ,DEPT_NM
+									   ,PAY
+									   ,max(type) as type
+                                       ,max(o_subjseq) as o_subjseq
+                                       ,max(dept_cd) as dept_cd
+                                       ,max([year]) as [year]
+									   ,MAX(PAY_NM)             AS PAY_NM
+									   ,MAX(EDUSTART) 			AS EDUSTART
+									   ,MAX(EDUEND) 				AS EDUEND
+									   ,MAX(EDUTIMES) 			AS EDUTIMES
+									   ,MAX(BIYONG) 				AS BIYONG
+									   ,MAX(BIYONG2) 				AS BIYONG2
+									   ,MAX(EDUMANS) 			AS EDUMANS
+								       ,MAX(grseqnm) 			AS GRSEQNM 
+								       ,MAX(subjnm) 				AS SUBJNM
+								       ,SUM(AMOUNT_CNT)     	AS PAY_CNT
+								       ,SUM(ISGRADUATED_Y)  AS ISGRADUATED_Y_CNT
+								       ,SUM(ISGRADUATED_N)  AS ISGRADUATED_N_CNT
+								       ,SUM(CHKFINAL_Y)  		AS CHKFINAL_Y_CNT
+                                       ,SUM(CHKFINAL_N)  		AS CHKFINAL_N_CNT
+								       ,SUM(AMOUNT)         	AS PAY_AMOUNT
+								       ,SUM(dp_AMOUNT)             AS dp_PAY_AMOUNT
+								       ,MAX(TOT_CNT)        	AS TOT_CNT
+								       ,MAX(AUTH_DATE)      	AS AUTH_DATE
+								       ,MAX(DEPT_IDX)       	AS DEPT_IDX
+								       ,COUNT(1)            		AS TOT
+								       ,max(deposit_date) as deposit_date
+								       ,sum(reamount) as reamount
+								       ,sum(reamountcnt) as reamountcnt
+							FROM (
+								select  [year],
+						         subj,
+						         subjnm,
+						         subjseq,
+						         edustart,
+						         eduend,
+						         edudays,
+						         edutimes,
+						         edumans,
+						         biyong,
+						         biyong2,
+						         dept_cd,
+						         name,
+						         userid,
+						         grseqnm,
+						         isgraduated,
+						         isgraduated_y,
+						         isgraduated_n,
+						         chkfinal,
+						         chkfinal_y,
+						         chkfinal_n,
+						         dept_nm,
+						         dept_idx,
+						         type,
+						         pay,
+						         pay_nm,
+						         amount,
+						         case when (aa.type = 'OB' AND aa.CHKFINAL = 'Y' and (select count(*) from tz_subjseq_deposit_date where subj = aa.subj and [year] = aa.[year] and subjseq = aa.subjseq and dept_nm = aa.dept_nm) =1 )
+						              then nvl(aa.BIYONG2,0)
+						         	  when (type <> 'OB' AND aa.CHKFINAL = 'Y')  
+						         	  then aa.BIYONG 
+						         	  else 0 end dp_AMOUNT,
+						         amount_cnt,
+						         auth_date,
+						         tot_cnt,
+						         upperclassno,
+						         o_subjseq,
+						         (select TO_CHAR (TO_DATE (deposit_date, 'YYYYMMDD'), 'YYYY-MM-DD') 
+			                                        from tz_subjseq_deposit_date 
+			                                        where subj = aa.SUBJ             
+			                                        and [year] = aa.[year]
+			                                        and subjseq = aa.o_subjseq
+			                                        and dept_nm = aa.dept_nm) as deposit_date,
+			                     reamount,
+			                     reamountcnt                   
+							from(  		
+										select 
+										 c.[year]      
+										             ,c.subj                                                             
+										             , c.subjnm                                                                
+										             , c.subjseq 
+										             , c.EDUSTART
+										             , c.EDUEND
+										             , c.EDUDAYS
+										             , c.EDUTIMES
+										             , c.EDUMANS
+										             , c.BIYONG
+										             , c.BIYONG2
+										             , b.dept_cd
+										             , b.name     
+										             , b.userid
+										             ,(select  grseqnm  from tz_grseq where grcode=c.grcode and grseq=c.grseq and gyear=c.gyear) grseqnm
+										             , CASE WHEN d.ISGRADUATED = 'Y' THEN 'Y' ELSE 'N' END AS ISGRADUATED
+			                                         , CASE WHEN d.ISGRADUATED = 'Y' THEN '1' ELSE '0' END AS ISGRADUATED_Y
+			                                         , CASE WHEN d.ISGRADUATED is null or d.ISGRADUATED = 'N' THEN '1' ELSE '0' END AS ISGRADUATED_N
+			                                         
+			                                         , CASE WHEN a.CHKFINAL = 'Y' THEN 'Y' ELSE 'N' END AS CHKFINAL
+			                                         , CASE WHEN a.CHKFINAL = 'Y' THEN '1' ELSE '0' END AS CHKFINAL_Y
+			                                         , CASE WHEN a.CHKFINAL is null or a.CHKFINAL = 'N' THEN '1' ELSE '0' END AS CHKFINAL_N
+										              , case when type = 'OB' then (
+										             												case when 
+										             													(
+												             													select org_nm from (
+																								                    select 0 as idx, org_nm from   tz_school_org where  org_cd = b.dept_cd
+																								                    union all
+																								                    select 1 as idx,  org_nm from   tz_eduorg where  orgid = b.dept_cd
+																												 ) 
+												             											)
+										             													is null or 
+										             													(
+												             													select org_nm from (
+																								                    select 0 as idx, org_nm from   tz_school_org where  org_cd = b.dept_cd
+																								                    union all
+																								                    select 1 as idx,  org_nm from   tz_eduorg where  orgid = b.dept_cd
+																												 ) 
+												             											)
+										             													= '-' then '' else 
+										             													(
+												             													select org_nm from (
+																								                    select 0 as idx, org_nm from   tz_school_org where  org_cd = b.dept_cd
+																								                    union all
+																								                    select 1 as idx,  org_nm from   tz_eduorg where  orgid = b.dept_cd
+																												 ) 
+												             											)
+										             													end ) 
+										                else '개인' end as dept_nm
+										             , case when type = 'OB' then (
+										             											case when 
+										             												(
+												             													select org_nm from (
+																								                    select 0 as idx, org_nm from   tz_school_org where  org_cd = b.dept_cd
+																								                    union all
+																								                    select 1 as idx,  org_nm from   tz_eduorg where  orgid = b.dept_cd
+																												 ) 
+												             											)
+										             												is null or 
+										             												(
+												             													select org_nm from (
+																								                    select 0 as idx, org_nm from   tz_school_org where  org_cd = b.dept_cd
+																								                    union all
+																								                    select 1 as idx,  org_nm from   tz_eduorg where  orgid = b.dept_cd
+																												 ) 
+												             											)
+										             												= '-' then 'M00' else b.dept_cd end ) 
+										                else 'M99' end as dept_idx
+										             , type
+										             , (
+										                 decode(trim(type), 'OB','교육청일괄납부','PB','무통장','RE','재수강','SC0010','신용카드','SC0030','계좌이체','SC0040','가상계좌','FE','무료',type) 
+										                 ) as pay
+										             , (
+			                                             decode(trim(type), 'OB','교육청일괄납부','개인') 
+			                                             ) as pay_NM    
+										            , case when (type = 'OB' AND a.CHKFINAL = 'Y') 
+										                   then nvl(c.BIYONG2,0)
+										                   when (type <> 'OB' AND a.CHKFINAL = 'Y')  then c.BIYONG 
+										                   else 0 end AMOUNT
+			                                         , case when a.CHKFINAL = 'Y' then '1' else '0' end AMOUNT_CNT
+										             , case when type = 'OB' then TO_DATE(SUBSTR(AUTH_DATE,1, 8),'YYYYMMDD') else NULL end as AUTH_DATE
+										             ,count(1) over() tot_cnt
+										             ,case when c.oriupperclass = 'PRF'
+			                                            then 1
+			                                            when c.oriupperclass = 'EXT'
+			                                            then 2
+			                                            when c.oriupperclass = 'PAR'
+			                                            then 3
+			                                            else 4
+			                                            end upperclassno
+			                                         ,c.subjseq as o_subjseq 
+			                                         , case when (type = 'RE')  then c.BIYONG else 0 end reamount  
+			                                         , case when (type = 'RE')  then 1 else 0 end reamountcnt
+										from   tz_propose   a                                                          
+										             , tz_member    b                                                          
+										             , vz_scsubjseq c                                                          
+										             , tz_stold d                                                              
+										             , tz_student ts
+										             , pa_payment pa                                                       
+										        where  a.userid  			= b.userid                                                    
+										        and    a.subj    			= c.subj                                                      
+										        and    a.[year]    			= c.[year]                                                      
+										        and    a.subjseq 			= c.subjseq                                                   
+										        and    a.subj    			= d.subj(+)                                                   
+										        and    a.[year]    			= d.[year](+)                                                   
+										        and    a.subjseq 			= d.subjseq(+)                                                
+										        and    a.userid  			= d.userid(+)                                                 
+										        and    a.userid 			= ts.userid(+)                                                 
+										        and    a.subj				= ts.subj(+)                                                  
+										        and    a.subjseq 			= ts.subjseq(+)                                                   
+										        and    a.[year] 				= ts.[year](+) 
+										        and    pa.order_id(+) 	= a.order_id 
+										        and 	 pa.useyn(+) 		= 'Y' 
+										        and 	 pa.userid(+) 		= a.userid	
+										        and    c.grcode 			= 'N000001'            						        
+												and    c.gyear 				=  nvl(#ses_search_gyear#, to_char(sysdate, 'YYYY'))
+												and 	a.CHKFINAL 		= 'Y'
+												and c.isyearedustatus = 'Y'
+												
+											]]>
+												
+																				
+											 <isPropertyAvailable property="ses_search_subjseq">
+												<isNotEmpty property="ses_search_subjseq">
+												   			and c.isclosed = 'Y'
+												</isNotEmpty>
+										     </isPropertyAvailable>								
+												
+												
+												and c.isuse = 'Y'
+												--and a.subjseq in( '0015', '0010')								
+												
+												
+										     
+										     <isPropertyAvailable property="ses_search_subj">
+												<isNotEmpty property="ses_search_subj">
+												    and 	c.subj  =  #ses_search_subj#
+												</isNotEmpty>
+										     </isPropertyAvailable>
+										     
+										     <isPropertyAvailable property="ses_search_subjseq">
+												<isNotEmpty property="ses_search_subjseq">
+												    and 	c.subjseq  =  #ses_search_subjseq#
+												</isNotEmpty>
+										     </isPropertyAvailable>
+										     
+										     							     
+										   		        
+											
+											 <![CDATA[
+											 
+										        -- order by c.[year]  ,c.subj , c.subjseq
+										          
+										)aa
+								)
+							GROUP BY upperclassno,SUBJ,SUBJSEQ,DEPT_NM,PAY
+							) Z
+							WHERE 1=1
+							ORDER BY upperclassno,SUBJSEQ,SUBJ,DEPT_IDX,PAY
+		]]>
+	</select>
+	
+	
+	<select id="ReceiptMoneyManageDAO.selectSubjseqDepositDateCnt" parameterClass="map" resultClass="int">    
+		select count(*) as cnt
+		  from tz_subjseq_deposit_date
+		 where subj = #p_subj#
+		 	and [year] = #p_year#
+		 	and subjseq = #p_subjseq#
+		 	and dept_nm = #p_deptNm#
+    </select>
+    
+    
+    <select id="ReceiptMoneyManageDAO.selectSubjseqDepositDate" parameterClass="map" resultClass="egovMap">    
+		select subj, 
+	         [year],
+	         subjseq,
+	         dept_nm,
+	         TO_CHAR (TO_DATETIME (deposit_date, 'YYYYMMDDHH24MISS'), 'YYYY-MM-DD') AS deposit_date,
+	         indate,
+	         inuserid,
+	         ldate,
+	         luserid
+		  from tz_subjseq_deposit_date
+		 where subj = #p_subj#
+		 	and [year] = #p_year#
+		 	and subjseq = #p_subjseq#
+		 	and dept_nm = #p_deptNm#
+    </select>
+    
+    <insert id="ReceiptMoneyManageDAO.insertSubjseqDepositDate">
+		insert into tz_subjseq_deposit_date(
+			subj, [year], subjseq, dept_nm, deposit_date, indate, inuserid
+		)
+		values(
+			#p_subj#,
+			#p_year#,
+			#p_subjseq#,
+			#p_deptNm#,
+			replace(#ipdate#, '-', ''),
+			to_char(sysdatetime, 'yyyyMMddhh24miss'),
+			#userid#		
+		)
+	</insert>
+    
+    <update id="ReceiptMoneyManageDAO.updateSubjseqDepositDate">
+		update tz_subjseq_deposit_date
+			set deposit_date = replace(#ipdate#, '-', ''),
+			ldate = to_char(sysdatetime, 'yyyyMMddhh24miss'),
+			luserid = #userid#		
+		where subj = #p_subj#
+		 	and [year] = #p_year#
+		 	and subjseq = #p_subjseq#
+		 	and dept_nm = #p_deptNm#
+	</update>
+	
+	
+	<select id="ReceiptMoneyManageDAO.selectSubjReceiptMoneyTotalList" parameterClass="map" resultClass="egovMap">
+		<![CDATA[
+							SELECT 
+									 z.upperclassno
+									,Z.SUBJ
+                                    ,Z.SUBJNM
+                                    ,LAG(TO_NUMBER(Z.SUBJSEQ)) OVER(ORDER BY SUBJ,SUBJSEQ,DEPT_IDX,PAY) 	AS SUBJSEQ_LAG
+                                    ,TO_NUMBER(Z.SUBJSEQ) AS SUBJSEQ
+                                    ,LEAD(TO_NUMBER(Z.SUBJSEQ)) OVER(ORDER BY SUBJ,SUBJSEQ,DEPT_IDX,PAY) AS SUBJSEQ_LEAD
+                                    ,Z.EDUSTART                        																														/*연수시작일*/
+                                    ,Z.EDUEND                            																														/*연수종료일*/
+                                    ,Z.EDUTIMES                        																														/*시간*/
+                                    ,Z.BIYONG
+                                    ,Z.BIYONG2                            																														/*수강료*/
+                                    ,Z.EDUMANS                        																														/*대상*/
+                                    ,Z.DEPT_NM                        																														/*입금자*/
+                                    ,Z.PAY                      																														/*입금방법*/
+                                    ,LAG(Z.PAY_NM) OVER(ORDER BY SUBJ,SUBJSEQ,DEPT_IDX,PAY) 						AS PAY_LAG
+                                    ,Z.PAY_NM
+                                    ,LEAD(Z.PAY_NM) OVER(ORDER BY SUBJ,SUBJSEQ,DEPT_IDX,PAY) 					AS PAY_LEAD
+                                    ,Z.PAY_CNT                        																														/*입금방법별인원*/
+                                    ,Z.ISGRADUATED_Y_CNT        																														/*이수인원(내역전체)*/
+                                    ,Z.ISGRADUATED_N_CNT        																														/*미이수인원(내역전체)*/
+                                    ,SUM(ISGRADUATED_Y_CNT) OVER(PARTITION BY SUBJ,SUBJSEQ,DEPT_NM)     	AS ISGRADUATED_Y_DEPTCNT        	/*이수인원(입금자별)*/
+                                    ,SUM(ISGRADUATED_N_CNT) OVER(PARTITION BY SUBJ,SUBJSEQ,DEPT_NM)     	AS ISGRADUATED_N_DEPTCNT        	/*미이수인원(입금자별)*/
+                                    ,SUM(ISGRADUATED_Y_CNT) OVER(PARTITION BY SUBJ,SUBJSEQ)                 	AS ISGRADUATED_Y_SUBJSEQCNT    	/*이수인원(기수별)*/
+                                    ,SUM(ISGRADUATED_N_CNT) OVER(PARTITION BY SUBJ,SUBJSEQ)                 	AS ISGRADUATED_N_SUBJSEQCNT    	/*미이수인원(기수별)*/
+                                    ,SUM(PAY_CNT) OVER(PARTITION BY SUBJ,SUBJSEQ,DEPT_NM)                     	AS PAY_DEPT_CNT                        	/*징수인원(입금자별)*/
+                                    ,SUM(PAY_CNT) OVER(PARTITION BY SUBJ,SUBJSEQ)                                     AS PAY_SUBJSEQ_CNT                    	/*징수인원(입금자별)*/
+                                    ,SUM(PAY_CNT) OVER(PARTITION BY SUBJ)                                                 	AS PAY_SUBJ_CNT                        	/*징수인원(과정별)*/
+                                    ,SUM(PAY_CNT) OVER()                                                                         	AS PAY_TOTAL_CNT                        /*징수인원(내역전체)*/
+                                    ,SUM(TOT) OVER(PARTITION BY SUBJ,SUBJSEQ)                                         	AS SUBJSEQ_TOT                            /*수강인원(기수별)*/
+                                    ,Z.TOT_CNT                                                                                                                                        		/*수강인원(내역전체)*/
+                                    ,Z.PAY_AMOUNT                                                                                                                                    		/*입금액(내역전체)*/
+                                    ,SUM(PAY_AMOUNT) OVER(PARTITION BY SUBJ,SUBJSEQ,CASE WHEN PAY = '교육청일괄납부' THEN '교육청' ELSE '개인' END)                 AS DEPT_AMOUNT                        /*입금액(입금자별)*/
+                                    ,SUM(dp_PAY_AMOUNT) OVER(PARTITION BY SUBJ,SUBJSEQ,CASE WHEN PAY = '교육청일괄납부' THEN '교육청' ELSE '개인' END)                 AS DP_DEPT_AMOUNT                        /*교육청 수납 입금액(입금자별)*/
+                                    ,SUM(PAY_AMOUNT) OVER(PARTITION BY SUBJ,SUBJSEQ)                             	AS SUBJSEQ_AMOUNT                    	/*입금액(기수별)*/
+                                    ,SUM(dp_PAY_AMOUNT) OVER(PARTITION BY SUBJ,SUBJSEQ)                                 AS dp_SUBJSEQ_AMOUNT                        /*교육청 수납입금액(기수별)*/
+                                    ,SUM(PAY_AMOUNT) OVER(PARTITION BY SUBJ)                                         	AS SUBJ_AMOUNT                        	/*입금액(과정별)*/
+                                    ,SUM(PAY_AMOUNT) OVER()                                                                     	AS TOTAL_AMOUNT                        	/*입금액(내역전체)*/
+                                    ,SUM(dp_PAY_AMOUNT) OVER()                                                                         AS dp_TOTAL_AMOUNT                            /*입금액(내역전체)*/                                
+                                    ,LAG(DEPT_IDX) OVER(ORDER BY SUBJ,SUBJSEQ,DEPT_IDX,PAY)                     	AS DEPT_LAG
+                                    ,Z.DEPT_IDX
+                                    ,LEAD(DEPT_IDX) OVER(ORDER BY SUBJ,SUBJSEQ,DEPT_IDX,PAY)                     AS DEPT_LEAD
+                                    ,COUNT(1) OVER(PARTITION BY SUBJ,SUBJSEQ)                                         	AS ALL_SUBJSEQ_CNT
+                                    ,COUNT(1) OVER(PARTITION BY SUBJ,SUBJSEQ,CASE WHEN PAY = '교육청일괄납부' THEN '교육청' ELSE '개인' END)                             	AS ALL_DEPT_PAY_CNT
+                                    ,COUNT(1) OVER(PARTITION BY SUBJ,SUBJSEQ,DEPT_NM)                             	AS ALL_DEPT_CNT
+                                    ,SUM(CHKFINAL_Y_CNT) OVER(PARTITION BY SUBJ,SUBJSEQ,DEPT_NM)             AS DEPT_CNT                                	/*수강인원(입금자별)*/
+                                    ,Z.AUTH_DATE
+                                    ,type
+                                    ,o_subjseq
+                                    ,dept_cd
+                                    ,[year] 
+                                    ,pay_num
+                                    ,sum(reamount) over() as reamount
+                                    ,sum(reamountcnt) over() as reamountcnt
+							FROM
+							(
+							SELECT      max(upperclassno) as upperclassno 
+                                       ,max(SUBJ) as SUBJ
+                                       ,max(SUBJSEQ) as SUBJSEQ
+                                       ,max(DEPT_NM) as DEPT_NM
+									   ,PAY
+									   ,max(type) as type
+                                       ,max(o_subjseq) as o_subjseq
+                                       ,max(dept_cd) as dept_cd
+                                       ,max([year]) as [year]
+									   ,MAX(PAY_NM)             AS PAY_NM
+									   ,MAX(EDUSTART) 			AS EDUSTART
+									   ,MAX(EDUEND) 				AS EDUEND
+									   ,MAX(EDUTIMES) 			AS EDUTIMES
+									   ,MAX(BIYONG) 				AS BIYONG
+									   ,MAX(BIYONG2) 				AS BIYONG2
+									   ,MAX(EDUMANS) 			AS EDUMANS
+								       ,MAX(grseqnm) 			AS GRSEQNM 
+								       ,MAX(subjnm) 				AS SUBJNM
+								       ,SUM(AMOUNT_CNT)     	AS PAY_CNT
+								       ,SUM(ISGRADUATED_Y)  AS ISGRADUATED_Y_CNT
+								       ,SUM(ISGRADUATED_N)  AS ISGRADUATED_N_CNT
+								       ,SUM(CHKFINAL_Y)  		AS CHKFINAL_Y_CNT
+                                       ,SUM(CHKFINAL_N)  		AS CHKFINAL_N_CNT
+								       ,SUM(AMOUNT)         	AS PAY_AMOUNT
+								       ,SUM(dp_AMOUNT)             AS dp_PAY_AMOUNT
+								       ,MAX(TOT_CNT)        	AS TOT_CNT
+								       ,MAX(AUTH_DATE)      	AS AUTH_DATE
+								       ,MAX(DEPT_IDX)       	AS DEPT_IDX
+								       ,COUNT(1)            		AS TOT
+								       ,max(pay_num) as pay_num
+								       ,sum(reamount) as reamount
+								       ,sum(reamountcnt) as reamountcnt
+							FROM (
+									select  [year],
+							         subj,
+							         subjnm,
+							         subjseq,
+							         edustart,
+							         eduend,
+							         edudays,
+							         edutimes,
+							         edumans,
+							         biyong,
+							         biyong2,
+							         dept_cd,
+							         name,
+							         userid,
+							         grseqnm,
+							         isgraduated,
+							         isgraduated_y,
+							         isgraduated_n,
+							         chkfinal,
+							         chkfinal_y,
+							         chkfinal_n,
+							         dept_nm,
+							         dept_idx,
+							         type,
+							         pay,
+							         pay_nm,
+							         amount,
+							         case when (aa.type = 'OB' AND aa.CHKFINAL = 'Y' and (select count(*) from tz_subjseq_deposit_date where subj = aa.subj and [year] = aa.[year] and subjseq = aa.subjseq and dept_nm = aa.dept_nm) =1 ) 
+							         then nvl(aa.BIYONG2,0) 
+							         when (type <> 'OB' AND aa.CHKFINAL = 'Y')  
+							         then aa.BIYONG 
+							         else 0 end dp_AMOUNT,
+							         amount_cnt,
+							         auth_date,
+							         tot_cnt,
+							         upperclassno,
+							         o_subjseq,
+							         (select TO_CHAR (TO_DATE (deposit_date, 'YYYYMMDD'), 'YYYY-MM-DD') 
+				                      from tz_subjseq_deposit_date 
+				                      where subj = aa.SUBJ             
+				                      and [year] = aa.[year]
+				                      and subjseq = aa.o_subjseq
+				                      and dept_nm = aa.dept_nm) as deposit_date,
+				                      pay_num,
+				                      reamount,
+				                      reamountcnt
+								from(
+											select 
+											 c.[year]      
+											             ,c.subj                                                             
+											             , c.subjnm                                                                
+											             , c.subjseq 
+											             , c.EDUSTART
+											             , c.EDUEND
+											             , c.EDUDAYS
+											             , c.EDUTIMES
+											             , c.EDUMANS
+											             , c.BIYONG
+											             , c.BIYONG2
+											             , b.dept_cd
+											             , b.name     
+											             , b.userid
+											             ,(select  grseqnm  from tz_grseq where grcode=c.grcode and grseq=c.grseq and gyear=c.gyear) grseqnm
+											             , CASE WHEN d.ISGRADUATED = 'Y' THEN 'Y' ELSE 'N' END AS ISGRADUATED
+				                                         , CASE WHEN d.ISGRADUATED = 'Y' THEN '1' ELSE '0' END AS ISGRADUATED_Y
+				                                         , CASE WHEN d.ISGRADUATED is null or d.ISGRADUATED = 'N' THEN '1' ELSE '0' END AS ISGRADUATED_N
+				                                         
+				                                         , CASE WHEN a.CHKFINAL = 'Y' THEN 'Y' ELSE 'N' END AS CHKFINAL
+				                                         , CASE WHEN a.CHKFINAL = 'Y' THEN '1' ELSE '0' END AS CHKFINAL_Y
+				                                         , CASE WHEN a.CHKFINAL is null or a.CHKFINAL = 'N' THEN '1' ELSE '0' END AS CHKFINAL_N
+											             , case when type = 'OB' then (
+								             											case when 
+									             											(
+									             													select org_nm from (
+																					                    select 0 as idx, org_nm from   tz_school_org where  org_cd = b.dept_cd
+																					                    union all
+																					                    select 1 as idx,  org_nm from   tz_eduorg where  orgid = b.dept_cd
+																									 ) 
+									             											) is null or 
+									             											(
+									             													select org_nm from (
+																					                    select 0 as idx, org_nm from   tz_school_org where  org_cd = b.dept_cd
+																					                    union all
+																					                    select 1 as idx,  org_nm from   tz_eduorg where  orgid = b.dept_cd
+																									 ) 
+									             											) = '-' 
+								             											then '' ELSE 
+								             											(
+								             													select org_nm from (
+																				                    select 0 as idx, org_nm from   tz_school_org where  org_cd = b.dept_cd
+																				                    union all
+																				                    select 1 as idx,  org_nm from   tz_eduorg where  orgid = b.dept_cd
+																								 ) 
+								             											 )
+								             											end 
+								             											) 
+											                else '개인' end as dept_nm
+											             , case when type = 'OB' then ( 
+							             											case when 
+								             											(
+								             													select org_nm from (
+																				                    select 0 as idx, org_nm from   tz_school_org where  org_cd = b.dept_cd
+																				                    union all
+																				                    select 1 as idx,  org_nm from   tz_eduorg where  orgid = b.dept_cd
+																								 ) 
+								             											) is null or 
+								             											 (
+								             													select org_nm from (
+																				                    select 0 as idx, org_nm from   tz_school_org where  org_cd = b.dept_cd
+																				                    union all
+																				                    select 1 as idx,  org_nm from   tz_eduorg where  orgid = b.dept_cd
+																								 ) 
+								             											) = '-' 
+							             											then 'M00' 
+							             											else b.dept_cd end ) 
+											                else 'M99' end as dept_idx
+											             , type
+											             , (
+											                 decode(trim(type), 'OB','교육청일괄납부','PB','무통장','RE','재수강','SC0010','신용카드','SC0030','계좌이체','SC0040','가상계좌','FE','무료',type) 
+											                 ) as pay
+											             , (
+				                                             decode(trim(type), 'OB','교육청일괄납부','개인') 
+				                                             ) as pay_NM    
+											            , case when (type = 'OB' AND a.CHKFINAL = 'Y') 
+											              then nvl(c.BIYONG2,0)
+											              when (type <> 'OB' AND a.CHKFINAL = 'Y')  
+											              then c.BIYONG 
+											              else 0 end AMOUNT
+				                                         , case when a.CHKFINAL = 'Y' then '1' else '0' end AMOUNT_CNT
+											             , case when type = 'OB' then TO_DATE(SUBSTR(AUTH_DATE,1, 8),'YYYYMMDD') else NULL end as AUTH_DATE
+											             ,count(1) over() tot_cnt
+											             ,case when c.oriupperclass = 'PRF'
+				                                            then 1
+				                                            when c.oriupperclass = 'EXT'
+				                                            then 2
+				                                            when c.oriupperclass = 'PAR'
+				                                            then 3
+				                                            else 4
+				                                            end upperclassno
+				                                         ,c.subjseq as o_subjseq
+				                                         ,decode(trim(type), 'OB','1','SC0030','2','PB','3','SC0010','4','SC0040','5','FE','6','RE','7',8) as pay_num
+				                                         , case when (type = 'RE')  then c.BIYONG else 0 end reamount 
+				                                         , case when (type = 'RE')  then 1 else 0 end reamountcnt     
+											from   tz_propose   a                                                          
+											             , tz_member    b                                                          
+											             , vz_scsubjseq c                                                          
+											             , tz_stold d                                                              
+											             , tz_student ts
+											             , pa_payment pa                                                       
+											        where  a.userid  			= b.userid                                                    
+											        and    a.subj    			= c.subj                                                      
+											        and    a.[year]    			= c.[year]                                                      
+											        and    a.subjseq 			= c.subjseq                                                   
+											        and    a.subj    			= d.subj(+)                                                   
+											        and    a.[year]    			= d.[year](+)                                                   
+											        and    a.subjseq 			= d.subjseq(+)                                                
+											        and    a.userid  			= d.userid(+)                                                 
+											        and    a.userid 			= ts.userid(+)                                                 
+											        and    a.subj				= ts.subj(+)                                                  
+											        and    a.subjseq 			= ts.subjseq(+)                                                   
+											        and    a.[year] 				= ts.[year](+) 
+											        and    pa.order_id(+) 	= a.order_id 
+											        and 	 pa.useyn(+) 		= 'Y' 
+											        and 	 pa.userid(+) 		= a.userid	
+											        and    c.grcode 			= 'N000001'            						        
+													and    c.gyear 				=  nvl(#ses_search_gyear#, to_char(sysdate, 'YYYY'))
+													and 	a.CHKFINAL 		= 'Y'
+													and c.isyearedustatus = 'Y'
+				                                    ]]>
+													
+												 <isPropertyAvailable property="ses_search_subjseq">
+													<isNotEmpty property="ses_search_subjseq">
+													   			and c.isclosed = 'Y'
+													</isNotEmpty>
+											     </isPropertyAvailable>
+											     
+													
+													and c.isuse = 'Y'
+													--and a.subjseq in( '0015', '0010')									
+													
+											     
+											     <isPropertyAvailable property="ses_search_subj">
+													<isNotEmpty property="ses_search_subj">
+													    and 	c.subj  =  #ses_search_subj#
+													</isNotEmpty>
+											     </isPropertyAvailable>
+											     
+											     <isPropertyAvailable property="ses_search_subjseq">
+													<isNotEmpty property="ses_search_subjseq">
+													    and 	c.subjseq  =  #ses_search_subjseq#
+													</isNotEmpty>
+											     </isPropertyAvailable>
+											     
+											     							     
+											   		        
+												
+												 <![CDATA[
+												 
+											        -- order by c.[year]  ,c.subj , c.subjseq  
+											)aa
+									)							
+							GROUP BY PAY							
+							) Z
+							WHERE 1=1
+							ORDER BY pay_num
+		]]>
+	</select>
+	
+	
+	<delete id="ReceiptMoneyManageDAO.deleteSubjseqDepositDate">
+		delete from tz_subjseq_deposit_date
+		where subj = #p_subj#
+		 	and [year] = #p_year#
+		 	and subjseq = #p_subjseq#
+		 	and dept_nm = #p_deptNm#
+	</delete>
+	
+	<select id="ReceiptMoneyManageDAO.selectYearMoneyTotalizationList" parameterClass="map" resultClass="egovMap">
+		<![CDATA[
+			select *
+			from tz_year_money_totalization
+			where [year] = #ses_search_gyear#
+			ORDER BY upperclassno,to_number(SUBJSEQ),SUBJ,DEPT_IDX,PAY
+		]]>
+	</select>
+	
+	
+	<insert id="ReceiptMoneyManageDAO.insertYearReceiptMoneyStatus">
+	<![CDATA[
+		insert into tz_year_money_totalization
+		select *
+		from(
+					select upperclassno
+							,subj
+							,subjnm
+							,subjseq_lag
+							,subjseq
+							,subjseq_lead
+							,edustart
+							,eduend
+							,edutimes
+							,biyong
+							,edumans
+							,dept_nm
+							,pay
+							,pay_lag
+							,pay_nm
+							,pay_lead
+							,pay_cnt
+							,isgraduated_y_cnt
+							,isgraduated_n_cnt
+							,isgraduated_y_deptcnt
+							,isgraduated_n_deptcnt
+							,isgraduated_y_subjseqcnt
+							,isgraduated_n_subjseqcnt
+							,decode(dept_nm,'개인',pay_dept_cnt-reamountcnt, pay_dept_cnt) as pay_dept_cnt
+							,pay_subjseq_cnt
+							,pay_subj_cnt
+							,pay_total_cnt
+							,subjseq_tot
+							,tot_cnt
+							,decode(type,'RE',0,pay_amount) as pay_amount
+							,decode(dept_nm,'개인',dept_amount-reamount, dept_amount) as dept_amount
+							,dp_dept_amount
+							,subjseq_amount-reamount as subjseq_amount
+							,dp_subjseq_amount
+							,subj_amount
+							,total_amount
+							,dp_total_amount
+							,dept_lag
+							,dept_idx
+							,dept_lead
+							,all_subjseq_cnt
+							,all_dept_pay_cnt
+							,all_dept_cnt
+							,dept_cnt
+							,auth_date
+							,type
+							,o_subjseq
+							,dept_cd
+							,[year]
+							,deposit_date
+							,reamount
+							,reamountcnt
+							,fuserid
+							,fdate
+							,luserid
+							,ldate
+
+					from (
+							SELECT 
+									 z.upperclassno
+									,Z.SUBJ
+                                    ,Z.SUBJNM
+                                    ,LAG(TO_NUMBER(Z.SUBJSEQ)) OVER(ORDER BY SUBJ,SUBJSEQ,DEPT_IDX,PAY) 	AS SUBJSEQ_LAG
+                                    ,TO_NUMBER(Z.SUBJSEQ) AS SUBJSEQ
+                                    ,LEAD(TO_NUMBER(Z.SUBJSEQ)) OVER(ORDER BY SUBJ,SUBJSEQ,DEPT_IDX,PAY) AS SUBJSEQ_LEAD
+                                    ,Z.EDUSTART                        																														/*연수시작일*/
+                                    ,Z.EDUEND                            																														/*연수종료일*/
+                                    ,Z.EDUTIMES                        																														/*시간*/
+                                    ,Z.BIYONG
+                                    ,Z.BIYONG2                            																														/*수강료*/
+                                    ,Z.EDUMANS                        																														/*대상*/
+                                    ,nvl(Z.DEPT_NM,'') as DEPT_NM           																														/*입금자*/
+                                    ,nvl(Z.PAY,'') as PAY                      																														/*입금방법*/
+                                    ,LAG(Z.PAY_NM) OVER(ORDER BY SUBJ,SUBJSEQ,DEPT_IDX,PAY) 						AS PAY_LAG
+                                    ,Z.PAY_NM
+                                    ,LEAD(Z.PAY_NM) OVER(ORDER BY SUBJ,SUBJSEQ,DEPT_IDX,PAY) 					AS PAY_LEAD
+                                    ,Z.PAY_CNT                        																														/*입금방법별인원*/
+                                    ,Z.ISGRADUATED_Y_CNT        																														/*이수인원(내역전체)*/
+                                    ,Z.ISGRADUATED_N_CNT        																														/*미이수인원(내역전체)*/
+                                    ,SUM(ISGRADUATED_Y_CNT) OVER(PARTITION BY SUBJ,SUBJSEQ,DEPT_NM)     	AS ISGRADUATED_Y_DEPTCNT        	/*이수인원(입금자별)*/
+                                    ,SUM(ISGRADUATED_N_CNT) OVER(PARTITION BY SUBJ,SUBJSEQ,DEPT_NM)     	AS ISGRADUATED_N_DEPTCNT        	/*미이수인원(입금자별)*/
+                                    ,SUM(ISGRADUATED_Y_CNT) OVER(PARTITION BY SUBJ,SUBJSEQ)                 	AS ISGRADUATED_Y_SUBJSEQCNT    	/*이수인원(기수별)*/
+                                    ,SUM(ISGRADUATED_N_CNT) OVER(PARTITION BY SUBJ,SUBJSEQ)                 	AS ISGRADUATED_N_SUBJSEQCNT    	/*미이수인원(기수별)*/
+                                    ,SUM(PAY_CNT) OVER(PARTITION BY SUBJ,SUBJSEQ,DEPT_NM)                     	AS PAY_DEPT_CNT                        	/*징수인원(입금자별)*/
+                                    ,SUM(PAY_CNT) OVER(PARTITION BY SUBJ,SUBJSEQ)                                     AS PAY_SUBJSEQ_CNT                    	/*징수인원(입금자별)*/
+                                    ,SUM(PAY_CNT) OVER(PARTITION BY SUBJ)                                                 	AS PAY_SUBJ_CNT                        	/*징수인원(과정별)*/
+                                    ,SUM(PAY_CNT) OVER()                                                                         	AS PAY_TOTAL_CNT                        /*징수인원(내역전체)*/
+                                    ,SUM(TOT) OVER(PARTITION BY SUBJ,SUBJSEQ)                                         	AS SUBJSEQ_TOT                            /*수강인원(기수별)*/
+                                    ,Z.TOT_CNT                                                                                                                                        		/*수강인원(내역전체)*/
+                                    ,Z.PAY_AMOUNT                                                                                                                                    		/*입금액(내역전체)*/
+                                    ,SUM(PAY_AMOUNT) OVER(PARTITION BY SUBJ,SUBJSEQ,CASE WHEN PAY = '교육청일괄납부' THEN '교육청' ELSE '개인' END)                 AS DEPT_AMOUNT                        /*입금액(입금자별)*/
+                                    ,SUM(dp_PAY_AMOUNT) OVER(PARTITION BY SUBJ,SUBJSEQ,CASE WHEN PAY = '교육청일괄납부' THEN '교육청' ELSE '개인' END)                 AS DP_DEPT_AMOUNT                        /*교육청 수납 입금액(입금자별)*/
+                                    ,SUM(PAY_AMOUNT) OVER(PARTITION BY SUBJ,SUBJSEQ)                             	AS SUBJSEQ_AMOUNT                    	/*입금액(기수별)*/
+                                    ,SUM(dp_PAY_AMOUNT) OVER(PARTITION BY SUBJ,SUBJSEQ)                                 AS dp_SUBJSEQ_AMOUNT                        /*교육청 수납입금액(기수별)*/
+                                    ,SUM(PAY_AMOUNT) OVER(PARTITION BY SUBJ)                                         	AS SUBJ_AMOUNT                        	/*입금액(과정별)*/
+                                    ,SUM(PAY_AMOUNT) OVER()                                                                     	AS TOTAL_AMOUNT                        	/*입금액(내역전체)*/
+                                    ,SUM(dp_PAY_AMOUNT) OVER()                                                                         AS dp_TOTAL_AMOUNT                            /*입금액(내역전체)*/                                
+                                    ,LAG(DEPT_IDX) OVER(ORDER BY SUBJ,SUBJSEQ,DEPT_IDX,PAY)                     	AS DEPT_LAG
+                                    ,Z.DEPT_IDX
+                                    ,LEAD(DEPT_IDX) OVER(ORDER BY SUBJ,SUBJSEQ,DEPT_IDX,PAY)                     AS DEPT_LEAD
+                                    ,COUNT(1) OVER(PARTITION BY SUBJ,SUBJSEQ)                                         	AS ALL_SUBJSEQ_CNT
+                                    ,COUNT(1) OVER(PARTITION BY SUBJ,SUBJSEQ,CASE WHEN PAY = '교육청일괄납부' THEN '교육청' ELSE '개인' END)                             	AS ALL_DEPT_PAY_CNT
+                                    ,COUNT(1) OVER(PARTITION BY SUBJ,SUBJSEQ,DEPT_NM)                             	AS ALL_DEPT_CNT
+                                    ,SUM(CHKFINAL_Y_CNT) OVER(PARTITION BY SUBJ,SUBJSEQ,DEPT_NM)             AS DEPT_CNT                                	/*수강인원(입금자별)*/
+                                    ,Z.AUTH_DATE
+                                    ,type
+                                    ,o_subjseq
+                                    ,dept_cd
+                                    ,[year]
+                                    ,deposit_date
+                                    ,sum(reamount) over(partition by subj, subjseq) as reamount
+                                    ,sum(reamountcnt) over(partition by subj, subjseq) as reamountcnt
+                                    ,#userid# as fuserid
+                                    ,to_char(sysdatetime,'YYYYMMDDHH24') as fdate
+                                    ,#userid# as luserid
+                                    ,to_char(sysdatetime,'YYYYMMDDHH24') as ldate 
+							FROM
+							(
+							SELECT      upperclassno
+							           ,SUBJ
+									   ,SUBJSEQ
+									   ,DEPT_NM
+									   ,PAY
+									   ,max(type) as type
+                                       ,max(o_subjseq) as o_subjseq
+                                       ,max(dept_cd) as dept_cd
+                                       ,max([year]) as [year]
+									   ,MAX(PAY_NM)             AS PAY_NM
+									   ,MAX(EDUSTART) 			AS EDUSTART
+									   ,MAX(EDUEND) 				AS EDUEND
+									   ,MAX(EDUTIMES) 			AS EDUTIMES
+									   ,MAX(BIYONG) 				AS BIYONG
+									   ,MAX(BIYONG2) 				AS BIYONG2
+									   ,MAX(EDUMANS) 			AS EDUMANS
+								       ,MAX(grseqnm) 			AS GRSEQNM 
+								       ,MAX(subjnm) 				AS SUBJNM
+								       ,SUM(AMOUNT_CNT)     	AS PAY_CNT
+								       ,SUM(ISGRADUATED_Y)  AS ISGRADUATED_Y_CNT
+								       ,SUM(ISGRADUATED_N)  AS ISGRADUATED_N_CNT
+								       ,SUM(CHKFINAL_Y)  		AS CHKFINAL_Y_CNT
+                                       ,SUM(CHKFINAL_N)  		AS CHKFINAL_N_CNT
+								       ,SUM(AMOUNT)         	AS PAY_AMOUNT
+								       ,SUM(dp_AMOUNT)             AS dp_PAY_AMOUNT
+								       ,MAX(TOT_CNT)        	AS TOT_CNT
+								       ,MAX(AUTH_DATE)      	AS AUTH_DATE
+								       ,MAX(DEPT_IDX)       	AS DEPT_IDX
+								       ,COUNT(1)            		AS TOT
+								       ,max(deposit_date) as deposit_date
+								       ,sum(reamount) as reamount
+								       ,sum(reamountcnt) as reamountcnt
+							FROM (
+									select  [year],
+							         subj,
+							         subjnm,
+							         subjseq,
+							         edustart,
+							         eduend,
+							         edudays,
+							         edutimes,
+							         edumans,
+							         biyong,
+							         biyong2,
+							         dept_cd,
+							         name,
+							         userid,
+							         grseqnm,
+							         isgraduated,
+							         isgraduated_y,
+							         isgraduated_n,
+							         chkfinal,
+							         chkfinal_y,
+							         chkfinal_n,
+							         dept_nm,
+							         dept_idx,
+							         type,
+							         pay,
+							         pay_nm,
+							         amount,
+							         case when (aa.type = 'OB' AND aa.CHKFINAL = 'Y' and (select count(*) from tz_subjseq_deposit_date where subj = aa.subj and [year] = aa.[year] and subjseq = aa.subjseq and dept_nm = aa.dept_nm) =1 )
+							         then nvl(aa.BIYONG2,0)
+							         	  when (type <> 'OB' AND aa.CHKFINAL = 'Y')  
+							         	  then aa.BIYONG 
+							         	  else 0 end dp_AMOUNT,
+							         amount_cnt,
+							         auth_date,
+							         tot_cnt,
+							         upperclassno,
+							         o_subjseq,
+							         (select TO_CHAR (TO_DATE (deposit_date, 'YYYYMMDD'), 'YYYY-MM-DD') 
+				                                        from tz_subjseq_deposit_date 
+				                                        where subj = aa.SUBJ             
+				                                        and [year] = aa.[year]
+				                                        and subjseq = aa.o_subjseq
+				                                        and dept_nm = aa.dept_nm) as deposit_date,
+				                     reamount,
+				                     reamountcnt                   
+								from(  		
+											select 
+											 c.[year]      
+											             ,c.subj                                                             
+											             , c.subjnm                                                                
+											             , c.subjseq 
+											             , c.EDUSTART
+											             , c.EDUEND
+											             , c.EDUDAYS
+											             , c.EDUTIMES
+											             , c.EDUMANS
+											             , case when type='OB' then c.BIYONG2
+											                    when type!='OB' then c.BIYONG
+											                    else 0 
+											                    end BIYONG
+											             , c.BIYONG2
+											             , b.dept_cd
+											             , b.name     
+											             , b.userid
+											             ,(select  grseqnm  from tz_grseq where grcode=c.grcode and grseq=c.grseq and gyear=c.gyear) grseqnm
+											             , CASE WHEN d.ISGRADUATED = 'Y' THEN 'Y' ELSE 'N' END AS ISGRADUATED
+				                                         , CASE WHEN d.ISGRADUATED = 'Y' THEN '1' ELSE '0' END AS ISGRADUATED_Y
+				                                         , CASE WHEN d.ISGRADUATED is null or d.ISGRADUATED = 'N' THEN '1' ELSE '0' END AS ISGRADUATED_N
+				                                         
+				                                         , CASE WHEN a.CHKFINAL = 'Y' THEN 'Y' ELSE 'N' END AS CHKFINAL
+				                                         , CASE WHEN a.CHKFINAL = 'Y' THEN '1' ELSE '0' END AS CHKFINAL_Y
+				                                         , CASE WHEN a.CHKFINAL is null or a.CHKFINAL = 'N' THEN '1' ELSE '0' END AS CHKFINAL_N
+											             , case when type = 'OB' then (case when 
+											             								(
+								             													select org_nm from (
+																				                    select 0 as idx, org_nm from   tz_school_org where  org_cd = b.dept_cd
+																				                    union all
+																				                    select 1 as idx,  org_nm from   tz_eduorg where  orgid = b.dept_cd
+																								 ) 
+								             											)
+											             								is null or 
+											             								(
+								             													select org_nm from (
+																				                    select 0 as idx, org_nm from   tz_school_org where  org_cd = b.dept_cd
+																				                    union all
+																				                    select 1 as idx,  org_nm from   tz_eduorg where  orgid = b.dept_cd
+																								 ) 
+								             											)
+											             								= '-' then ''
+											             								else 
+											             								(
+								             													select org_nm from (
+																				                    select 0 as idx, org_nm from   tz_school_org where  org_cd = b.dept_cd
+																				                    union all
+																				                    select 1 as idx,  org_nm from   tz_eduorg where  orgid = b.dept_cd
+																								 ) 
+								             											)							             								
+											             								end ) 
+											                else '개인' end as dept_nm
+											             , case when type = 'OB' then (case when 
+											             									(
+								             													select org_nm from (
+																				                    select 0 as idx, org_nm from   tz_school_org where  org_cd = b.dept_cd
+																				                    union all
+																				                    select 1 as idx,  org_nm from   tz_eduorg where  orgid = b.dept_cd
+																								 ) 
+								             												)
+											             									is null or 
+											             									(
+								             													select org_nm from (
+																				                    select 0 as idx, org_nm from   tz_school_org where  org_cd = b.dept_cd
+																				                    union all
+																				                    select 1 as idx,  org_nm from   tz_eduorg where  orgid = b.dept_cd
+																								 ) 
+								             												)
+											             									= '-' then 'M00' 
+											             									else b.dept_cd end ) 
+											                else 'M99' end as dept_idx
+											             , type
+											             , (
+											                 decode(trim(type), 'OB','교육청일괄납부','PB','무통장','RE','재수강','SC0010','신용카드','SC0030','계좌이체','SC0040','가상계좌','FE','무료',type) 
+											                 ) as pay
+											             , (
+				                                             decode(trim(type), 'OB','교육청일괄납부','개인') 
+				                                             ) as pay_NM    
+											            , case when (type = 'OB' AND a.CHKFINAL = 'Y') 
+											                   then nvl(c.BIYONG2,0)
+											                   when (type <> 'OB' AND a.CHKFINAL = 'Y')  then c.BIYONG 
+											                   else 0 end AMOUNT
+				                                         , case when a.CHKFINAL = 'Y' then '1' else '0' end AMOUNT_CNT
+											             , case when type = 'OB' then TO_DATE(SUBSTR(AUTH_DATE,1, 8),'YYYYMMDD') else NULL end as AUTH_DATE
+											             ,count(1) over() tot_cnt
+											             ,case when c.oriupperclass = 'PRF'
+				                                            then 1
+				                                            when c.oriupperclass = 'EXT'
+				                                            then 2
+				                                            when c.oriupperclass = 'PAR'
+				                                            then 3
+				                                            else 4
+				                                            end upperclassno
+				                                         ,c.subjseq as o_subjseq 
+				                                         , case when (type = 'RE')  then c.BIYONG else 0 end reamount  
+				                                         , case when (type = 'RE')  then 1 else 0 end reamountcnt
+											from   tz_propose   a                                                          
+											             , tz_member    b                                                          
+											             , vz_scsubjseq c                                                          
+											             , tz_stold d                                                              
+											             , tz_student ts
+											             , pa_payment pa                                                       
+											        where  a.userid  			= b.userid                                                    
+											        and    a.subj    			= c.subj                                                      
+											        and    a.[year]    			= c.[year]                                                      
+											        and    a.subjseq 			= c.subjseq                                                   
+											        and    a.subj    			= d.subj(+)                                                   
+											        and    a.[year]    			= d.[year](+)                                                   
+											        and    a.subjseq 			= d.subjseq(+)                                                
+											        and    a.userid  			= d.userid(+)                                                 
+											        and    a.userid 			= ts.userid(+)                                                 
+											        and    a.subj				= ts.subj(+)                                                  
+											        and    a.subjseq 			= ts.subjseq(+)                                                   
+											        and    a.[year] 				= ts.[year](+) 
+											        and    pa.order_id(+) 	= a.order_id 
+											        and 	 pa.useyn(+) 		= 'Y' 
+											        and 	 pa.userid(+) 		= a.userid	
+											        and    c.grcode 			= 'N000001'            						        
+													and    c.gyear 				=  nvl(#ses_search_gyear#, to_char(sysdate, 'YYYY'))
+													and 	a.CHKFINAL 		= 'Y'
+													and c.isyearedustatus = 'Y'
+													
+												]]>
+													
+																					
+												 <isPropertyAvailable property="ses_search_subjseq">
+													<isNotEmpty property="ses_search_subjseq">
+													   			and c.isclosed = 'Y'
+													</isNotEmpty>
+											     </isPropertyAvailable>								
+													
+													
+													and c.isuse = 'Y'
+													--and a.subjseq in( '0015', '0010', '0016',0020)											
+													
+													
+											     
+											     <isPropertyAvailable property="ses_search_subj">
+													<isNotEmpty property="ses_search_subj">
+													    and 	c.subj  =  #ses_search_subj#
+													</isNotEmpty>
+											     </isPropertyAvailable>
+											     
+											     <isPropertyAvailable property="ses_search_subjseq">
+													<isNotEmpty property="ses_search_subjseq">
+													    and 	c.subjseq  =  #ses_search_subjseq#
+													</isNotEmpty>
+											     </isPropertyAvailable>
+											     
+											     							     
+											   		        
+												
+												 <![CDATA[
+												 
+											        -- order by c.[year]  ,c.subj , c.subjseq
+											          
+											)aa
+									)
+							GROUP BY upperclassno,SUBJ,SUBJSEQ,DEPT_NM,PAY
+							) Z
+						)	
+						WHERE 1=1
+						ORDER BY upperclassno,SUBJSEQ,SUBJ,DEPT_IDX,PAY
+		)					
+		]]>
+	</insert>
+	
+	
+	<update id="ReceiptMoneyManageDAO.updateYearReceiptMoneyStatus" parameterClass="map" >
+	<![CDATA[
+			UPDATE tz_year_money_totalization /*ReceiptMoneyManageDAO.updateYearReceiptMoneyStatus*//*연도별입금내역 데이터 수정*/
+				SET 
+					biyong = nvl(#biyong#, 0)
+					,dept_cnt = nvl(#deptCnt#, 0)
+					,isgraduated_y_deptcnt = nvl(#isgraduatedYDeptcnt#, 0)
+					,pay_dept_cnt = nvl(#payDeptCnt#, 0)
+					,pay_cnt = nvl(#payCnt#, 0)
+					,pay_amount = nvl(#payAmount#, 0)
+					,isgraduated_n_deptcnt = nvl(#isgraduatedNDeptcnt#, 0)
+			 WHERE [year] 		= #year#
+			 AND upperclassno 		= #upperclassno#
+			 and subj = #subj#
+			 AND o_subjseq 	= #subjseq#
+			 and dept_idx = #deptIdx#
+			 and type = #type#
+			 ]]>
+			 
+			 <isNotEqual property="deptIdx" compareValue="M99">
+			 	and dept_nm = #deptNm#	
+			 </isNotEqual>
+     	         
+	</update>
+	
+	<update id="ReceiptMoneyManageDAO.updateYearReceiptMoneyStatus_2" parameterClass="map" >
+	<![CDATA[
+			UPDATE tz_year_money_totalization /*ReceiptMoneyManageDAO.updateYearReceiptMoneyStatus*//*연도별입금내역 데이터 수정*/
+				SET 
+					dept_amount = nvl(#deptAmount#, 0)
+				   ,subjseq_amount = nvl(#subjseqAmount#, 0)				   			
+			WHERE [year] 		= #year#
+			 AND upperclassno 		= #upperclassno#
+			 and subj = #subj#
+			 AND o_subjseq 	= #subjseq#
+			 ]]>
+			 
+			 <isNotEqual property="deptIdx" compareValue="M99">
+			 	and type = #type#	
+			 </isNotEqual>
+			 <isEqual property="deptIdx" compareValue="M99">
+			 	and dept_idx = #deptIdx#
+			 </isEqual>
+	</update>
+	
+	
+	<delete id="ReceiptMoneyManageDAO.deleteYearReceiptMoneyStatus">
+		delete from tz_year_money_totalization
+		WHERE [year] 		= #ses_search_gyear#
+	</delete>
+	
+	<select id="ReceiptMoneyManageDAO.selectYearMoneyTotalizationTotalList" parameterClass="map" resultClass="egovMap">
+		select case when pay = '교육청일괄납부' or pay = '무료'
+      		then dept_cnt
+      		when pay = '계좌이체' or pay = '무통장' or pay = '신용카드'
+      		then pay_dept_cnt
+      		when pay = '재수강'
+      		then pay_cnt		
+      		end  dept_cnt
+	      ,
+	      case when pay = '교육청일괄납부' or pay = '무료'
+      		then isgraduated_y_cnt
+      		when pay = '계좌이체' or pay = '무통장' or pay = '신용카드'
+      		then isgraduated_y_cnt_m
+      		when pay = '재수강'
+      		then isgraduated_y_cnt		
+      		end  isgraduated_y_deptcnt	      		
+	      ,decode(pay, '재수강', 0, pay_dept_cnt) as pay_dept_cnt
+	      ,pay_cnt
+	      ,pay_amount
+	      ,dept_amount
+	      ,subjseq_amount
+	      ,case when pay = '교육청일괄납부' or pay = '무료'
+      		then isgraduated_n_deptcnt
+      		when pay = '계좌이체' or pay = '무통장' or pay = '신용카드'
+      		then isgraduated_n_deptcnt-re_isgraduated_n_deptcnt
+      		when pay = '계좌이체' or pay = '재수강'
+      		then re_isgraduated_n_deptcnt		
+      		end  isgraduated_n_deptcnt	  
+	      ,dp_dept_amount
+	      ,pay_amount_m
+	      ,(dp_dept_amount+pay_amount_m) as sum_dp_dept_amount
+	      ,sum_pay_amount
+	      ,pay
+		from (
+			select sum(dept_cnt) as dept_cnt
+			      ,sum(isgraduated_y_cnt) as isgraduated_y_cnt 
+			      ,sum(pay_dept_cnt) as pay_dept_cnt
+			      ,sum(pay_cnt) as pay_cnt
+			      ,sum(pay_amount) as pay_amount
+		   	      ,(select sum(pay_amount) from tz_year_money_totalization where [year] = #ses_search_gyear# and pay in('계좌이체', '무통장', '신용카드')) as pay_amount_m	 
+			      ,sum(dept_amount) as dept_amount
+			      ,sum(subjseq_amount) as subjseq_amount
+			      ,sum(isgraduated_n_deptcnt) as isgraduated_n_deptcnt
+			      ,(select sum(isgraduated_y_cnt) from tz_year_money_totalization where [year] = #ses_search_gyear# and pay in('계좌이체', '무통장', '신용카드')) as isgraduated_y_cnt_m	 
+			      ,(select sum(dp_dept_amount)
+					from(
+						select row_number() over(partition by subj, subjseq order by dp_dept_amount desc) as rn, subj, subjseq, dp_dept_amount
+						from tz_year_money_totalization 
+						where [year] = #ses_search_gyear# 
+		      		 	  and type = 'OB'		
+					)
+					where rn =1) as dp_dept_amount
+				  ,(select sum(pay_amount) from tz_year_money_totalization where [year] = #ses_search_gyear#) as sum_pay_amount	
+				  ,(select sum(pay_cnt) - sum(isgraduated_y_cnt)
+					from tz_year_money_totalization
+					where pay = '재수강' ) as re_isgraduated_n_deptcnt
+			      ,pay	      
+			from tz_year_money_totalization
+		    where [year] = #ses_search_gyear#
+			group by pay
+		)	
+		order by decode(pay, '교육청일괄납부', 1,'계좌이체',2, '무통장', 3,'신용카드',4,'무료',5,  '재수강',6)
+	</select>
+	
+	
+</sqlMap>
+
+ 
+
+
+

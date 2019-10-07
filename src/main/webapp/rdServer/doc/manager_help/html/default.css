@@ -1,0 +1,56 @@
+body 
+{
+margin:5 0 5 0;
+color:#000000;
+text-size:10pt;
+font-family:±¼¸²,Arial,µ¸¿ò;
+line-height:17pt;
+scrollbar-face-color: #EFF3F7;
+scrollbar-3dlight-color: #EFF3F7;
+scrollbar-darkshadow-color: #EFF3F7;
+scrollbar-track-color: #EFF3F7;
+scrollbar-shadow-color: #A6A6A6;
+scrollbar-highlight-color: #A6A6A6;
+scrollbar-arrow-color: #A6A6A6;
+} 
+
+td {
+color:#000000;
+font-size:9pt;
+font-family:±¼¸²,Arial,µ¸¿ò;
+line-height:14pt;
+font-weight:650;
+text-decoration:none
+} 
+
+a:link {
+text-decoration:none; color:#3399fd
+} 
+
+a:visited {
+text-decoration:none; color:#112c70
+} 
+
+a:hover {
+text-decoration:none; color:#ff9977
+} 
+
+a:active {
+text-decoration:none; color:#ff9977
+} 
+
+.header {
+font-size:9pt;cursor:hand;color:#112c70;text-decoration:none
+} 
+
+.style1
+{
+    BORDER-RIGHT: #202020 1px;
+    BORDER-TOP: #202020 1px;
+    FONT-SIZE: 9pt;
+    BORDER-LEFT: #202020 1px;
+    COLOR: red;
+    BORDER-BOTTOM: #202020 1px line;
+}
+
+

@@ -1,0 +1,17 @@
+body { margin-left : 0; margin-top : 0; margin-right : 0; margin-bottom : 0; SCROLLBAR-FACE-COLOR : #EEEEEE; SCROLLBAR-SHADOW-COLOR : #B7B7B7; SCROLLBAR-DARKSHADOW-COLOR : #B7B7B7; SCROLLBAR-HIGHLIGHT-COLOR : #FFFFFF; SCROLLBAR-3DLIGHT-COLOR : #B7B7B7; SCROLLBAR-TRACK-COLOR : #B7B7B7; SCROLLBAR-ARROW-COLOR : #B7B7B7; }
+td { font-family : ±¼¸²; color : #212121; font-size : 10pt; line-height : 150%; }
+
+#strong {
+	color : #9D0948;
+	font-weight: bold;
+}				
+#dir { font-size : 13px; color : #A47837; }
+#over { text-decoration: underline; color : #AAA98B; }
+.case_ttle { font-weight : bold; }
+.case_ttle2 { font-weight : bold; color : #666666; }
+#re_box{ font-size : 9pt; color : #212121; line-height : 18px;}
+
+#re_textballoon{ font-size : 10pt; color : #a0410d; text-decoration : underline; line-height : 18px;}
+#re_textballoon a:link {text-decoration : underline; color:#a0410d;}
+#re_textballoon a:visited {text-decoration : underline; color:#a0410d;}
+#re_textballoon a:hover {text-decoration : underline; color:#a0410d;}

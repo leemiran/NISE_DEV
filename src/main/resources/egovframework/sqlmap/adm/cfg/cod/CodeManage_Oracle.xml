@@ -1,0 +1,215 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE sqlMap PUBLIC "-//iBATIS.com//DTD SQL Map 2.0//EN" "http://ibatis.apache.org/dtd/sql-map-2.dtd">
+
+<sqlMap namespace="CodeManage">
+<typeAlias  alias="egovMap" type="egovframework.rte.psl.dataaccess.util.EgovMap"/>
+
+	<select id="codeManageDAO.selectListCode" parameterClass="map" resultClass="egovMap">
+		select gubun, gubunnm, maxlevel, issystem
+		  from tz_codegubun
+		 order by gubun asc
+	</select>
+
+	<select id="codeManageDAO.selectViewCode" parameterClass="map" resultClass="egovMap">
+		select gubun, gubunnm, maxlevel, issystem
+		  from tz_codegubun
+		 where gubun = #p_gubun#
+	</select>
+	
+	<update id="codeManageDAO.updateCode">
+		update tz_codegubun
+		   set gubunnm  = #p_gubunnm#,
+		       issystem = #p_issystem#,
+		       luserid  = #userid#,
+		       ldate    = to_char(sysdatetime, 'yyyyMMddhh24miss')
+		 where gubun    = #p_gubun#
+	</update>
+	
+	<delete id="codeManageDAO.deleteCode">
+		delete tz_codegubun where gubun = #p_gubun#
+	</delete>
+	
+	<delete id="codeManageDAO.deleteSubCode">
+		delete tz_code where gubun = #p_gubun#
+	</delete>
+	
+	<insert id="codeManageDAO.insertCode">
+		<selectKey keyProperty="gubun" resultClass="String">
+			select trim(to_char(nvl(max(gubun), 0) +1, '0000')) as gubun from tz_codegubun
+		</selectKey>
+		insert into tz_codegubun(
+			gubun,
+			gubunnm,
+			maxlevel,
+			issystem,
+			luserid,
+			ldate
+		)
+		values(
+			#gubun#,
+			#p_gubunnm#,
+			#p_maxlevel#,
+			#p_issystem#,
+			#userid#,
+			to_char(sysdatetime, 'yyyyMMddhh24miss')
+		)
+	</insert>
+	
+	<select id="codeManageDAO.selectSubListCode" parameterClass="map" resultClass="egovMap">
+		select code, codenm, url, levels
+		  from tz_code
+		 where gubun = #p_gubun#
+		<isNotEmpty property="p_levels">
+		   and levels = #p_levels#
+		</isNotEmpty>
+		<isNotEmpty property="p_searchtext">
+		   and codenm like '%' || #p_searchtext# || '%'
+		</isNotEmpty>
+		
+		<isEqual property="p_gubun" compareValue="0012">
+			and use_yn = 'Y'		
+		</isEqual>
+		
+		 order by orders, code
+	</select>
+	
+	<select id="codeManageDAO.selectSubViewCode" parameterClass="map" resultClass="egovMap">
+		select code, codenm, url
+		  from tz_code
+		 where gubun  = #p_gubun#
+		   and levels = #p_levels#
+		   and code   = #p_code#
+	</select>
+	
+	<update id="codeManageDAO.subUpdateData">
+		update tz_code
+		   set codenm  = #p_codenm#,
+		       luserid = #userid#,
+		       ldate   = to_char(sysdatetime, 'yyyyMMddhh24miss')
+		 where gubun   = #p_gubun#
+		   and levels  = #p_levels#
+		   and code    = #p_code#
+	</update>
+	
+	<delete id="codeManageDAO.subDeleteData">
+		delete tz_code where gubun = #p_gubun# and levels = #p_levels# and code = #p_code#
+	</delete>
+	
+	<insert id="codeManageDAO.subInsertData">
+		<selectKey keyProperty="code" resultClass="String">
+			select trim(to_char(count(0) +1, '00000')) as code
+			  from tz_code
+			 where gubun  = #p_gubun#
+			   and levels = #p_levels#
+		</selectKey>
+		insert into tz_code(
+			gubun,
+			levels,
+			code,
+			codenm,
+			luserid,
+			ldate
+		)
+		values(
+			#p_gubun#,
+			#p_levels#,
+			#code#,
+			#p_codenm#,
+			#userid#,
+			to_char(sysdatetime, 'yyyyMMddhh24miss')
+		)
+	</insert>
+	
+	<select id="codeManageDAO.selectCursBunryuList" parameterClass="map" resultClass="egovMap">
+		select 
+			upperclass as code, classname as codenm 
+		from tz_subjatt
+		where middleclass = '000'
+		and lowerclass = '000'
+		and use_yn = 'Y'
+		order by classname 
+	</select>
+	
+	<!-- 교육관련 코드 테이블 -->
+	<select id="codeManageDAO.selectEduListCode" parameterClass="map" resultClass="egovMap">
+		 select cd as code, cd_nm as codenm
+         from   tk_edu000t
+		 where  co_cd  = #p_gubun#
+		order  by cd
+	</select>
+	
+	
+	<!-- 설문지 리스트  -->
+	<select id="codeManageDAO.selectSulPaperList" parameterClass="map" resultClass="egovMap">
+		select sulpapernum || '' as code, sulpapernm as codenm 
+		from tz_sulpaper
+		where subj = 'ALL' and grcode = 'ALL'         
+		<![CDATA[ --and sultype = '1' ]]>				  	
+		order by sulpapernum asc
+	</select>
+	
+	<!-- 출석고사장 학교 리스트  -->
+	<select id="codeManageDAO.selectSchoolRoomList" parameterClass="map" resultClass="egovMap">
+		select 
+		seq || '' as code
+		,'['||low_edumin||']'||school_nm as codenm 
+		, area_map
+		from TZ_ATTEND_CD 
+		where isuse='Y'
+		<isNotEmpty property="p_seq">
+		And seq = #p_seq#
+		</isNotEmpty>
+		<isNotEmpty property="selectSchoolValue">
+			<iterate property="selectSchoolValue" prepend="And seq In" conjunction="," open="(" close=")">
+			#selectSchoolValue[]#
+			</iterate>
+		</isNotEmpty>
+	</select>
+	
+	
+	<!-- 기관 정보 코드 리스트  -->
+	<select id="codeManageDAO.selectEduOrgList" parameterClass="map" resultClass="egovMap">
+		select orgid as code, org_nm as codenm
+        from   tz_eduorg 
+        where  parord = #p_gubun#
+        order  by orgid
+	</select>
+	
+<!--	설문 척도 가져오기-->
+	<select id="codeManageDAO.selectSulScaleList" parameterClass="map" resultClass="egovMap">
+		select 
+		  scalecode || '' as code
+		, scalename as codenm
+		from tz_scale
+        where s_gubun  =  #p_gubun#
+        and   scaletype = 'S'
+        and   isdel = 'N'
+        order  by scalecode
+	</select>
+	
+<!--	검색에서 평가의 대한 종류를 가져오는 쿼리-->
+	<select id="codeManageDAO.selectExamResultPaperNum" parameterClass="map" resultClass="egovMap">
+		  SELECT   a.subj, a.[year], a.subjseq, a.lesson, a.examtype,
+           a.papernum || '' as code,
+           '[' || a.papernum || '] ' ||   (select  codenm
+										   into  v_codenm
+										   from  tz_code 
+										  where gubun = '0012'
+										     and  code  = a.examtype)as codenm
+		    FROM   tz_exampaper a, tz_subj b
+		   WHERE       a.subj(+) = b.subj
+		           AND a.subj = #ses_search_subj#
+		           AND a.[year] = #ses_search_gyear#
+		           AND a.subjseq = #ses_search_subjseq#
+		           and a.examtype = 'E'
+		ORDER BY   a.subj,
+		           a.[year],
+		           a.subjseq,
+		           a.lesson,
+		           a.examtype,
+		           a.papernum ASC
+	</select>
+
+
+</sqlMap>
+

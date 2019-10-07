@@ -1,0 +1,138 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE sqlMap PUBLIC "-//iBATIS.com//DTD SQL Map 2.0//EN" "http://ibatis.apache.org/dtd/sql-map-2.dtd">
+
+<sqlMap namespace="MenuManage">
+<typeAlias  alias="egovMap" type="egovframework.rte.psl.dataaccess.util.EgovMap"/>
+
+	<!-- 접속정보 확인 -->
+	<select id="menuManageDAO.selectAdmTopMenuList" parameterClass="map" resultClass="egovMap">
+		select a.menu, a.menunm, c.pgm, c.menu as submenu
+		  from tz_menu a, tz_menuauth b,
+		       (
+		        select menu, pgm, [upper], grcode
+		          from (
+		                select menu, pgm, [upper], grcode, row_number() over(partition by [upper] order by orders nulls last) as cnt
+		                  from tz_menu
+		                 where pgm is not null
+		                   and isdisplay = 'Y'
+		               )
+		         where cnt = 1
+		       ) c
+		 where a.grcode = nvl(#grcode#, 'N000001')
+		   and a.isdisplay = 'Y'
+		   and a.levels = 1
+		   and a.grcode = b.grcode
+		   and a.menu   = b.menu
+		   and b.gadmin = #gadmin#
+		   and b.control like '%r%'
+		   and a.grcode = c.grcode
+		   and a.menu   = c.[upper]
+		 order by orders
+	</select>
+	
+	<select id="menuManageDAO.selectAdmLeftMenuList" parameterClass="map" resultClass="egovMap">
+		select [upper] as menu,
+			   a.menu as submenu,
+		       a.menunm,
+		       para1,
+		       para2,
+		       para3,
+		       para4,
+		       para5,
+		       para6,
+		       para7,
+		       para8,
+		       para9,
+		       para10,
+		       para11,
+		       para12,
+		       levels,
+		       [upper],
+		       parent,
+		       pgm,
+		       isdisplay
+		  from tz_menu a, tz_menuauth b, tz_menusub c,
+		       (
+		         select grcode, substr(menu, 1, 2) as twocharmenu, orders as uporders
+		           from tz_menu
+		          where levels = 1
+		          order by orders
+		       ) d
+		 where a.grcode = nvl(#grcode#, 'N000001')
+		   and a.grcode = b.grcode
+		   and a.menu = b.menu
+		   and a.grcode = c.grcode
+		   and a.menu = c.menu
+		   and a.grcode = d.grcode
+		   and substr(a.menu, 1, 2) = d.twocharmenu
+		   and b.menusubseq = c.seq
+		   and c.seq = 0
+		   and b.gadmin = #gadmin#
+		   and b.control like '%r%'
+		   and a.isdisplay = 'Y'
+		   and substr(a.menu, 1, 2) not in (select substr(menu, 1, 2) from tz_menu where levels = 1 and isdisplay = 'N')
+		   and levels > 1
+		   and [upper] = #s_menu#
+<!--		   and menunm != 'separator'-->
+		 order by d.uporders, a.levels, a.orders nulls last, a.menu
+	</select>
+	
+	<select id="menuManageDAO.getTitleInfo" parameterClass="map" resultClass="egovMap">
+		select b.menunm as main_title, a.menunm as sub_title
+		  from tz_menu a, tz_menu b
+		 where a.menu = #s_submenu#
+		   and a.[upper] = b.menu
+	</select>
+	
+	
+<!--	관리자 전체 메뉴 리스트-->
+	<select id="menuManageDAO.selectAdmAllMenuList" parameterClass="map" resultClass="egovMap">
+	
+		select a.menu menu,
+		   a.menunm menunm,
+		   para1,
+		   para2,
+		   para3,
+		   para4,
+		   para5,
+		   para6,
+		   para7,
+		   para8,
+		   para9,
+		   para10,
+		   para11,
+		   para12,
+		   levels,
+		   [upper],
+		   parent,
+		   pgm,
+		   isdisplay
+	  from TZ_MENU a, 
+		   TZ_MENUAUTH b, 
+		   TZ_MENUSUB c, 
+	   (                                      
+	   select                                 
+		grcode,                               
+		 substr(menu, 1, 2) twocharmenu,      
+		 orders uporders                      
+	   from                                   
+		 tz_menu                              
+	   where                                  
+		 levels =1                            
+	   order by orders                        
+	   ) d 
+	 where a.grcode=nvl(#grcode#, 'N000001')
+	   	and a.grcode=b.grcode and a.menu=b.menu 
+	   	and a.grcode=c.grcode and a.menu=c.menu 
+	 	and a.grcode = d.grcode                  
+	 	and substr(a.menu, 1,2) = d.twocharmenu  
+	   	and b.menusubseq=c.seq and c.seq=0 
+	   	and b.gadmin=#gadmin#
+	   	and b.control like '%r%' and a.isdisplay = 'Y'  
+	   	and substr(a.menu, 1, 2) not in(select substr(menu, 1, 2) from tz_menu where levels = 1 and isdisplay='N') 
+	   	and menunm != 'separator'
+	order by d.uporders,a.levels,a.orders,a.menu
+	</select>
+	
+</sqlMap>
+

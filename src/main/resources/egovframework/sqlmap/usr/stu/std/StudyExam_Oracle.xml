@@ -1,0 +1,1176 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE sqlMap PUBLIC "-//iBATIS.com//DTD SQL Map 2.0//EN" "http://ibatis.apache.org/dtd/sql-map-2.dtd">
+
+<sqlMap namespace="StudyExam">
+<typeAlias  alias="egovMap" type="egovframework.rte.psl.dataaccess.util.EgovMap"/>
+
+<!--	1차, 2차 응시 체크-->
+	<select id="studyExamDAO.getExamResultChk" parameterClass="map" resultClass="int">
+		select count(0) as cnt
+		  from tz_examresult$examtabletemp$ a, tz_exampaper b
+		 where a.subj 		= b.subj
+		   and a.[year] 		= b.[year]
+		   and a.subjseq 	= b.subjseq
+		   and a.lesson 	= b.lesson
+		   and a.examtype 	= b.examtype
+		   and a.papernum 	= b.papernum
+		   and a.subj 		= #p_subj#
+		   and a.[year] 		= #p_year#
+		   and a.subjseq 	= #p_subjseq#
+		   and a.lesson 	= #p_lesson#
+		   and a.examtype 	= #p_examtype#
+		   and a.papernum 	= #p_papernum#
+		   and a.userid 	= #userid#
+	</select>
+	
+	
+	
+
+	<select id="studyExamDAO.getExamResult" parameterClass="map" resultClass="egovMap">
+		select a.exam, a.ended, a.userretry,
+		       B.EXAMTIME - TRUNC((sysdatetime - TO_DATETIME(A.STARTED,'YYYYMMDDHH24MISS')) DIV (1000*60)) AS EXTRA_TIME 
+		  from tz_examresult$examtabletemp$ a, tz_exampaper b
+		 where a.subj 		= b.subj
+		   and a.[year] 		= b.[year]
+		   and a.subjseq 	= b.subjseq
+		   and a.lesson 	= b.lesson
+		   and a.examtype 	= b.examtype
+		   and a.papernum 	= b.papernum
+		   and a.subj 		= #p_subj#
+		   and a.[year] 		= #p_year#
+		   and a.subjseq 	= #p_subjseq#
+		   and a.lesson 	= #p_lesson#
+		   and a.examtype 	= #p_examtype#
+		   and a.papernum 	= #p_papernum#
+		   and a.userid 	= #userid#
+	</select>
+	
+	<select id="studyExamDAO.getExamPaperData" parameterClass="map" resultClass="egovMap">
+		select a.subj,   a.[year],   a.subjseq,   a.lesson,  a.examtype,   a.papernum,  a.lessonstart, a.lessonend,
+		       a.examtime,   a.exampoint,   a.examcnt,  a.totalscore,  a.cntlevel1, a.cntlevel2, a.cntlevel3, a.level1text, a.level2text, a.level3text,
+		       a.isopenanswer,  a.isopenexp, a.retrycnt, a.progress, GET_CODENM('0012', nvl(a.examtype, '')) examtypenm, startdt, enddt
+		  from tz_exampaper a
+		 where a.subj     = #p_subj#
+		   and a.[year]     = #p_year#
+		   and a.subjseq  = #p_subjseq#
+		   and a.lesson   = #p_lesson#
+		   and a.examtype = #p_examtype#
+		   and a.papernum = #p_papernum#
+	</select>
+	
+	<select id="studyExamDAO.getQuestionList" parameterClass="map" resultClass="egovMap">
+		select a.subj, a.examnum, a.lesson, a.examtype, a.examtext, a.exptext, a.levels, a.selcount, a.saveimage, a.saveaudio,
+		       a.savemovie, a.saveflash,  a.realimage,   a.realaudio, a.realmovie, a.realflash,
+		       a.examnum || ',' || DBMS_RANDOM.RANDOM rkey
+		  from tz_exam a
+		 where a.subj     = #p_subj#
+		   and a.lesson   = #pp_lesson#
+		   and a.examtype = #pp_type#
+		   and a.levels   = #pp_level#
+		   and a.isuse    = 'Y'
+		 order by rkey
+	</select>
+	
+	<update id="studyExamDAO.updateExam">
+		update tz_examresult$examtabletemp$
+		   set started = to_char(sysdatetime, 'yyyyMMddhh24miss'),
+		       answer = null,
+		       answercnt = 0,
+		       exam = #strexamnum#,
+		       examcnt = 0,
+		       exampoint = 0,
+		       ended = null,
+		       score = 0,
+		       corrected = 0,
+		       userretry = userretry - 1
+		 where subj     = #p_subj#
+		   and [year]     = #p_year#
+		   and subjseq  = #p_subjseq#
+		   and lesson   = #pp_lesson#
+		   and examtype = #p_examtype#
+		   and papernum = #p_papernum#
+		   and userid   = #userid#
+	</update>
+	
+	<select id="studyExamDAO.selectPaperQuestionExampleList" parameterClass="map" resultClass="egovMap">
+		select a.subj, a.examnum, lesson, examtype, examtext, exptext, levels, selcount, saveimage, saveaudio, examtypenm, levelsnm,
+		       savemovie, saveflash, realimage, realaudio, realmovie, realflash, selnum, seltext, isanswer, saveselimage, realselimage, isselimage
+		  from (
+				select a.subj, a.examnum, a.lesson, a.examtype, a.examtext, a.exptext, a.levels, a.selcount, a.saveimage, a.saveaudio, c.codenm examtypenm, d.codenm levelsnm,
+				       a.savemovie, a.saveflash, a.realimage, a.realaudio, a.realmovie, a.realflash, b.selnum, b.seltext, b.isanswer, b.saveselimage, b.realselimage,  b.isselimage
+				  from tz_exam a, tz_examsel b, tz_code c, tz_code d
+				 where a.subj = b.subj(+)
+				   and a.examnum 	= b.examnum(+)
+				   and a.examtype 	= c.code
+				   and a.levels 	= d.code
+				   and a.subj 		= #p_subj#
+				   and c.gubun 		= '0013'
+				   and d.gubun 		= '0014'
+				   and a.isuse 		= 'Y'
+		       ) a,
+		       (
+				select substr(exam, 0, instr(exam, '!_', 1)-1) as idx,
+				       substr(exam, instr(exam, '!_', 1)+2, length(exam)) as examnum
+				  from (
+					<dynamic prepend=" select ">
+					    <iterate property="p_examnums" conjunction=" from DB_ROOT union all select ">
+					        #p_examnums[]# as exam
+					    </iterate>
+					</dynamic>
+						   from DB_ROOT
+					   )
+		       ) b
+		 where a.examnum = b.examnum
+		 order by to_number(b.idx), a.selnum
+		   
+	</select>
+	
+	<select id="studyExamDAO.getPaperData" parameterClass="map" resultClass="egovMap">
+		select b.subj,   a.[year],    a.subjseq,   a.lesson, a.cntlevel1, a.cntlevel2, a.cntlevel3, a.isopenanswer,
+		       a.examtype,  a.papernum,   a.lessonstart, a.lessonend,  a.examtime, a.exampoint, a.examcnt, a.totalscore,
+		       a.isopenexp,  a.retrycnt,  a.progress, b.subjnm,  GET_CODENM('0012', nvl(a.examtype, '')) examtypenm
+		       , (CASE WHEN TO_CHAR(SYSDATE,'YYYYMMDD') BETWEEN A.STARTDT AND A.ENDDT THEN 'Y' ELSE 'N' END) AS CHCK,
+		       a.examsubj
+		  from tz_exampaper a, tz_subj       b
+		 where a.subj     = b.subj
+		   and a.subj     = #p_subj#
+		   and a.[year]     = #p_year#
+		   and a.subjseq  = #p_subjseq#
+		   and a.papernum = #p_papernum#
+		 order by a.subj, a.[year], a.subjseq, a.lesson, a.examtype
+	</select>
+	
+	<select id="studyExamDAO.selectStartTime"  parameterClass="map" resultClass="egovMap">
+		SELECT
+			CASE 
+				WHEN STARTED IS NULL OR STARTED = '' THEN TO_NUMBER(EXAMTIME)
+		        ELSE EXAMTIME - TRUNC((sysdatetime - TO_DATETIME(STARTED,'YYYYMMDDHH24MISS')) DIV (1000*60) )
+		    END AS EXTRATIME
+		    , STARTED
+		    , ANSWER
+		    , EXAMTIME
+		    , STARTDT
+		    , ENDDT
+		FROM (
+			SELECT 
+				D.ENDED
+				, D.STARTED
+			    , DECODE((SELECT HANDICAP_YN FROM TZ_MEMBER WHERE USERID = #userid#), 'Y', DECODE(A.HANDICAP_EXAMTIME, NULL, A.EXAMTIME, A.HANDICAP_EXAMTIME), A.EXAMTIME) EXAMTIME
+			    , D.ANSWER
+			    , TO_CHAR(TO_DATE(A.STARTDT, 'YYYYMMDD'), 'YYYY-MM-DD') STARTDT
+			    , TO_CHAR(TO_DATE(A.ENDDT, 'YYYYMMDD'), 'YYYY-MM-DD') ENDDT
+			FROM 
+				TZ_EXAMPAPER A
+				, TZ_EXAMRESULT$examtabletemp$ D
+			WHERE 
+				A.SUBJ = D.SUBJ (+)
+				AND A.[year] = D.[year] (+)
+				AND A.SUBJSEQ = D.SUBJSEQ (+)
+				AND A.LESSON = D.LESSON (+)
+				AND A.EXAMTYPE = D.EXAMTYPE (+)
+				AND A.PAPERNUM = D.PAPERNUM (+)
+				AND D.USERID (+) = #userid#
+				and a.subj = #p_subj#
+				and a.[year] = #p_year#
+				and a.subjseq = #p_subjseq#
+				and a.lesson  = #p_lesson#
+				and a.examtype = #p_examtype#
+				and a.papernum = #p_papernum#
+			order by a.subj, a.[year], a.subjseq, a.lesson, a.examtype
+		)
+	</select>
+	
+	<select id="studyExamDAO.selectStudentCount" parameterClass="map" resultClass="int">
+		select count(0)
+		  from tz_student
+		 where subj    = #p_subj#
+		   and [year]    = #p_year#
+		   and subjseq = #p_subjseq#
+		   and userid  = #userid#
+	</select>
+	
+	<select id="studyExamDAO.checkPaper" parameterClass="map" resultClass="int">
+		select count(0)
+		  from tz_exampaper a
+		 where a.subj     = #p_subj#
+		   and a.[year]     = #p_year#
+		   and a.subjseq  = #p_subjseq#
+		   and a.papernum = #p_papernum#
+		   
+		   <isEmpty property="p_isadmin" > 
+		   	and sysdatetime between TO_DATETIME(startdt||'000000', 'yyyyMMddhh24miss') and TO_DATETIME(enddt||'235959', 'yyyyMMddhh24miss')
+		   </isEmpty>
+
+	</select>
+	
+	<select id="studyExamDAO.chkResultExist" parameterClass="map" resultClass="int">
+		select count(0)
+		  from tz_examresult$examtabletemp$
+		 where subj    = #p_subj#
+		   and [year]    = #p_year#
+		   and subjseq = #p_subjseq#
+		   and lesson  = #p_lesson#
+		   and examtype= #p_examtype#
+		   and papernum= #p_papernum#
+		   and userid  = #userid#
+	</select>
+	
+	<select id="studyExamDAO.MakeExamResult" parameterClass="map" resultClass="int">
+		<isEqual property="v_examtype" compareValue="2">
+			select count(0) as cnt
+			  from tz_exam a,
+			       (select subj, examnum, selnum, seltext, isanswer from tz_examsel where subj = #p_subj# and examnum = #v_examnum#) b
+			 where a.subj    = b.subj
+			   and a.examnum = b.examnum
+			   and lower(replace(replace(trim(b.seltext), ' ', ''), ',', '&#44;')) = lower(replace(replace(trim(#v_answer#), ' ', ''), ',', '&#44;'))
+			       
+		</isEqual>
+		<isNotEqual property="v_examtype" compareValue="2">
+			select count(0) as cnt
+			  from tz_exam a,
+			       (select subj, examnum, selnum, seltext, isanswer from tz_examsel where subj = #p_subj# and examnum = #v_examnum#) b
+			 where b.isanswer = 'Y'
+			   and a.subj     = b.subj
+			   and a.examnum  = b.examnum
+			   and b.selnum   = trim(nvl(#v_answer#,0))
+			       
+		</isNotEqual>
+	</select>
+	
+	<select id="studyExamDAO.getExamType" parameterClass="map" resultClass="String">
+		select examtype
+		  from tz_exam
+		 where subj    = #p_subj#
+		   and examnum = #v_examnum#
+	</select>
+	
+	<insert id="studyExamDAO.insertTZ_examresult">
+		insert into tz_examresult$examtabletemp$(
+			subj, [year], subjseq, lesson, examtype, papernum, userid, exam, examcnt, exampoint,
+			score, answercnt, started, ended, [time], answer, corrected, userretry, luserid, ldate,
+			user_ip, indate,examsubj
+		)
+		values(
+			#p_subj#,
+			#p_year#,
+			#p_subjseq#,
+			#p_lesson#,
+			#p_examtype#,
+			#p_papernum#,
+			#userid#,
+			#p_exam#,
+			#p_examcnt#,
+			#p_exampoint#,
+			#v_score#,
+			#v_answercnt#,
+			to_char(sysdatetime, 'yyyyMMddhh24miss'),
+			#p_ended#,
+			#p_time#,
+			#v_corrected#,
+			#v_corrected#,
+			#v_userretry#,
+			#userid#,
+			to_char(sysdatetime, 'yyyyMMddhh24miss'),
+			#userip#,
+			to_char(sysdatetime, 'yyyyMMddhh24miss'),
+			#p_exam_subj#
+		)
+	</insert>
+	
+	<update id="studyExamDAO.updateTZ_examresult">
+		update tz_examresult$examtabletemp$
+		   set exam 		= #p_exam#
+		     , examcnt 		= #p_examcnt#
+		     , exampoint 	= #p_exampoint#
+		     , score 		= #v_score#
+		     , answercnt 	= #v_answercnt#
+		     , ended 		= to_char(sysdatetime, 'yyyyMMddhh24miss')
+		     , [TIME] 		= #p_time#
+		     , answer 		= #v_answer#
+		     , corrected 	= #v_corrected#
+		     , userretry 	= #v_userretry#
+		     , luserid 		= #userid#
+		     , ldate 		= to_char(sysdatetime, 'yyyyMMddhh24miss')
+		     , user_ip 		= #userip#
+		 where subj    		= #p_subj#
+		   and [year]    		= #p_year#
+		   and subjseq 		= #p_subjseq#
+		   and lesson  		= #p_lesson#
+		   and examtype 	= #p_examtype#
+		   and papernum 	= #p_papernum#
+		   and userid 		= #userid#
+	</update>
+	
+	<update id="studyExamDAO.updateTZ_examresultReRating">
+		update tz_examresult$examtabletemp$
+		   set exam 		= #p_exam#
+		     , examcnt 		= #p_examcnt#
+		     , exampoint 	= #p_exampoint#
+		     , score 		= #v_score#
+		     , answercnt 	= #v_answercnt#
+		     , answer 		= #v_answer#
+		     , corrected 	= #v_corrected#
+		 where subj    		= #p_subj#
+		   and [year]    		= #p_year#
+		   and subjseq 		= #p_subjseq#
+		   and lesson  		= #p_lesson#
+		   and examtype 	= #p_examtype#
+		   and papernum 	= #p_papernum#
+		   and userid 		= #p_userid#
+	</update>
+	
+	<select id="studyExamDAO.IsResultScore" parameterClass="map" resultClass="int">
+		select score
+		  from tz_examresult$examtabletemp$
+		 where subj     = #p_subj#
+		   and [year]     = #p_year#
+		   and subjseq  = #p_subjseq#
+		   and examtype = #p_examtype#
+		   and papernum = #p_papernum#
+		   and userid   = #userid#
+	</select>
+	
+	<select id="studyExamDAO.SelectEndedTime" parameterClass="map" resultClass="int">
+		select count(ended) as endedcnt
+		  from tz_examresult$examtabletemp$
+		 where subj      = #p_subj#
+		   and [year]      = #p_year#
+		   and subjseq   = #p_subjseq#
+		   and examtype  = #p_examtype#
+		   and userid    = #userid#
+		   and papernum  = #p_papernum#
+	</select>
+            
+	<select id="studyExamDAO.selectExamresultAnswer" parameterClass="map" resultClass="egovMap">
+		select nvl(answer, '') as answer
+		  from tz_examresult$examtabletemp$
+		 where subj     = #p_subj#
+		   and [year]     = #p_year#
+		   and subjseq  = #p_subjseq#
+		   and lesson   = #p_lesson#
+		   and examtype = #p_examtype#
+		   and papernum = #p_papernum#
+		   and userid   = #p_userid#
+	</select>
+	
+	<update id="studyExamDAO.updateExamresultAnswer">
+		update tz_examresult$examtabletemp$
+		   set answer   = #v_answerStr#,
+		   	   examcnt  = #p_examcnt#,
+		       ended    = to_char(sysdatetime, 'yyyyMMddhh24miss')
+		 where subj     = #p_subj#
+		   and [year]     = #p_year#
+		   and subjseq  = #p_subjseq#
+		   and lesson   = #p_lesson#
+		   and examtype = #p_examtype#
+		   and papernum = #p_papernum#
+		   and userid   = #p_userid#
+	</update>
+            
+            
+            
+            
+	<!-- <select id="studyExamDAO.selectPaperQuestionExampleBankList" parameterClass="map" resultClass="egovMap">
+		select rn, a.subj, a.examnum, a.lesson, a.examtype, a.examtext, a.exptext, a.levels, a.selcount, saveimage, saveaudio, examtypenm, levelsnm,
+		       savemovie, saveflash, realimage, realaudio, realmovie, realflash, selnum, seltext, isanswer, saveselimage, realselimage, isselimage,
+		       b.examsubj, a.lessonnum
+		  from (
+				select a.subj, a.examnum, a.lesson, a.examtype, a.examtext, a.exptext, a.levels, a.selcount, a.saveimage, a.saveaudio, c.codenm examtypenm, d.codenm levelsnm,
+				       a.savemovie, a.saveflash, a.realimage, a.realaudio, a.realmovie, a.realflash, b.selnum, b.seltext, b.isanswer, b.saveselimage, b.realselimage,  b.isselimage
+				       ,a.lessonnum
+				  from tz_exam a, tz_examsel b, tz_code c, tz_code d
+				 where a.subj = b.subj(+)
+				   and a.examnum 	= b.examnum(+)
+				   and a.examtype 	= c.code
+				   and a.levels 	= d.code
+				   and a.subj 		= #p_exam_subj#
+				   and c.gubun 		= '0013'
+				   and d.gubun 		= '0014'
+				   and a.isuse 		= 'Y'
+		       ) a,
+		       (
+				select   rownum as rn, aa.*
+               	from(
+					WITH tz_exam_tmp AS (
+						select 
+							exam.*
+							, ep.level1text
+							, ep.level2text
+							, ep.level3text
+						from
+							(
+							SELECT  
+								a.*, 
+								ROW_NUMBER() OVER(PARTITION BY LESSONNUM ORDER BY LESSONNUM) as rn,
+								(select count(0) from tz_exampaper_sheet where examsubj = a.subj and examnum = a.examnum) as examusecnt
+							FROM
+								tz_exam a
+							WHERE
+								a.subj = #p_exam_subj#
+								AND a.lesson = '001'
+								AND a.ISUSE = 'Y'
+							) exam
+							, tz_exampaper ep
+						where 
+							exam.subj = ep.examsubj
+							and exam.lesson = ep.lesson
+							and ep.subj = #ses_search_subj#
+							and ep.[year] = #ses_search_year#
+							and ep.subjseq = #ses_search_subjseq#
+							and rn &lt; ep.setexamcnt
+							and examusecnt &lt; ep.setexamlessoncnt
+						ORDER BY DBMS_RANDOM.RANDOM
+						)    	    	
+						select 
+							#ses_search_subj# subj
+							, #ses_search_year# [year]
+							, #ses_search_subjseq# subjseq
+							, lesson
+							, examtype
+							, #p_papernum# papernum
+							, #p_exam_subj# examsubj
+							, examnum
+							, #userid# inuserid
+							, TO_CHAR(sysdatetime, 'YYYYMMDDHH24MISS') indate
+							, #p_examtype# paperexamtype
+							, #userid# luserid
+							, TO_CHAR(sysdatetime, 'YYYYMMDDHH24MISS') ldate
+						from
+							(			   
+							select subj, examnum, lesson, examtype
+							from( 
+								SELECT a.*
+								FROM tz_exam_tmp a
+								WHERE examtype = '1'
+								AND levels = '1'		                      
+								)
+							where ROWNUM &lt;= regexp_substr(regexp_substr(level1text, '[^|]+', 1, 1), '[^,]+', 1, 2)
+							union all
+							select subj, examnum, lesson, examtype
+							from( 
+								SELECT a.*
+								FROM tz_exam_tmp a
+								WHERE examtype = '1'
+								AND levels = '2'		                      
+								)			    
+							where ROWNUM &lt;= regexp_substr(regexp_substr(level2text, '[^|]+', 1, 1), '[^,]+', 1, 2)
+							union all
+							select subj, examnum, lesson, examtype
+							from( 
+								SELECT a.*
+								FROM tz_exam_tmp a
+								WHERE examtype = '1'
+								AND levels = '3'		                      
+								)			     
+							where ROWNUM &lt;= regexp_substr(regexp_substr(level3text, '[^|]+', 1, 1), '[^,]+', 1, 2)
+							union all 
+							select subj, examnum, lesson, examtype
+							from( 
+								SELECT a.*
+								FROM tz_exam_tmp a
+								WHERE examtype = '2'
+								AND levels = '1'		                      
+								)		    
+							where ROWNUM &lt;= regexp_substr(regexp_substr(level1text, '[^|]+', 1, 2), '[^,]+', 1, 2)
+							union all
+							select subj, examnum, lesson, examtype
+							from( 
+								SELECT a.*
+								FROM tz_exam_tmp a
+								WHERE examtype = '2'
+								AND levels = '2'		                      
+								)
+							where ROWNUM &lt;= regexp_substr(regexp_substr(level2text, '[^|]+', 1, 2), '[^,]+', 1, 2)
+							union all
+							select subj, examnum, lesson, examtype
+							from( 
+								SELECT a.*
+								FROM tz_exam_tmp a
+								WHERE examtype = '2'
+								AND levels = '3'		                      
+								)
+							where ROWNUM &lt;= regexp_substr(regexp_substr(level3text, '[^|]+', 1, 2), '[^,]+', 1, 2)
+							union all 
+							select subj, examnum, lesson, examtype
+							from( 
+								SELECT a.*
+								FROM tz_exam_tmp a
+								WHERE examtype = '3'
+								AND levels = '1'		                      
+								)
+							where ROWNUM &lt;= regexp_substr(regexp_substr(level1text, '[^|]+', 1, 3), '[^,]+', 1, 2)
+							union all
+							select subj, examnum, lesson, examtype
+							from( 
+								SELECT a.*
+								FROM tz_exam_tmp a
+								WHERE examtype = '3'
+								AND levels = '2'		                      
+								)
+							where ROWNUM &lt;= regexp_substr(regexp_substr(level2text, '[^|]+', 1, 3), '[^,]+', 1, 2)
+							union all
+							select subj, examnum, lesson, examtype
+							from( 
+								SELECT a.*
+								FROM tz_exam_tmp a
+								WHERE examtype = '3'
+								AND levels = '3'		                      
+								)
+							where ROWNUM &lt;= regexp_substr(regexp_substr(level3text, '[^|]+', 1, 3), '[^,]+', 1, 2)
+						)	
+               	 )aa          
+		       ) b
+		 where a.subj=b.examsubj
+         and a.examnum = b.examnum
+		 order by rn, selnum
+		   
+	</select>  -->
+	<select id="studyExamDAO.selectPaperQuestionExampleBankList" parameterClass="map" resultClass="egovMap">
+		select rn, a.subj, a.examnum, a.lesson, a.examtype, a.examtext, a.exptext, a.levels, a.selcount, saveimage, saveaudio, examtypenm, levelsnm,
+		       savemovie, saveflash, realimage, realaudio, realmovie, realflash, selnum, seltext, isanswer, saveselimage, realselimage, isselimage,
+		       b.examsubj, a.lessonnum
+		  from (
+				select a.subj, a.examnum, a.lesson, a.examtype, a.examtext, a.exptext, a.levels, a.selcount, a.saveimage, a.saveaudio, c.codenm examtypenm, d.codenm levelsnm,
+				       a.savemovie, a.saveflash, a.realimage, a.realaudio, a.realmovie, a.realflash, b.selnum, b.seltext, b.isanswer, b.saveselimage, b.realselimage,  b.isselimage
+				       ,a.lessonnum
+				  from tz_exam a, tz_examsel b, tz_code c, tz_code d
+				 where a.subj = b.subj(+)
+				   and a.examnum 	= b.examnum(+)
+				   and a.examtype 	= c.code
+				   and a.levels 	= d.code
+				   and a.subj 		= #p_exam_subj#
+				   and c.gubun 		= '0013'
+				   and d.gubun 		= '0014'
+				   and a.isuse 		= 'Y'
+		       ) a,
+		       (
+				select   rownum as rn, aa.*
+               	from(
+					     	    	
+						select 
+							#ses_search_subj# subj
+							, #ses_search_year# [year]
+							, #ses_search_subjseq# subjseq
+							, lesson
+							, examtype
+							, #p_papernum# papernum
+							, #p_exam_subj# examsubj
+							, examnum
+							, #userid# inuserid
+							, TO_CHAR(sysdatetime, 'YYYYMMDDHH24MISS') indate
+							, #p_examtype# paperexamtype
+							, #userid# luserid
+							, TO_CHAR(sysdatetime, 'YYYYMMDDHH24MISS') ldate
+						from
+							(			   
+							select subj, examnum, lesson, examtype
+							from( 
+								SELECT a.*
+								FROM (
+									select 
+										exam.*
+										, ep.level1text
+										, ep.level2text
+										, ep.level3text
+									from
+										(
+										SELECT  
+											a.*, 
+											ROW_NUMBER() OVER(PARTITION BY LESSONNUM ORDER BY LESSONNUM) as rn,
+											(select count(0) from tz_exampaper_sheet where examsubj = a.subj and examnum = a.examnum) as examusecnt
+										FROM
+											tz_exam a
+										WHERE
+											a.subj = #p_exam_subj#
+											AND a.lesson = '001'
+											AND a.ISUSE = 'Y'
+										) exam
+										, tz_exampaper ep
+									where 
+										exam.subj = ep.examsubj
+										and exam.lesson = ep.lesson
+										and ep.subj = #ses_search_subj#
+										and ep.[year] = #ses_search_year#
+										and ep.subjseq = #ses_search_subjseq#
+										and rn &lt; ep.setexamcnt
+										and examusecnt &lt; ep.setexamlessoncnt
+									ORDER BY RANDOM()
+									) a
+								WHERE examtype = '1'
+								AND levels = '1'		                      
+								)
+							where ROWNUM &lt;= (select SUBSTRING_INDEX(SUBSTRING_INDEX(level1text, '|', '1'), ',', '-1')
+												from tz_exampaper ep
+												where ep.subj = #ses_search_subj#
+														and ep.[year] = #ses_search_year#
+														and ep.subjseq = #ses_search_subjseq#	
+												)
+							union all
+							select subj, examnum, lesson, examtype
+							from( 
+								SELECT a.*
+								FROM (
+									select 
+										exam.*
+										, ep.level1text
+										, ep.level2text
+										, ep.level3text
+									from
+										(
+										SELECT  
+											a.*, 
+											ROW_NUMBER() OVER(PARTITION BY LESSONNUM ORDER BY LESSONNUM) as rn,
+											(select count(0) from tz_exampaper_sheet where examsubj = a.subj and examnum = a.examnum) as examusecnt
+										FROM
+											tz_exam a
+										WHERE
+											a.subj = #p_exam_subj#
+											AND a.lesson = '001'
+											AND a.ISUSE = 'Y'
+										) exam
+										, tz_exampaper ep
+									where 
+										exam.subj = ep.examsubj
+										and exam.lesson = ep.lesson
+										and ep.subj = #ses_search_subj#
+										and ep.[year] = #ses_search_year#
+										and ep.subjseq = #ses_search_subjseq#
+										and rn &lt; ep.setexamcnt
+										and examusecnt &lt; ep.setexamlessoncnt
+									ORDER BY RANDOM()
+									) a
+								WHERE examtype = '1'
+								AND levels = '2'		                      
+								)			    
+							where ROWNUM &lt;= (select SUBSTRING_INDEX(SUBSTRING_INDEX(level2text, '|', '1'), ',', '-1')
+													from tz_exampaper ep
+													where ep.subj = #ses_search_subj#
+															and ep.[year] = #ses_search_year#
+															and ep.subjseq = #ses_search_subjseq#	
+													)
+							union all
+							select subj, examnum, lesson, examtype
+							from( 
+								SELECT a.*
+								FROM (
+									select 
+										exam.*
+										, ep.level1text
+										, ep.level2text
+										, ep.level3text
+									from
+										(
+										SELECT  
+											a.*, 
+											ROW_NUMBER() OVER(PARTITION BY LESSONNUM ORDER BY LESSONNUM) as rn,
+											(select count(0) from tz_exampaper_sheet where examsubj = a.subj and examnum = a.examnum) as examusecnt
+										FROM
+											tz_exam a
+										WHERE
+											a.subj = #p_exam_subj#
+											AND a.lesson = '001'
+											AND a.ISUSE = 'Y'
+										) exam
+										, tz_exampaper ep
+									where 
+										exam.subj = ep.examsubj
+										and exam.lesson = ep.lesson
+										and ep.subj = #ses_search_subj#
+										and ep.[year] = #ses_search_year#
+										and ep.subjseq = #ses_search_subjseq#
+										and rn &lt; ep.setexamcnt
+										and examusecnt &lt; ep.setexamlessoncnt
+									ORDER BY RANDOM()
+									) a
+								WHERE examtype = '1'
+								AND levels = '3'		                      
+								)			     
+							where ROWNUM &lt;= (select SUBSTRING_INDEX(SUBSTRING_INDEX(level3text, '|', '1'), ',', '-1')
+													from tz_exampaper ep
+													where ep.subj = #ses_search_subj#
+															and ep.[year] = #ses_search_year#
+															and ep.subjseq = #ses_search_subjseq#	
+													)
+							union all 
+							select subj, examnum, lesson, examtype
+							from( 
+								SELECT a.*
+								FROM (
+									select 
+										exam.*
+										, ep.level1text
+										, ep.level2text
+										, ep.level3text
+									from
+										(
+										SELECT  
+											a.*, 
+											ROW_NUMBER() OVER(PARTITION BY LESSONNUM ORDER BY LESSONNUM) as rn,
+											(select count(0) from tz_exampaper_sheet where examsubj = a.subj and examnum = a.examnum) as examusecnt
+										FROM
+											tz_exam a
+										WHERE
+											a.subj = #p_exam_subj#
+											AND a.lesson = '001'
+											AND a.ISUSE = 'Y'
+										) exam
+										, tz_exampaper ep
+									where 
+										exam.subj = ep.examsubj
+										and exam.lesson = ep.lesson
+										and ep.subj = #ses_search_subj#
+										and ep.[year] = #ses_search_year#
+										and ep.subjseq = #ses_search_subjseq#
+										and rn &lt; ep.setexamcnt
+										and examusecnt &lt; ep.setexamlessoncnt
+									ORDER BY RANDOM()
+									) a
+								WHERE examtype = '2'
+								AND levels = '1'		                      
+								)		    
+							where ROWNUM &lt;= (select SUBSTRING_INDEX(SUBSTRING_INDEX(SUBSTRING_INDEX(level1text, '|', '2'), '|', '-1'), ',', '-1')
+													from tz_exampaper ep
+													where ep.subj = #ses_search_subj#
+															and ep.[year] = #ses_search_year#
+															and ep.subjseq = #ses_search_subjseq#	
+													)
+							union all
+							select subj, examnum, lesson, examtype
+							from( 
+								SELECT a.*
+								FROM (
+									select 
+										exam.*
+										, ep.level1text
+										, ep.level2text
+										, ep.level3text
+									from
+										(
+										SELECT  
+											a.*, 
+											ROW_NUMBER() OVER(PARTITION BY LESSONNUM ORDER BY LESSONNUM) as rn,
+											(select count(0) from tz_exampaper_sheet where examsubj = a.subj and examnum = a.examnum) as examusecnt
+										FROM
+											tz_exam a
+										WHERE
+											a.subj = #p_exam_subj#
+											AND a.lesson = '001'
+											AND a.ISUSE = 'Y'
+										) exam
+										, tz_exampaper ep
+									where 
+										exam.subj = ep.examsubj
+										and exam.lesson = ep.lesson
+										and ep.subj = #ses_search_subj#
+										and ep.[year] = #ses_search_year#
+										and ep.subjseq = #ses_search_subjseq#
+										and rn &lt; ep.setexamcnt
+										and examusecnt &lt; ep.setexamlessoncnt
+									ORDER BY RANDOM()
+									) a
+								WHERE examtype = '2'
+								AND levels = '2'		                      
+								)
+							where ROWNUM &lt;= (select SUBSTRING_INDEX(SUBSTRING_INDEX(SUBSTRING_INDEX(level2text, '|', '2'), '|', '-1'), ',', '-1')
+													from tz_exampaper ep
+													where ep.subj = #ses_search_subj#
+															and ep.[year] = #ses_search_year#
+															and ep.subjseq = #ses_search_subjseq#	
+													)
+							union all
+							select subj, examnum, lesson, examtype
+							from( 
+								SELECT a.*
+								FROM (
+									select 
+										exam.*
+										, ep.level1text
+										, ep.level2text
+										, ep.level3text
+									from
+										(
+										SELECT  
+											a.*, 
+											ROW_NUMBER() OVER(PARTITION BY LESSONNUM ORDER BY LESSONNUM) as rn,
+											(select count(0) from tz_exampaper_sheet where examsubj = a.subj and examnum = a.examnum) as examusecnt
+										FROM
+											tz_exam a
+										WHERE
+											a.subj = #p_exam_subj#
+											AND a.lesson = '001'
+											AND a.ISUSE = 'Y'
+										) exam
+										, tz_exampaper ep
+									where 
+										exam.subj = ep.examsubj
+										and exam.lesson = ep.lesson
+										and ep.subj = #ses_search_subj#
+										and ep.[year] = #ses_search_year#
+										and ep.subjseq = #ses_search_subjseq#
+										and rn &lt; ep.setexamcnt
+										and examusecnt &lt; ep.setexamlessoncnt
+									ORDER BY RANDOM()
+									) a
+								WHERE examtype = '2'
+								AND levels = '3'		                      
+								)
+							where ROWNUM &lt;= (select SUBSTRING_INDEX(SUBSTRING_INDEX(SUBSTRING_INDEX(level3text, '|', '2'), '|', '-1'), ',', '-1')
+													from tz_exampaper ep
+													where ep.subj = #ses_search_subj#
+															and ep.[year] = #ses_search_year#
+															and ep.subjseq = #ses_search_subjseq#	
+													)
+							union all 
+							select subj, examnum, lesson, examtype
+							from( 
+								SELECT a.*
+								FROM (
+									select 
+										exam.*
+										, ep.level1text
+										, ep.level2text
+										, ep.level3text
+									from
+										(
+										SELECT  
+											a.*, 
+											ROW_NUMBER() OVER(PARTITION BY LESSONNUM ORDER BY LESSONNUM) as rn,
+											(select count(0) from tz_exampaper_sheet where examsubj = a.subj and examnum = a.examnum) as examusecnt
+										FROM
+											tz_exam a
+										WHERE
+											a.subj = #p_exam_subj#
+											AND a.lesson = '001'
+											AND a.ISUSE = 'Y'
+										) exam
+										, tz_exampaper ep
+									where 
+										exam.subj = ep.examsubj
+										and exam.lesson = ep.lesson
+										and ep.subj = #ses_search_subj#
+										and ep.[year] = #ses_search_year#
+										and ep.subjseq = #ses_search_subjseq#
+										and rn &lt; ep.setexamcnt
+										and examusecnt &lt; ep.setexamlessoncnt
+									ORDER BY RANDOM()
+									) a
+								WHERE examtype = '3'
+								AND levels = '1'		                      
+								)
+							where ROWNUM &lt;= (select SUBSTRING_INDEX(SUBSTRING_INDEX(level1text, '|', '-1'), ',', '-1')
+												from tz_exampaper ep
+													where ep.subj = #ses_search_subj#
+															and ep.[year] = #ses_search_year#
+															and ep.subjseq = #ses_search_subjseq#	
+													)
+							union all
+							select subj, examnum, lesson, examtype
+							from( 
+								SELECT a.*
+								FROM (
+									select 
+										exam.*
+										, ep.level1text
+										, ep.level2text
+										, ep.level3text
+									from
+										(
+										SELECT  
+											a.*, 
+											ROW_NUMBER() OVER(PARTITION BY LESSONNUM ORDER BY LESSONNUM) as rn,
+											(select count(0) from tz_exampaper_sheet where examsubj = a.subj and examnum = a.examnum) as examusecnt
+										FROM
+											tz_exam a
+										WHERE
+											a.subj = #p_exam_subj#
+											AND a.lesson = '001'
+											AND a.ISUSE = 'Y'
+										) exam
+										, tz_exampaper ep
+									where 
+										exam.subj = ep.examsubj
+										and exam.lesson = ep.lesson
+										and ep.subj = #ses_search_subj#
+										and ep.[year] = #ses_search_year#
+										and ep.subjseq = #ses_search_subjseq#
+										and rn &lt; ep.setexamcnt
+										and examusecnt &lt; ep.setexamlessoncnt
+									ORDER BY RANDOM()
+									) a
+								WHERE examtype = '3'
+								AND levels = '2'		                      
+								)
+							where ROWNUM &lt;= (select SUBSTRING_INDEX(SUBSTRING_INDEX(level2text, '|', '-1'), ',', '-1')
+												from tz_exampaper ep
+													where ep.subj = #ses_search_subj#
+															and ep.[year] = #ses_search_year#
+															and ep.subjseq = #ses_search_subjseq#	
+													)
+							union all
+							select subj, examnum, lesson, examtype
+							from( 
+								SELECT a.*
+								FROM (
+									select 
+										exam.*
+										, ep.level1text
+										, ep.level2text
+										, ep.level3text
+									from
+										(
+										SELECT  
+											a.*, 
+											ROW_NUMBER() OVER(PARTITION BY LESSONNUM ORDER BY LESSONNUM) as rn,
+											(select count(0) from tz_exampaper_sheet where examsubj = a.subj and examnum = a.examnum) as examusecnt
+										FROM
+											tz_exam a
+										WHERE
+											a.subj = #p_exam_subj#
+											AND a.lesson = '001'
+											AND a.ISUSE = 'Y'
+										) exam
+										, tz_exampaper ep
+									where 
+										exam.subj = ep.examsubj
+										and exam.lesson = ep.lesson
+										and ep.subj = #ses_search_subj#
+										and ep.[year] = #ses_search_year#
+										and ep.subjseq = #ses_search_subjseq#
+										and rn &lt; ep.setexamcnt
+										and examusecnt &lt; ep.setexamlessoncnt
+									ORDER BY RANDOM()
+									) a
+								WHERE examtype = '3'
+								AND levels = '3'		                      
+								)
+							where ROWNUM &lt;= (select SUBSTRING_INDEX(SUBSTRING_INDEX(level1text, '|', '-1'), ',', '-1')
+												from tz_exampaper ep
+													where ep.subj = #ses_search_subj#
+															and ep.[year] = #ses_search_year#
+															and ep.subjseq = #ses_search_subjseq#	
+													)	
+						)	
+               	 )aa          
+		       ) b
+		 where a.subj=b.examsubj
+         and a.examnum = b.examnum
+		 order by rn, selnum
+		   
+	</select>            
+            
+            
+     <select id="studyExamDAO.selectExamBankPaperModifyList" parameterClass="map" resultClass="egovMap">
+		select rn, a.subj, a.examnum, a.lesson, a.examtype, a.examtext, a.exptext, a.levels, a.selcount, saveimage, saveaudio, examtypenm, levelsnm,
+		       savemovie, saveflash, realimage, realaudio, realmovie, realflash, selnum, seltext, isanswer, saveselimage, realselimage, isselimage
+		  from (
+				select a.subj, a.examnum, a.lesson, a.examtype, a.examtext, a.exptext, a.levels, a.selcount, a.saveimage, a.saveaudio, c.codenm examtypenm, d.codenm levelsnm,
+				       a.savemovie, a.saveflash, a.realimage, a.realaudio, a.realmovie, a.realflash, b.selnum, b.seltext, b.isanswer, b.saveselimage, b.realselimage,  b.isselimage
+				  from tz_exam a, tz_examsel b, tz_code c, tz_code d
+				 where a.subj = b.subj(+)
+				   and a.examnum 	= b.examnum(+)
+				   and a.examtype 	= c.code
+				   and a.levels 	= d.code
+				   and a.subj 		= #p_exam_subj#
+				   and c.gubun 		= '0013'
+				   and d.gubun 		= '0014'
+				   and a.isuse 		= 'Y'
+		       ) a,
+		       (
+				select   rownum as rn, aa.*
+               	from(
+					select a.*, b.levels
+                        from TZ_EXAMPAPER_SHEET a
+                            ,tz_exam b
+                        WHERE a.examsubj = b.subj
+                        and a.examnum = b.examnum
+                        and a.subj = #ses_search_subj#
+                        and a.[year] = #ses_search_year#
+                        and a.subjseq = #ses_search_subjseq#
+                        and a.lesson = #p_lesson# 
+                        and a.papernum = #p_papernum#
+                        and a.paperexamtype = #p_examtype#            
+                       order by a.examtype, b.levels
+               	 )aa          
+		       ) b
+		 where a.subj=b.examsubj
+         and a.examnum = b.examnum
+		 order by rn, selnum
+		   
+	</select>  
+    
+    
+    <update id="studyExamDAO.updateExamResultExam">
+		update tz_examresult$examtabletemp$
+		   set started = to_char(sysdatetime, 'yyyyMMddhh24miss'),
+		       answer = null,
+		       answercnt = 0,
+		       exam = #strexamnum#,
+		       examcnt = 0,
+		       exampoint = 0,
+		       ended = null,
+		       score = 0,
+		       corrected = 0,
+		       userretry = userretry - 1
+		 where subj     = #p_subj#
+		   and [year]     = #p_year#
+		   and subjseq  = #p_subjseq#
+		   and lesson   = #p_lesson#
+		   and examtype = #p_examtype#
+		   and papernum = #p_papernum#
+		   and userid   = #userid#
+	</update>        
+            
+    <update id="studyExamDAO.updateTZ_examresultEnded">
+		update tz_examresult$examtabletemp$
+		   set ended = to_char(sysdatetime, 'yyyyMMddhh24miss')
+		 where subj    		= #p_subj#
+		   and [year]    		= #p_year#
+		   and subjseq 		= #p_subjseq#
+		   and lesson  		= #p_lesson#
+		   and examtype 	= #p_examtype#
+		   and papernum 	= #p_papernum#
+		   and userid 		= #p_userid#
+	</update>
+	
+	<select id="studyExamDAO.getExamResultInfo" parameterClass="map" resultClass="egovMap">
+		select 
+			rtrim(er.exam, ',') exam
+			, rtrim(er.answer, ',') answer
+			 
+			, er.lesson
+			, er.examtype
+			, er.papernum
+			, er.userretry
+			, er.examsubj
+			
+			, ep.exampoint
+		from 
+			tz_examresult$examtabletemp$ er
+			, tz_exampaper ep
+		where 
+			er.subj = #p_subj#
+			and er.[year] = #p_year#
+			and er.subjseq = #p_subjseq#
+			and er.userid = #userid#
+			
+			and er.subj = ep.subj
+			and er.[year] = ep.[year]
+			and er.subjseq = ep.subjseq
+			and er.lesson = ep.lesson
+			and er.examtype = ep.examtype
+			and er.papernum = ep.papernum
+	
+	</select>        
+	
+	<select id="studyExamDAO.getExamInProgress" parameterClass="map" resultClass="egovMap">
+		<iterate conjunction="UNION ALL" property="examList">
+			select 
+				#examList[].rn# rn
+				, e.subj
+				, e.examnum
+				, e.lesson
+				, e.examtype
+				, e.examtext
+				, e.exptext
+				, e.levels
+				, e.selcount
+				, e.saveimage
+				, e.saveaudio
+				, cd1.codenm examtypenm
+				, cd2.codenm levelsnm
+				, e.savemovie
+				, e.saveflash
+				, e.realimage
+				, e.realaudio
+				, e.realmovie
+				, e.realflash
+				, es.selnum
+				, es.seltext
+				, es.isanswer
+				, es.saveselimage
+				, es.realselimage
+				, es.isselimage
+				, e.subj examsubj
+				, e.lessonnum
+				, case 
+					when 2 = e.examtype then decode(#examList[].myAnswer#, '0', '', #examList[].myAnswer#)
+					else decode(#examList[].myAnswer#, TO_CHAR(es.selnum), 'Y', 'N')
+				end my_answer
+			from 
+				tz_exam e
+				, tz_examsel es
+				, tz_code cd1
+				, tz_code cd2
+			where e.subj = es.subj
+				and e.examnum = es.examnum
+				and e.examtype = cd1.code
+				and e.levels = cd2.code
+				and cd1.gubun = '0013'
+				and cd2.gubun = '0014'
+				and e.subj = #examsubj#
+				and e.examnum = #examList[].examnum#
+		</iterate>
+		
+	</select>
+            
+	<update id="studyExamDAO.updateExamResultSubmit">
+		update tz_examresult$examtabletemp$
+		   set submit_yn 	= #submitYn#
+		 where subj    		= #p_subj#
+		   and [year]    		= #p_year#
+		   and subjseq 		= #p_subjseq#
+		   and lesson  		= #p_lesson#
+		   and examtype 	= #p_examtype#
+		   and papernum 	= #p_papernum#
+		   and userid 		= #userid#
+	</update>
+	
+	<select id="studyExamDAO.getRetryExamChangeYn" parameterClass="map" resultClass="string">
+		select 
+			<isEmpty property="examtabletemp">
+				case when userretry > 0 and submit_yn = 'Y' then 'Y' else 'N' end RETRY_EXAM_CHANGE_YN
+			</isEmpty> 
+			<isNotEmpty property="examtabletemp">
+				case when  submit_yn = 'Y' then 'Y' else 'N' end RETRY_EXAM_CHANGE_YN
+			</isNotEmpty>
+		from 
+			tz_examresult$examtabletemp$
+		where subj    		= #p_subj#
+		   and [year]    		= #p_year#
+		   and subjseq 		= #p_subjseq#
+		   and lesson  		= #p_lesson#
+		   and examtype 	= #p_examtype#
+		   and papernum 	= #p_papernum#
+		   and userid 		= #userid#
+	</select>
+	
+	<update id="studyExamDAO.updateRetryExamChange">
+		update tz_examresult$examtabletemp$
+		   set
+		   answer = #p_answer#
+		   , corrected = #p_answer#
+		   , submit_yn = 'N'
+		 where subj    		= #p_subj#
+		   and [year]    		= #p_year#
+		   and subjseq 		= #p_subjseq#
+		   and lesson  		= #p_lesson#
+		   and examtype 	= #p_examtype#
+		   and papernum 	= #p_papernum#
+		   and userid 		= #userid#
+	</update>
+	
+	<select id="studyExamDAO.selectExamResultSubmit" parameterClass="map" resultClass="string">
+		select case when submit_yn = 'Y' then 'Y' else 'N' end submit_yn
+		from 
+			tz_examresult$examtabletemp$
+		where subj    		= #p_subj#
+		   and [year]    		= #p_year#
+		   and subjseq 		= #p_subjseq#
+		   and lesson  		= #p_lesson#
+		   and examtype 	= #p_examtype#
+		   and papernum 	= #p_papernum#
+		   and userid 		= #userid#
+	</select>
+	
+            
+</sqlMap>

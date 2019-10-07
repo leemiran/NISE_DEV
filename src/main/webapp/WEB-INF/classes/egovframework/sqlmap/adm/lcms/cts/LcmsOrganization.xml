@@ -1,0 +1,260 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE sqlMap PUBLIC "-//iBATIS.com//DTD SQL Map 2.0//EN" "http://ibatis.apache.org/dtd/sql-map-2.dtd">
+
+<sqlMap namespace="LcmsOrganization">
+	<typeAlias  alias="egovMap" type="egovframework.rte.psl.dataaccess.util.EgovMap"/>
+
+    <select id="lcmsOrganizationDAO.selectLcmsOrganizationPageList" parameterClass="map" resultClass="egovMap">
+        SELECT * 
+        FROM
+               (
+                SELECT TEMP.*, 
+                <isNotEmpty property="rowsPerPage">
+                       CEIL(ROWNUM / #rowsPerPage#) AS PAGE 
+                </isNotEmpty>
+                <isEmpty property="rowsPerPage">
+                       CEIL(ROWNUM / 10) AS PAGE 
+                </isEmpty>
+                FROM
+                      (
+                       SELECT 
+	        	              ORG_SEQ,
+	        	              COURSE_TYPE,
+	        	              ORG_ID,
+	        	              ORG_TITLE,
+	        	              ORG_DIR,
+	        	              CRS_ORG_NO,
+	        	              ORG_STRUCTURE,
+	        	              ORG_GLOBAL_TO_SYS,
+	        	              META_LOCATION,
+	        	              USERID,
+	        	              UPDATE_DT,
+	        	              ORG_STUDY_WIDTH,
+	        	              ORG_STUDY_HEIGHT,
+	        	              ORG_TREE_VIEW,
+	        	              ORG_WINDOW_FULL_VIEW,
+	        	              ORG_BUTTON_VIEW,
+	        	              ORG_SHOWTOPBTM_YN,
+	        	              ORG_CONTENTS_WIDTH,
+	        	              ORG_CONTENTS_HEIGHT,
+	        	              COURSE_CD,
+	        	              GROUP_SEQ,
+	        	               MODEL_INFO
+        		       FROM   TB_LCMS_ORGANIZATION
+        		       <!--  APPEND WHERE CONDITION START  -->
+
+        		       <!--  APPEND WHERE CONDITION END    -->
+        		       <isNotEmpty property="orderBy">
+        			       $orderBy$
+        		       </isNotEmpty>
+        	          ) TEMP 
+               )
+        <isNotEmpty property="page">
+        WHERE PAGE = #page#
+        </isNotEmpty>
+        <isEmpty property="page">
+        WHERE PAGE = 1
+        </isEmpty>
+    </select>
+
+    <select id="lcmsOrganizationDAO.selectLcmsOrganizationList" parameterClass="map" resultClass="egovMap">
+        SELECT ORG_SEQ,
+               COURSE_TYPE,
+               ORG_ID,
+               ORG_TITLE,
+               ORG_DIR,
+               CRS_ORG_NO,
+               ORG_STRUCTURE,
+               ORG_GLOBAL_TO_SYS,
+               META_LOCATION,
+               USERID,
+               UPDATE_DT,
+               ORG_STUDY_WIDTH,
+               ORG_STUDY_HEIGHT,
+               ORG_TREE_VIEW,
+               ORG_WINDOW_FULL_VIEW,
+               ORG_BUTTON_VIEW,
+               ORG_SHOWTOPBTM_YN,
+               ORG_CONTENTS_WIDTH,
+               ORG_CONTENTS_HEIGHT,
+               COURSE_CD,
+               GROUP_SEQ,
+               MODEL_INFO
+        FROM   TB_LCMS_ORGANIZATION
+    </select>
+
+    <select id="lcmsOrganizationDAO.selectLcmsOrganizationPageListTotCnt" parameterClass="map" remapResults="true" resultClass="int">
+        SELECT COUNT(ROWNUM) AS [COUNT]
+        FROM   TB_LCMS_ORGANIZATION
+    </select>
+    <select id="lcmsOrganizationDAO.getOrgSeqNum" parameterClass="map" remapResults="true" resultClass="int">
+        SELECT NVL(MAX(ORG_SEQ), 0) + 1
+          FROM TB_LCMS_ORGANIZATION
+    </select>
+    <select id="lcmsOrganizationDAO.getOrgaidCnt" parameterClass="map" remapResults="true" resultClass="int">
+        SELECT COUNT(ORG_ID) CNT
+          FROM TB_LCMS_ORGANIZATION
+         WHERE ORG_ID = #orgId#
+           AND COURSE_CD = #courseSeq#
+    </select>
+
+    <select id="lcmsOrganizationDAO.selectLcmsOrganization" parameterClass="map" resultClass="egovMap">
+        SELECT ORG_SEQ,
+               COURSE_TYPE,
+               ORG_ID,
+               ORG_TITLE,
+               ORG_DIR,
+               CRS_ORG_NO,
+               ORG_STRUCTURE,
+               ORG_GLOBAL_TO_SYS,
+               META_LOCATION,
+               USERID,
+               UPDATE_DT,
+               ORG_STUDY_WIDTH,
+               ORG_STUDY_HEIGHT,
+               ORG_TREE_VIEW,
+               ORG_WINDOW_FULL_VIEW,
+               ORG_BUTTON_VIEW,
+               ORG_SHOWTOPBTM_YN,
+               ORG_CONTENTS_WIDTH,
+               ORG_CONTENTS_HEIGHT,
+               COURSE_CD,
+               GROUP_SEQ,
+               MODEL_INFO
+        FROM   TB_LCMS_ORGANIZATION
+        WHERE  ORG_SEQ = #orgSeq#
+    </select>
+
+    <insert id="lcmsOrganizationDAO.insertLcmsOrganization">
+        <selectKey resultClass="int" keyProperty="orgSeq">
+            SELECT NVL(MAX(ORG_SEQ)+1, 1)
+            FROM   TB_LCMS_ORGANIZATION
+        </selectKey>
+        INSERT INTO TB_LCMS_ORGANIZATION
+        (
+            ORG_SEQ,
+            COURSE_TYPE,
+            ORG_ID,
+            ORG_TITLE,
+            ORG_DIR,
+            CRS_ORG_NO,
+            ORG_STRUCTURE,
+            ORG_GLOBAL_TO_SYS,
+            META_LOCATION,
+            USERID,
+            UPDATE_DT,
+            COURSE_CD,
+            MODEL_INFO
+        )
+        VALUES
+        (
+            #orgSeq#,
+            #courseType#,
+            #orgId#,
+            #orgTitle#,
+            #orgDir#,
+            #crsOrgNo#,
+            #orgStructure#,
+            #orgGlobalToSys#,
+            #metaLocation#,
+            #userId#,
+            SYSDATE,
+            #courseCd#,
+            #modelInfo#
+        )
+    </insert>
+
+    <update id="lcmsOrganizationDAO.updateLcmsOrganization">
+        UPDATE TB_LCMS_ORGANIZATION
+        SET    COURSE_TYPE = #courseType#,
+               ORG_ID = #orgId#,
+               ORG_TITLE = #orgTitle#,
+               ORG_DIR = #orgDir#,
+               CRS_ORG_NO = #crsOrgNo#,
+               ORG_STRUCTURE = #orgStructure#,
+               ORG_GLOBAL_TO_SYS = #orgGlobalToSys#,
+               META_LOCATION = #metaLocation#,
+               USERID = #userId#,
+               UPDATE_DT = #updateDt#,
+               ORG_STUDY_WIDTH = #orgStudyWidth#,
+               ORG_STUDY_HEIGHT = #orgStudyHeight#,
+               ORG_TREE_VIEW = #orgTreeView#,
+               ORG_WINDOW_FULL_VIEW = #orgWindowFullView#,
+               ORG_BUTTON_VIEW = #orgButtonView#,
+               ORG_SHOWTOPBTM_YN = #orgShowtopbtmYn#,
+               ORG_CONTENTS_WIDTH = #orgContentsWidth#,
+               ORG_CONTENTS_HEIGHT = #orgContentsHeight#,
+               COURSE_CD = #courseCd#,
+               GROUP_SEQ = #groupSeq#,
+               MODEL_INFO = #modelInfo#
+        WHERE  ORG_SEQ = #orgSeq#
+    </update>
+
+    <delete id="lcmsOrganizationDAO.deleteLcmsOrganization">
+        delete tb_lcms_organization where org_seq in <iterate property="orgSeq" conjunction="," open="(" close=")">$orgSeq[]$</iterate>
+    </delete>
+
+    <delete id="lcmsOrganizationDAO.deleteLcmsOrganizationAll">
+        DELETE FROM TB_LCMS_ORGANIZATION
+        <dynamic prepend="WHERE ORG_SEQ IN ">
+            <isNotEmpty property="orgSeq">
+                <iterate property="orgSeq" open="(" close=")" conjunction=",">
+                    #orgSeq[]#
+                </iterate>
+            </isNotEmpty>
+            <isEmpty property="orgSeq">
+                ('')
+            </isEmpty>
+        </dynamic>
+    </delete>
+
+	<select id="lcmsOrganizationDAO.selectOrganizationPathList" parameterClass="map" resultClass="egovMap">
+		<![CDATA[
+		select base_dir
+		  from (
+		        select substr(rsrc_base_dir, 0, instr(rsrc_base_dir, '/', -1) -1) as base_dir
+		          from tb_lcms_item_resource 
+		         where rsrc_seq in (select rsrc_seq from tb_lcms_item 
+		         					 where org_seq in 
+		]]>
+								                <iterate property="orgSeq" conjunction="," open="(" close=")">
+								                    $orgSeq[]$
+								                </iterate>
+		<![CDATA[
+		         				    )
+		        )
+		 group by base_dir
+		]]>
+	</select>
+	
+	<select id="lcmsOrganizationDAO.checkCourseMapping" parameterClass="map" remapResults="true" resultClass="int">
+		select count(0)
+		  from tz_subj a, tz_subjseq b, tz_stold c
+		 where a.subj = #subj#
+		   and a.subj = b.subj
+		   and b.subj = c.subj
+		   and b.[year] = c.[year]
+		   and b.subjseq = c.subjseq
+	</select>
+	
+	<update id="lcmsOrganizationDAO.updateOrgSort">
+		update
+		/*+bypass_ujvc*/(select a.org_seq, a.crs_org_no, b.sort
+		                   from tb_lcms_organization a,
+		                         (
+		                         select substr(tmp, 0, instr(tmp,'!')-1 ) as org,
+		                                 substr(tmp, instr(tmp,'!')+1, length(tmp)) as sort
+		                           from (
+										<dynamic prepend=" select ">
+								               <iterate property="p_org" conjunction=" from DB_ROOT union all select ">
+								                   #p_org[]# as tmp
+								               </iterate>
+								        </dynamic>
+		                                    from DB_ROOT
+		                                 )
+		                         ) b
+		                  where a.org_seq = b.org)
+		set crs_org_no = sort
+	</update>
+</sqlMap>
+

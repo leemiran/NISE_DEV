@@ -1,0 +1,176 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE sqlMap PUBLIC "-//iBATIS.com//DTD SQL Map 2.0//EN" "http://ibatis.apache.org/dtd/sql-map-2.dtd">
+
+<sqlMap namespace="StudyReport">
+<typeAlias  alias="egovMap" type="egovframework.rte.psl.dataaccess.util.EgovMap"/>
+
+
+	<select id="studyReportDAO.selectViewOrderStu" parameterClass="map" resultClass="egovMap">
+		select ordseq, weeklyseq, weeklysubseq, title, reptype,
+		       isopen, isopenscore, basicscore,
+		       startdate, expiredate, restartdate, reexpiredate,
+		       contents, submitfiletype, realfile, newfile, filelimit,
+		       ( case when (select count(0) from tu_projrep
+		                     where ldate is not null
+		                       and subj    = #p_subj#
+		                       and [year]    = #p_year#
+		                       and subjseq = #p_subjseq#
+		                       and [CLASS]   = #p_class#
+		                       and projid  = #userid#
+		                       and ordseq  = a.ordseq) > 0
+		              then 'Y' else 'N' end
+		       ) as submityn, perfectscore, submitscore, notsubmitscore,
+		        CASE WHEN                                                                                   
+                        TO_CHAR(sysdatetime, 'YYYYMMDDHH24MISS') 
+                       BETWEEN startdate AND expiredate                                                      
+                 THEN 'Y' ELSE 'N'                                                                           
+                 END indate,                                                                                 
+                 CASE WHEN                                                                                   
+                        TO_CHAR(sysdatetime, 'YYYYMMDDHH24MISS')
+                       BETWEEN restartdate AND reexpiredate                                                  
+                 THEN 'Y' ELSE 'N'                                                                           
+                 END adddate,
+                 (select name from tz_member where userid = #userid#) as name,
+             (select addsubmitcnt from tu_projrep  WHERE grcode = a.grcode 
+             AND subj = a.subj    
+             AND [year] = a.[year] 
+             AND subjseq = a.subjseq    
+             AND [CLASS] = a.[CLASS]     
+             AND projid = #userid#) addsubmitcnt 
+		  from tu_projord a
+		 where 1 = 1
+		   and subj    = #p_subj#
+		   and [year]    = #p_year#
+		   and subjseq = #p_subjseq#
+		   and [CLASS]   = #p_class#
+		   and ordseq  = #p_ordseq#
+		   and delyn  != 'Y'
+	</select>
+	
+	<select id="studyReportDAO.selectProfFiles" parameterClass="map" resultClass="egovMap">
+		select grcode, subj, [year], subjseq, [CLASS], ordseq,
+		       fileseq, realfile, newfile, filepath, filesize
+		  from tu_projord_file
+		 where 1 = 1
+		   and subj    = #p_subj#
+		   and [year]    = #p_year#
+		   and subjseq = #p_subjseq#
+		   and [CLASS]   = #p_class#
+		   and ordseq  = #p_ordseq#
+	</select>
+	
+	<select id="studyReportDAO.selectProfData" parameterClass="map" resultClass="egovMap">
+		select title, contents, score, realfile, newfile, ldate
+		  from tu_projrep
+		 where grcode  = #grcode#
+		   and subj    = #p_subj#
+		   and [year]    = #p_year#
+		   and subjseq = #p_subjseq#
+		   and [CLASS]   = #p_class#
+		   and ordseq  = #p_ordseq#
+		   and projid  = #userid#
+	</select>
+	
+	<select id="studyReportDAO.selectProfScore" parameterClass="map" resultClass="int">
+		select submitscore
+		  from tu_projord
+		 where 1 = 1
+		   and grcode  = #grcode#
+		   and subj    = #p_subj#
+		   and [year]    = #p_year#
+		   and subjseq = #p_subjseq#
+		   and [CLASS]   = #p_class#
+		   and ordseq  = #p_ordseq#
+	</select>
+	
+	<update id="studyReportDAO.updateProf">
+		update tu_projrep
+		   set score        = $submitscore$
+		      , seq			= 1
+		      , weeklyseq	= #p_weeklyseq#
+		      , weeklysubseq = #p_weeklysubseq#
+		      , title		= #p_title#
+		      , contents	= #p_contents#		      
+       <isNotEmpty property="uploadFileName">
+		       , newfile = #uploadFileName#
+		       , realfile = #originalFileName#
+		</isNotEmpty>
+		<isEmpty property="uploadFileName">
+			<isNotEmpty property="p_filedel">
+		       , newfile = null
+		       , realfile = null
+			</isNotEmpty>
+		</isEmpty>
+		      , realfilesize	= #fileSize#
+		      , luserid		= #userid#	  
+		      
+		
+		<isEqual property="p_submitType" compareValue="in">		      
+			<isNotEmpty property="p_ldate">
+				, ldate		=  replace(#p_ldate#,'-','') || to_char(sysdatetime, 'hh24miss')
+			</isNotEmpty> 
+			
+			<isEmpty property="p_ldate">
+				, ldate		= to_char(sysdatetime, 'yyyyMMddhh24miss')
+			</isEmpty>   
+		</isEqual>    
+		  
+		      , getscore = 0
+		      
+		<isEqual property="p_submitType" compareValue="mo">
+			      , adddate = to_char(sysdatetime, 'yyyyMMddhh24miss')
+		</isEqual>
+		
+		<isEqual property="p_submitType" compareValue="up">          
+   		      , adddate = to_char(sysdatetime, 'yyyyMMddhh24miss')		
+		     		
+	   		 <isEqual property="p_adddate" compareValue="Y">
+	   		 	,addsubmitcnt = addsubmitcnt+1
+	   		 </isEqual>       
+   		 </isEqual>
+		      
+		      
+		 where grcode		= #grcode#
+		   and subj			= #p_subj#
+		   and [year]			= #p_year#
+		   and subjseq		= #p_subjseq#
+		   and [CLASS]		= #p_class#
+		   and ordseq		= #p_ordseq#
+		   and projid		= #userid#
+	</update>
+	
+	<insert id="studyReportDAO.insertProf">
+		insert into tu_projrep(
+			grcode, subj, [year], subjseq, [CLASS], ordseq, seq, projid, score,
+			weeklyseq, weeklysubseq, title, contents, realfile, newfile, realfilesize, luserid, ldate
+		)
+		values(
+			#grcode#,
+			#p_subj#,
+			#p_year#,
+			#p_subjseq#,
+			#p_class#,
+			#p_ordseq#,
+			1,
+			#userid#,
+			$submitscore$,
+			#p_weeklyseq#,
+			#p_weeklysubseq#,
+			#p_title#,
+			#p_contents#,
+			#originalFileName#,
+			#uploadFileName#,
+			#fileSize#,
+			#userid#,
+			
+		<isNotEmpty property="p_ldate">
+			replace(#p_ldate#,'-','') || to_char(sysdatetime, 'hh24miss')
+		</isNotEmpty> 
+		
+		<isEmpty property="p_ldate">
+			to_char(sysdatetime, 'yyyyMMddhh24miss')
+		</isEmpty>   
+		      
+		)
+	</insert>
+</sqlMap>

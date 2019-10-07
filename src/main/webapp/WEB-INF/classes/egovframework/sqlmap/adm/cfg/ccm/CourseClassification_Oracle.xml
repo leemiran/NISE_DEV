@@ -1,0 +1,114 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE sqlMap PUBLIC "-//iBATIS.com//DTD SQL Map 2.0//EN" "http://ibatis.apache.org/dtd/sql-map-2.dtd">
+
+<sqlMap namespace="CourseClassification">
+<typeAlias  alias="egovMap" type="egovframework.rte.psl.dataaccess.util.EgovMap"/>
+
+	<select id="courseClassificationDAO.selectCourseClassificationList" parameterClass="map" resultClass="egovMap">
+		select a.subjclass,
+		       a.upperclass,
+		       a.middleclass,
+		       a.lowerclass,
+		       b.upperclassname,
+		       c.middleclassname,
+		       a.classname,
+		       a.use_yn,
+		       (select count(0) from tz_subjatt where upperclass = a.upperclass and middleclass != '000') as upper_cnt,
+               (select count(0) from tz_subjatt where upperclass = a.upperclass and middleclass = a.middleclass and lowerclass != '000') as middle_cnt
+		  from tz_subjatt a,
+		       (
+		         select upperclass, classname as upperclassname
+		           from tz_subjatt
+		          where middleclass = '000' and lowerclass = '000'
+		       ) b,
+		       (
+		         select upperclass, middleclass, classname as middleclassname
+		           from tz_subjatt
+		          where middleclass != '000' and lowerclass = '000'
+		       ) c
+		 where a.upperclass = b.upperclass
+		   and a.upperclass = c.upperclass(+)
+		   and a.middleclass = c.middleclass(+)
+		  /*and a.use_yn = 'Y'*/
+		 order by a.upperclass, a.middleclass, a.lowerclass
+	</select>
+	
+	<update id="courseClassificationDAO.updateCourseClassification">
+		update tz_subjatt
+		   set classname = #p_classname#,
+		       luserid   = #userid#,
+		       ldate     = to_char(sysdatetime, 'yyyyMMddhh24miss')
+		 where subjclass = #p_upperclass# || #p_middleclass# || #p_lowerclass#
+	</update>
+	
+	<delete id="courseClassificationDAO.deleteCourseClassification">
+		delete tz_subjatt where subjclass = #p_upperclass# || #p_middleclass# || #p_lowerclass#
+	</delete>
+	
+	<select id="courseClassificationDAO.getNewClassCode" parameterClass="map" resultClass="String">
+		select decode(substr(classcode, 2, 2), '99', chr(ascii(substr(classcode, 1, 1)) +1 ) || '01', substr(classcode, 1, 1))
+		       ||
+		       lpad(to_number(substr(classcode, 2, 2)) +1, 2, '0') as classcode
+		  from (
+				<isEqual property="p_classtype" compareValue="upper">
+		  		 select nvl(decode(nvl(max(upperclass), #p_code#), '000', #p_code#, max(upperclass)), #p_code#) as classcode
+		  		   from tz_subjatt
+		  		  where substr(upperclass, 1, 1) != '0'
+		  		    and substr(upperclass, 1, 1)  = 'A'
+				</isEqual>
+				<isEqual property="p_classtype" compareValue="middle">
+		  		 select nvl(decode(nvl(max(middleclass), #p_code#), '000', #p_code#, max(middleclass)), #p_code#) as classcode
+		  		   from tz_subjatt
+		  		  where substr(upperclass, 1, 1) != '0'
+		  		    and substr(upperclass, 1, 1)  != 'A'
+		  		    and upperclass = #p_upperclass#
+				</isEqual>
+				<isEqual property="p_classtype" compareValue="lower">
+		  		 select nvl(decode(nvl(max(lowerclass), #p_code#), '000', #p_code#, max(lowerclass)), #p_code#) as classcode
+		  		   from tz_subjatt
+		  		  where substr(upperclass, 1, 1) != '0'
+		  		    and substr(upperclass, 1, 1)  != 'A'
+		  		    and upperclass = #p_upperclass#
+		  		    and middleclass = #p_middleclass#
+				</isEqual>
+		       )
+	</select>
+	
+	<select id="courseClassificationDAO.selectClassList" parameterClass="map" resultClass="egovMap">
+		select classname as code_name,
+		<isEqual property="gubun" compareValue="middle">upperclass as code</isEqual>
+		<isEqual property="gubun" compareValue="lower">middleclass as code</isEqual>
+		  from tz_subjatt
+		 where lowerclass = '000'
+		<isEqual property="gubun" compareValue="middle">
+		   and middleclass = '000'
+		</isEqual>
+		<isEqual property="gubun" compareValue="lower">
+		   and middleclass != '000'
+		   and upperclass = #p_upperclass#
+		</isEqual>
+	</select>
+	
+	<insert id="courseClassificationDAO.insertCourseClassification">
+		insert into tz_subjatt(
+			subjclass,
+			upperclass,
+			middleclass,
+			lowerclass,
+			classname,
+			luserid,
+			ldate
+		)
+		values(
+			#p_subjclass#,
+			#p_upperclass#,
+			#p_middleclass#,
+			#p_lowerclass#,
+			#p_classname#,
+			#userid#,
+			to_char(sysdatetime, 'yyyyMMddhh24miss')
+		)
+	</insert>
+
+</sqlMap>
+

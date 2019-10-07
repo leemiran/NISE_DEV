@@ -1,0 +1,186 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE sqlMap PUBLIC "-//iBATIS.com//DTD SQL Map 2.0//EN" "http://ibatis.apache.org/dtd/sql-map-2.dtd">
+
+<sqlMap namespace="StudySurvey">
+<typeAlias  alias="egovMap" type="egovframework.rte.psl.dataaccess.util.EgovMap"/>
+
+
+	<select id="studySurveyDAO.selectEducationSubjectList" parameterClass="map" resultClass="egovMap">
+		select x.*, get_codenm('0004', isonoff) as isonoffvalue,
+               case when to_char(sysdate, 'yyyyMMdd') between aftersulsdate and aftersuledate
+                    then 'Y'
+                    else 'N'
+                end as indata
+		  from (
+		  		 select a.subjnm, a.grcode, a.edustart, a.eduend, a.subj, a.[year], a.subjseq, #userid# as userid, NVL(b.tstep,0) AS tstep,
+		  		        c.sulpapernum, c.sulpapernm, c.progress, c.sulnums, c.sultype, '' as stdt, '' as endt,
+		  		        (select isonoff from tz_subj where subj = a.subj) as isonoff, aftersulsdate, aftersuledate,
+		  		        (select count(0) from tz_suleach where subj = a.subj and [year] = a.[year] and subjseq = a.subjseq and sulpapernum = a.sulpapernum and userid = #userid#) as eachcnt
+		  		   from tz_subjseq a, (select * from tz_student  where userid = #userid#) b, tz_sulpaper c
+		  		  where a.subj        = b.subj(+)
+		  		    and a.[year]        = b.[year](+)
+		  		    and a.subjseq     = b.subjseq(+)
+		  		    and a.sulpapernum = c.sulpapernum
+		  		   
+		  		    and c.subj        = 'ALL'
+		  		    and c.grcode      = 'ALL'
+	  		    <![CDATA[ --and a.isclosed   != 'Y']]>
+				<isEmpty property="studyPopup">
+				    and a.subj        = #p_subj#
+				    and a.[year]        = #p_year#
+				    and a.subjseq     = #p_subjseq#
+				</isEmpty>
+		       ) x
+		 order by x.subj, x.[year], x.subjseq
+	</select>
+	
+	<select id="studySurveyDAO.selectUserList" parameterClass="map" resultClass="egovMap">
+		select a.grcode, a.subj, a.subjseq, a.sulpapernum, a.sulpapernm, a.[year], a.totcnt, a.sulnums, a.sulmailing, a.sulstart, a.sulend, 'COMMON' as subjnm,
+		       (select count(0) from tz_suleach where grcode = a.grcode and subj = a.subj and sulpapernum = a.sulpapernum and userid = #userid#) as issul
+		  from tz_sulpaper a
+		 where a.grcode = #grcode#
+		   and a.subj   = 'COMMON'
+		   and to_char(sysdate, 'yyyyMMdd') between substr(a.sulstart, 1, 8) and substr(a.sulend, 1, 8)
+		 order by a.subj, a.sulpapernum
+	</select>
+	
+	<select id="studySurveyDAO.getIsSubjSul" parameterClass="map" resultClass="egovMap">
+		select decode(sum(cnt), 0, 'N', 'Y') as issubjsul
+		  from (
+		          select count(0) as cnt
+		            from tz_sulpaper a, tz_subjseq b
+		           where a.sulpapernum = b.sulpapernum
+		             and b.subj    = #p_subj#
+		             and b.[year]    = #p_year#
+		             and b.subjseq = #p_subjseq#
+		             and a.subj    = 'ALL'
+		           union all
+		          select 0 from DB_ROOT
+		       )
+	</select>
+	
+	<select id="studySurveyDAO.getPapernumSeq" parameterClass="map" resultClass="int">
+		select max(sulpapernum) as maxno
+		  from tz_sulpaper
+		 where subj   = #s_subj#
+		   and grcode = #s_grcode#
+	</select>
+	
+	<select id="studySurveyDAO.getSulNums" parameterClass="map" resultClass="String">
+		select sulnums
+		  from tz_sulpaper
+		 where sulpapernum = #p_sulpapernum#
+	</select>
+	
+	<select id="studySurveyDAO.selectPaperQuestionExampleList" parameterClass="map" resultClass="egovMap">
+		select a.subj, a.sulnum, a.selcount, a.selmax, a.distcode, 
+				--get_codenm('0054', a.distcode) as distcodenm,
+				(select  codenm
+					from  tz_code
+					where gubun = '0054'
+					      and code  = a.distcode
+				) as distcodenm,
+		        a.sultype, 
+		        --get_codenm('0011', a.sultype) as sultypenm,
+		        (select  codenm
+				   from  tz_code
+				  where gubun = '0011'
+				  and levels = '1'
+				     and  code  = a.sultype
+				) as sultypenm,   
+		        a.sultext, b.selnum, b.seltext, b.selpoint,
+		        (select count(0) from tz_sulsel where sulnum = a.sulnum) as selcount
+		  from tz_sul a, tz_sulsel b,
+		        (
+                    select SUBSTRING_INDEX(sul, '!_', 1) as sulnum,
+                           SUBSTRING_INDEX(sul, '!_', -1) as idx
+                      from (
+							<dynamic prepend=" select ">
+				                <iterate property="sulnums" conjunction=" from DB_ROOT union all select ">
+				                    #sulnums[]#  
+				                    as sul
+				                </iterate>
+					        </dynamic>
+					           from DB_ROOT
+                            )
+		        ) c
+		 where a.subj    = b.subj(+)
+		   and a.grcode  = b.grcode(+)
+		   and a.sulnum  = b.sulnum(+) 
+		   and a.subj    = #s_subj#
+		   and a.grcode  = #s_grcode#
+		   and a.sulnum  = c.sulnum
+		 order by a.subj, to_number(c.idx), b.selnum desc
+	</select>
+	
+	<insert id="studySurveyDAO.insertSulmunUserResult">
+		insert into tz_suleach(
+			subj, grcode, [year], subjseq, sulpapernum, userid, sulnums, answers, luserid, ldate,
+			distcode1, distcode2, distcode3, distcode4, distcode5, distcode6, distcode7, distcode8,
+			distcode1_avg, distcode2_avg, distcode3_avg, distcode4_avg, distcode5_avg, distcode6_avg, distcode7_avg, distcode8_avg,
+			distcode10
+		)
+		select #p_subj#,
+		       #grcode#,
+		       #p_year#,
+		       #p_subjseq#,
+		       #p_sulpapernum#,
+		       #userid#,
+		       #p_sulnum#,
+		       #p_answer#,
+		       #userid#,
+		       to_char(sysdatetime, 'yyyyMMddhh24miss'),
+		       sum(code1) as code1,
+		       sum(code2) as code2,
+		       sum(code3) as code3,
+		       sum(code4) as code4,
+		       sum(code5) as code5,
+		       sum(code6) as code6,
+		       sum(code7) as code7,
+		       sum(code8) as code8,
+		       round(decode(sum(code1), 0, 0, sum(code1) / sum(code1_cnt)), 2) as code1_avg,
+		       round(decode(sum(code2), 0, 0, sum(code2) / sum(code2_cnt)), 2) as code2_avg,
+		       round(decode(sum(code3), 0, 0, sum(code3) / sum(code3_cnt)), 2) as code3_avg,
+		       round(decode(sum(code4), 0, 0, sum(code4) / sum(code4_cnt)), 2) as code4_avg,
+		       round(decode(sum(code5), 0, 0, sum(code5) / sum(code5_cnt)), 2) as code5_avg,
+		       round(decode(sum(code6), 0, 0, sum(code6) / sum(code6_cnt)), 2) as code6_avg,
+		       round(decode(sum(code7), 0, 0, sum(code7) / sum(code7_cnt)), 2) as code7_avg,
+		       round(decode(sum(code8), 0, 0, sum(code8) / sum(code8_cnt)), 2) as code8_avg,
+		       ''
+		  from (
+		        select decode(distcode, 1, nvl(c.selpoint, 0), 0) as code1,
+		               decode(distcode, 2, nvl(c.selpoint, 0), 0) as code2,
+		               decode(distcode, 3, nvl(c.selpoint, 0), 0) as code3,
+		               decode(distcode, 4, nvl(c.selpoint, 0), 0) as code4,
+		               decode(distcode, 5, nvl(c.selpoint, 0), 0) as code5,
+		               decode(distcode, 6, nvl(c.selpoint, 0), 0) as code6,
+		               decode(distcode, 7, nvl(c.selpoint, 0), 0) as code7,
+		               decode(distcode, 8, nvl(c.selpoint, 0), 0) as code8,
+		               decode(distcode, 1, 1, 0) as code1_cnt,
+		               decode(distcode, 2, 1, 0) as code2_cnt,
+		               decode(distcode, 3, 1, 0) as code3_cnt,
+		               decode(distcode, 4, 1, 0) as code4_cnt,
+		               decode(distcode, 5, 1, 0) as code5_cnt,
+		               decode(distcode, 6, 1, 0) as code6_cnt,
+		               decode(distcode, 7, 1, 0) as code7_cnt,
+		               decode(distcode, 8, 1, 0) as code8_cnt
+		          from (
+		                    select to_number(SUBSTRING_INDEX(sul, '!_', 1)) as sulnum,
+		                           SUBSTRING_INDEX(sul, '!_', -1) as answer
+		                      from (
+									<dynamic prepend=" select ">
+						                <iterate property="sulnums" conjunction=" from DB_ROOT union all select ">
+						                    #sulnums[]#  
+						                    as sul
+						                </iterate>
+							        </dynamic>
+							           from DB_ROOT
+		                            )
+		               ) a,
+		               tz_sul b, tz_sulsel c
+		         where a.sulnum = b.sulnum
+		           and a.sulnum  = c.sulnum(+)
+		           and to_char(a.answer)  = c.selnum(+)
+		       )
+	</insert>
+</sqlMap>

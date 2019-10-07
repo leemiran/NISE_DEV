@@ -1,0 +1,473 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE sqlMap PUBLIC "-//iBATIS.com//DTD SQL Map 2.0//EN" "http://ibatis.apache.org/dtd/sql-map-2.dtd">
+
+<sqlMap namespace="Approval">
+<typeAlias  alias="egovMap" type="egovframework.rte.psl.dataaccess.util.EgovMap"/>
+
+	
+	
+<!--	수강생관리 목록 -->
+	<select id="approvalDAO.selectStudentManagerList" parameterClass="map" resultClass="egovMap">
+	<![CDATA[
+	 select 	/*approvalDAO.selectStudentManagerList*/                     	                                            
+		       c.course																 
+		     , c.cyear																	
+		     , c.courseseq																
+		     , c.coursenm                                                              
+		     , c.subj                                                                  		    		
+		     , c.[year]                                                                  
+		     , c.subjnm                                                                
+		     , c.subjseq                                                               
+		     , c.subjseqgr                                                             
+		     , c.edustart                                                              
+		     , c.eduend                                                                
+		     , c.isclosed                                                              
+		     , c.isgoyong                                                              
+		     , c.biyong                                                                --수강료
+		     , c.goyongpricemajor                                                      --대기업
+		     , c.goyongpriceminor                                                      --우선지원
+		     , c.goyongpricestand                                                      
+		     -- , get_codenm('0004',c.isonoff) isonoff
+		     , (select codenm from  tz_code where gubun = '0004' and  code  = c.isonoff) as isonoff                             
+		     , b.name                                                                  
+		     , b.position_nm                                                           
+		     , b.lvl_nm                                                                
+		     , b.userid                                                                
+		     , b.email                                                                    
+		     , b.hometel                                                                
+		     , b.handphone                                                                
+		     -- , get_compnm(b.comp) as companynm    
+		     , (select compnm from tz_compclass where comp=b.comp) as companynm  
+		     , a.appdate 
+		     , decode(a.chkfinal,'Y',a.ldate,'') as approvaldate                                                              
+		     --, get_cpnm((select cp from tz_subj where subj=c.scsubj)) cpnm             
+		     , (select cpnm from tz_cpinfo where cpseq=(select cp from tz_subj where subj=c.scsubj)) cpnm
+		     , a.chkfirst                                                              
+		     , a.chkfinal                                                              
+		     , nvl(d.isgraduated,'M') as grdvalue
+		     , Decode(nvl(d.isgraduated,'M'), 'Y', '수료','N','미수료','미처리') grdvaluenm                     
+		     , d.notgraducd                                                            
+		     , decode(d.isgraduated, null, (case when to_char(sysdatetime,'yyyymmddhhmm') >= c.edustart then 'Y' else 'N' end), 'Y') as rejectpossible 
+		     , case                                                                     
+		            when c.edustart <= to_char(sysdatetime,'yyyymmddhh') and c.eduend  > to_char(sysdatetime,'yyyymmddhh') then 
+		                 '4' --교육기간                                                
+		            when c.eduend <= to_char(sysdatetime,'yyyymmddhh') then                 
+		                 '5' --교육종료후                                                
+		            when to_char(sysdatetime,'yyyymmddhh') < c.propstart then                 
+		                 '1' --수강신청전                                                
+		            when c.propstart <= to_char(sysdatetime,'yyyymmddhh') and c.propend  > to_char(sysdatetime,'yyyymmddhh') then 
+		                 '2' --수강신청기간                                            
+		            when c.propend <= to_char(sysdatetime,'yyyymmddhh') and c.edustart  > to_char(sysdatetime,'yyyymmddhh') then 
+		                 '3' --교육대기기간                                            
+		            when c.propstart is null and c.propend is null then                 
+		                 '0'                                                             
+		       end as eduterm                                                            
+		
+		-- 추가요청 교재 배송을 위한 정보
+		      , HRDC 
+		      , ZIP_CD 
+		      , ADDRESS 
+		      , ZIP_CD1 
+		      , ADDRESS1 
+		      , USER_PATH 
+		      , ISMAILLING 
+		      , ISSMS 
+		--        , ( select examnum from tz_student ts where ts.userid=b.userid and ts.subj = a.subj) examnum 
+		      , ts.examnum 
+		      , decode(a.order_id, '', '0', a.order_id) as order_id
+		      , Decode(a.chkfinal , 'B', '미처리', 'Y', '승인', 'N', '반려') as chkfinalnm
+	         , (
+                 select decode(trim(type), 'OB','교육청일괄납부','PB','무통장','RE','재수강','SC0010','신용카드','SC0030','계좌이체','SC0040','가상계좌', 'FE', '무료',type) 
+                 from pa_payment pa where pa.order_id = a.order_id and pa.useyn='Y' and pa.userid=a.userid
+                 ) as pay 
+             
+               , (select type from pa_payment pa where pa.order_id = a.order_id and pa.useyn='Y' and pa.userid=a.userid) as paycd
+               ,b.emp_gubun 
+          	   , code.codenm area_codenm
+		from   tz_propose   a                                                          
+		     , tz_member    b                                                          
+		     , vz_scsubjseq c                                                          
+		     , tz_stold d                                                              
+		     , tz_student ts
+	         , tz_code code
+		where  a.userid  = b.userid                                                    
+		and    a.subj    = c.subj                                                      
+		and    a.[year]    = c.[year]                                                      
+		and    a.subjseq = c.subjseq                                                   
+		and    a.subj    = d.subj(+)                                                   
+		and    a.[year]    = d.[year](+)                                                   
+		and    a.subjseq = d.subjseq(+)                                                
+		and    a.userid  = d.userid(+)                                                 
+		and    a.userid =ts.userid(+)                                                 
+		and    a.subj= ts.subj(+)                                                  
+		and    a.subjseq=ts.subjseq(+)                                                   
+		and    a.[year]=ts.[year](+) 
+		
+		]]>
+		and    c.grcode = 'N000001'
+		and    b.comp ='1001'
+		and    c.grseq        =  #ses_search_grseq#
+	    and	code.gubun(+) = '0118'
+	    and	code.code(+) = a.area_code
+	 
+	 <isNotEmpty property="ses_search_gyear">
+		and    c.gyear =  #ses_search_gyear#
+	 </isNotEmpty>
+	 
+	 
+	 <isNotEmpty property="ses_search_att">
+		and    c.oriupperclass =  #ses_search_att#
+	 </isNotEmpty>
+	 
+	 
+	 
+	 <isNotEmpty property="ses_search_subj">
+	  and    c.scsubj         = #ses_search_subj#
+	 </isNotEmpty>
+	  
+	 <isNotEmpty property="ses_search_subjseq">
+	  and    c.scsubjseq      = #ses_search_subjseq#
+	 </isNotEmpty>
+	 
+	 <isNotEmpty property="ses_search_year">
+	  and    c.[year]      = #ses_search_year#
+	 </isNotEmpty>
+	  
+	   
+	  
+	 <isNotEmpty property="search_appstatus">
+	   and    a.chkfinal = #search_appstatus#
+	 </isNotEmpty>
+	  
+	 <isNotEmpty property="search_payType">
+	 	<isEqual property="search_payType" compareValue="etc">
+			and (select trim(type) from pa_payment pa  where pa.order_id = a.order_id and pa.useyn='Y')  not in ('PB','RE','OB','SC0010','SC0030','SC0040')	 	 
+	 	</isEqual>
+	 	<isNotEqual property="search_payType" compareValue="etc">
+	 		and (select trim(type) from pa_payment pa  where pa.order_id = a.order_id and pa.useyn='Y')  = #search_payType#
+	 	</isNotEqual>
+	 </isNotEmpty>
+	 
+	 <isNotEmpty property="search_text">
+	 	<isEqual property="search_group" compareValue="birth_date">
+	 		and b.birth_date Like UPPER('%' || REPLACE(#search_text#, '-', '') || '%')
+	 	</isEqual>
+	 	<isNotEqual property="search_group" compareValue="birth_date">
+	 		and UPPER(REPLACE(b.$search_group$, '-', '')) Like Upper('%' || REPLACE(#search_text#, '-', '') || '%')
+	 	</isNotEqual>
+	 </isNotEmpty>
+	 <isNotEmpty property="search_area">
+ 	 	and a.area_code = #search_area#
+ 	 </isNotEmpty>
+	 
+	 
+	 	<isNotEmpty property="search_orderColumn">
+		 	order by C.course, C.cyear, C.courseseq, $search_orderColumn$ $search_orderType$, c.scsubj, c.scsubjseq, B.userid 
+ 		</isNotEmpty>
+       	<isEmpty property="search_orderColumn">
+       		order by C.course, C.cyear, C.courseseq, C.subjnm,C.[year],C.subjseq,B.userid
+      	</isEmpty>
+	</select>
+	
+	<!-- 
+	ID   : approvalDAO.selectSubjSeqList
+	설명 : 과정의 기수 리스트 조회
+	수정일			수정자				수정내용
+	==========================
+	유상도			2015.01.17		최초생성
+	-->
+	<select id="approvalDAO.selectSubjSeqList" parameterClass="map" resultClass="egovMap">
+	<![CDATA[
+		select [year],subj, subjseq /*approvalDAO.selectSubjSeqList*/
+		from vz_scsubjseq
+		where 1=1
+		and    grcode = 'N000001'
+		and 	 isuse   = 'Y'
+		and    subj     = #ses_search_subj# 
+		and    [year]     = #ses_search_year#
+		/*and 	grseq 	= ses_search_grseq*/
+		]]>
+	</select>
+	
+	
+	<select id="approvalDAO.selectStudentManagerIsClosed" parameterClass="map" resultClass="egovMap">
+		select a.isonoff                                                          
+		,a.subjseqgr                                                        
+		,a.isclosed                                                         
+		,decode(a.studentlimit, 0, 1000000, a.studentlimit) as studentlimit 
+		,(
+			select count(userid) from   tz_propose                                                 
+			where  a.subj    = subj                                           
+			and    a.subjseq = subjseq                                        
+			and    a.[year]    = [year]
+		) as propcnt,
+		<![CDATA[
+		Case 
+		When edustart <= to_char(sysdatetime, 'YYYYMMDDHH') and eduend > to_char(sysdatetime, 'YYYYMMDDHH') Then '4'    --교육기간
+		When eduend < to_char(sysdatetime, 'YYYYMMDDHH') Then '5'  --교육종료후
+		When propstart > to_char(sysdatetime, 'YYYYMMDDHH') Then '1'    --수강신청전
+		When propstart <= to_char(sysdatetime, 'YYYYMMDDHH') and propend > to_char(sysdatetime, 'YYYYMMDDHH') Then '2'  --수강신청기간
+		When propend <= to_char(sysdatetime, 'YYYYMMDDHH') and edustart > to_char(sysdatetime, 'YYYYMMDDHH') Then '3'   --교육대기기간
+		Else '0' end eduterm,
+		Case When 
+		decode(a.studentlimit,0, 1000000,  a.studentlimit) > (select count(userid) from tz_propose where subj = a.subj and subjseq = a.subjseq and [year] = a.[year])
+		Then 'Y'
+		Else 'N'
+		End isaddpossible		--수강신청가능여부
+		]]>		    
+		from   vz_scsubjseq a                                                     
+		where  a.subj    = #ses_search_subj#
+		and    a.[year]    = #ses_search_year#
+		and    a.subjseq = #ses_search_subjseq#
+	order  by subjseq
+	</select>
+	
+	<select id="approvalDAO.selectAcceptTargetMemberList" parameterClass="map" resultClass="egovMap">
+		select                                                                         	
+			a.userid,                                                                  	
+			a.birth_date,                                               		  	
+			a.name,                                                                    	
+			a.email,                                                  	  	
+			a.hometel,                                                    		
+			a.handphone,                                               	  	
+			a.comp,                                                   	  	
+			a.jikup,                                                   	  	
+			(
+				select 'Y' from tz_edutarget                                                          	
+				where  userid   = a.userid                                               	
+				and mastercd = #userid#                    	
+			)                                          istarget,                       	
+			(
+				select   'Y'   from                                                                      	
+				tz_propose                                                            	
+				where userid  = a.userid                                                	
+				and subj    = #p_subj#
+				and subjseq = #p_subjseq#
+				and [year]    = #p_year#
+			)                                       ispropose
+			
+			,
+				(
+				select count(*)
+				from   tz_stold
+				where  subj        = #p_subj#
+				and    userid      = a.userid
+				and    isgraduated = 'Y'
+				)
+				+
+				(
+				 select count(*)
+				 from   tz_student aa 
+				      , (select subj 
+				              , [year] 
+				              , subjseq 
+				              , userid 
+				         from   tz_stold 
+				         where  isgraduated = 'N' 
+				         and    subj   =   #p_subj#
+				         ) bb 
+				 where  aa.subj    =   #p_subj#
+				 and    aa.userid  =   a.userid
+				 and    aa.subj    = bb.subj(+) 
+				 and    aa.[year]    = bb.[year](+) 
+				 and    aa.subjseq = bb.subjseq(+) 
+				 and    aa.userid  = bb.userid(+) 
+				 and    bb.userid is null 
+				)
+				+ 
+				( 
+				select count(*)
+				from tz_propose aa 
+				where exists (                 
+					select 'X'                    
+					from vz_scsubjseq  bb 
+					where aa.subj = bb.subj         
+					and aa.[year] = bb.[year]           
+					and aa.subjseq = bb.subjseq     
+					and course = #p_subj#
+					and cyear =  #p_year#
+					and courseseq = #p_subjseq#
+					and userid =  a.userid
+				)                              
+				and aa.chkfinal != 'N'
+				and aa.subj = #p_subj#   
+				and aa.[year] =#p_year#     
+				and aa.subjseq =#p_subjseq#
+				and aa.userid = a.userid
+				) as propcnt                       	
+			from                                                                           	
+			(
+				select                                                                    	
+				userid, birth_date, name,  email
+				,  hometel, handphone, comp,  post_nm as jikup                                                      	
+				from tz_member                                                             	
+				where  1 = 1                                                             	
+			
+			<isNotEmpty property="search_word">
+				and $search_group$ like '%' || #search_word# || '%'
+			</isNotEmpty>
+			<isEmpty property="search_word">
+				and userid = ''
+			</isEmpty>
+			
+			
+			) a                                                                        	
+			where  1 = 1  and a.comp      in (
+				select     comp                                               	
+				from   tz_grcomp                                           	
+				where    grcode = 'N000001'  
+			)
+	</select>
+	
+	
+	<insert id="approvalDAO.insertPropose">
+		insert into tz_propose ( 
+		subj,    [year],          subjseq,      userid,     
+		comp,    jik,           appdate,      isdinsert,  
+		isb2c,   ischkfirst,    chkfirst,     chkfinal,   
+		proptxt, billstat, ordcode,      cancelkind, 
+		luserid, ldate, area_code ) 
+		values ( 
+		#v_scsubj#, 
+		#v_scyear#, 
+		#v_scsubjseq#, 
+		#v_userid#, 
+		(select comp from tz_member where userid = #v_userid#), 
+		(select lvl_nm from tz_member where userid = #v_userid#), 
+		to_char(sysdatetime,'YYYYMMDDHH24MISS'), 
+		#v_isdinsert# , 
+		'N', 
+		'N', 
+		#v_chkfirst#, 
+		#v_chkfinal#, 
+		'', 
+		'', 
+		'', 
+		'', 
+		#v_luserid#, 
+		to_char(sysdatetime,'YYYYMMDDHH24MISS')
+		, upper(#areaCode#) 
+		)
+	</insert>
+	
+	<select id="approvalDAO.selectProposeCount" parameterClass="map"  remapResults="true" resultClass="int">
+		select count(*) cnt
+		from   tz_student
+		WHERE    userid		= #v_userid#     
+		and      subj  		= #v_scsubj#    
+		and      [year]  		= #v_scyear#     
+		and      subjseq    = #v_scsubjseq#
+	</select>
+	
+	<update id="approvalDAO.updatePropose">
+		update tz_propose set 
+		cancelkind = ''
+		, isdinsert = #v_isdinsert#
+		, chkfirst = 'Y'
+		, chkfinal = 'Y'
+		where subj = #v_scsubj#
+		and [year] = #v_scyear#
+		and subjseq = #v_scsubjseq#
+		and userid = #v_userid#
+	</update>
+	
+	
+	<insert id="approvalDAO.insertPaPayment">
+		<selectKey keyProperty="p_order_id" resultClass="String">
+		SELECT TO_CHAR(SYSDATETIME,'YYYYMMDDHH24MISS')||RANDOM() AS ORDER_ID FROM DB_ROOT
+		</selectKey>
+		
+		insert into pa_payment(order_id,userid,leccode,lecnumb,type,auth_date,[year],enterance_dt, amount)
+		values(
+		#p_order_id#,
+		#v_userid#,
+		#v_scsubj#,
+		#v_scsubjseq#,
+		--'PB',
+		'FE',
+		to_char(sysdatetime,'yyyymmddhh24miss'),
+		to_char(sysdate,'yyyy'),
+		'',
+		''
+		)
+	</insert>
+	
+	
+	<update id="approvalDAO.updateProposeOrdering">
+		update tz_propose set 
+		order_id = #p_order_id#, 
+		gubun = 'FE'
+		where subj = #v_scsubj#
+		and [year] = #v_scyear#
+		and subjseq = #v_scsubjseq#
+		and userid = #v_userid#
+	</update>
+	
+	
+	<update id="approvalDAO.updateProposePaytype">
+		update tz_propose set 
+		gubun = #p_type#
+		,order_id = #p_neworderid#
+		where userid = #p_userid#
+		and [year] = #p_year#
+		and subj = #p_subj#
+		and subjseq = #p_subjseq#
+
+	</update>
+	
+	
+	<update id="approvalDAO.updatePaymentPaytype">
+		update pa_payment set 
+		type = #p_type#
+		,order_id = #p_neworderid#
+		,card_period = #p_card_period#
+		,card_no = #p_card_no#
+		,card_nm = #p_card_nm#
+		,auth_no = #p_auth_no#
+		,auth_date = replace(replace(replace(replace(#p_auth_date#, ':'), ','),'-'),' ')
+		where order_id = #p_orderid#
+		and userid = #p_userid#
+		and [year] = #p_year#
+		and leccode = #p_subj#
+
+	</update>
+	
+	<!-- 
+	ID   : approvalDAO.updateMemberSubjSeqInfo
+	설명 : 수강생 기수 정보 업데이트
+	수정일			수정자				수정내용
+	==========================
+	유상도			2015.01.17		최초생성
+	-->
+	<update id="approvalDAO.updateMemberSubjSeqInfo">
+		update tz_propose set 
+		subjseq = #ajp_newsubjseq#
+		where subj 	= #ajp_subj#
+		and [year]		= #ajp_year#
+		and subjseq	= #ajp_oldsubjseq#
+		and userid 	= #ajp_userid#
+
+	</update>
+	
+	<!-- 
+	ID   : approvalDAO.selectMemberSubjSeqInfo
+	설명 : 새로운 기수에 수강생 등록여부 확인
+	수정일			수정자				수정내용
+	==========================
+	유상도			2015.01.17		최초생성
+	-->
+	<select id="approvalDAO.selectMemberSubjSeqInfo" parameterClass="map"  remapResults="true" resultClass="int">
+		select count(*) cnt
+		from   tz_propose
+		where subj 	= #ajp_subj#
+		and [year]		= #ajp_year#
+		and subjseq	= #ajp_newsubjseq#
+		and userid 	= #ajp_userids#
+	</select>
+	
+</sqlMap>
+
+ 
+
+
+

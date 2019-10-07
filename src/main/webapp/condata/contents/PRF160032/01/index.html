@@ -1,0 +1,27 @@
+<html>
+<head>
+<title>:: 장애학생 안전교육 역량강화 과정 ::</title>
+<meta http-equiv="Content-Type" content="text/html; charset=euc-kr">
+<script language="JavaScript">
+function init(){
+	url=window.location.href;
+	sURL=url.split("?")[0];
+	sURL=sURL.split("/");
+	
+	tName=sURL[sURL.length-1];
+	tModule=sURL[sURL.length-2];
+	
+	sp=tModule+"_01.html";
+	mainFrame.location.href=sp;
+}
+</script>
+</head>
+<frameset rows="710,60"  cols="1024" frameborder="NO"  framespacing="0" onload="init();">
+	<frame src="" name="mainFrame" scrolling="NO"><!-- 최초 페이지 넣어줌 -->
+	<frame src="../image_menu/studyMenu.html"  name="bottomFrame" scrolling="NO" noresize>
+</frameset>
+<noframes><body leftmargin="0" topmargin="0" marginwidth="0" marginheight="0" style="overflow-x:hidden;overflow-y:hidden">
+
+
+</body></noframes>
+</html>

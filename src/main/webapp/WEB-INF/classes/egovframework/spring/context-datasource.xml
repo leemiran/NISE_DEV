@@ -1,0 +1,99 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans-2.5.xsd">
+
+	<bean id="propertyConfigurer"
+        class="org.springframework.beans.factory.config.PropertyPlaceholderConfigurer">
+        <property name="locations">
+            <list>
+            <value>classpath:/egovframework/egovProps/globals.properties</value>
+			<!--<value>file:D:/eduup_egovframework/workspace/knise/src/main/resources/egovframework/egovProps/globals.properties</value>-->	
+                 
+            </list>
+        </property>
+    </bean>
+    
+	<!-- DataSource -->
+	<alias name="dataSource-${Globals.DbType}" alias="dataSource" />
+	<alias name="dataSource-mysql" alias="dataSource2" />
+	
+	<!-- Oracle 사용 -->
+	<!-- <bean id="dataSource-oracle" class="org.apache.commons.dbcp.BasicDataSource" destroy-method="close">
+		<property name="driverClassName" value="oracle.jdbc.driver.OracleDriver"/>
+	  	<property name="url" value="jdbc:oracle:thin:@203.236.236.27:1521:orcl" />
+	  	<property name="username" value="NEWKNISE"/>
+	  	<property name="password" value="NEWKNISE"/>
+	</bean> -->
+	
+	<!--Tibero 사용-->	
+	<!--bean id="dataSource-oracle" class="org.apache.commons.dbcp.BasicDataSource" destroy-method="close">
+		<property name="driverClassName" value="com.tmax.tibero.jdbc.TbDriver"/>
+		<property name="url" value="jdbc:tibero:thin:@203.236.236.27:8629:tibero" />
+		<property name="username" value="newknise"/>
+		<property name="password" value="newknise"/>
+	</bean  -->	
+	
+	<!--Cubrid 사용-->	
+	<bean id="dataSource-oracle" class="org.apache.commons.dbcp.BasicDataSource" destroy-method="close">
+		<property name="driverClassName" value="cubrid.jdbc.driver.CUBRIDDriver"/>
+		<!-- <property name="url" value="jdbc:cubrid:203.236.236.27:30000:newknise:::" /> -->
+		<property name="url" value="jdbc:cubrid:10.175.72.49:30000:newknise:::" />
+		<!-- <property name="username" value="newknise"/>
+		<property name="password" value="newknise"/> -->
+		<property name="username" value="nise"/>
+		<property name="password" value="nise"/>
+	</bean>	
+	
+
+<!--	<bean id="dataSource-oracle" class="org.apache.commons.dbcp.BasicDataSource" destroy-method="close">-->
+<!--		<property name="driverClassName" value="oracle.jdbc.driver.OracleDriver"/>-->
+<!--	  	<property name="url" value="jdbc:oracle:thin:@114.141.28.247:1521:orcl" />-->
+<!--	  	<property name="username" value="NEWKNISE"/>-->
+<!--	  	<property name="password" value="NEWKNISE"/>-->
+<!--	</bean>-->
+	
+	
+	
+	
+	
+	
+
+	<!-- MySQL -->	
+	<bean id="dataSource-mysql" class="org.apache.commons.dbcp.BasicDataSource" destroy-method="close">
+		<property name="driverClassName" value="net.sf.log4jdbc.DriverSpy"/>
+		<property name="url" value="jdbc:mysql://10.175.134.34/lgsms" />
+		<property name="username" value="lgsms"/>
+		<property name="password" value="lgsms"/>
+	</bean>
+	
+	
+	<!-- Altibase -->
+	<!--
+	<bean id="dataSource-altibase" class="org.apache.commons.dbcp.BasicDataSource" destroy-method="close">
+		<property name="driverClassName" value="Altibase.jdbc.driver.AltibaseDriver"/>
+		<property name="url" value="jdbc:Altibase://192.168.200.22:1721/egovfrm?encoding=UTF-8" />
+		<property name="username" value="com"/>
+		<property name="password" value="com01"/>
+		<property name="maxActive" value="10"/>
+	</bean>
+	-->
+	
+	<!-- Tibero -->
+	<!-- 
+	<bean id="dataSource-tibero" class="org.apache.commons.dbcp.BasicDataSource" destroy-method="close">
+		<property name="driverClassName" value="oracle.jdbc.driver.OracleDriver"/>
+	  	<property name="url" value="jdbc:oracle:thin:@114.141.28.247:1521:orcl" />
+	  	<property name="username" value="eduup"/>
+	  	<property name="password" value="eduup"/>
+	</bean>
+	--> 
+	 <!-- TEST jndi 
+
+	 <bean id="dataSource-tibero" class="org.springframework.jndi.JndiObjectFactoryBean">
+	 	<property name="jndiName" value="java:comp/env/jdbc/EduUp" />
+     </bean>
+	 -->
+ 
+
+</beans>

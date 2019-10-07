@@ -1,0 +1,53 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE sqlMap PUBLIC "-//iBATIS.com//DTD SQL Map 2.0//EN" "http://ibatis.apache.org/dtd/sql-map-2.dtd">
+
+<sqlMap namespace="LoginLog">
+<typeAlias  alias="egovMap" type="egovframework.rte.psl.dataaccess.util.EgovMap"/>
+
+	<!-- 접속정보 확인 -->
+	<select id="loginLogDAO.selectLoginCount" parameterClass="map" remapResults="true" resultClass="int">
+		select count(0)
+		  from tz_homecount
+		 where gubun      = #gubun#
+		   and date_year  = #year#
+		   and date_month = #month#
+		   and date_day   = #day#
+		   and date_time  = #time#
+		   and date_week  = #week#
+	</select>
+	
+	<!-- 접속정보 등록 -->
+	<insert id="loginLogDAO.insertLogCount">
+		insert into tz_homecount(
+			gubun,
+			date_year,
+			date_month,
+			date_day,
+			date_time,
+			date_week,
+			cnt
+		)
+		values(
+			#gubun#,
+			#year#,
+			#month#,
+			#day#,
+			#time#,
+			#week#,
+			1
+		)
+	</insert>
+	
+	<!-- 접속정보 카운드 업데이트 -->
+	<update id="loginLogDAO.updateLogCount">
+		update tz_homecount
+		   set cnt = cnt + 1
+		 where gubun      = #gubun#
+		   and date_year  = #year#
+		   and date_month = #month#
+		   and date_day   = #day#
+		   and date_time  = #time#
+		   and date_week  = #week#
+	</update>
+</sqlMap>
+

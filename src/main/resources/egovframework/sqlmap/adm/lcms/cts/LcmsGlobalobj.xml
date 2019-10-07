@@ -1,0 +1,132 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE sqlMap PUBLIC "-//iBATIS.com//DTD SQL Map 2.0//EN" "http://ibatis.apache.org/dtd/sql-map-2.dtd">
+
+<sqlMap namespace="LcmsGlobalobj">
+
+
+<typeAlias  alias="egovMap" type="egovframework.rte.psl.dataaccess.util.EgovMap"/>
+
+    <select id="lcmsGlobalobjDAO.selectLcmsGlobalobjPageList" parameterClass="map" resultClass="egovMap">
+        SELECT * 
+        FROM
+               (
+                SELECT TEMP.*, 
+                <isNotEmpty property="rowsPerPage">
+                       CEIL(ROWNUM / #rowsPerPage#) AS PAGE 
+                </isNotEmpty>
+                <isEmpty property="rowsPerPage">
+                       CEIL(ROWNUM / 10) AS PAGE 
+                </isEmpty>
+                FROM
+                      (
+                       SELECT 
+	        	              OBJID,
+	        	              USER_ID,
+	        	              SCOPEID,
+	        	              SATISFIED,
+	        	               MEASURE
+        		       FROM   TB_LCMS_GLOBALOBJ
+        		       <!--  APPEND WHERE CONDITION START  -->
+
+        		       <!--  APPEND WHERE CONDITION END    -->
+        		       <isNotEmpty property="orderBy">
+        			       $orderBy$
+        		       </isNotEmpty>
+        	          ) TEMP 
+               )
+        <isNotEmpty property="page">
+        WHERE PAGE = #page#
+        </isNotEmpty>
+        <isEmpty property="page">
+        WHERE PAGE = 1
+        </isEmpty>
+    </select>
+
+    <select id="lcmsGlobalobjDAO.selectLcmsGlobalobjList" parameterClass="map" resultClass="egovMap">
+        SELECT OBJID,
+               USER_ID,
+               SCOPEID,
+               SATISFIED,
+               MEASURE
+        FROM   TB_LCMS_GLOBALOBJ
+    </select>
+
+    <select id="lcmsGlobalobjDAO.selectLcmsGlobalobjPageListTotCnt" parameterClass="map" resultClass="int">
+        SELECT COUNT(ROWNUM) AS [COUNT]
+        FROM   TB_LCMS_GLOBALOBJ
+    </select>
+
+    <select id="lcmsGlobalobjDAO.selectLcmsGlobalobj" parameterClass="map" resultClass="egovMap">
+        SELECT OBJID,
+               USER_ID,
+               SCOPEID,
+               SATISFIED,
+               MEASURE
+        FROM   TB_LCMS_GLOBALOBJ
+        WHERE  OBJID = #objid#
+        AND    USER_ID = #userId#
+    </select>
+
+    <insert id="lcmsGlobalobjDAO.insertLcmsGlobalobj">
+        <selectKey resultClass="long" keyProperty="userId">
+            SELECT NVL(MAX(USER_ID)+1, 1)
+            FROM   TB_LCMS_GLOBALOBJ
+            WHERE  OBJID = #objid#
+        </selectKey>
+        INSERT INTO TB_LCMS_GLOBALOBJ
+        (
+            OBJID,
+            USER_ID,
+            SCOPEID,
+            SATISFIED,
+            MEASURE
+        )
+        VALUES
+        (
+            #objid#,
+            #userId#,
+            #scopeid#,
+            #satisfied#,
+            #measure#
+        )
+    </insert>
+
+    <update id="lcmsGlobalobjDAO.updateLcmsGlobalobj">
+        UPDATE TB_LCMS_GLOBALOBJ
+        SET    SCOPEID = #scopeid#,
+               SATISFIED = #satisfied#,
+               MEASURE = #measure#
+        WHERE  OBJID = #objid#
+        AND    USER_ID = #userId#
+    </update>
+
+    <delete id="lcmsGlobalobjDAO.deleteLcmsGlobalobj">
+        DELETE FROM TB_LCMS_GLOBALOBJ
+        WHERE  OBJID = #objid#
+        AND    USER_ID = #userId#
+    </delete>
+
+    <delete id="lcmsGlobalobjDAO.deleteLcmsGlobalobjAll">
+        DELETE FROM TB_LCMS_GLOBALOBJ
+        WHERE  OBJID = #objid#
+        <dynamic prepend="WHERE USER_ID IN ">
+            <isNotEmpty property="userId">
+                <iterate property="userId" open="(" close=")" conjunction=",">
+                    #userId[]#
+                </iterate>
+            </isNotEmpty>
+            <isEmpty property="userId">
+                ('')
+            </isEmpty>
+        </dynamic>
+    </delete>
+
+    <select id="lcmsGlobalobjDAO.existLcmsGlobalobj" resultClass="long">
+        SELECT COUNT(ROWNUM) 
+        FROM   TB_LCMS_GLOBALOBJ
+        WHERE  OBJID = #objid#
+        AND    USER_ID = #userId#
+    </select>
+
+</sqlMap>
+

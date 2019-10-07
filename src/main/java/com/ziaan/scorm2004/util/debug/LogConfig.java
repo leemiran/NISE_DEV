@@ -1,0 +1,591 @@
+/*******************************************************************************
+**
+** Advanced Distributed Learning Co-Laboratory (ADL Co-Lab) grants you 
+** ("Licensee") a non-exclusive, royalty free, license to use, modify and 
+** redistribute this software in source and binary code form, provided that 
+** i) this copyright notice and license appear on all copies of the software; 
+** and ii) Licensee does not utilize the software in a manner which is 
+** disparaging to ADL Co-Lab.
+**
+** This software is provided "AS IS," without a warranty of any kind.  ALL 
+** EXPRESS OR IMPLIED CONDITIONS, REPRESENTATIONS AND WARRANTIES, INCLUDING 
+** ANY IMPLIED WARRANTY OF MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE 
+** OR NON-INFRINGEMENT, ARE HEREBY EXCLUDED.  ADL Co-Lab AND ITS LICENSORS 
+** SHALL NOT BE LIABLE FOR ANY DAMAGES SUFFERED BY LICENSEE AS A RESULT OF 
+** USING, MODIFYING OR DISTRIBUTING THE SOFTWARE OR ITS DERIVATIVES.  IN NO 
+** EVENT WILL ADL Co-Lab OR ITS LICENSORS BE LIABLE FOR ANY LOST REVENUE, 
+** PROFIT OR DATA, OR FOR DIRECT, INDIRECT, SPECIAL, CONSEQUENTIAL, 
+** INCIDENTAL OR PUNITIVE DAMAGES, HOWEVER CAUSED AND REGARDLESS OF THE 
+** THEORY OF LIABILITY, ARISING OUT OF THE USE OF OR INABILITY TO USE 
+** SOFTWARE, EVEN IF ADL Co-Lab HAS BEEN ADVISED OF THE POSSIBILITY OF SUCH 
+** DAMAGES.
+**
+*******************************************************************************/
+package com.ziaan.scorm2004.util.debug;
+
+// native java imports
+import java.util.*;
+import java.io.*;
+import java.util.logging.*;
+import java.text.MessageFormat;
+
+// ADL imports
+import com.ziaan.library.ConfigSet;
+import com.ziaan.library.Log;
+import com.ziaan.scorm2004.util.debug.ADLSimpleFormatter;
+import com.ziaan.scorm2004.util.EnvironmentVariable;
+
+/**
+ * This class sets up the configuration of how logging is handled based on the
+ * contents of the configuration file provided with the software.  This config
+ * file is modifiable to change the handling of logging without the need to
+ * re-build the software.
+ *
+ * <strong>Filename: </strong><br>
+ * DOMParseHandler.java<br><br>
+ *
+ * <strong>Description:</strong><br>
+ * A <code>DOMparseHandler</code> is used to parse and validate XML instances.
+ * <br><br>
+ *
+ *
+ * <strong>Design Issues:</strong><br>
+ * None<br>
+ * <br>
+ *
+ * <strong>Implementation Issues:</strong><br>
+ * The configure() method must be called to instantiate the logger for the
+ * log management/handling properties to be read from the properties file
+ * and initialized.<br><br>
+ *
+ * <strong>Known Problems:</strong><br>
+ * None<br><br>
+ *
+ * <strong>Side Effects:</strong><br>
+ * None<br><br>
+ *
+ * <strong>References:</strong><br>
+ * None<br><br>
+ *
+ * @author ADL Technical Team
+ */
+public class LogConfig
+{
+   /**
+    * This class has the function configure() which sets up the configuration
+    * for outputting the debug logging messages.  More specifically, if reads
+    * adllog.properties file and sets:
+    * the level of logging requested by the user;
+    * whether or not the logging messages should be displayed to the Console;
+    * whether or not the logging messages should be written to a file;
+    * whether to print the default timestamp to the console and/or to the file.
+    */
+
+   //mLogManager object
+   LogManager mLogManager;
+
+   // ADL Logger object for the Test Suite
+   Logger mLoggerTestSuite;
+
+   // Setup ADL Logger object for the Sequencer
+   Logger mLoggerSequencer;
+
+   // Setup ADL Logger object for the SampleRTE
+   Logger mLoggerSampleRTE;
+
+   // Setup ADL Logger object for the Validator
+   Logger mLoggerValidator;
+
+   // Setup ADL Logger object for the Data Model
+   Logger mLoggerDataModel;
+
+   // Setup ADL Logger object for Miscellaneous
+   Logger mLoggerMisc;
+
+
+   public LogConfig()
+   {
+      //Initialize mLogManager
+      mLogManager = LogManager.getLogManager();
+
+      // Setup ADL Logger for the Test Suite
+      mLoggerTestSuite = Logger.getLogger("org.adl.util.debug.testsuite");
+
+      // Setup ADL Logger for the Sequencer
+      mLoggerSequencer = Logger.getLogger("org.adl.util.debug.sequencer");
+
+      // Setup ADL Logger for the SampleRTE
+      mLoggerSampleRTE = Logger.getLogger("org.adl.util.debug.samplerte");
+
+      // Setup ADL Logger for the Validator
+      mLoggerValidator = Logger.getLogger("org.adl.util.debug.validator");
+
+      // Setup ADL Logger for the Data Model
+      mLoggerDataModel = Logger.getLogger("org.adl.util.debug.datamodel");
+
+      // Setup ADL Logger for Miscellaneous
+      mLoggerMisc = Logger.getLogger("org.adl.util.debug.misc");
+   }
+
+   /**
+    * Reads the ADL specific properties file.  This is used to configure the
+    * debug logging output.<br>
+    */
+   public void configure(String iEnvironmentVariable, boolean appendFile)
+   {
+      // Use our own file, NOT the default logging file.
+//      String propFileName = File.separator + "scorm2004.properties";
+//      String propFile = iEnvironmentVariable + File.separator + "config" + propFileName;
+      
+       String propFile = "";
+       
+       try
+       {
+         ConfigSet conf = new ConfigSet();
+         propFile = conf.getProperty("SCORM2004.LOG.PROPERTIES");
+       }
+       catch ( Exception e )
+       {
+           System.out.println( "cresys.properties 설정에 문제가 발생했습니다." );
+           e.printStackTrace();
+       }
+     
+       System.setProperty("java.util.logging.config.file", propFile);
+
+      // Read the configuration just modified with setProperty
+      try
+      {
+         mLogManager.readConfiguration();
+      }
+      catch ( IOException ioe )
+      {
+         System.out.println("IOException Error: "+ioe);
+      }
+      catch ( SecurityException se )
+      {
+         System.out.println("SecurityException Error: "+se);
+      }
+
+      Properties props = new Properties();
+
+      // Will be used to hold the boolean values in the properties file for:
+      // Test Suite Logger
+      String consoleOutputTestSuite = new String();
+      String consoleTimestampTestSuite = new String();
+      String fileOutputTestSuite = new String();
+      String fileTimestampTestSuite = new String();
+
+      // Sequencer Logger
+      String consoleOutputSequencer = new String();
+      String consoleTimestampSequencer = new String();
+      String fileOutputSequencer = new String();
+      String fileTimestampSequencer = new String();
+
+      // SampleRTE Logger
+      String consoleOutputSampleRTE = new String();
+      String consoleTimestampSampleRTE = new String();
+      String fileOutputSampleRTE = new String();
+      String fileTimestampSampleRTE = new String();
+
+      // Validator Logger
+      String consoleOutputValidator = new String();
+      String consoleTimestampValidator = new String();
+      String fileOutputValidator = new String();
+      String fileTimestampValidator = new String();
+
+      // Data Model Logger
+      String consoleOutputDataModel = new String();
+      String consoleTimestampDataModel = new String();
+      String fileOutputDataModel = new String();
+      String fileTimestampDataModel = new String();
+
+      // Miscellaneous Catchall Loggers
+      String consoleOutputMisc = new String();
+      String consoleTimestampMisc = new String();
+      String fileOutputMisc = new String();
+      String fileTimestampMisc = new String();
+
+      try
+      {
+         // Create InputStream of the adlog.properties file name
+         InputStream instream = new FileInputStream(propFile);
+         props.load(instream);
+         // Get the values set in adllog.properties for:
+         // Test Suite Logger
+         consoleOutputTestSuite = props.getProperty("org.adl.util.debug." +
+                                                    "print.console.testsuite");
+         consoleTimestampTestSuite = props.getProperty("org.adl.util.debug." +
+                                                 "timestamp.console.testsuite");
+         fileOutputTestSuite = props.getProperty("org.adl.util.debug.print." +
+                                                 "file.testsuite");
+         fileTimestampTestSuite = props.getProperty("org.adl.util.debug." +
+                                                    "timestamp.file.testsuite");
+
+         // Sequencer Logger
+         consoleOutputSequencer = props.getProperty("org.adl.util.debug." +
+                                                    "print.console.sequencer");
+         consoleTimestampSequencer = props.getProperty("org.adl.util.debug." +
+                                                 "timestamp.console.sequencer");
+         fileOutputSequencer = props.getProperty("org.adl.util.debug.print." +
+                                                 "file.sequencer");
+         fileTimestampSequencer = props.getProperty("org.adl.util.debug." +
+                                                    "timestamp.file.sequencer");
+
+         // SampleRTE Logger
+         consoleOutputSampleRTE = props.getProperty("org.adl.util.debug." +
+                                                    "print.console.samplerte");
+         consoleTimestampSampleRTE = props.getProperty("org.adl.util.debug." +
+                                                "timestamp.console.samplerte");
+         fileOutputSampleRTE = props.getProperty("org.adl.util.debug.print." +
+                                                 "file.samplerte");
+         fileTimestampSampleRTE = props.getProperty("org.adl.util.debug." +
+                                                    "timestamp.file.samplerte");
+
+         // Validator Logger
+         consoleOutputValidator = props.getProperty("org.adl.util.debug." +
+                                                    "print.console.validator");
+         consoleTimestampValidator = props.getProperty("org.adl.util.debug." +
+                                                 "timestamp.console.validator");
+         fileOutputValidator = props.getProperty("org.adl.util.debug.print." +
+                                                 "file.validator");
+         fileTimestampValidator = props.getProperty("org.adl.util.debug." +
+                                                    "timestamp.file.validator");
+
+         // Data Model Logger
+         consoleOutputDataModel = props.getProperty("org.adl.util.debug." +
+                                                    "print.console.datamodel");
+         consoleTimestampDataModel = props.getProperty("org.adl.util.debug." +
+                                               "timestamp.console.datamodel");
+         fileOutputDataModel = props.getProperty("org.adl.util.debug.print." +
+                                                 "file.datamodel");
+         fileTimestampDataModel = props.getProperty("org.adl.util.debug." +
+                                                    "timestamp.file.datamodel");
+
+         // Miscellaneous Catchall Loggers
+         consoleOutputMisc = props.getProperty("org.adl.util.debug.print." +
+                                               "console.misc");
+         consoleTimestampMisc = props.getProperty("org.adl.util.debug." +
+                                                  "timestamp.console.misc");
+         fileOutputMisc = props.getProperty("org.adl.util.debug.print.file." +
+                                                                     "misc");
+         fileTimestampMisc = props.getProperty("org.adl.util.debug.timestamp." +
+                                               "file.misc");
+
+         instream.close();
+      }
+      catch ( FileNotFoundException fnfe)
+      {
+         System.out.println("FileNotFoundException " + fnfe);
+      }
+      catch ( IOException ioe)
+      {
+         System.out.println("IOException " + ioe);
+      }
+      catch ( SecurityException se )
+      {
+         System.out.println("SecurityException Error: "+se);
+      }
+
+      // Test Suite Logger
+      // If true - will be used to indicate: Print to the Console.
+      if (consoleOutputTestSuite.equalsIgnoreCase("true"))
+      {
+         ConsoleHandler ch = new ConsoleHandler();
+
+         if (consoleTimestampTestSuite.equalsIgnoreCase("true"))
+         {
+            // Use Java's formatter which displays the date
+            ch.setFormatter(new SimpleFormatter());
+         }
+         else
+         {
+            // Use ADL's overridden formatter - has NO date/timestamp
+            ch.setFormatter(new ADLSimpleFormatter());
+         }
+         mLoggerTestSuite.addHandler(ch);
+      }
+
+      // If true - will be used to indicate: Print to a file.
+      if (fileOutputTestSuite.equalsIgnoreCase("true"))
+      {
+         // Setup output log file
+         try
+         {
+            String fileName = new String();
+            // Output filename
+            fileName = iEnvironmentVariable + File.separator + "config" +
+               File.separator + "debug_testsuite.log";
+
+            FileHandler fh = new FileHandler(fileName, appendFile);
+
+            if (fileTimestampTestSuite.equalsIgnoreCase("true"))
+            {
+               // Use Java's formatter which displays the date
+               fh.setFormatter(new SimpleFormatter());
+            }
+            else
+            {
+               // Use ADL's overridden formatter - has NO date/timestamp
+               fh.setFormatter(new ADLSimpleFormatter());
+            }
+            mLoggerTestSuite.addHandler(fh);
+         }
+         catch ( IOException ioe )
+         {
+            System.out.println("Handler IOException Error TestSuite: "+ioe);
+         }
+      }
+
+      // Sequencer Logger
+      // If true - will be used to indicate: Print to the Console.
+      if (consoleOutputSequencer.equalsIgnoreCase("true"))
+      {
+         ConsoleHandler ch = new ConsoleHandler();
+
+         if (consoleTimestampSequencer.equalsIgnoreCase("true"))
+         {
+            // Use Java's formatter which displays the date
+            ch.setFormatter(new SimpleFormatter());
+         }
+         else
+         {
+            // Use ADL's overridden formatter - has NO date/timestamp
+            ch.setFormatter(new ADLSimpleFormatter());
+         }
+         mLoggerSequencer.addHandler(ch);
+      }
+
+      // If true - will be used to indicate: Print to a file.
+      if (fileOutputSequencer.equalsIgnoreCase("true"))
+      {
+         // Setup output log file
+         try
+         {
+            String fileName = new String();
+            // Output filename
+            fileName = iEnvironmentVariable + File.separator + "config" +
+               File.separator + "debug_sequencer.log";
+
+            FileHandler fh = new FileHandler(fileName, appendFile);
+
+            if (fileTimestampSequencer.equalsIgnoreCase("true"))
+            {
+               // Use Java's formatter which displays the date
+               fh.setFormatter(new SimpleFormatter());
+            }
+            else
+            {
+               // Use ADL's overridden formatter - has NO date/timestamp
+               fh.setFormatter(new ADLSimpleFormatter());
+            }
+            mLoggerSequencer.addHandler(fh);
+         }
+         catch ( IOException ioe )
+         {
+            System.out.println("Handler IOException Error Sequencer: "+ioe);
+         }
+      }
+
+      // SampleRTE Logger
+      // If true - will be used to indicate: Print to the Console.
+      if (consoleOutputSampleRTE.equalsIgnoreCase("true"))
+      {
+         ConsoleHandler ch = new ConsoleHandler();
+
+         if (consoleTimestampSampleRTE.equalsIgnoreCase("true"))
+         {
+            // Use Java's formatter which displays the date
+            ch.setFormatter(new SimpleFormatter());
+         }
+         else
+         {
+            // Use ADL's overridden formatter - has NO date/timestamp
+            ch.setFormatter(new ADLSimpleFormatter());
+         }
+         mLoggerSampleRTE.addHandler(ch);
+      }
+
+      // If true - will be used to indicate: Print to a file.
+      if (fileOutputSampleRTE.equalsIgnoreCase("true"))
+      {
+         // Setup output log file
+         try
+         {
+            String fileName = new String();
+            // Output filename
+            fileName = iEnvironmentVariable + File.separator + "config" +
+               File.separator + "debug_samplerte.log";
+
+            FileHandler fh = new FileHandler(fileName, appendFile);
+
+            if (fileTimestampSampleRTE.equalsIgnoreCase("true"))
+            {
+               // Use Java's formatter which displays the date
+               fh.setFormatter(new SimpleFormatter());
+            }
+            else
+            {
+               // Use ADL's overridden formatter - has NO date/timestamp
+               fh.setFormatter(new ADLSimpleFormatter());
+            }
+            mLoggerSampleRTE.addHandler(fh);
+         }
+         catch ( IOException ioe )
+         {
+            System.out.println("Handler IOException Error: "+ioe);
+         }
+      }
+
+      // Validator Logger
+      // If true - will be used to indicate: Print to the Console.
+      if (consoleOutputValidator.equalsIgnoreCase("true"))
+      {
+         ConsoleHandler ch = new ConsoleHandler();
+
+         if (consoleTimestampValidator.equalsIgnoreCase("true"))
+         {
+            // Use Java's formatter which displays the date
+            ch.setFormatter(new SimpleFormatter());
+         }
+         else
+         {
+            // Use ADL's overridden formatter - has NO date/timestamp
+            ch.setFormatter(new ADLSimpleFormatter());
+         }
+         mLoggerValidator.addHandler(ch);
+      }
+
+      // If true - will be used to indicate: Print to a file.
+      if (fileOutputValidator.equalsIgnoreCase("true"))
+      {
+         // Setup output log file
+         try
+         {
+            String fileName = new String();
+            // Output filename
+            fileName = iEnvironmentVariable + File.separator + "config" +
+               File.separator + "debug_validator.log";
+
+            FileHandler fh = new FileHandler(fileName, appendFile);
+
+            if (fileTimestampValidator.equalsIgnoreCase("true"))
+            {
+               // Use Java's formatter which displays the date
+               fh.setFormatter(new SimpleFormatter());
+            }
+            else
+            {
+               // Use ADL's overridden formatter - has NO date/timestamp
+               fh.setFormatter(new ADLSimpleFormatter());
+            }
+            mLoggerValidator.addHandler(fh);
+         }
+         catch ( IOException ioe )
+         {
+            System.out.println("Handler IOException Error: "+ioe);
+         }
+      }
+
+      // Data Model Logger
+      // If true - will be used to indicate: Print to the Console.
+      if (consoleOutputDataModel.equalsIgnoreCase("true"))
+      {
+         ConsoleHandler ch = new ConsoleHandler();
+
+         if (consoleTimestampDataModel.equalsIgnoreCase("true"))
+         {
+            // Use Java's formatter which displays the date
+            ch.setFormatter(new SimpleFormatter());
+         }
+         else
+         {
+            // Use ADL's overridden formatter - has NO date/timestamp
+            ch.setFormatter(new ADLSimpleFormatter());
+         }
+         mLoggerDataModel.addHandler(ch);
+      }
+
+      // If true - will be used to indicate: Print to a file.
+      if (fileOutputDataModel.equalsIgnoreCase("true"))
+      {
+         // Setup output log file
+         try
+         {
+            String fileName = new String();
+            // Output filename
+            fileName = iEnvironmentVariable + File.separator + "config" +
+               File.separator + "debug_datamodel.log";
+
+            FileHandler fh = new FileHandler(fileName, appendFile);
+
+            if (fileTimestampDataModel.equalsIgnoreCase("true"))
+            {
+               // Use Java's formatter which displays the date
+               fh.setFormatter(new SimpleFormatter());
+            }
+            else
+            {
+               // Use ADL's overridden formatter - has NO date/timestamp
+               fh.setFormatter(new ADLSimpleFormatter());
+            }
+            mLoggerDataModel.addHandler(fh);
+         }
+         catch ( IOException ioe )
+         {
+            System.out.println("Handler IOException Error: "+ioe);
+         }
+      }
+
+      // Miscellaneous Catchall Logger
+      // If true - will be used to indicate: Print to the Console.
+      if (consoleOutputMisc.equalsIgnoreCase("true"))
+      {
+         ConsoleHandler ch = new ConsoleHandler();
+
+         if (consoleTimestampMisc.equalsIgnoreCase("true"))
+         {
+            // Use Java's formatter which displays the date
+            ch.setFormatter(new SimpleFormatter());
+         }
+         else
+         {
+            // Use ADL's overridden formatter - has NO date/timestamp
+            ch.setFormatter(new ADLSimpleFormatter());
+         }
+         mLoggerMisc.addHandler(ch);
+      }
+
+      // If true - will be used to indicate: Print to a file.
+      if (fileOutputMisc.equalsIgnoreCase("true"))
+      {
+         // Setup output log file
+         try
+         {
+            String fileName = new String();
+            // Output filename
+            fileName = iEnvironmentVariable + File.separator + "config" +
+               File.separator + "debug_misc.log";
+
+            FileHandler fh = new FileHandler(fileName, appendFile);
+
+            if (fileTimestampMisc.equalsIgnoreCase("true"))
+            {
+               // Use Java's formatter which displays the date
+               fh.setFormatter(new SimpleFormatter());
+            }
+            else
+            {
+               // Use ADL's overridden formatter - has NO date/timestamp
+               fh.setFormatter(new ADLSimpleFormatter());
+            }
+            mLoggerMisc.addHandler(fh);
+         }
+         catch ( IOException ioe )
+         {
+            System.out.println("Handler IOException Error: "+ioe);
+         }
+      }
+
+      return;
+   }
+}

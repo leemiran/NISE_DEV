@@ -1,0 +1,322 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE sqlMap PUBLIC "-//iBATIS.com//DTD SQL Map 2.0//EN" "http://ibatis.apache.org/dtd/sql-map-2.dtd">
+
+<sqlMap namespace="LcmsCmiObjectinfo">
+
+
+<typeAlias  alias="egovMap" type="egovframework.rte.psl.dataaccess.util.EgovMap"/>
+
+    <select id="lcmsCmiObjectinfoDAO.selectLcmsCmiObjectinfoPageList" parameterClass="map" resultClass="egovMap">
+        SELECT * 
+        FROM
+               (
+                SELECT TEMP.*, 
+                <isNotEmpty property="rowsPerPage">
+                       CEIL(ROWNUM / #rowsPerPage#) AS PAGE 
+                </isNotEmpty>
+                <isEmpty property="rowsPerPage">
+                       CEIL(ROWNUM / 10) AS PAGE 
+                </isEmpty>
+                FROM
+                      (
+                       SELECT 
+	        	              COURSE_MAP_SEQ,
+	        	              ORG_SEQ,
+	        	              ITEM_ID,
+	        	              LEARNER_ID,
+	        	              LEARNER_NAME,
+	        	              TOTAL_TIME,
+	        	              SCORE_SCALED,
+	        	              COMPLETION_STATUS,
+	        	              COMPLETION_THRESHOLD,
+	        	              ENTRY_INFO,
+	        	              CREDIT,
+	        	              EXIT_STATUS,
+	        	              LAUNCH_DATA,
+	        	              LOCATION,
+	        	              MAX_TIME_ALLOWED,
+	        	              MODE_INFO,
+	        	              PROGRESS_MEASURE,
+	        	              SCALED_PASSING_SCORE,
+	        	              SUCCESS_STATUS,
+	        	              SUSPEND_DATA,
+	        	              TIME_LIMIT_ACTION,
+	        	              SCORE_RAW,
+	        	              SCORE_MAX,
+	        	              SCORE_MIN,
+	        	              LEARNER_PREFERENCE_AUDIO_LEVEL,
+	        	              LEARNER_PREFERENCE_LANGUAGE,
+	        	              LEARNER_PREFERENCE_DELIVERY_SP,
+	        	              LEARNER_PREFERENCE_AUDIO_CAPTI,
+	        	              USERID,
+	        	              UPDATE_DT,
+	        	               ATTEMPT
+        		       FROM   TB_LCMS_CMI_OBJECTINFO$nowYear$
+        		       <!--  APPEND WHERE CONDITION START  -->
+
+        		       <!--  APPEND WHERE CONDITION END    -->
+        		       <isNotEmpty property="orderBy">
+        			       $orderBy$
+        		       </isNotEmpty>
+        	          ) TEMP 
+               )
+        <isNotEmpty property="page">
+        WHERE PAGE = #page#
+        </isNotEmpty>
+        <isEmpty property="page">
+        WHERE PAGE = 1
+        </isEmpty>
+    </select>
+
+    <select id="lcmsCmiObjectinfoDAO.selectLcmsCmiObjectinfoList" parameterClass="map" resultClass="egovMap">
+        SELECT COURSE_MAP_SEQ,
+               ORG_SEQ,
+               ITEM_ID,
+               LEARNER_ID,
+               LEARNER_NAME,
+               TOTAL_TIME,
+               SCORE_SCALED,
+               COMPLETION_STATUS,
+               COMPLETION_THRESHOLD,
+               ENTRY_INFO,
+               CREDIT,
+               EXIT_STATUS,
+               LAUNCH_DATA,
+               LOCATION,
+               MAX_TIME_ALLOWED,
+               MODE_INFO,
+               PROGRESS_MEASURE,
+               SCALED_PASSING_SCORE,
+               SUCCESS_STATUS,
+               SUSPEND_DATA,
+               TIME_LIMIT_ACTION,
+               SCORE_RAW,
+               SCORE_MAX,
+               SCORE_MIN,
+               LEARNER_PREFERENCE_AUDIO_LEVEL,
+               LEARNER_PREFERENCE_LANGUAGE,
+               LEARNER_PREFERENCE_DELIVERY_SP,
+               LEARNER_PREFERENCE_AUDIO_CAPTI,
+               USERID,
+               UPDATE_DT,
+               ATTEMPT
+        FROM   TB_LCMS_CMI_OBJECTINFO$nowYear$
+    </select>
+
+    <select id="lcmsCmiObjectinfoDAO.selectLcmsCmiObjectinfoPageListTotCnt" parameterClass="map" resultClass="int">
+        SELECT COUNT(ROWNUM) AS [COUNT]
+        FROM   TB_LCMS_CMI_OBJECTINFO$nowYear$
+    </select>
+
+    <select id="lcmsCmiObjectinfoDAO.selectLcmsCmiObjectinfo" parameterClass="map" resultClass="egovMap">
+        SELECT COURSE_MAP_SEQ,
+               ORG_SEQ,
+               ITEM_ID,
+               LEARNER_ID,
+               LEARNER_NAME,
+               TOTAL_TIME,
+               SCORE_SCALED,
+               COMPLETION_STATUS,
+               COMPLETION_THRESHOLD,
+               ENTRY_INFO,
+               CREDIT,
+               EXIT_STATUS,
+               LAUNCH_DATA,
+               LOCATION,
+               MAX_TIME_ALLOWED,
+               MODE_INFO,
+               PROGRESS_MEASURE,
+               SCALED_PASSING_SCORE,
+               SUCCESS_STATUS,
+               SUSPEND_DATA,
+               TIME_LIMIT_ACTION,
+               SCORE_RAW,
+               SCORE_MAX,
+               SCORE_MIN,
+               LEARNER_PREFERENCE_AUDIO_LEVEL,
+               LEARNER_PREFERENCE_LANGUAGE,
+               LEARNER_PREFERENCE_DELIVERY_SP,
+               LEARNER_PREFERENCE_AUDIO_CAPTI,
+               USERID,
+               UPDATE_DT,
+               ATTEMPT
+        FROM   TB_LCMS_CMI_OBJECTINFO$nowYear$
+        WHERE  COURSE_MAP_SEQ = #courseMapSeq#
+        AND    ORG_SEQ        = #orgSeq#
+        AND    ITEM_ID        = #itemId#
+        AND    LEARNER_ID     = #learnerId#
+    </select>
+
+    <insert id="lcmsCmiObjectinfoDAO.insertLcmsCmiObjectinfo">
+
+        INSERT INTO TB_LCMS_CMI_OBJECTINFO$nowYear$
+        (
+            COURSE_MAP_SEQ,
+            ORG_SEQ,
+            ITEM_ID,
+            LEARNER_ID,
+            LEARNER_NAME,
+            TOTAL_TIME,
+            SCORE_SCALED,
+            COMPLETION_STATUS,
+            COMPLETION_THRESHOLD,
+            ENTRY_INFO,
+            CREDIT,
+            EXIT_STATUS,
+            LAUNCH_DATA,
+            LOCATION,
+            MAX_TIME_ALLOWED,
+            MODE_INFO,
+            PROGRESS_MEASURE,
+            SCALED_PASSING_SCORE,
+            SUCCESS_STATUS,
+            SUSPEND_DATA,
+            TIME_LIMIT_ACTION,
+            SCORE_RAW,
+            SCORE_MAX,
+            SCORE_MIN,
+            LEARNER_PREFERENCE_AUDIO_LEVEL,
+            LEARNER_PREFERENCE_LANGUAGE,
+            LEARNER_PREFERENCE_DELIVERY_SP,
+            LEARNER_PREFERENCE_AUDIO_CAPTI,
+            USERID,
+            UPDATE_DT,
+            ATTEMPT
+        )
+        VALUES
+        (
+            #courseMapSeq#,
+            #orgSeq#,
+            #itemId#,
+            #learnerId#,
+            #learnerName#,
+            #totalTime#,
+            #scoreScaled#,
+            #completionStatus#,
+            #completionThreshold#,
+            #entryInfo#,
+            #credit#,
+            #exitStatus#,
+            #launchData#,
+            #location#,
+            #maxTimeAllowed#,
+            #modeInfo#,
+            #progressMeasure#,
+            #scaledPassingScore#,
+            #successStatus#,
+            #suspendData#,
+            #timeLimitAction#,
+            #scoreRaw#,
+            #scoreMax#,
+            #scoreMin#,
+            #learnerPreferenceAudioLevel#,
+            #learnerPreferenceLanguage#,
+            #learnerPreferenceDeliverySp#,
+            #learnerPreferenceAudioCapti#,
+            #userId#,
+            sysdate,
+            #attempt#
+        )
+    </insert>
+
+    <update id="lcmsCmiObjectinfoDAO.updateLcmsCmiObjectinfo">
+        UPDATE TB_LCMS_CMI_OBJECTINFO$nowYear$
+        SET    LEARNER_NAME = #learnerName#,
+               TOTAL_TIME = #totalTime#,
+               SCORE_SCALED = #scoreScaled#,
+               COMPLETION_STATUS = #completionStatus#,
+               COMPLETION_THRESHOLD = #completionThreshold#,
+               ENTRY_INFO = #entryInfo#,
+               CREDIT = #credit#,
+               EXIT_STATUS = #exitStatus#,
+               LAUNCH_DATA = #launchData#,
+               LOCATION = #location#,
+               MAX_TIME_ALLOWED = #maxTimeAllowed#,
+               MODE_INFO = #modeInfo#,
+               PROGRESS_MEASURE = #progressMeasure#,
+               SCALED_PASSING_SCORE = #scaledPassingScore#,
+               SUCCESS_STATUS = #successStatus#,
+               SUSPEND_DATA = #suspendData#,
+               TIME_LIMIT_ACTION = #timeLimitAction#,
+               SCORE_RAW = #scoreRaw#,
+               SCORE_MAX = #scoreMax#,
+               SCORE_MIN = #scoreMin#,
+               LEARNER_PREFERENCE_AUDIO_LEVEL = #learnerPreferenceAudioLevel#,
+               LEARNER_PREFERENCE_LANGUAGE = #learnerPreferenceLanguage#,
+               LEARNER_PREFERENCE_DELIVERY_SP = #learnerPreferenceDeliverySp#,
+               LEARNER_PREFERENCE_AUDIO_CAPTI = #learnerPreferenceAudioCapti#,
+               USERID = #learnerId#,
+               UPDATE_DT = sysdate,
+               ATTEMPT = #attempt#
+	<isEqual property="completionStatus" compareValue="completed">
+			  ,COMPLETED_DT = DECODE(COMPLETED_DT, null, SYSDATE, COMPLETED_DT)
+	</isEqual>
+        WHERE  COURSE_MAP_SEQ = #courseMapSeq#
+        AND    ORG_SEQ = #orgSeq#
+        AND    ITEM_ID = #itemId#
+        AND    LEARNER_ID = #learnerId#
+
+    </update>
+
+    <delete id="lcmsCmiObjectinfoDAO.deleteLcmsCmiObjectinfo">
+        DELETE FROM TB_LCMS_CMI_OBJECTINFO$nowYear$
+        WHERE  COURSE_MAP_SEQ = #courseMapSeq#
+        AND    ORG_SEQ = #orgSeq#
+        AND    ITEM_ID = #itemId#
+        AND    LEARNER_ID = #learnerId#
+    </delete>
+
+    <delete id="lcmsCmiObjectinfoDAO.deleteLcmsCmiObjectinfoAll">
+        DELETE FROM TB_LCMS_CMI_OBJECTINFO$nowYear$
+        WHERE  COURSE_MAP_SEQ = #courseMapSeq#
+        AND    ORG_SEQ = #orgSeq#
+        AND    ITEM_ID = #itemId#
+        <dynamic prepend="WHERE LEARNER_ID IN ">
+            <isNotEmpty property="learnerId">
+                <iterate property="learnerId" open="(" close=")" conjunction=",">
+                    #learnerId[]#
+                </iterate>
+            </isNotEmpty>
+            <isEmpty property="learnerId">
+                ('')
+            </isEmpty>
+        </dynamic>
+    </delete>
+
+    <select id="lcmsCmiObjectinfoDAO.existLcmsCmiObjectinfo" resultClass="long">
+        SELECT COUNT(ROWNUM) 
+        FROM   TB_LCMS_CMI_OBJECTINFO$nowYear$
+        WHERE  COURSE_MAP_SEQ = #courseMapSeq#
+        AND    ORG_SEQ = #orgSeq#
+        AND    ITEM_ID = #itemId#
+        AND    LEARNER_ID = #learnerId#
+    </select>
+    
+    <select id="lcmsCmiObjectinfoDAO.checkScormEduLimit" parameterClass="map" resultClass="String">
+    	<![CDATA[
+		        
+		select case when edu_limit = 0 then 'PLAY'
+		            when completion_status = 'completed' then 'PLAY'
+		            else case when progress_limit >= edu_limit then 'STOP' else 'PLAY' end
+		        end as edu_limit
+		  from (
+                select (select completion_status from tb_lcms_cmi_objectinfo$nowYear$ where item_id = #itemId# and course_map_seq = b.course_map_seq and learner_id = #userid#) as completion_status,
+                        round((completed_cnt/(select count(0) from tb_lcms_item where course_cd = a.subj and rsrc_seq != 0))*100, 2) as progress_limit,
+                        (select edulimit from tz_subjseq where subj = a.subj and [year] = a.[year] and subjseq = a.subjseq) as edu_limit
+                  from tb_lcms_course_map a,
+                        (
+                            select count(0) as completed_cnt, course_map_seq
+                              from tb_lcms_cmi_objectinfo$nowYear$
+                             where course_map_seq = #courseMapSeq#
+                               and learner_id = #userid#
+                               and completion_status = 'completed'
+                               and to_char(completed_dt, 'yyyyMMdd') = to_char(sysdate, 'yyyyMMdd')
+                             group by course_map_seq
+                        ) b
+                 where a.course_map_seq = b.course_map_seq
+		        )
+		]]>
+    </select>
+
+</sqlMap>
+

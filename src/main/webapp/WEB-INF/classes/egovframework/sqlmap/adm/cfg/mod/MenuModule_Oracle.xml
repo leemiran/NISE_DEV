@@ -1,0 +1,193 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE sqlMap PUBLIC "-//iBATIS.com//DTD SQL Map 2.0//EN" "http://ibatis.apache.org/dtd/sql-map-2.dtd">
+
+<sqlMap namespace="MenuModule">
+<typeAlias  alias="egovMap" type="egovframework.rte.psl.dataaccess.util.EgovMap"/>
+
+
+	<select id="menuModuleDAO.menuModuleList" parameterClass="map" resultClass="egovMap">
+		select menu,
+		       menunm,
+		       [upper],
+		       parent,
+		       pgm,
+		       isdisplay,
+		       para1,
+		       para2,
+		       para3,
+		       para4,
+		       para5,
+		       para6,
+		       para7,
+		       para8,
+		       para9,
+		       para10,
+		       para11,
+		       para12,
+		       created,
+		       luserid,
+		       ldate,
+		       levels,
+		       orders,
+		       systemgubun,
+		       (select count(0) from tz_menusub where menu = a.menu) as cnt
+		  from tz_menu a
+		 where grcode = #grcode#
+		   and isdisplay = 'Y'
+		<isNotEmpty property="p_searchtext">
+		   and menunm like '%' || #p_searchtext# || '%'
+		</isNotEmpty>
+		 order by (select orders from tz_menu where menu = a.parent) asc, parent asc, levels asc, orders asc
+	</select>
+	
+	<select id="menuModuleDAO.menuModuleSubList" parameterClass="map" resultClass="egovMap">
+		select menu, seq, servlet, modulenm, luserid, ldate
+		  from tz_menusub
+		 where grcode = #grcode#
+		   and menu   = #p_menu#
+		 order by menu
+	</select>
+	
+	<select id="menuModuleDAO.getMenuName" parameterClass="map" resultClass="String">
+		select menunm from tz_menu where menu = #p_menu#
+	</select>
+	
+	<select id="menuModuleDAO.getModuleInfo" parameterClass="map" resultClass="egovMap">
+		select menu, seq, servlet, modulenm, luserid, ldate
+		  from tz_menusub
+		 where grcode = #grcode#
+		   and menu   = #p_menu#
+		   and seq    = #p_seq#
+	</select>
+	
+	<select id="menuModuleDAO.selectMenuAuthList" parameterClass="map" resultClass="egovMap">
+		select a.gadmin, a.control, a.systemgubun, b.gadminnm
+		  from tz_menuauth a, tz_gadmin b
+		 where a.gadmin = b.gadmin
+		   and a.grcode = #grcode#
+		   and a.menu   = #p_menu#
+		   and a.menusubseq = #p_seq#
+		 order by a.gadmin asc
+	</select>
+	
+	<update id="menuModuleDAO.updateMenuModuleSub">
+		update tz_menusub
+		   set servlet = #p_servlet#,
+		       modulenm = #p_modulenm#,
+		       luserid  = #userid#,
+		       ldate    = to_char(sysdatetime, 'yyyyMMddhh24miss'),
+		       systemgubun = #p_systemgubun#
+		 where grcode = #grcode#
+		   and menu   = #p_menu#
+		   and seq    = #p_seq#
+	</update>
+	<delete id="menuModuleDAO.deleteMenuModuleAuth">
+		delete tz_menuauth
+		 where grcode 		= #grcode#
+		   and menu   		= #p_menu#
+		   and menusubseq 	= #p_seq#
+	</delete>
+	
+	<select id="menuModuleDAO.getSeqKey" parameterClass="map" resultClass="String">
+			select nvl(max(seq), -1) + 1 as seq
+			  from tz_menusub
+			 where grcode = #grcode#
+			   and menu   = #p_menu#
+	</select>
+	<insert id="menuModuleDAO.insertModuleSub">
+		insert into tz_menusub(
+			grcode,
+			menu,
+			seq,
+			servlet,
+			modulenm,
+			systemgubun,
+			luserid,
+			ldate
+		)
+		values(
+			#grcode#,
+			#p_menu#,
+			#p_seq#,
+			#p_servlet#,
+			#p_modulenm#,
+			#p_systemgubun#,
+			#userid#,
+			to_char(sysdatetime, 'yyyyMMddhh24miss')
+		)
+	</insert>
+	
+	<insert id="menuModuleDAO.insertMenuModuleAuth">
+		insert into tz_menuauth(
+			grcode, gadmin, menusubseq, menu, control, systemgubun, luserid, ldate
+		)
+		values(
+			#grcode#, #p_gadmin#, #p_seq#, #p_menu#, #p_control#, #p_systemgubun#, #userid#, to_char(sysdatetime, 'yyyyMMddhh24miss')
+		)
+	</insert>
+	
+	<delete id="menuModuleDAO.deleteMenuModuleSub">
+		delete tz_menusub
+		 where grcode = #grcode#
+		   and menu   = #p_menu#
+		   and seq    = #p_seq#
+	</delete>
+	<delete id="menuModuleDAO.deleteMenuModuleProcess">
+		delete tz_menusubprocess
+		 where grcode = #grcode#
+		   and menu   = #p_menu#
+		   and seq    = #p_seq#
+	</delete>
+	
+	
+	<select id="menuModuleDAO.selectProcessList" parameterClass="map" resultClass="egovMap">
+		select process, servlettype, method, luserid, ldate
+		  from tz_menusubprocess
+		 where grcode = #grcode#
+		   and menu   = #p_menu#
+		   and seq    = #p_seq#
+	</select>
+	
+	<select id="menuModuleDAO.selectProcessInfo" parameterClass="map" resultClass="egovMap">
+		select process, servlettype, method, luserid, ldate
+		  from tz_menusubprocess
+		 where grcode = #grcode#
+		   and menu   = #p_menu#
+		   and seq    = #p_seq#
+		   and process= #p_process#
+	</select>
+	
+	<update id="menuModuleDAO.updateProcess">
+		update tz_menusubprocess
+		   set servlettype = #p_servlettype#
+		     , method = #p_method#
+		 where grcode = #grcode#
+		   and menu   = #p_menu#
+		   and seq    = #p_seq#
+		   and process= #p_process#
+	</update>
+	
+	<insert id="menuModuleDAO.insertProcess">
+		insert into tz_menusubprocess(
+			grcode,
+			menu,
+			seq,
+			process,
+			servlettype,
+			method,
+			luserid,
+			ldate
+		)
+		values(
+			#grcode#,
+			#p_menu#,
+			#p_seq#,
+			#p_process#,
+			#p_servlettype#,
+			#p_method#,
+			#userid#,
+			to_char(sysdatetime, 'yyyyMMddhh24miss')
+		)
+	</insert>
+</sqlMap>
+

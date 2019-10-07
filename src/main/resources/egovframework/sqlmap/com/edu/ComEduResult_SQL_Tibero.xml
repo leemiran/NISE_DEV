@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE sqlMap PUBLIC "-//iBATIS.com//DTD SQL Map 2.0//EN" "http://www.ibatis.com/dtd/sql-map-2.dtd">
+
+<sqlMap namespace="comEduResult">
+
+	<typeAlias  alias="egovMap" type="egovframework.rte.psl.dataaccess.util.EgovMap"/>
+    
+	<procedure id="comEduResultDAO.eduProcedure" parameterClass="map">
+		{CALL PROC_ONLINE_RESULT(#seqCurm#,#suserId#)}
+	</procedure>
+	
+	 
+</sqlMap>                            

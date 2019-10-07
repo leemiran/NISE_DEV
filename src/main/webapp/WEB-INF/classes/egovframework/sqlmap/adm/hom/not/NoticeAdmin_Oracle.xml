@@ -1,0 +1,1829 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE sqlMap PUBLIC "-//iBATIS.com//DTD SQL Map 2.0//EN" "http://ibatis.apache.org/dtd/sql-map-2.dtd">
+
+<sqlMap namespace="NoticeAdmin">
+<typeAlias  alias="egovMap" type="egovframework.rte.psl.dataaccess.util.EgovMap"/>
+
+	<resultMap id="noticeAdminDAO.NoticeResult" class="egovframework.rte.psl.dataaccess.util.EgovMap">
+		<result property="seq"      	column="seq" />
+	   	<result property="grcodegubun"  		column="grcodegubun" />
+	   	<result property="startdate"      	column="startdate" />
+	   	<result property="enddate"      	column="enddate" />
+	   	<result property="addate"       column="addate" />
+	   	<result property="adtitle"       column="adtitle" />
+	   	<result property="adname"         column="adname" />
+	   	<result property="adcontent"    column="adcontent"  jdbcType="CLOB" javaType="java.lang.String"/>
+	   	<result property="cnt"       column="cnt" />
+	   	<result property="luserid"     column="luserid" />
+	   	<result property="ldate"       column="ldate" />
+	   	<result property="loginyn"     column="loginyn" />
+	   	<result property="useyn"          column="useyn" />
+	   	<result property="compcd"          column="compcd" jdbcType="CLOB" javaType="java.lang.String"/>
+	   	<result property="popwidth"          column="popwidth" />
+	   	<result property="popheight"          column="popheight" />
+	   	<result property="popxpos"          column="popxpos" />
+	   	<result property="popypos"          column="popypos" />
+	   	<result property="popup"          column="popup" />
+	   	<result property="uselist"          column="uselist" />
+	   	<result property="useframe"          column="useframe" />
+	   	<result property="isall"          column="isall" />
+	   	<result property="aduserid"          column="aduserid" />
+	   	<result property="grcodecd"          column="grcodecd" jdbcType="CLOB" javaType="java.lang.String"/>
+	   	<result property="type"          column="type" />
+	   	<result property="notice_gubun"          column="notice_gubun" />
+	   	<result property="tem_type"          column="tem_type" />
+	   	
+	</resultMap>
+	<resultMap id="noticeAdminDAO.srSystemResult" class="egovframework.rte.psl.dataaccess.util.EgovMap">
+		<result property="tabseq"      		column="tabseq" />
+		<result property="seq"      		column="seq" />
+		<result property="re_seq"      		column="re_seq" />		
+	   	<result property="gubun"  			column="gubun" />
+	   	<result property="userid"  			column="userid" />
+	   	<result property="user_name"  		column="user_name" />
+	   	<result property="reg_id"      		column="reg_id" />
+	   	<result property="reg_date"      	column="reg_date" />
+	   	<result property="reqdate_from"     column="reqdate_from" />
+	   	<result property="reqdate_to"       column="reqdate_to" />
+	   	<result property="finish_date"      column="finish_date" />
+	   	<result property="proc_rate"        column="proc_rate" />
+	   	<result property="req_title"        column="req_title" />
+	   	<result property="req_content"    	column="req_content"  jdbcType="CLOB" javaType="java.lang.String"/>
+	   	<result property="list_seq"       	column="list_seq" />
+	   	<result property="busy_gubun"     	column="busy_gubun" />
+	   	<result property="sr_level"     	column="sr_level" />	   	
+	   	<result property="code_nm"     		column="code_nm" />
+	   	<result property="confirm_date"     column="confirm_date" />	   	
+	   	<result property="sys_gubun"    	column="sys_gubun" />	   	
+	</resultMap>
+	<resultMap id="noticeAdminDAO.srSystemResult1" class="egovframework.rte.psl.dataaccess.util.EgovMap">
+	   	<result property="re_seq"        column="re_seq" />
+	   	<result property="finish_date"        column="finish_date" />
+	   	<result property="user_name"        column="user_name" />
+	   	<result property="proc_rate"        column="proc_rate" />	   	
+	   	<result property="req_title"        column="req_title" />	   	
+	   	<result property="req_content"    	column="req_content"  jdbcType="CLOB" javaType="java.lang.String"/>
+	   	<result property="sr_level"    	column="sr_level" />	   	
+	   	<result property="list_seq"    	column="list_seq" />	   	
+	</resultMap>	
+
+	<select id="noticeAdminDAO.selectTableseq" parameterClass="map" resultClass="int">
+		select tabseq from tz_bds
+		 where type = #p_type#
+	</select>
+
+	<select id="noticeAdminDAO.selectNoticeListAll" parameterClass="map" resultClass="egovMap">
+		select rownum, a.seq, a.adtitle, a.adname, a.cnt, a.luserid, a.ldate, a.isall,
+		       a.useyn, a.popup, a.loginyn, a.gubun, a.aduserid, a.type, a.notice_gubun,
+		       to_char(to_date(substr(a.addate, 1, 8), 'yyyyMMdd'), 'yyyy.MM.dd') as addate,
+		       (select count(realfile) from tz_boardfile where tabseq = a.tabseq and seq = a.seq) as filecnt
+		  from tz_notice a
+		 where isall = 'Y'
+		<isNotEmpty property="p_searchtext">
+		<isEqual property="p_search" compareValue="adtitle">
+		   and a.adtitle like '%' || #p_searchtext# || '%'
+		</isEqual>
+		<isEqual property="p_search" compareValue="adcontents">
+		   and a.adcontents like '%' || #p_searchtext# || '%'
+		</isEqual>
+		<isEqual property="p_search" compareValue="aduserid">
+		   and a.aduserid like '%' || #p_searchtext# || '%'
+		</isEqual>
+		<isEqual property="p_search" compareValue="adname">
+		   and a.adname like '%' || #p_searchtext# || '%'
+		</isEqual>
+		<isEqual property="p_search" compareValue="addate">
+		   and substr(a.addate, 1, 8) = replace(#p_searchtext#, '.', '')
+		</isEqual>
+		</isNotEmpty>
+		<isNotEqual property="gadmin" compareValue="A">
+			<isNotEqual property="p_tabseq" compareValue="12">
+		   	and ( compcd like '%'||#comp#||'%' or grcodecd like '%'||#grcode#||'%' )
+		   	</isNotEqual>
+		</isNotEqual>
+		   and tabseq = #p_tabseq#
+		 order by a.addate desc
+	</select>
+
+	<select id="noticeAdminDAO.selectNoticeListTotCnt" parameterClass="map" resultClass="int">
+		select count(0) as cnt
+		  from tz_notice a
+		 where isall = 'N'
+		   and tabseq = #p_tabseq#
+		<isNotEmpty property="p_searchtext">
+		<isEqual property="p_search" compareValue="adtitle">
+		   and a.adtitle like '%' || #p_searchtext# || '%'
+		</isEqual>
+		<isEqual property="p_search" compareValue="adcontents">
+		   and a.adcontents like '%' || #p_searchtext# || '%'
+		</isEqual>
+		<isEqual property="p_search" compareValue="aduserid">
+		   and a.aduserid like '%' || #p_searchtext# || '%'
+		</isEqual>
+		<isEqual property="p_search" compareValue="adname">
+		   and a.adname like '%' || #p_searchtext# || '%'
+		</isEqual>
+		<isEqual property="p_search" compareValue="addate">
+		   and substr(a.addate, 1, 8) = replace(#p_searchtext#, '.', '')
+		</isEqual>
+		</isNotEmpty>
+		<isNotEqual property="gadmin" compareValue="A">
+			<isNotEqual property="p_tabseq" compareValue="12">
+		    and ( compcd like '%'||#comp#||'%' or grcodecd like '%'||#grcode#||'%' )
+		    </isNotEqual>
+		</isNotEqual>
+	</select>
+	
+	<select id="noticeAdminDAO.selectNoticeList" parameterClass="map" resultClass="egovMap">
+		select * from (
+		
+		select rownum as rn, seq, adtitle, adname, cnt, luserid, ldate, isall, useyn, 
+		       popup, loginyn, aduserid, gubun, type, notice_gubun, addate, filecnt
+		  from (
+					select a.seq, a.adtitle, a.adname, a.cnt, a.luserid, a.ldate, a.isall,
+					       a.useyn, a.popup, a.loginyn, a.aduserid, a.gubun, a.type, a.notice_gubun,
+					       to_char(to_date(substr(a.addate, 1, 8), 'yyyyMMdd'), 'yyyy.MM.dd') as addate,
+					       (select count(realfile) from tz_boardfile where tabseq = a.tabseq and seq = a.seq) as filecnt
+					  from tz_notice a
+					 where isall = 'N'
+					   and tabseq = #p_tabseq#
+					<isNotEmpty property="p_searchtext">
+					<isEqual property="p_search" compareValue="adtitle">
+					   and a.adtitle like '%' || #p_searchtext# || '%'
+					</isEqual>
+					<isEqual property="p_search" compareValue="adcontents">
+					   and a.adcontents like '%' || #p_searchtext# || '%'
+					</isEqual>
+					<isEqual property="p_search" compareValue="aduserid">
+					   and a.aduserid like '%' || #p_searchtext# || '%'
+					</isEqual>
+					<isEqual property="p_search" compareValue="adname">
+					   and a.adname like '%' || #p_searchtext# || '%'
+					</isEqual>
+					<isEqual property="p_search" compareValue="addate">
+					   and substr(a.addate, 1, 8) = replace(#p_searchtext#, '.', '')
+					</isEqual>
+					</isNotEmpty>
+					<isNotEqual property="gadmin" compareValue="A">
+						<isNotEqual property="p_tabseq" compareValue="12">
+					   	and ( compcd like '%'||#comp#||'%' or grcodecd like '%'||#grcode#||'%' )
+					   	</isNotEqual>
+					</isNotEqual>
+					 order by a.addate desc
+		       )
+		       
+		) where rn BETWEEN #firstIndex# + 1 AND #firstIndex# + #recordCountPerPage#
+	</select>
+
+	<select id="noticeAdminDAO.srSystemSpecListAll" parameterClass="map" resultClass="egovMap">
+		select 
+			rownum,
+			tabseq,
+			seq,
+			gubun,
+			reg_id,
+			(select name from tz_member where userid = #userid#) as reg_name,
+			reg_date,
+			reqdate_from,
+			reqdate_to,
+			finish_date,
+			proc_rate,
+			req_title,
+			busy_gubun,
+			(select count(realfile) from tz_boardfile where tabseq = a.tabseq and seq = a.seq) as filecnt
+		from tz_srsystem a
+		where 1=1
+		<isNotEmpty property="p_searchtext">
+			<isEqual property="p_search" compareValue="adtitle">
+				and a.req_title like '%' || #p_searchtext# || '%'
+			</isEqual>
+			<isEqual property="p_search" compareValue="adcontents">
+				and a.req_content like '%' || #p_searchtext# || '%'
+			</isEqual>
+			<isEqual property="p_search" compareValue="aduserid">
+				and a.reg_id like '%' || #p_searchtext# || '%'
+			</isEqual>
+			<isEqual property="p_search" compareValue="adname">
+				and a.reg_name like '%' || #p_searchtext# || '%'
+			</isEqual>
+			<isEqual property="p_search" compareValue="addate">
+				and substr(a.reqdate_from, 1, 8) = replace(#p_searchtext#, '.', '')
+			</isEqual>
+		</isNotEmpty>
+		and tabseq = #p_tabseq#
+		order by a.first_reg_date desc
+	</select>
+	<select id="noticeAdminDAO.srSystemSpecListTotCnt" parameterClass="map" resultClass="int">
+		select 
+			count(0) as cnt
+		from tz_srsystem a
+		where 1=1	
+		<isNotEmpty property="p_searchtext">
+			<isEqual property="p_search" compareValue="adtitle">
+				and a.req_title like '%' || #p_searchtext# || '%'
+			</isEqual>
+			<isEqual property="p_search" compareValue="adcontents">
+				and a.req_content like '%' || #p_searchtext# || '%'
+			</isEqual>
+			<isEqual property="p_search" compareValue="aduserid">
+				and a.reg_id like '%' || #p_searchtext# || '%'
+			</isEqual>
+			<isEqual property="p_search" compareValue="adname">
+				and a.reg_name like '%' || #p_searchtext# || '%'
+			</isEqual>
+		</isNotEmpty>
+		<isNotEmpty property="p_search_from">
+			<isEmpty property="p_search_to">
+				<![CDATA[
+				and a.reqdate_from >= #p_search_from#
+				]]>	
+			</isEmpty>
+		</isNotEmpty>
+		<isNotEmpty property="p_search_to">
+			<isEmpty property="p_search_from">
+				<![CDATA[
+				and a.reqdate_from <= #p_search_to#
+				]]>	
+			</isEmpty>
+		</isNotEmpty>
+		<isNotEmpty property="p_search_from">
+			<isNotEmpty property="p_search_to">
+				<![CDATA[
+				and a.reqdate_from >= replace(#p_search_from#,'.','')
+				and a.reqdate_from <= replace(#p_search_to#,'.','')
+				]]>	
+			</isNotEmpty>	
+		</isNotEmpty>
+		<isNotEmpty property="p_finish_date">
+			and a.finish_date = replace(#p_finish_date#,'.','')
+		</isNotEmpty>
+		<isNotEmpty property="sys_gubun">
+			<isNotEqual property="sys_gubun" compareValue="M">
+				and a.sys_gubun = #sys_gubun#
+			</isNotEqual>
+		</isNotEmpty>
+		<isNotEmpty property="busy_gubun">
+			<isNotEqual property="busy_gubun" compareValue="Z">
+				and a.busy_gubun = #busy_gubun#
+			</isNotEqual>
+		</isNotEmpty>
+		<isNotEmpty property="answer_gubun">
+			<isEqual property="answer_gubun" compareValue="1">
+				and a.seq in (select b.seq from tz_srsystem b where b.re_seq = 1)
+			</isEqual>
+			<isEqual property="answer_gubun" compareValue="0">
+				and a.seq not in (select b.seq from tz_srsystem b where b.re_seq = 1)
+			</isEqual>
+		</isNotEmpty>		
+	</select>
+	
+	<select id="noticeAdminDAO.srSystemSpecList" parameterClass="map" resultClass="egovMap">
+		select * from (
+			select
+				rownum as rn, tabseq,seq, re_seq,gubun,reg_id,reg_name,
+				to_char(to_date(substr(reg_date, 1, 8), 'YYYYMMDD'), 'yyyy.MM.dd') as reg_date,
+				reqdate_from,reqdate_to,
+				CASE WHEN finish_date !=null THEN to_char(to_date(substr(finish_date, 1, 8), 'YYYYMMDD'), 'yyyy.MM.dd') 
+								ELSE ''
+								END  finish_date,	
+				proc_rate ,req_title,busy_gubun,sr_level,list_seq,filecnt,confirm_date,sys_gubun
+			from (
+				select 
+					a.tabseq,
+					a.seq,
+					a.re_seq,							
+					a.gubun,
+					a.reg_id,
+					(select name from tz_member where userid = trim(a.reg_id)) as reg_name,
+					a.reg_date,
+					a.reqdate_from,
+					a.reqdate_to,
+					a.finish_date,
+					a.proc_rate,
+					a.req_title,
+					a.busy_gubun,
+					a.sr_level,
+					a.list_seq,
+		       		(select count(realfile) from tz_boardfile where tabseq = a.tabseq and seq = a.seq) as filecnt,
+		       		a.confirm_date,
+		       		(select codenm from tz_code where gubun = '0122' and code = trim(a.sys_gubun)) as sys_gubun
+				from tz_srsystem a
+				where 1=1
+				<isNotEmpty property="p_searchtext">
+					<isEqual property="p_search" compareValue="adtitle">
+						and a.req_title like '%' || #p_searchtext# || '%'
+					</isEqual>
+					<isEqual property="p_search" compareValue="adcontents">
+						and a.req_content like '%' || #p_searchtext# || '%'
+					</isEqual>
+					<isEqual property="p_search" compareValue="aduserid">
+						and a.reg_id like '%' || #p_searchtext# || '%'
+					</isEqual>
+					<isEqual property="p_search" compareValue="adname">
+						and a.reg_name like '%' || #p_searchtext# || '%'
+					</isEqual>
+				</isNotEmpty>
+				<isNotEmpty property="p_search_from">
+					<isEmpty property="p_search_to">
+						<![CDATA[
+						and a.reqdate_from >= #p_search_from#
+						]]>	
+					</isEmpty>
+				</isNotEmpty>
+				<isNotEmpty property="p_search_to">
+					<isEmpty property="p_search_from">
+						<![CDATA[
+						and a.reqdate_from <= #p_search_to#
+						]]>	
+					</isEmpty>
+				</isNotEmpty>
+				<isNotEmpty property="p_search_from">
+					<isNotEmpty property="p_search_to">
+						<![CDATA[
+						and a.reqdate_from >= replace(#p_search_from#,'.','')
+						and a.reqdate_from <= replace(#p_search_to#,'.','')
+						]]>	
+					</isNotEmpty>	
+				</isNotEmpty>
+				<isNotEmpty property="p_finish_date">
+					and a.finish_date = replace(#p_finish_date#,'.','')
+				</isNotEmpty>
+				<isNotEmpty property="sys_gubun">
+					<isNotEqual property="sys_gubun" compareValue="M">
+						and a.sys_gubun = #sys_gubun#
+					</isNotEqual>
+				</isNotEmpty>
+				<isNotEmpty property="busy_gubun">
+					<isNotEqual property="busy_gubun" compareValue="Z">
+						and a.busy_gubun = #busy_gubun#
+					</isNotEqual>
+				</isNotEmpty>
+				<isNotEmpty property="answer_gubun">
+					<isEqual property="answer_gubun" compareValue="1">
+						and a.seq in (select b.seq from tz_srsystem b where b.re_seq = 1)
+					</isEqual>
+					<isEqual property="answer_gubun" compareValue="0">
+						and a.seq not in (select b.seq from tz_srsystem b where b.re_seq = 1)
+					</isEqual>
+				</isNotEmpty>
+				and a.tabseq = #p_tabseq#
+				order by a.list_seq desc
+			)
+		) where rn BETWEEN #firstIndex# + 1 AND #firstIndex# + #recordCountPerPage#
+	</select>
+	<select id="noticeAdminDAO.srSystemSpecListExcelDown" parameterClass="map" resultClass="egovMap">
+		select	rownum as rn, tabseq,seq, re_seq,gubun,reg_id,reg_name,
+			to_char(to_date(substr(reg_date, 1, 8), 'YYYYMMDD'), 'yyyy.MM.dd') as reg_date,
+			reqdate_from,reqdate_to,
+			CASE WHEN finish_date != NULL THEN to_char(to_date(substr(finish_date, 1, 8), 'YYYYMMDD'), 'yyyy.MM.dd') 
+					ELSE ''
+					END finish_date,
+			proc_rate ,req_title,busy_gubun,sr_level,list_seq,filecnt,confirm_date,sys_gubun
+		from (
+			select 
+				a.tabseq,
+				a.seq,
+				a.re_seq,							
+				a.gubun,
+				a.reg_id,
+				(select name from tz_member where userid = trim(a.reg_id)) as reg_name,
+				a.reg_date,
+				a.reqdate_from,
+				a.reqdate_to,
+				a.finish_date,
+				a.proc_rate,
+				a.req_title,
+				a.busy_gubun,
+				a.sr_level,
+				a.list_seq,
+				(select count(realfile) from tz_boardfile where tabseq = a.tabseq and seq = a.seq) as filecnt,
+				a.confirm_date,
+				(select codenm from tz_code where gubun = '0122' and code = trim(a.sys_gubun)) as sys_gubun
+			from tz_srsystem a
+			where 1=1
+			<isNotEmpty property="p_searchtext">
+				<isEqual property="p_search" compareValue="adtitle">
+					and a.req_title like '%' || #p_searchtext# || '%'
+				</isEqual>
+				<isEqual property="p_search" compareValue="adcontents">
+					and a.req_content like '%' || #p_searchtext# || '%'
+				</isEqual>
+				<isEqual property="p_search" compareValue="aduserid">
+					and a.reg_id like '%' || #p_searchtext# || '%'
+				</isEqual>
+				<isEqual property="p_search" compareValue="adname">
+					and a.reg_name like '%' || #p_searchtext# || '%'
+				</isEqual>
+			</isNotEmpty>
+			<isNotEmpty property="p_search_from">
+				<isEmpty property="p_search_to">
+					<![CDATA[
+					and a.reqdate_from >= #p_search_from#
+					]]>	
+				</isEmpty>
+			</isNotEmpty>
+			<isNotEmpty property="p_search_to">
+				<isEmpty property="p_search_from">
+					<![CDATA[
+					and a.reqdate_from <= #p_search_to#
+					]]>
+				</isEmpty>
+			</isNotEmpty>
+			<isNotEmpty property="p_search_from">
+				<isNotEmpty property="p_search_to">
+					<![CDATA[
+					and a.reqdate_from >= replace(#p_search_from#,'.','')
+					and a.reqdate_from <= replace(#p_search_to#,'.','')
+					]]>
+				</isNotEmpty>	
+			</isNotEmpty>
+			<isNotEmpty property="p_finish_date">
+				and a.finish_date = replace(#p_finish_date#,'.','')
+			</isNotEmpty>
+			<isNotEmpty property="sys_gubun">
+				<isNotEqual property="sys_gubun" compareValue="M">
+					and a.sys_gubun = #sys_gubun#
+				</isNotEqual>
+			</isNotEmpty>
+			<isNotEmpty property="busy_gubun">
+				<isNotEqual property="busy_gubun" compareValue="Z">
+					and a.busy_gubun = #busy_gubun#
+				</isNotEqual>
+			</isNotEmpty>
+			<isNotEmpty property="answer_gubun">
+				<isEqual property="answer_gubun" compareValue="1">
+					and a.seq in (select b.seq from tz_srsystem b where b.re_seq = 1)
+				</isEqual>
+				<isEqual property="answer_gubun" compareValue="0">
+					and a.seq not in (select b.seq from tz_srsystem b where b.re_seq = 1)
+				</isEqual>
+			</isNotEmpty>
+			and a.tabseq = #p_tabseq#
+			order by a.list_seq desc
+		)
+	</select>
+	
+	<select id="noticeAdminDAO.selectGrcodeList" parameterClass="map" resultClass="egovMap">
+		select distinct a.grcode, a.grcoden
+		  from tz_grcode a, tz_grsubj b, (select subj from tz_subjman whree userid = #userid# and gadmin = #gadmin#) c
+		 where a.grcode = b.grcode and b.subjcourse = c.subj
+		 order by a.grcodenm
+	</select>
+	<select id="noticeAdminDAO.selectGrcodeList2" parameterClass="map" resultClass="egovMap">
+		select distinct a.grcode, a.grcodenm
+		  from tz_grcode a, tz_grcodeman b
+		 where a.grcode = b.grcode and b.userid = #userid# and gadmin = #gadmin#
+		 order by a.grcodenm
+	</select>
+	<select id="noticeAdminDAO.selectGrcodeList3" parameterClass="map" resultClass="egovMap">
+		select distinct a.grcode, a.grcodenm
+		  from tz_grcode a, tz_grcomp b, (select comp from tz_compman where userid = #userid# and gadmin = #gadmin#) c
+		 where a.grcode = b.grcode and substr(b.comp, 1, 4) = substr(c.comp, 1, 4)
+		 order by a.grcodenm
+	</select>
+	<select id="noticeAdminDAO.selectGrcodeList4" parameterClass="map" resultClass="egovMap">
+		select grcode, grcodenm
+		  from tz_grcode
+		 order by tz_grcode
+	</select>
+	
+<!--	공지사항 상세보기-->
+	<!-- <select id="noticeAdminDAO.selectNoticeView" parameterClass="map" resultMap="noticeAdminDAO.NoticeResult"> -->
+	<select id="noticeAdminDAO.selectNoticeView" parameterClass="map" resultClass="egovMap"> 
+		select 
+		   a.seq,     
+		   a.gubun,   
+		   a.grcodegubun,   
+		   trim(startdate) startdate, 
+		   trim(enddate) enddate,     
+		   a.addate,                    
+		   a.adtitle,                   
+		   a.adname,                    
+		   a.adcontent,                     
+		   a.cnt,                       
+		   a.luserid,                   
+		   a.ldate,                     
+		   trim(a.loginyn) loginyn,                    
+		   a.useyn,                      
+		   a.compcd,                    
+		   a.popwidth,                  
+		   a.popheight,                 
+		   a.popxpos,                   
+		   a.popypos,                   
+		   a.popup,                     
+		   a.uselist,                   
+		   a.useframe,                  
+		   a.isall,                     
+		   a.aduserid,                  
+		   a.grcodecd,                  
+		   a.type,                       
+		   a.notice_gubun,               
+		   a.tem_type                   
+		 from TZ_NOTICE a
+		  	where a.seq    = #p_seq#
+			and a.tabseq = #p_tabseq#
+			and rownum = 1
+	</select>
+	<!-- <select id="noticeAdminDAO.srSystemSpecView" parameterClass="map" resultMap="noticeAdminDAO.srSystemResult"> -->
+	<select id="noticeAdminDAO.srSystemSpecView" parameterClass="map" resultClass="egovMap"> 
+		select 
+			a.tabseq,
+			a.seq,
+			a.re_seq,
+			a.gubun,
+			#userid# as userid,
+			(
+				select name from tz_member where userid = trim(a.reg_id)
+			) as user_name,
+			trim(a.reg_id) as reg_id,
+			trim(a.reg_date) as reg_date,
+			trim(a.reqdate_from) as reqdate_from,
+			trim(a.reqdate_to) as reqdate_to,
+			trim(a.finish_date) as finish_date,
+			a.proc_rate,
+			a.req_title,
+			a.req_content,
+			a.list_seq,
+			a.busy_gubun,
+			a.sr_level,
+			(
+				select codenm from tz_code where gubun = '0131' and trim(code) = trim(a.busy_gubun)
+			) as code_nm,
+			a.confirm_date,
+			(select codenm from tz_code where gubun = '0122' and code = trim(a.sys_gubun)) as sys_gubun	
+		from tz_srsystem a
+		where a.seq    = #p_seq#
+			and a.tabseq = #p_tabseq#
+			and a.re_seq = 0
+			and rownum = 1
+	</select>
+	<select id="noticeAdminDAO.selectReplyCount" parameterClass="map" resultClass="int">
+		select count(*) as cnt
+		 from tz_srsystem
+		 where seq = #p_seq#
+		 and tabseq = #p_tabseq#
+		 and re_seq > 0
+	</select>	
+	<select id="noticeAdminDAO.selectSrSystemReSeq" parameterClass="map" resultClass="int">
+		select nvl(max(re_seq),0) as cnt
+		 from tz_srsystem
+		 where seq = #p_seq#
+		 and tabseq = #p_tabseq#
+	</select>	
+	<select id="noticeAdminDAO.selectConfirmDateCnt" parameterClass="map" resultClass="int">
+		select count(confirm_date) as cnt
+		 from tz_srsystem
+		 where seq = #p_seq#
+		 and tabseq = #p_tabseq#
+		 and re_seq = 0		
+	</select>	
+	<select id="noticeAdminDAO.selectSrSystemSrListSeqMin" parameterClass="map" resultClass="float">
+		select (nvl(min(list_seq),0) + (select nvl(max(list_seq),0) from tz_srsystem where seq &lt; $p_seq$ and tabseq=$p_tabseq$))/2.0 as cnt
+		 from tz_srsystem
+		 where seq = #p_seq#
+		 and tabseq = #p_tabseq#
+	</select>	
+	<select id="noticeAdminDAO.selectSrSystemSrListSeqMinRe1" parameterClass="map" resultClass="float">
+		select before_value 
+		from(
+		select 
+			list_seq,
+			(list_seq + LAG(list_seq,1,0) over(order by list_seq))/2.0 as before_value
+		
+		from tz_srsystem
+		order by list_seq desc
+		)
+		where list_seq = $list_seq$
+	</select>	
+	<select id="noticeAdminDAO.selectSrSystemSrListSeqMinRe2" parameterClass="map" resultClass="float">
+			select max(list_seq1 + list_seq2) as list_seq
+			from
+			(
+					select 
+						list_seq as list_seq1,
+						00.0 as list_seq2
+					 from tz_srsystem
+					 where seq = #p_seq#
+					 and tabseq = #p_tabseq#
+					 and re_seq = #reSeq# 
+					 union all
+					select 
+						0.0 as list_seq1,
+						0.0 as list_seq2
+					 from DB_ROOT
+			)	
+	</select>	
+	<select id="noticeAdminDAO.selectSrSystemSrLevel" parameterClass="map" resultClass="int">
+		select nvl(max(sr_level),0) as cnt
+		 from tz_srsystem
+		 where seq = #p_seq#
+		 and tabseq = #p_tabseq#
+	</select>	
+	<!-- <select id="noticeAdminDAO.srSystemSpecViewList" parameterClass="map" resultMap="noticeAdminDAO.srSystemResult1"> -->	
+	<select id="noticeAdminDAO.srSystemSpecViewList" parameterClass="map" resultClass="egovMap">
+		select 
+			a.re_seq,
+			trim(a.finish_date) as finish_date,
+			(
+				select name from tz_member where userid = trim(a.reg_id)
+			) as user_name,
+			a.proc_rate,
+			a.req_title,
+			a.req_content,
+			a.sr_level,	
+			a.list_seq	
+		from tz_srsystem a
+		where a.seq    = #p_seq#
+		<isEqual property="p_reseq" compareValue="0">
+			and a.re_seq    = 99999
+		</isEqual>		
+		<isNotEqual property="p_reseq" compareValue="0">
+			and a.re_seq    = #p_reseq#
+		</isNotEqual>		
+
+		order by a.re_seq asc	 
+	</select>
+	<!-- <select id="noticeAdminDAO.srSystemSpecViewListRe" parameterClass="map" resultMap="noticeAdminDAO.srSystemResult1">	 -->
+	<select id="noticeAdminDAO.srSystemSpecViewListRe" parameterClass="map" resultClass="egovMap">
+		select 
+			a.re_seq,
+			trim(a.finish_date) as finish_date,
+			(
+				select name from tz_member where userid = trim(a.reg_id)
+			) as user_name,
+			a.proc_rate,
+			a.req_title,
+			a.req_content,
+			a.sr_level
+		from tz_srsystem a
+		where a.seq    = #p_seq#
+		<isEqual property="p_reseq" compareValue="0">
+			and a.re_seq    = 9999999
+		</isEqual>		
+		<isNotEqual property="p_reseq" compareValue="0">
+			and a.re_seq    = #p_reseq#
+		</isNotEqual>		
+
+		order by a.re_seq asc	 
+	</select>
+	
+	
+<!--	게시판 첨부 파일 리스트 -->
+	<select id="noticeAdminDAO.selectBoardFileList" parameterClass="map" resultClass="egovMap">
+		select 
+		   b.realfile,                  
+		   b.savefile,                  
+		   b.fileseq                    
+		 from TZ_BOARDFILE B  
+		  where b.seq    = #p_seq#
+			and b.tabseq = #p_tabseq#
+	</select>
+	
+	
+<!--	공지사항 조회수 업데이트-->
+	<update id="noticeAdminDAO.updateNoticeReadCount">
+		update TZ_NOTICE set cnt = cnt + 1 where seq = #p_seq#
+	</update>
+	
+<!--	공지등록-->
+	<insert id="noticeAdminDAO.insertNotice">
+		<selectKey keyProperty="p_seq" resultClass="int">
+			select nvl(max(seq), 0) + 1 from TZ_NOTICE 
+		</selectKey>
+		insert into TZ_NOTICE(               
+		tabseq, 
+		seq, 
+		gubun, 
+		startdate,       
+		enddate, 
+		addate, 
+		adtitle, 
+		adname,    
+		adcontent, 
+		cnt, 
+		luserid, 
+		ldate,      
+		loginyn, 
+		useyn, 
+		compcd, 
+		popwidth,    
+		popheight, 
+		popxpos, 
+		popypos, 
+		upfile, 
+		realfile, 
+		popup, 
+		uselist, 
+		useframe,  
+		isall, 
+		grcodecd, 
+		aduserid, 
+		type, 
+		notice_gubun, 
+		tem_type, 
+		grcodegubun)   
+		values (
+			#p_tabseq#,            
+			#p_seq#,            
+			#p_gubun#,            
+			#p_startdate#,
+			#p_enddate#,            
+			to_char(sysdatetime, 'YYYYMMDDHH24MISS'), 
+			#p_adtitle#, 
+			#name#, 
+			#p_content:CLOB#,            
+			0,            
+			#userid#,            
+			to_char(sysdatetime, 'YYYYMMDDHH24MISS'), 
+			#p_login#,            
+			#p_use#,            
+			#p_compcd:CLOB#,            
+			#p_popsize1#,
+			#p_popsize2#,            
+			#p_popposition1#,            
+			#p_popposition2#,            
+			#originalFileName#,
+			#uploadFileName#,            
+			#p_popup#,            
+			#p_uselist#,            
+			#p_useframe#, 
+			#p_isAllvalue#,            
+			#p_grcodecd:CLOB#, 
+			#userid#, 
+			#p_type#, 
+			#p_notice_gubun#, 
+			#p_tem_type#, 
+			#p_grcodegubun#
+		)	
+	</insert>
+	<insert id="noticeAdminDAO.insertSrSystem">
+		<selectKey keyProperty="p_seq" resultClass="int">
+			select nvl(max(seq), 0) + 1 from tz_srsystem 
+		</selectKey>
+		insert into tz_srsystem(     
+			tabseq,
+			seq,
+			re_seq,
+			gubun,
+			reg_id,
+			reg_DATE,
+			reqdate_from,
+			reqdate_to,
+			finish_date,
+			proc_rate,
+			req_title,
+			req_content,
+			list_seq,
+			busy_gubun,
+			sr_level,
+			first_reg_id,
+			first_reg_date,
+			last_reg_id,
+			last_reg_date,
+			sys_gubun
+			)   
+		values (
+			#p_tabseq#,            
+			#p_seq#,
+			0,            
+			#gubun#,  
+			trim(#reg_id#),
+			replace(#reg_date#,'.',''),
+			replace(#reqdate_from#,'.',''),
+			replace(#reqdate_to#,'.',''),
+			replace(#finish_date#,'.',''),
+			#proc_rate#,
+			#req_title#,
+			#req_content_val:CLOB#,
+			#p_seq#,
+			#busy_gubun#,
+			'0',
+			#userid#,
+			to_char(sysdatetime, 'YYYYMMDDHH24MISS'),
+			#userid#,
+			to_char(sysdatetime, 'YYYYMMDDHH24MISS'),
+			#sys_gubun#
+		)	
+	</insert>
+	<insert id="noticeAdminDAO.insertSrSystemReply">
+		insert into tz_srsystem(tabseq,seq,re_seq,gubun,reg_id,reg_date,reqdate_from,reqdate_to,finish_date,proc_rate,req_title,req_content,confirm_date,list_seq,busy_gubun,sr_level,first_reg_id,first_reg_date,last_reg_id,last_reg_date,sys_gubun)
+		select 
+			#p_tabseq#,            
+			#p_seq#,
+			#reseq#,            
+			gubun,  
+			#userid#,
+			to_char(sysdatetime, 'YYYYMMDDHH24MISS'),
+			trim(reqdate_from),
+			trim(reqdate_to),
+			replace(#finish_date#,'.',''),
+			#proc_rate#,
+			#req_title#,
+			#req_content_val:CLOB#,
+			to_char(sysdatetime, 'YYYYMMDDHH24MISS'),
+			#ListSeqMin#,
+			busy_gubun,
+			#srlevel#,
+			#userid#,
+			first_reg_date,
+			#userid#,
+			last_reg_date,
+			sys_gubun
+		from tz_srsystem
+		where seq    = #p_seq#
+		and tabseq = #p_tabseq#
+		and re_seq = 0		
+	</insert>
+	
+	
+<!--	보드에 파일등록하기-->
+	<insert id="noticeAdminDAO.insertBoardFile">
+		<selectKey resultClass="int" keyProperty="p_fileseq">
+			select nvl(max(fileseq),0) + 1 from	tz_boardfile	
+			where tabseq = #p_tabseq# and seq = #p_seq# 
+		</selectKey>
+		insert	into tz_boardfile(tabseq, seq, fileseq, realfile, savefile, luserid,	ldate)
+		values (#p_tabseq#, #p_seq#, #p_fileseq#, #originalFileName#, #uploadFileName#, #userid#, to_char(sysdatetime, 'YYYYMMDDHH24MISS'))
+	</insert>
+	
+<!--	게시글 삭제-->
+	<delete id="noticeAdminDAO.deleteNotice">
+		delete from TZ_NOTICE
+		where tabseq = #p_tabseq# 
+		and seq = #p_seq#
+	</delete>
+	<delete id="noticeAdminDAO.deleteSrSystem">
+		delete from tz_srsystem
+		where tabseq = #p_tabseq# 
+		and seq = #p_seq#
+		and re_seq=0
+	</delete>	
+	<delete id="noticeAdminDAO.deleteSrSystemReply">
+		delete from tz_srsystem
+		where tabseq = #p_tabseq# 
+		and seq = #p_seq#
+		and re_seq=#p_reseq#
+	</delete>	
+<!--	보드파일 삭제-->
+	<delete id="noticeAdminDAO.deleteBoardFile">
+		delete from tz_boardfile 
+		where tabseq = #p_tabseq# 
+		and seq = #p_seq#
+		and fileseq = #p_fileseq#
+	</delete>
+	
+<!--	공지사항 수정-->
+	<update id="noticeAdminDAO.updateNotice">
+		update TZ_NOTICE set 
+		gubun = #p_gubun# ,  
+		startdate = #p_startdate# , 
+		enddate = #p_enddate# , 
+		adtitle = #p_adtitle# , 
+		adcontent = #p_content:CLOB# , 
+		loginyn= #p_login#, 
+		useyn = #p_use#, 
+		compcd = #p_compcd:CLOB#, 
+		popwidth = #p_popsize1#, 
+		popheight = #p_popsize2#, 
+		popxpos = #p_popposition1#, 
+		popypos = #p_popposition2#, 		 
+		popup = #p_popup#, 
+		uselist= #p_uselist#, 
+		useframe = #p_useframe#, 
+		isall = #p_isAllvalue# , 
+		grcodecd = #p_grcodecd:CLOB#, 
+		type = #p_type#, 
+		notice_gubun = #p_notice_gubun#, 
+		tem_type = #p_tem_type# 
+		where tabseq = #p_tabseq#
+		and seq = #p_seq#	
+	</update>
+	<update id="noticeAdminDAO.updateSrSystem">
+		update tz_srsystem set 
+		reqdate_from = replace(#reqdate_from#,'.',''),  
+		reqdate_to = replace(#reqdate_to#,'.',''), 
+		finish_date =replace(#finish_date#,'.','') ,
+		busy_gubun = #busy_gubun# ,
+		req_title = #req_title# , 
+		req_content = #req_content_val:CLOB# , 
+		last_reg_id= #userid#,
+		last_reg_date= to_char(sysdatetime, 'YYYYMMDDHH24MISS'),
+		sys_gubun=#sys_gubun#
+		where tabseq = #p_tabseq#
+		and seq = #p_seq#	
+		and re_seq = 0		
+	</update>
+	<update id="noticeAdminDAO.confirmDateUpdate">
+		update tz_srsystem set 
+			confirm_date = to_char(sysdatetime, 'YYYYMMDDHH24MISS')
+		where tabseq = #p_tabseq#
+		and seq = #p_seq#	
+		and re_seq = 0		
+	</update>
+	<update id="noticeAdminDAO.updateSrSystemReply">
+		update tz_srsystem set 
+		finish_date =replace(#finish_date#,'.','') ,
+		proc_rate = #proc_rate# ,
+		req_title = #req_title# ,
+		req_content = #req_content_val:CLOB# , 
+		last_reg_id= #userid#,
+		last_reg_date= to_char(sysdatetime, 'YYYYMMDDHH24MISS')
+		where tabseq = #p_tabseq#
+		and seq = #p_seq#	
+		and re_seq = #re_seq#		
+	</update>
+	<update id="noticeAdminDAO.updateSrSystemReply1">
+		update tz_srsystem set 
+		finish_date =replace(#finish_date#,'.','') ,
+		proc_rate = #proc_rate# ,
+		req_title = #req_title# ,
+		req_content = #req_content_val:CLOB# , 
+		last_reg_id= #userid#,
+		last_reg_date= to_char(sysdatetime, 'YYYYMMDDHH24MISS')
+		where tabseq = #p_tabseq#
+		and seq = #p_seq#	
+		and re_seq = #re_seq#		
+	</update>
+	
+<!--	FAQ 카테고리 리스트 -->
+	<select id="noticeAdminDAO.selectCategoryList" parameterClass="map" resultClass="egovMap">
+		select 
+		faqcategory, faqcategorynm, luserid, ldate, 
+		(select count(0) from TZ_FAQ where faqcategory   = a.faqcategory and faqgubun = a.faqgubun) catecount
+		from TZ_FAQ_CATEGORY a 
+    	where 1=1
+    	
+    	<isEmpty property="p_faqgubun">
+    	and faqgubun = 'FAQ'
+    	</isEmpty>
+    	
+    	<isNotEmpty property="p_faqgubun">
+    	and faqgubun = #p_faqgubun#
+    	</isNotEmpty>
+    	
+    	 
+    	<isNotEmpty property="search_faqcategorynm">
+    		 and faqcategorynm like  '%' || #search_faqcategorynm# || '%'
+    	</isNotEmpty>
+    	order by faqcategory asc
+	</select>
+	
+<!--	FAQ 카테고리 보기-->
+	<select id="noticeAdminDAO.selectCategoryView" parameterClass="map" resultClass="egovMap">
+		select faqcategory, faqcategorynm, luserid, ldate  from TZ_FAQ_CATEGORY
+        where 1=1
+         
+        <isEmpty property="p_faqgubun">
+    	and faqgubun = 'FAQ'
+    	</isEmpty>
+    	
+    	<isNotEmpty property="p_faqgubun">
+    	and faqgubun = #p_faqgubun#
+    	</isNotEmpty>
+    	 
+        AND faqcategory  = #p_faqcategory#
+		and rownum = 1
+	</select>
+	
+<!--	FAQ 카테고리 등록-->
+	<insert id="noticeAdminDAO.insertCategoryFaq">
+		<selectKey keyProperty="p_faqcategory" resultClass="int">
+			select nvl(max(to_number(faqcategory)),0) + 1 from TZ_FAQ_CATEGORY
+		</selectKey>
+		
+		insert into TZ_FAQ_CATEGORY(faqcategory, faqcategorynm, luserid, ldate, faqgubun)
+		values (
+		#p_faqcategory#, 
+		#p_faqcategorynm#, 
+		#userid#, 
+		to_char(sysdatetime, 'YYYYMMDDHH24MISS'), 
+		<isEmpty property="p_faqgubun">
+    	'FAQ'
+    	</isEmpty>
+    	
+    	<isNotEmpty property="p_faqgubun">
+    	#p_faqgubun#
+    	</isNotEmpty>
+		)
+	</insert>
+	
+<!--	FAQ 카테고리 수정-->
+	<update id="noticeAdminDAO.updateCategoryFaq">
+		update TZ_FAQ_CATEGORY set 
+		faqcategorynm = #p_faqcategorynm# , 
+		luserid = #userid# , 
+		ldate = to_char(sysdatetime, 'YYYYMMDDHH24MISS') 
+		where faqcategory = #p_faqcategory#
+		<isEmpty property="p_faqgubun">
+    	and faqgubun = 'FAQ'
+    	</isEmpty>
+    	
+    	<isNotEmpty property="p_faqgubun">
+    	and faqgubun = #p_faqgubun#
+    	</isNotEmpty>
+	</update>
+	
+<!--	FAQ 카테고리 삭제-->
+	<delete id="noticeAdminDAO.deleteCategoryFaq">
+		delete from TZ_FAQ_CATEGORY 
+		where faqcategory = #p_faqcategory#
+		<isEmpty property="p_faqgubun">
+    	and faqgubun = 'FAQ'
+    	</isEmpty>
+    	
+    	<isNotEmpty property="p_faqgubun">
+    	and faqgubun = #p_faqgubun#
+    	</isNotEmpty>
+	</delete>
+	
+<!--	FAQ 카테고리로 등록된 모든 리스트 삭제-->
+	<delete id="noticeAdminDAO.deleteCategoryFaqList">
+		delete from TZ_FAQ 
+		where faqcategory = #p_faqcategory#
+		<isEmpty property="p_faqgubun">
+    	and faqgubun = 'FAQ'
+    	</isEmpty>
+    	
+    	<isNotEmpty property="p_faqgubun">
+    	and faqgubun = #p_faqgubun#
+    	</isNotEmpty>
+	</delete>
+	
+<!--	faq 리줄트맵-->
+	<resultMap id="noticeAdminDAO.FaqResult" class="egovframework.rte.psl.dataaccess.util.EgovMap">
+		<result property="fnum"      	column="fnum" />
+		<result property="title"      	column="title" />
+	   	<result property="contents"     column="contents"  jdbcType="CLOB" javaType="java.lang.String"/>
+	   	<result property="indate"      	column="indate" />
+	   	<result property="luserid"      column="luserid" />
+	   	<result property="ldate"      	column="ldate" />
+	   	<result property="real_file"      	column="real_file" />
+	   	<result property="save_file"      	column="save_file" />
+	   	<result property="faqcategory"      	column="faqcategory" />
+	</resultMap>
+	
+	<!--	faq 전체개수-->
+	<select id="noticeAdminDAO.selectFaqListTotCnt" parameterClass="map" resultClass="int">
+		select count(0) as cnt
+		 from TZ_FAQ a, TZ_FAQ_CATEGORY b
+		 where a.faqgubun = b.faqgubun
+		        and a.faqcategory = b.faqcategory
+		        
+		        <isEmpty property="p_faqgubun">
+		    	and a.faqgubun = 'FAQ'
+		    	</isEmpty>
+		    	
+		    	<isNotEmpty property="p_faqgubun">
+		    	and a.faqgubun = #p_faqgubun#
+		    	</isNotEmpty>
+		    	
+		        <isNotEmpty property="p_faqcategory">                                   
+		        	and a.faqcategory   = #p_faqcategory#
+		        </isNotEmpty>
+		        <isNotEmpty property="search_word">
+		        	and lower(a.$search_group$) like lower('%' || #search_word# || '%')
+		        </isNotEmpty>
+	</select>
+
+	<!--	faq Page 리스트-->
+	<!-- <select id="noticeAdminDAO.selectFaqListPage" parameterClass="map" resultMap="noticeAdminDAO.FaqResult"> -->
+	<select id="noticeAdminDAO.selectFaqListPage" parameterClass="map" resultClass="egovMap">
+		select * from (
+		
+		select rownum as rn, fnum, title, contents, indate, luserid, ldate, real_file, save_file, faqcategory 
+		  from (
+		  
+				select 
+				a.fnum, a.title, a.contents, a.indate, a.luserid, a.ldate, a.real_file, a.save_file, a.faqcategory 
+		        from TZ_FAQ a, TZ_FAQ_CATEGORY b
+		        where a.faqgubun = b.faqgubun
+		        and a.faqcategory = b.faqcategory
+		        
+		        <isEmpty property="p_faqgubun">
+		    	and a.faqgubun = 'FAQ'
+		    	</isEmpty>
+		    	
+		    	<isNotEmpty property="p_faqgubun">
+		    	and a.faqgubun = #p_faqgubun#
+		    	</isNotEmpty>
+		    	
+		        <isNotEmpty property="p_faqcategory">                                   
+		        	and a.faqcategory   = #p_faqcategory#
+		        </isNotEmpty>
+		        <isNotEmpty property="search_word">
+		        	and lower(a.$search_group$) like lower('%' || #search_word# || '%')
+		        </isNotEmpty>
+		        order by a.fnum desc 
+		   )
+		       
+		) where rn BETWEEN #firstIndex# + 1 AND #firstIndex# + #recordCountPerPage#
+	</select>
+	
+	
+<!--	faq 전체 리스트-->
+	<!-- <select id="noticeAdminDAO.selectFaqList" parameterClass="map" resultMap="noticeAdminDAO.FaqResult"> -->
+	<select id="noticeAdminDAO.selectFaqList" parameterClass="map" resultClass="egovMap">
+				select 
+				a.fnum, a.title, a.contents, a.indate, a.luserid, a.ldate, a.real_file, a.save_file, a.faqcategory 
+		        from TZ_FAQ a, TZ_FAQ_CATEGORY b
+		        where a.faqgubun = b.faqgubun
+		        and a.faqcategory = b.faqcategory
+		        
+		        <isEmpty property="p_faqgubun">
+		    	and a.faqgubun = 'FAQ'
+		    	</isEmpty>
+		    	
+		    	<isNotEmpty property="p_faqgubun">
+		    	and a.faqgubun = #p_faqgubun#
+		    	</isNotEmpty>
+		    	
+		        <isNotEmpty property="p_faqcategory">                                   
+		        	and a.faqcategory   = #p_faqcategory#
+		        </isNotEmpty>
+		        <isNotEmpty property="search_word">
+		        	and lower(a.$search_group$) like lower('%' || #search_word# || '%')
+		        </isNotEmpty>
+		        order by a.fnum desc 
+	</select>
+	
+	
+<!--	faq 보기-->
+	<!-- <select id="noticeAdminDAO.selectFaqView" parameterClass="map" resultMap="noticeAdminDAO.FaqResult"> -->
+	<select id="noticeAdminDAO.selectFaqView" parameterClass="map" resultClass="egovMap">
+		select 
+		fnum, title, contents, indate, luserid, ldate, real_file, save_file, faqcategory
+		from TZ_FAQ a
+	    where faqcategory   = #p_faqcategory#
+	    and fnum = #p_fnum#
+	    <isEmpty property="p_faqgubun">
+    	and a.faqgubun = 'FAQ'
+    	</isEmpty>
+    	
+    	<isNotEmpty property="p_faqgubun">
+    	and a.faqgubun = #p_faqgubun#
+    	</isNotEmpty>
+    	and rownum = 1
+	</select>
+	
+	
+<!--	faq 등록-->
+	<insert id="noticeAdminDAO.insertFaq">
+		<selectKey keyProperty="p_fnum" resultClass="int">
+			select nvl(max(fnum), 0) + 1 as fnum from TZ_FAQ
+			where faqcategory  = #p_faqcategory#
+		</selectKey>
+		insert into TZ_FAQ(faqcategory, fnum, title, contents, indate, luserid, ldate, faqgubun )
+	    values (
+	    #p_faqcategory#, 
+		#p_fnum#, 
+		#p_title#, 
+		#p_content:CLOB#, 
+		to_char(sysdatetime, 'YYYYMMDDHH24MISS'), 
+		#userid#, 
+		to_char(sysdatetime, 'YYYYMMDDHH24MISS'),
+		<isEmpty property="p_faqgubun">
+    	'FAQ'
+    	</isEmpty>
+    	
+    	<isNotEmpty property="p_faqgubun">
+    	#p_faqgubun#
+    	</isNotEmpty>
+		) 
+	</insert>
+	
+<!--	faq 수정-->
+	<update id="noticeAdminDAO.updateFaq">
+		update TZ_FAQ set 
+		faqcategory =  #p_faqcategory#, 
+		title = #p_title# , 
+		contents = #p_content:CLOB#, 
+		luserid = #userid#, 
+		ldate = to_char(sysdatetime, 'YYYYMMDDHH24MISS') 
+		where faqcategory = #p_o_faqcategory# 
+		and fnum = #p_fnum#
+		<isEmpty property="p_faqgubun">
+    	and faqgubun = 'FAQ'
+    	</isEmpty>
+    	
+    	<isNotEmpty property="p_faqgubun">
+    	and faqgubun = #p_faqgubun#
+    	</isNotEmpty>
+	</update>
+	
+<!--	faq 삭제-->
+	<delete id="noticeAdminDAO.deleteFaq">
+		 delete from TZ_FAQ 
+		 where faqcategory = #p_faqcategory# 
+		and fnum = #p_fnum#
+		<isEmpty property="p_faqgubun">
+    	and faqgubun = 'FAQ'
+    	</isEmpty>
+    	
+    	<isNotEmpty property="p_faqgubun">
+    	and faqgubun = #p_faqgubun#
+    	</isNotEmpty>
+	</delete>
+	
+	
+<!--	고사장리스트-->
+	<select id="noticeAdminDAO.selectSchoolRoomList" parameterClass="map" resultClass="egovMap">
+		select seq,school_nm,phone_no,isuse,zip_cd,juso, area_map from TZ_ATTEND_CD  order by seq desc
+	</select>
+	
+	
+	<!--	고사장 보기-->
+	<select id="noticeAdminDAO.selectSchoolRoomView" parameterClass="map" resultClass="egovMap">
+		select
+		seq,school_nm,high_edumin,low_edumin,school_class,
+		found_class,part_class,juso,zip_cd,phone_no,update_dt,update_id,isuse,
+		Case When Length(zip_cd) > 3 Then substr(zip_cd, 0, 3) Else zip_cd End zip_cd1,
+		Case When Length(zip_cd) > 5 Then substr(zip_cd, 5) Else zip_cd End zip_cd2
+		, area_map
+		from TZ_ATTEND_CD
+		where seq = #p_seq#
+		and rownum = 1
+	</select>
+	
+<!--	고사장등록-->
+	<insert id="noticeAdminDAO.insertSchoolRoom">
+		<selectKey keyProperty="p_seq" resultClass="int">
+			select nvl(max(seq),0)+1 from TZ_ATTEND_CD
+		</selectKey>
+		insert into tz_attend_cd (seq,school_nm,high_edumin,low_edumin,school_class,
+		found_class,part_class,juso,zip_cd,phone_no,update_dt,update_id,isuse, area_map )
+		values(
+		#p_seq# ,
+		#p_edunm# ,
+		#p_homepage# ,
+		#p_area# ,
+		#p_gubun# ,
+		'U' ,
+		'기타' ,
+		#p_addr# ,
+		#p_post1# <isNotEmpty property="p_post2">|| '-' || #p_post2#</isNotEmpty> ,
+		#p_shtel# ,
+		to_char(sysdatetime, 'yyyymmddhh24miss'),
+		#userid# ,
+		#p_useyn# 
+		, #p_area_map#
+		)
+	</insert>
+	
+<!--	고사장수정-->
+	<update id="noticeAdminDAO.updateSchoolRoom">
+		update tz_attend_cd set 
+		school_nm = #p_edunm# ,
+		high_edumin = #p_homepage# ,
+		low_edumin = #p_area#, 
+		school_class = #p_gubun#  , 
+		juso = #p_area# ,
+		zip_cd = #p_post1# <isNotEmpty property="p_post2">|| '-' || #p_post2#</isNotEmpty> ,
+		phone_no = #p_shtel# ,
+		update_dt = to_char(sysdatetime, 'yyyymmddhh24miss') ,
+		update_id = #userid# ,
+		area_map = #p_area_map#,
+		isuse = #p_useyn#
+		
+		where seq = #p_seq#
+	
+	</update>
+	
+<!--	고사장삭제-->
+	<delete id="noticeAdminDAO.deleteSchoolRoom">
+		delete from  TZ_ATTEND_CD where seq = #p_seq#
+	</delete>
+	
+	
+	
+	
+	
+<!--	qna 전체 개수-->
+	<select id="noticeAdminDAO.selectQnaListTotCnt" parameterClass="map" resultClass="int">
+				select count(0) as cnt  
+				from TZ_CENTER_BOARD a               
+				where 1=1
+			
+			<isNotEmpty property="p_tabseq">
+				<isEqual property="p_tabseq" compareValue="0">
+						and a.tabseq  = #p_tabseq#
+				</isEqual>
+				
+				<isEqual property="p_tabseq" compareValue="1">
+						and a.tabseq  = #p_tabseq#
+				</isEqual>
+				
+				<isEqual property="p_tabseq" compareValue="2">
+						and a.tabseq  = #p_tabseq#
+				</isEqual>
+				
+				<isEqual property="p_tabseq" compareValue="3">
+						and a.tabseq  = #p_tabseq#
+				</isEqual>
+				
+				<isEqual property="p_tabseq" compareValue="4">
+						and a.tabseq  = #p_tabseq#
+				</isEqual>
+				
+				
+				<isNotEqual property="p_tabseq" compareValue="0">
+						<isNotEqual property="p_tabseq" compareValue="1">
+							<isNotEqual property="p_tabseq" compareValue="2">
+								<isNotEqual property="p_tabseq" compareValue="3">
+									<isNotEqual property="p_tabseq" compareValue="4">
+										and a.tabseq  IN (2, 3)
+										and a.userid = #userid#
+									</isNotEqual>
+								</isNotEqual>
+							</isNotEqual>
+						</isNotEqual>
+				</isNotEqual>
+			</isNotEmpty>
+			
+			<isNotEmpty property="p_answer">
+				<isEqual property="p_answer" compareValue="Y">
+					and a.hasanswer    = 'Y'
+				</isEqual>
+				
+				<isNotEqual property="p_answer" compareValue="Y">
+					and (a.hasanswer = 'N' or a.hasanswer is null)
+				</isNotEqual>
+			</isNotEmpty>
+			
+			<isNotEmpty property="p_searchtext">
+				<isEqual property="p_search" compareValue="name">
+					and a.name like '%' || #p_searchtext# || '%'
+				</isEqual>
+				<isEqual property="p_search" compareValue="title">
+					and a.title like '%' || #p_searchtext# || '%'
+				</isEqual>
+				<isEqual property="p_search" compareValue="content">
+				<![CDATA[
+					and dbms_lob.instr(a.content,  Replace(#p_searchtext#, '-',''),1,1) <> 0
+				]]>
+				</isEqual>
+				<isEqual property="p_search" compareValue="ldate">
+				<![CDATA[
+					and ( SUBSTR(a.indate, 1, 8) <= Replace(#p_searchtext#, '-','')
+				]]>
+				</isEqual>
+				<isEqual property="p_search" compareValue="userid">
+					and ( a.userid  = #p_searchtext# )
+				</isEqual>
+			</isNotEmpty>
+	</select>
+	
+<!--	qna 리스트-->
+	<select id="noticeAdminDAO.selectQnaList" parameterClass="map" resultClass="egovMap">
+		select * from (
+		
+		select rownum as rn, tabseq, seq, userid, name, title, filecnt, gadmin,         
+			indate, cnt, refseq, levels, [position], hasanswer, aname, adate, isopen, openchk, gubuna
+		  from (
+		  	select a.tabseq, a.seq seq, a.userid userid, a.name name, a.title title, 0 filecnt, decode(a.gadmin, 'ZZ', 'ZZ', 'P1', '강사',  '운영자') gadmin,         
+			a.indate indate, a.cnt cnt, a.refseq refseq, a.levels levels, a.[position] [position], a.hasanswer, a.aname, a.adate, isopen,
+			DECODE(userid, #userid#, 'Y', NVL(isopen,'N')) as openchk, a.gubuna     
+			from TZ_CENTER_BOARD a         
+			      
+			where 1=1
+			
+			<isNotEmpty property="p_tabseq">
+				<isEqual property="p_tabseq" compareValue="0">
+						and a.tabseq  = #p_tabseq#
+				</isEqual>
+				
+				<isEqual property="p_tabseq" compareValue="1">
+						and a.tabseq  = #p_tabseq#
+				</isEqual>
+				
+				<isEqual property="p_tabseq" compareValue="2">
+						and a.tabseq  = #p_tabseq#
+				</isEqual>
+				
+				<isEqual property="p_tabseq" compareValue="3">
+						and a.tabseq  = #p_tabseq#
+				</isEqual>
+				
+				<isEqual property="p_tabseq" compareValue="4">
+						and a.tabseq  = #p_tabseq#
+				</isEqual>
+				
+				
+				<isNotEqual property="p_tabseq" compareValue="0">
+						<isNotEqual property="p_tabseq" compareValue="1">
+							<isNotEqual property="p_tabseq" compareValue="2">
+								<isNotEqual property="p_tabseq" compareValue="3">
+									<isNotEqual property="p_tabseq" compareValue="4">
+										and a.tabseq  IN (2, 3)
+										and a.userid = #userid#
+									</isNotEqual>
+								</isNotEqual>
+							</isNotEqual>
+						</isNotEqual>
+				</isNotEqual>
+			</isNotEmpty>
+			
+			<isNotEmpty property="p_answer">
+				<isEqual property="p_answer" compareValue="Y">
+					and a.hasanswer    = 'Y'
+				</isEqual>
+				
+				<isNotEqual property="p_answer" compareValue="Y">
+					and (a.hasanswer = 'N' or a.hasanswer is null)
+				</isNotEqual>
+			</isNotEmpty>
+			
+			<isNotEmpty property="p_gubuna">
+					and a.gubuna    = #p_gubuna#
+			</isNotEmpty>
+			
+			<isNotEmpty property="p_searchtext">
+				<isEqual property="p_search" compareValue="name">
+					and a.name like '%' || #p_searchtext# || '%'
+				</isEqual>
+				<isEqual property="p_search" compareValue="title">
+					and a.title like '%' || #p_searchtext# || '%'
+				</isEqual>
+				<isEqual property="p_search" compareValue="content">
+				<![CDATA[
+					and dbms_lob.instr(a.content,  Replace(#p_searchtext#, '-',''),1,1) <> 0
+				]]>
+				</isEqual>
+				<isEqual property="p_search" compareValue="ldate">
+				<![CDATA[
+					and ( SUBSTR(a.indate, 1, 8) <= Replace(#p_searchtext#, '-','')
+				]]>
+				</isEqual>
+				<isEqual property="p_search" compareValue="userid">
+					and ( a.userid  = #p_searchtext# )
+				</isEqual>
+			</isNotEmpty>
+			
+			
+			order by a.refseq desc, [position] asc  
+		 )
+		) 
+		where rn BETWEEN #firstIndex# + 1 AND #firstIndex# + #recordCountPerPage#
+	</select>
+	
+<!--	qna result-->
+	<resultMap id="noticeAdminDAO.QnaResult" class="egovframework.rte.psl.dataaccess.util.EgovMap">
+		<result property="tabseq"      		column="tabseq" />
+		<result property="seq"      		column="seq" />
+		<result property="title"      		column="title" />
+		<result property="userid"      		column="userid" />
+		<result property="name"			column="name" />
+		<result property="content"		column="content" jdbcType="CLOB" javaType="java.lang.String"/>
+		<result property="indate"      		column="indate" />
+		<result property="refseq"      		column="refseq" />
+		<result property="levels"      		column="levels" />
+		<result property="position"		column="position" />
+		<result property="upfile"      		column="upfile" />
+		<result property="cnt"      		column="cnt" />
+		<result property="recomcnt"		column="recomcnt" />
+		<result property="luserid"      	column="luserid" />
+		<result property="ldate"		column="ldate" />
+		<result property="gubunA"      		column="gubunA" />
+		<result property="gubunB"      		column="gubunB" />
+		<result property="isopen"      		column="isopen" />
+		<result property="email"      		column="email" />
+		<result property="hasanswer"		column="hasanswer" />
+		<result property="realfile"		column="realfile" />
+		<result property="savefile"		column="savefile" />
+		<result property="gadmin"      		column="gadmin" />
+		<result property="pwd"      		column="pwd" />
+		<result property="auserid"		column="auserid" />
+		<result property="adate"      		column="adate" />
+		<result property="acontent"		column="acontent" jdbcType="CLOB" javaType="java.lang.String"/>
+		<result property="atitle"      		column="atitle" />
+		<result property="aname"      		column="aname" />
+		<result property="sangdam_gubun"	column="sangdam_gubun" />
+		<result property="sangdam_gubun_name"   column="sangdam_gubun_name" />
+		<result property="realfile2"      	column="realfile2" />
+		<result property="savefile2"      	column="savefile2" />
+	</resultMap>
+	
+	<!--	qna 보기-->
+	<!-- <select id="noticeAdminDAO.selectQnaView" parameterClass="map" resultMap="noticeAdminDAO.QnaResult"> -->
+	<select id="noticeAdminDAO.selectQnaView" parameterClass="map" resultClass="egovMap">
+		select	
+			a.tabseq, 
+			a.seq, 
+			a.title, 
+			a.userid, 
+			a.name, 				
+			a.content, 
+			a.indate, 
+			a.refseq, 
+			a.levels, 
+			a.[position], 			
+			a.upfile, 
+			a.cnt, 
+			a.recomcnt, 
+			a.luserid, 
+			a.ldate, 				
+			a.gubunA, 
+			a.gubunB, 
+			a.isopen, 
+			a.email, 
+			a.hasanswer,			
+			a.realfile,  
+			a.savefile, 
+			decode(a.gadmin, 'ZZ', 'ZZ', 'P1', '강사',  '운영자') gadmin, 
+			a.pwd, 
+			a.auserid, 			
+			a.adate, 
+			a.acontent, 
+			a.atitle, 
+			aname, 
+			sangdam_gubun, 
+			nvl(b.codenm, '') sangdam_gubun_name, 
+			a.arealfile realfile2, 
+			a.asavefile savefile2 
+		from tz_center_board  a, tz_code b                                      
+		where   1=1
+			
+			
+			<isNotEmpty property="p_tabseq">
+				<isEqual property="p_tabseq" compareValue="0">
+						and a.tabseq  = #p_tabseq#
+				</isEqual>
+				
+				<isEqual property="p_tabseq" compareValue="1">
+						and a.tabseq  = #p_tabseq#
+				</isEqual>
+				
+				<isEqual property="p_tabseq" compareValue="2">
+						and a.tabseq  = #p_tabseq#
+				</isEqual>
+				
+				<isEqual property="p_tabseq" compareValue="3">
+						and a.tabseq  = #p_tabseq#
+				</isEqual>
+				
+				<isEqual property="p_tabseq" compareValue="4">
+						and a.tabseq  = #p_tabseq#
+				</isEqual>
+				
+				
+				<isNotEqual property="p_tabseq" compareValue="0">
+						<isNotEqual property="p_tabseq" compareValue="1">
+							<isNotEqual property="p_tabseq" compareValue="2">
+								<isNotEqual property="p_tabseq" compareValue="3">
+									<isNotEqual property="p_tabseq" compareValue="4">
+										and a.tabseq  IN (2, 3)
+										and a.userid = #userid#
+									</isNotEqual>
+								</isNotEqual>
+							</isNotEqual>
+						</isNotEqual>
+				</isNotEqual>
+			</isNotEmpty>
+					
+		
+		and 	a.seq = #p_seq#                 
+		and     b.gubun(+)  = '0047'
+		and     a.sangdam_gubun = b.code(+) 
+		and rownum = 1
+	</select>
+<!--	조회수 업데이트-->
+	<update id="noticeAdminDAO.updateQnaCount">
+		update TZ_CENTER_BOARD set cnt = cnt + 1 
+		where   1=1
+		
+			<isNotEmpty property="p_tabseq">
+				<isEqual property="p_tabseq" compareValue="0">
+						and tabseq  = #p_tabseq#
+				</isEqual>
+				
+				<isEqual property="p_tabseq" compareValue="1">
+						and tabseq  = #p_tabseq#
+				</isEqual>
+				
+				<isEqual property="p_tabseq" compareValue="2">
+						and tabseq  = #p_tabseq#
+				</isEqual>
+				
+				<isEqual property="p_tabseq" compareValue="3">
+						and tabseq  = #p_tabseq#
+				</isEqual>
+				
+				<isEqual property="p_tabseq" compareValue="4">
+						and tabseq  = #p_tabseq#
+				</isEqual>
+				
+				
+				<isNotEqual property="p_tabseq" compareValue="0">
+						<isNotEqual property="p_tabseq" compareValue="1">
+							<isNotEqual property="p_tabseq" compareValue="2">
+								<isNotEqual property="p_tabseq" compareValue="3">
+									<isNotEqual property="p_tabseq" compareValue="4">
+										and tabseq  IN (2, 3)
+									</isNotEqual>
+								</isNotEqual>
+							</isNotEqual>
+						</isNotEqual>
+				</isNotEqual>
+			</isNotEmpty>
+					
+		and 	seq = #p_seq#   
+	</update>
+	
+<!--	qna 등록 -->
+	<insert id="noticeAdminDAO.insertQna">
+		<selectKey resultClass="int" keyProperty="p_seq">
+			select nvl(max(seq), 0)+1 from TZ_CENTER_BOARD where tabseq = #p_tabseq#
+		</selectKey>
+		insert into TZ_CENTER_BOARD(
+		tabseq, seq, userid, name, indate, title, content, cnt, refseq, levels, [position], luserid, ldate, gadmin, sangdam_gubun, gubuna, email, realfile, savefile
+		) 
+		values (
+			#p_tabseq#, 
+			#p_seq#, 
+			#userid#, 
+			#name#, 
+			to_char(sysdatetime,  'YYYYMMDDHH24MISS'), 
+			#p_title#, 
+			#p_content#, 
+			0, 
+			#p_seq#, 
+			1, 
+			1, 
+			#userid#, 
+			to_char(sysdatetime, 'YYYYMMDDHH24MISS'),
+			#gadmin#, 
+			#p_sangdamgubun#, 
+			#p_gubuna#,
+			#p_email#,
+			#originalFileName#, 
+			#uploadFileName#
+		)
+	</insert>
+	
+	
+	<!--	qna 답변등록 -->
+	<insert id="noticeAdminDAO.insertQnaReply">
+		<selectKey resultClass="int" keyProperty="p_seq">
+			select nvl(max(seq), 0)+1 from TZ_CENTER_BOARD where tabseq = #p_tabseq#
+		</selectKey>
+		insert into TZ_CENTER_BOARD(
+		tabseq, seq, userid, name, indate, title, content, cnt, refseq, levels, [position], luserid, ldate, gadmin, sangdam_gubun, gubuna, email, realfile, savefile
+		) 
+		values (
+			#p_tabseq#, 
+			#p_seq#, 
+			#userid#, 
+			#name#, 
+			to_char(sysdatetime,  'YYYYMMDDHH24MISS'), 
+			#p_title#, 
+			#p_content#, 
+			0, 
+			#p_refseq#, 
+			#p_levels# + 1, 
+			#p_position# + 1, 
+			#userid#, 
+			to_char(sysdatetime, 'YYYYMMDDHH24MISS'),
+			#gadmin#, 
+			#p_sangdamgubun#, 
+			#p_gubuna#,
+			#p_email#,
+			#originalFileName#, 
+			#uploadFileName#
+		)
+	</insert>
+	
+<!--	qna answer, user content 수정-->
+	<update id="noticeAdminDAO.updateQna">
+		update TZ_CENTER_BOARD set 
+		title = #p_title#, 
+		content = #p_content:CLOB#, 
+		atitle = #p_atitle#,  
+		acontent = #p_acontent:CLOB#, 
+		sangdam_gubun = #p_sangdamgubun#, 
+		email = #p_email#
+		
+		<isEqual property="p_check" compareValue="Y">
+			, arealfile = ''
+			, asavefile = ''  
+		</isEqual>
+		<isNotEqual property="p_check" compareValue="Y">
+			<isNotEmpty property="uploadFileName">
+			, arealfile = #originalFileName#
+			, asavefile = #uploadFileName#  
+			</isNotEmpty>
+		</isNotEqual>
+		
+		<isNotEmpty property="p_acontent">
+			, hasanswer ='Y'
+			, adate = to_char(sysdatetime,  'YYYYMMDDHH24MISS')
+			, aname= #userid#
+			, auserid= #userid#
+		</isNotEmpty>
+		<isEmpty property="p_acontent">
+			, hasanswer ='N'
+			, adate =''
+			, aname= '' 
+		</isEmpty>
+		
+		where   tabseq  = #p_tabseq#
+		and 	seq = #p_seq#   
+	</update>
+	
+	
+	
+	
+<!--	학습자가 QNA 내용 수정시-->
+	<update id="noticeAdminDAO.updateQnaUser">
+		update TZ_CENTER_BOARD set 
+		title = #p_title#, 
+		content = #p_content:CLOB#, 
+		gubuna = #p_gubuna#,
+		isopen = #p_isopen#,
+		email = #p_email#
+		
+		<isEqual property="p_check" compareValue="Y">
+			, realfile = ''
+			, savefile = ''  
+		</isEqual>
+		<isNotEqual property="p_check" compareValue="Y">
+			<isNotEmpty property="uploadFileName">
+			, realfile = #originalFileName#
+			, savefile = #uploadFileName#  
+			</isNotEmpty>
+		</isNotEqual>
+		
+		where   tabseq  = #p_tabseq#
+		and 	seq = #p_seq#   
+	</update>
+	
+	
+	
+	
+	
+<!--	qna 삭제-->
+	<delete id="noticeAdminDAO.deleteQna">
+		delete from TZ_CENTER_BOARD
+		where   tabseq  = #p_tabseq#
+		and 	seq = #p_seq#   
+	</delete>
+	
+	
+<!--	공지사항 레이어 팝업 단체로 가져오기 상세보기-->
+	<select id="noticeAdminDAO.selectNoticeViewAll" parameterClass="map" resultClass="egovMap">
+		select *
+		from (
+		select 
+		   a.seq,     
+		   a.gubun,   
+		   a.grcodegubun,   
+		   trim(startdate) startdate, 
+		   trim(enddate) enddate,     
+		   a.addate,                    
+		   a.adtitle,                   
+		   a.adname,                    
+		   a.adcontent ,                     
+		   a.cnt,                       
+		   a.luserid,                   
+		   a.ldate,                     
+		   trim(a.loginyn) loginyn,                    
+		   a.useyn,                      
+		   a.compcd,                    
+		   a.popwidth,                  
+		   a.popheight,                 
+		   a.popxpos,                   
+		   a.popypos,                   
+		   a.popup,                     
+		   a.uselist,                   
+		   a.useframe,                  
+		   a.isall,                     
+		   a.aduserid,                  
+		   a.grcodecd,                  
+		   a.type,                       
+		   a.notice_gubun,               
+		   a.tem_type,
+		   rownum rn                   
+		 from TZ_NOTICE a
+		  	where a.tabseq = #p_tabseq#
+		  	
+		  	<isNotEmpty property="popupListAttr">
+		  	 	<iterate property="popupListAttr" prepend="AND a.seq IN" open="(" close=")"  conjunction="," >
+			  			  #popupListAttr[].seq#
+			    </iterate> 
+		  	</isNotEmpty>
+		  	<isEmpty property="popupListAttr">
+				and 1 = 0		  	
+		  	</isEmpty>
+   
+		order by enddate desc )
+		where rn <![CDATA[ < ]]> 3	
+	</select>
+	
+	
+	<select id="noticeAdminDAO.selectQnaSpamCnt" parameterClass="map" resultClass="int">
+		SELECT COUNT(*) as cnt
+		FROM TZ_CENTER_BOARD
+		WHERE userid  = #userid#
+		AND ldate >= TO_CHAR(ADDDATE(SYSDATETIME, INTERVAL -60 SECOND), 'YYYYMMDDHH24MISS')		
+	</select>
+		
+</sqlMap>
+

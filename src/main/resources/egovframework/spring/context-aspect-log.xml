@@ -1,0 +1,44 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+	xmlns:p="http://www.springframework.org/schema/p"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:aop="http://www.springframework.org/schema/aop"
+	xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans-2.5.xsd
+	http://www.springframework.org/schema/aop http://www.springframework.org/schema/aop/spring-aop-2.5.xsd">
+<!-- 
+	<bean id="logManage" class="egovframework.com.log.LogManageAspect" />
+	 
+		<aop:config>
+	    	<aop:aspect id="logManageAspect" ref="logManage">
+	    	
+	      		<aop:around pointcut="execution(public * egovframework.**..impl.*Impl.insert*(..))" method="logSql" />
+	      		
+	      		<aop:around pointcut="execution(public * egovframework.**..impl.*Impl.update*(..))" method="logSql" />
+	      		
+	      		<aop:around pointcut="execution(public * egovframework.**..impl.*Impl.delete*(..))" method="logSql" />
+	      		
+	      		<aop:around pointcut="execution(public * egovframework.**..impl.*Impl.select*(..))" method="logSql" />
+	      		
+	    	</aop:aspect>
+	  </aop:config>
+	
+
+ -->
+
+
+ 	<bean id="logManageLog" class="egovframework.com.log.LogManageAspectLog" />
+	    
+	<aop:config>
+		<aop:aspect id="logManageAspectLog" ref="logManageLog">
+	      		
+			<aop:around pointcut="execution(public * egovframework.adm.**..impl.*Impl.*update*(..)) or execution(public * egovframework.adm.**..impl.*Impl.*Update*(..))" method="aroundUpdateController" />
+		      		      		
+	      	<aop:around pointcut="execution(public * egovframework.adm.**..impl.*Impl.*delete*(..)) or execution(public * egovframework.adm.**..impl.*Impl.*Delete*(..))" method="aroundDeleteController" />
+	      		
+			<aop:around pointcut="execution(public * egovframework.adm.**..impl.*Impl.*insert*(..)) or execution(public * egovframework.adm.**..impl.*Impl.*Insert*(..))" method="aroundInsertController" />
+	      		
+
+	    </aop:aspect>
+	</aop:config>
+	   
+	   
+</beans>

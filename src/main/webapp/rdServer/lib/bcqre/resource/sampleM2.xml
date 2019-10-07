@@ -1,0 +1,30 @@
+<?xml version="1.0" encoding="euc-kr" ?>
+<EzCertIssuer>
+
+	<Doc name="default"> 
+		<Page 	name="default" width="10" height="10">
+			<MatrixSize width="10"  minheight="10" maxheight="10" />
+		</Page>
+	</Doc>
+
+	<Module sitecode="20" version="2.3.0.7" processlevel="2"
+		license="/ToBeChanged/license.issuer" > 
+		<MatrixModule  	convert2img="1" 
+				version="1"
+				format="2"
+				redundancycode="5"
+				rsctrl="2"
+				codingblocknumber="8"
+				mincodewordblock="4" 
+				density="3" 			 
+				dpi="450" />
+
+		<CryptoModule  toolkitcode="1" 
+		certPath="/ToBeChanged/signCert.der"
+		keyPath="/ToBeChaned/signPri.key"
+			       passwd="mypasswd"  />
+
+	</Module>
+
+</EzCertIssuer>
+

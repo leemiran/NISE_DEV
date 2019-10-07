@@ -1,0 +1,104 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE sqlMap PUBLIC "-//iBATIS.com//DTD SQL Map 2.0//EN" "http://ibatis.apache.org/dtd/sql-map-2.dtd">
+
+<sqlMap namespace="valid">
+	<typeAlias alias="egovMap" type="egovframework.rte.psl.dataaccess.util.EgovMap"/>
+	
+	<select id="getArea" parameterClass="map" resultClass="int">
+		select 
+			count(*) cnt
+		from 
+			tz_code 
+		where
+			code = #niceAreaCode#<!-- 
+			and [upper] = #deptCd# -->
+	</select>
+	
+	<select id="getAutoMemberCnt" parameterClass="map" resultClass="int">
+		select
+			count(*) cnt
+		from
+			tz_auto_member
+		where 
+			subj = #p_subj#
+			and [year] = #p_year#
+			and subjseq = #p_subjseq#
+	</select>
+	
+	<select id="getUserInfo" parameterClass="string" resultClass="egovMap">
+		select 
+			m.emp_gubun
+			, m.name
+			, m.nice_personal_num
+			, m.birth_date
+			, substr(m.nice_personal_num, 0, 3) nice_area_code
+			, m.dept_cd
+			, case when m.emp_gubun = 'P' then substr(m.zip_cd, 0, 2) 
+				   else substr(m.zip_cd1, 0, 2) 		
+				   end zip_area_code
+			, case when m.emp_gubun = 'P' then m.zip_cd
+				   else m.zip_cd1 
+				   end zip_code
+			, c.code dept_area_code
+			, job_cd
+		from 
+			tz_member m
+			, (
+				select 
+					code
+					, [upper]
+				from 
+					tz_code
+				where 
+					gubun = '0118'
+			) c
+		where 
+			m.userid = #userid#
+			and m.dept_cd = c.[upper](+)
+	</select>
+	
+	<select id="getUserInAutoMember" parameterClass="map" resultClass="int">
+		select
+			count(*) cnt
+		from
+			tz_auto_member
+		where 
+			subj = #subj#
+			and [year] = #year#
+			and subjseq = #subjseq#
+			and emp_gubun = #empGubun#
+			and name = #name#
+			<isEqual property="empGubun" compareValue="T">
+				and nice_personal_num = #nicePersonalNum#
+			</isEqual>
+			<isEqual property="empGubun" compareValue="E">
+				and birth_date = #birthDate#
+			</isEqual>
+	</select>
+	<select id="getSubjseqAreaList" parameterClass="map" resultClass="egovMap">
+		select 
+			area_code
+			, [upper] org_code 
+		from 
+			tz_subjseq_area sa
+			, tz_code c
+		where
+			sa.area_code = c.code
+			and c.gubun = '0118'
+			and subj = #subj#
+			and [year] = #year#
+			and subjseq = #subjseq#
+	</select>
+	
+	
+	<select id="selectStudyLimitCnt" parameterClass="map" resultClass="int">
+		SELECT COUNT(0) as cnt
+		FROM tz_subjseq
+		WHERE [year] = #year#
+		AND subj = #subj#
+		AND subjseq = #subjseq#
+		AND to_char(sysdatetime, 'yyyymmddhh24') BETWEEN edustart  AND eduend
+	</select>
+	
+</sqlMap>
+

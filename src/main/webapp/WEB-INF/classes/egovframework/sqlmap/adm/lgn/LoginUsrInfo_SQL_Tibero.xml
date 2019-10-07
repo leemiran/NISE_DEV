@@ -1,0 +1,380 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE sqlMap PUBLIC "-//iBATIS.com//DTD SQL Map 2.0//EN" "http://www.ibatis.com/dtd/sql-map-2.dtd">
+
+<sqlMap namespace="LoginUsrInfo">
+
+	<typeAlias  alias="egovMap" type="egovframework.rte.psl.dataaccess.util.EgovMap"/>
+	
+	<!-- 개인별권한 우선 그룹권한 포함한 메뉴 리스트 -->
+ 	<select id="LoginUsrInfo.selectCyberMenuAuthList" parameterClass="map" resultClass="egovMap"> 	
+		<![CDATA[
+		
+			SELECT MENUTB.* 
+			FROM
+				(
+				SELECT 	MMENU.MAIN_MENU_CODE, 
+						MMENU.MAIN_MENU_NAME,
+						DMENU.DETAIL_MENU_CODE,
+						DMENU.DETAIL_MENU_NAME,
+						MMENU.ORDER_NO AS M_ORDER_NO,
+						MMENU.AS_GUBUN,
+						MMENU.MENU_TYPE AS M_MENU_TYPE,
+						MMENU.MAIN_MENU_DESC,						
+						DMENU.PAGE_URL,
+						DMENU.ORDER_NO AS D_ORDER_NO,
+						DMENU.MENU_TYPE AS D_MENU_TYPE,
+						DMENU.DETAIL_MENU_DESC
+				FROM 	EC_R_MENU_MAIN MMENU 
+					LEFT OUTER JOIN
+						EC_R_MENU_DETAIL DMENU
+					ON	MMENU.MAIN_MENU_CODE = DMENU.MAIN_MENU_CODE
+					AND MMENU.MENU_TYPE 	 = DMENU.MENU_TYPE
+				WHERE   MMENU.AS_GUBUN = #sasgubun#
+				AND 	DMENU.UED_YN = 'Y'
+				ORDER BY MMENU.ORDER_NO ASC, DMENU.ORDER_NO ASC
+				)MENUTB
+				JOIN
+				(
+				SELECT 	MENUPS.MAIN_MENU_CODE, 
+						MENUPS.DETAIL_MENU_CODE, 
+						MENUPS.STATE_CODE ,
+						'P' AS GRADE_TYPE
+				FROM 	EC_R_MENU_PERSON MENUPS
+				WHERE 	MENUPS.STATE_CODE <> '01'
+				AND     MENUPS.AUTH_GRADE_CODE = #sauthGradeCode#
+				AND  	MENUPS.USER_ID = #suserId#
+				UNION 
+				SELECT 	MENUAH.MAIN_MENU_CODE, 
+						MENUAH.DETAIL_MENU_CODE,
+						MENUAH.STATE_CODE,
+						'G' AS GRADE_TYPE
+				FROM 	EC_R_MENU_AUTH MENUAH
+				WHERE 	MENUAH.STATE_CODE <> '01'
+				AND     MENUAH.AUTH_GRADE_CODE = #sauthGradeCode#
+				AND     MAIN_MENU_CODE||'-'||DETAIL_MENU_CODE NOT IN 
+				(
+				SELECT 	MAIN_MENU_CODE||'-'||DETAIL_MENU_CODE
+				FROM 	EC_R_MENU_PERSON
+				WHERE   USER_ID = #suserId#
+				AND     AUTH_GRADE_CODE = #sauthGradeCode#
+				)
+			)AUTHTB
+			ON  TRIM(MENUTB.MAIN_MENU_CODE) = TRIM(AUTHTB.MAIN_MENU_CODE)
+			AND TRIM(MENUTB.DETAIL_MENU_CODE) = TRIM(AUTHTB.DETAIL_MENU_CODE)
+		
+		]]>
+	</select>
+	
+	<!-- 개설과정 수 -->
+	<select id="LoginUsrInfo.selectOpenCyberCurmForYearCnt" parameterClass="map" remapResults="true" resultClass="int">	
+		<![CDATA[
+		
+		SELECT 	COUNT(*)
+		FROM  	EC_CURM A 
+					INNER JOIN  
+				EC_ASP C 
+				ON A.ASP_CODE = C.ASP_CODE
+		WHERE 	A.ASP_CODE =  #saspCode#
+		
+		AND 	A.MNG_DIV   in ($selectedMngDiv$)
+		
+		AND 	A.SQ_YEAR  =  #selectedYear#
+		
+		]]>		
+	</select>
+	
+	<!-- 보고서 인쇄건 수 -->
+	<select id="LoginUsrInfo.selectOpenCyberPrintLogCnt" parameterClass="map" remapResults="true" resultClass="int">	
+		<![CDATA[
+		
+		SELECT 	COUNT(1) AS CNT 
+		FROM 	EC_PRINT_LOG
+		WHERE 	ASP_CODE = #saspCode#
+		AND   	WRITE_DATE_TIME >= #selectedYear#||'0000000000'
+
+		]]>		
+	</select>
+	
+	<!-- 강사 수 -->
+	<select id="LoginUsrInfo.selectCyberLecturerCnt" parameterClass="map" remapResults="true" resultClass="int">	
+		<![CDATA[
+		
+		SELECT	Count(*) cnt
+        FROM 	EC_AI_LECTURER
+        Where 	ASP_CODE = #saspCode#
+        
+		]]>		
+	</select>
+	
+	
+	<!-- 교육 상태 값에 따른 인원 -->
+	<select id="LoginUsrInfo.selectCyberEduusrInfo" parameterClass="map" resultClass="egovMap">		
+		<![CDATA[
+		
+		SELECT	NVL(SUM(CASE WHEN (NVL(B.APPROVAL_STATE_CODE, 0)) = 0 THEN 0 ELSE 1 END), 0) APPLY,
+		      	NVL(SUM(CASE WHEN B.APPROVAL_STATE_CODE = '02' THEN 1 ELSE 0 END),0) SECOND_APPROVAL,
+		      	NVL(SUM(CASE WHEN B.APPROVAL_STATE_CODE = '01' THEN 1 ELSE 0 END),0) SECOND_STANDBY,
+		      	NVL(SUM(CASE WHEN B.APPROVAL_STATE_CODE = '03' THEN 1 ELSE 0 END),0) SECOND_CANCEL,
+			    NVL(SUM(CASE WHEN B.APPROVAL_STATE_CODE = '99' THEN 1 ELSE 0 END),0) ADMIN_CANCEL
+		FROM  	EC_AT_CURM_V A,
+				EC_AI_EDU_USER B,
+				EC_PERSON P,
+				EC_AI_ORGAN C
+		WHERE 	A.SEQ_CURM = B.SEQ_CURM(+)
+		AND 	B.USER_ID = P.USER_ID(+)
+		AND 	B.ORG_LINK = C.ORG_CD(+)
+		AND 	A.SQ_APPROVAL_YN = 'Y'
+		AND 	A.ASP_CODE = #saspCode#
+		AND 	A.MNG_DIV in ($selectedMngDiv$)
+		AND 	A.sq_year = #selectedYear#
+
+		]]>		
+	</select>
+	
+	<!-- 질문 답변 미답변 수 -->
+	<select id="LoginUsrInfo.selectCyberQnaInfo" parameterClass="map" resultClass="egovMap">		
+		<![CDATA[
+		
+			SELECT	(
+					SELECT 	COUNT(*)
+					FROM 	EC_CRS_BOARD A 
+								INNER JOIN
+							EC_AT_EDU_LECT B
+					ON 		A.CRS_SQ_CODE = B.CRS_SQ_CODE
+								INNER JOIN 
+							EC_AT_CURM_V V
+					ON 		B.SEQ_CURM = V.SEQ_CURM
+					WHERE 	A.BOARD_TYPE_CODE = '02'
+					AND 	A.[DEPTH] = 0
+					AND 	A.ASP_CODE = #saspCode#
+					AND     V.SQ_YEAR = #selectedYear#
+					AND 	V.MNG_DIV in ($selectedMngDiv$)
+					)AS 	Q_CNT,
+					(
+					SELECT 	COUNT(*)
+					FROM 	EC_CRS_BOARD A 
+								INNER JOIN
+							EC_AT_EDU_LECT B
+					ON 		A.CRS_SQ_CODE = B.CRS_SQ_CODE
+								INNER JOIN 
+							EC_AT_CURM_V V
+					ON 		B.SEQ_CURM = V.SEQ_CURM
+					WHERE 	A.BOARD_TYPE_CODE = '02'
+					AND 	A.[DEPTH] = 0
+					AND 	A.REPLY_YN = 'N'
+					AND 	A.ASP_CODE = #saspCode#
+					AND     V.SQ_YEAR = #selectedYear#
+					AND 	V.MNG_DIV in ($selectedMngDiv$)		
+					)AS 	NA_CNT
+			FROM 	DB_ROOT
+
+		]]>		
+	</select>
+	
+	<!-- 시험 응시/미응시 수 -->
+	<select id="LoginUsrInfo.selectCyberTestInfo" parameterClass="map" resultClass="egovMap">		
+		<![CDATA[
+		
+			SELECT				
+					COUNT(X.APPLY_CODE) APPLY_CNT,
+					SUM(CASE WHEN NVL(Y.SUBMIT_YN, 'N') = 'Y' THEN 1 ELSE 0 END) SUBMIT_CNT,
+					SUM(CASE WHEN NVL(Y.SUBMIT_YN, 'N') = 'Y' THEN 0 ELSE 1 END) NON_SUBMIT_CNT,
+					SUM(CASE WHEN NVL(Y.GRADE_YN, 'N') = 'Y' THEN 1 ELSE 0 END) GRADING_CNT,
+					SUM(CASE WHEN NVL(Y.SUBMIT_YN, 'N') = 'Y' THEN 1 ELSE 0 END) - SUM(CASE WHEN NVL(Y.GRADE_YN, 'N') = 'Y' THEN 1 ELSE 0 END) NON_GRADING_CNT
+			FROM
+				   (
+					SELECT 	CURMV.SQ_YEAR, A.CRS_SQ_CODE, A.TEST_PAPER_CODE, C.TEST_PAPER_TITLE,
+						   	A.START_DATE_TIME, A.END_DATE_TIME, B.APPLY_CODE,
+						   	C.TEST_MAKING_TYPE_CODE
+					  FROM 	EC_AT_CURM_V CURMV
+						INNER JOIN 
+							EC_AT_EDU_LECT LECT
+						ON CURMV.SEQ_CURM = LECT.SEQ_CURM
+						INNER JOIN
+					  		EC_TEST_TERM A
+					  	ON  LECT.CRS_SQ_CODE = A.CRS_SQ_CODE
+					  	INNER JOIN 
+					  		EC_APPLY B	
+					  	ON  A.CRS_SQ_CODE 		 = B.CRS_SQ_CODE	
+					  	INNER JOIN
+					  		EC_TEST_PAPER C	
+					  	ON 	A.TEST_PAPER_CODE 	 = C.TEST_PAPER_CODE
+					  	WHERE 	CURMV.SQ_YEAR = #selectedYear#
+					  	AND 	CURMV.ASP_CODE = #saspCode#
+					  	AND   	CURMV.MNG_DIV in ($selectedMngDiv$)
+					    AND   	B.APPROVAL_STATE_CODE = '02'
+					) X,
+					EC_TEST_APPLY Y
+			WHERE   X.CRS_SQ_CODE = Y.CRS_SQ_CODE (+)
+			AND 	X.APPLY_CODE = Y.APPLY_CODE (+)
+			AND 	X.TEST_PAPER_CODE = Y.TEST_PAPER_CODE (+)
+			
+
+		]]>		
+	</select>
+	<!--GROUP BY X.SQ_YEAR,X.TEST_PAPER_CODE, X.TEST_PAPER_TITLE, X.TEST_MAKING_TYPE_CODE, X.START_DATE_TIME, X.END_DATE_TIME-->
+	
+	<!-- 과제 응시/미응시 수 -->
+	<select id="LoginUsrInfo.selectCyberTaskInfo" parameterClass="map" resultClass="egovMap">		
+		<![CDATA[
+		
+			SELECT 	
+				  	COUNT(X.APPLY_CODE) APPLY_CNT,
+				  	SUM(CASE WHEN NVL(Y.SUBMIT_YN, 'N') = 'Y' THEN 1 ELSE 0 END) SUBMIT_CNT,
+				  	SUM(CASE WHEN NVL(Y.SUBMIT_YN, 'N') = 'Y' THEN 0 ELSE 1 END) NON_SUBMIT_CNT,
+				  	SUM(CASE WHEN NVL(Y.GRADE_YN, 'N') = 'Y' THEN 1 ELSE 0 END) GRADING_CNT,
+				  	SUM(CASE WHEN NVL(Y.SUBMIT_YN, 'N') = 'Y' THEN 1 ELSE 0 END) - SUM(CASE WHEN NVL(Y.GRADE_YN, 'N') = 'Y' THEN 1 ELSE 0 END) NON_GRADING_CNT
+			FROM
+				 	(
+				 	SELECT 	A.CRS_SQ_CODE,
+				 			A.TASK_GROUP_CODE,
+				 			C.TASK_GROUP_NAME,
+				 		 	A.START_DATE_TIME,
+				 		 	A.END_DATE_TIME,
+				 		 	B.APPLY_CODE
+				    FROM 	
+				    		EC_AT_CURM_V CURMV
+						INNER JOIN 
+							EC_AT_EDU_LECT LECT
+						ON CURMV.SEQ_CURM = LECT.SEQ_CURM
+						INNER JOIN
+				    		EC_TASK_TERM A
+				    	ON  LECT.CRS_SQ_CODE = A.CRS_SQ_CODE
+				    	INNER JOIN
+				    		EC_APPLY B
+				    	ON 	A.CRS_SQ_CODE = B.CRS_SQ_CODE
+				    	INNER JOIN 
+				    		EC_TASK_GROUP C	    	
+				    	ON 	A.TASK_GROUP_CODE = C.TASK_GROUP_CODE
+				   	WHERE 	CURMV.SQ_YEAR = #selectedYear#
+					AND 	CURMV.ASP_CODE = #saspCode#
+					AND   	CURMV.MNG_DIV in ($selectedMngDiv$)
+					AND 	B.APPROVAL_STATE_CODE = '02'
+					) X,
+					EC_TASK_APPLY Y,
+					EC_TASK Z
+			WHERE 	X.CRS_SQ_CODE = Y.CRS_SQ_CODE (+)
+			AND 	X.APPLY_CODE = Y.APPLY_CODE (+)
+			AND 	X.TASK_GROUP_CODE = Y.TASK_GROUP_CODE (+)
+			AND 	Y.TASK_CODE = Z.TASK_CODE
+
+		]]>		
+	</select>
+	
+	<!-- 토론 응시/미응시 수 -->
+	<select id="LoginUsrInfo.selectCyberDiscussInfo" parameterClass="map" resultClass="egovMap">		
+		<![CDATA[
+		
+			SELECT 	
+					COUNT(X.APPLY_CODE) APPLY_CNT,
+					SUM(CASE WHEN Y.SUBMIT_YN = 'Y' THEN 1  ELSE 0 END) SUBMIT_CNT,
+					SUM(CASE WHEN Y.SUBMIT_YN = 'Y' THEN 0  ELSE 1 END) NON_SUBMIT_CNT,
+					SUM(CASE WHEN Y.GRADE_YN = 'Y' THEN 1  ELSE 0 END) GRADE_CNT,
+					SUM(CASE WHEN Y.SUBMIT_YN = 'Y' THEN 1  ELSE 0 END) - SUM(CASE WHEN  Y.GRADE_YN = 'Y' THEN 1  ELSE 0 END)  NON_GRADING_CNT
+			FROM
+					(
+					SELECT 	C.APPLY_CODE, 
+							C.USER_ID, 
+							A.DISCUSS_CODE, 
+							A.DISCUSS_NAME,
+							START_DATE_TIME, 
+							END_DATE_TIME
+				   	FROM 	EC_AT_CURM_V CURMV
+								INNER JOIN 
+							EC_AT_EDU_LECT LECT
+							ON CURMV.SEQ_CURM = LECT.SEQ_CURM
+								INNER JOIN
+							EC_DISCUSS_TERM B
+							ON  LECT.CRS_SQ_CODE = B.CRS_SQ_CODE
+								INNER JOIN
+				   			EC_DISCUSS A
+				   			ON  B.DISCUSS_CODE = A.DISCUSS_CODE	 
+				   				INNER JOIN  			
+				   			EC_APPLY C
+				   			ON  B.CRS_SQ_CODE = C.CRS_SQ_CODE
+					WHERE 	CURMV.SQ_YEAR = #selectedYear#
+					AND   	CURMV.ASP_CODE = #saspCode#
+					AND   	CURMV.MNG_DIV in ($selectedMngDiv$)		
+					AND 	C.APPROVAL_STATE_CODE = '02'		
+					)X, EC_DISCUSS_APPLY Y
+			WHERE 	X.APPLY_CODE = Y.APPLY_CODE (+)
+			AND 	X.DISCUSS_CODE = Y.DISCUSS_CODE (+)
+
+		]]>		
+	</select>
+
+	<!-- 설문 응답/미응답 수 -->
+	<select id="LoginUsrInfo.selectCyberEnqInfo" parameterClass="map" resultClass="egovMap">		
+		<![CDATA[
+		
+			SELECT				
+				 COUNT(X.APPLY_CODE) APPLY_CNT,
+				 SUM(CASE WHEN NVL(Y.SUBMIT_YN, 'N') = 'Y' THEN 1 ELSE 0 END) SUBMIT_CNT,
+				 SUM(CASE WHEN NVL(Y.SUBMIT_YN, 'N') = 'Y' THEN 0  ELSE 1 END) NON_SUBMIT_CNT
+			FROM
+				(SELECT B.CRS_SQ_CODE, A.ENQ_CODE, A.ENQ_TITLE,
+					 START_DATE_TIME, END_DATE_TIME,
+					 C.APPLY_CODE
+				 FROM EC_ENQ A, EC_ENQ_TERM B, EC_APPLY C, EC_AI_EDU_USER D, EC_AT_CURM_V V
+				 WHERE 1=1
+				 	 AND V.SEQ_CURM = D.SEQ_CURM
+				     AND C.CRS_APPLY_CODE = D.CRS_APPLY_CODE
+					 AND A.ENQ_CODE = B.ENQ_CODE
+					 AND B.CRS_SQ_CODE = C.CRS_SQ_CODE
+					 AND C.ASP_CODE = #saspCode#
+					 AND V.SQ_YEAR 	= #selectedYear#
+					 AND V.MNG_DIV IN ($selectedMngDiv$)
+					 AND C.APPROVAL_STATE_CODE = '02'
+					 AND D.APPROVAL_STATE_CODE = '02') X
+				 ,EC_ENQ_REPLY Y
+			WHERE X.APPLY_CODE = Y.APPLY_CODE (+)
+				AND X.ENQ_CODE = Y.ENQ_CODE (+)
+				AND X.CRS_SQ_CODE = Y.CRS_SQ_CODE (+)
+			
+
+		]]>		
+	</select>
+				<!-- X.CRS_SQ_CODE, -->
+				<!-- X.ENQ_CODE, -->
+				<!-- X.ENQ_TITLE, -->
+				<!-- X.START_DATE_TIME, -->	
+				<!--X.END_DATE_TIME, -->
+				<!--GROUP BY X.CRS_SQ_CODE, X.ENQ_CODE, X.ENQ_TITLE, X.START_DATE_TIME, X.END_DATE_TIME -->
+	
+	<!-- 수료/미수료/미처리 인원 -->
+	<select id="LoginUsrInfo.selectCyberGraduateInfo" parameterClass="map" resultClass="egovMap">		
+		<![CDATA[
+		
+			SELECT 	SUM(RESULTTB.GONGIL) AS GONGIL,
+					SUM(RESULTTB.GONGE) AS GONGE,
+					SUM(RESULTTB.GONGSAM) AS GONGSAM
+			FROM(
+			SELECT 	
+					CASE 
+						WHEN EDUUSR.GRADUATE_STATE_CODE = '01' AND TO_CHAR(SYSDATE,'YYYYMMDD') > CURM.EDU_CLOSE
+						THEN 1
+						ELSE 0
+					END GONGIL,
+					CASE 
+						WHEN EDUUSR.GRADUATE_STATE_CODE = '02'
+						THEN 1
+						ELSE 0
+					END GONGE,  
+					CASE 
+						WHEN EDUUSR.GRADUATE_STATE_CODE = '03'
+						THEN 1
+						ELSE 0
+					END GONGSAM
+			FROM  	EC_AT_CURM_V CURM 
+						INNER JOIN
+					EC_AI_EDU_USER EDUUSR
+						ON CURM.SEQ_CURM = EDUUSR.SEQ_CURM
+			WHERE 	CURM.ASP_CODE = #saspCode#
+			AND		CURM.SQ_YEAR  = #selectedYear#
+			AND 	CURM.MNG_DIV IN ($selectedMngDiv$)
+			)RESULTTB
+
+		]]>		
+	</select>
+	
+</sqlMap>                            

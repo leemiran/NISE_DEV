@@ -1,0 +1,71 @@
+@charset "utf-8";
+/*default definition*/
+*{margin: 0;padding: 0;}
+body{font-family:dotum,돋움,sans-serif;margin: 0;padding: 0;color:#333333; font-size: 12px; line-height: 1.5em;}
+div{margin: 0;padding: 0;}
+ul,li{list-style:none;margin:0;padding:0;}
+ol {margin:0;padding:0;}
+p{margin: 0;padding: 0;}
+dl,dt,dd{margin: 0;padding: 0;}
+
+a:link,a:visited{text-decoration:underline; color:#626262;}
+a:hover,a:active{color:#fc6817;}
+hr{display:none;}
+.png24 {tmp:expression(setPng24(this));}
+
+
+input[type="checkbox"]{border:0;}
+input[type="radio"]{border:0;}
+.borderNone{border:none;}
+
+/* form all start */
+form {margin: 0;padding: 0;}
+select {font-size:12px; color:#555; font-family:"돋움"; line-height:25px; padding:2px 2px; border:1px solid #bababa}
+input .file {font-size:12px; color:#555; font-family:"돋움"; padding:2px 2px; border:1px solid #bababa}
+input {font-size:12px; border:1px solid #c6c6c6; padding:2px; color:#777777; font-family:"돋움"; height:15px;}
+input.txtput {height:17px; margin-bottom:1px; padding:0 2px;}
+.chr {padding:0; margin:0; width:auto; height:auto; border:0;} /* input radio버튼 checkbox css */
+textarea {padding:2px; border:1px solid #dadada; font-size:12px; line-height:1.5em; color:#777777; font-family:"돋움"; resize: none;}
+hr {display:none;}
+
+caption, legend {font-size:0;height:0;line-height:0;overflow:hidden;position:absolute;visibility:visible;width:0;}
+img, input.type-image {border:0px none;vertical-align:middle;}
+
+/* table all start */
+table, th, td {border-spacing:0; border-collapse:collapse;}
+/* table all end */
+.clear {clear:both;}
+.floatL	{float:left !important;}
+.floatR	{float:right !important;}
+.txtL {text-align:left !important;}
+.txtR {text-align:right !important}
+.txtC {text-align:center !important;}
+.vrT{vertical-align:top !important;}
+.vrM {vertical-align:middle !important;}
+.vrB {vertical-align:bottom !important;}
+.mrt3 {margin-top:3px !important}
+.mrt0 {margin-top:0 !important} .mrt10 {margin-top:10px !important} .mrt20 {margin-top:20px !important} .mrt30 {margin-top:30px !important}
+.mrb0 {margin-bottom:0 !important} .mrb10 {margin-bottom:10px !important} .mrb20 {margin-bottom:20px !important} .mrb30 {margin-bottom:30px !important}
+.mrr10 {margin-right:10px !important} .mrr20 {margin-right:20px !important} .mrr30 {margin-right:10px !important}
+.mrl10 {margin-left:10px !important} .mrl20 {margin-left:20px !important} .mrl30 {margin-left:30px !important}
+.nobtr {border-top:0 !important;}
+.nobbr {border-bottom:0 !important;}
+.w50{width:50px !important;}
+
+/* mamgin */
+.MT10 {margin-top:10px !important;}
+.MT20 {margin-top:20px !important;}
+
+.ML10 {margin-left:10px !important;}
+.ML20 {margin-left:20px !important;}
+.ML30 {margin-left:30px !important;}
+.ML40 {margin-left:40px !important;}
+
+.MR05 {margin-right:5px !important;}
+.MR10 {margin-right:10px !important;}
+.MR20 {margin-right:20px !important;}
+.MR30 {margin-right:30px !important;}
+.MR40 {margin-right:40px !important;}
+
+/* padding */
+.PL10 {padding-left:10px !important;}

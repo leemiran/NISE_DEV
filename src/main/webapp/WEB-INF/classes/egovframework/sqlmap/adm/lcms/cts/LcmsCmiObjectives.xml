@@ -1,0 +1,208 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE sqlMap PUBLIC "-//iBATIS.com//DTD SQL Map 2.0//EN" "http://ibatis.apache.org/dtd/sql-map-2.dtd">
+
+<sqlMap namespace="LcmsCmiObjectives">
+
+
+<typeAlias  alias="egovMap" type="egovframework.rte.psl.dataaccess.util.EgovMap"/>
+
+    <select id="lcmsCmiObjectivesDAO.selectLcmsCmiObjectivesPageList" parameterClass="map" resultClass="egovMap">
+        SELECT * 
+        FROM
+               (
+                SELECT TEMP.*, 
+                <isNotEmpty property="rowsPerPage">
+                       CEIL(ROWNUM / #rowsPerPage#) AS PAGE 
+                </isNotEmpty>
+                <isEmpty property="rowsPerPage">
+                       CEIL(ROWNUM / 10) AS PAGE 
+                </isEmpty>
+                FROM
+                      (
+                       SELECT 
+	        	              OBJECTIVES_SEQ,
+	        	              OBJECTIVES_COUNT,
+	        	              OBJECTIVES_ID,
+	        	              OBJECTIVES_SCORE_SCALED,
+	        	              OBJECTIVES_SCORE_RAW,
+	        	              OBJECTIVES_SCORE_MIN,
+	        	              OBJECTIVES_SCORE_MAX,
+	        	              OBJECTIVES_SUCCESS_STATUS,
+	        	              OBJECTIVES_COMPLETION_STATUS,
+	        	              OBJECTIVES_PROGRESS_MEASURE,
+	        	              OBJECTIVES_DESCRIPTION,
+	        	              USERID,
+	        	              UPDATE_DT,
+	        	              COURSE_MAP_SEQ,
+	        	              ORG_SEQ,
+	        	              ITEM_ID,
+	        	               LEARNER_ID
+        		       FROM   TB_LCMS_CMI_OBJECTIVES$nowYear$
+        		       <!--  APPEND WHERE CONDITION START  -->
+
+        		       <!--  APPEND WHERE CONDITION END    -->
+        		       <isNotEmpty property="orderBy">
+        			       $orderBy$
+        		       </isNotEmpty>
+        	          ) TEMP 
+               )
+        <isNotEmpty property="page">
+        WHERE PAGE = #page#
+        </isNotEmpty>
+        <isEmpty property="page">
+        WHERE PAGE = 1
+        </isEmpty>
+    </select>
+
+    <select id="lcmsCmiObjectivesDAO.selectLcmsCmiObjectivesList" parameterClass="map" resultClass="egovMap">
+        SELECT OBJECTIVES_SEQ,
+               OBJECTIVES_COUNT,
+               OBJECTIVES_ID,
+               OBJECTIVES_SCORE_SCALED,
+               OBJECTIVES_SCORE_RAW,
+               OBJECTIVES_SCORE_MIN,
+               OBJECTIVES_SCORE_MAX,
+               OBJECTIVES_SUCCESS_STATUS,
+               OBJECTIVES_COMPLETION_STATUS,
+               OBJECTIVES_PROGRESS_MEASURE,
+               OBJECTIVES_DESCRIPTION,
+               USERID,
+               UPDATE_DT,
+               COURSE_MAP_SEQ,
+               ORG_SEQ,
+               ITEM_ID,
+               LEARNER_ID
+        FROM   TB_LCMS_CMI_OBJECTIVES$nowYear$
+        WHERE  LEARNER_ID     = #learnerId# 
+        AND    COURSE_MAP_SEQ = #courseMapSeq#
+        AND    ORG_SEQ        = #orgSeq# 
+        AND    ITEM_ID        = #itemId# 
+		ORDER  BY OBJECTIVES_SEQ
+    </select>
+
+    <select id="lcmsCmiObjectivesDAO.selectLcmsCmiObjectivesPageListTotCnt" parameterClass="map" resultClass="int">
+        SELECT COUNT(ROWNUM) AS [COUNT]
+        FROM   TB_LCMS_CMI_OBJECTIVES$nowYear$
+    </select>
+
+    <select id="lcmsCmiObjectivesDAO.selectLcmsCmiObjectives" parameterClass="map" resultClass="egovMap">
+        SELECT OBJECTIVES_SEQ,
+               OBJECTIVES_COUNT,
+               OBJECTIVES_ID,
+               OBJECTIVES_SCORE_SCALED,
+               OBJECTIVES_SCORE_RAW,
+               OBJECTIVES_SCORE_MIN,
+               OBJECTIVES_SCORE_MAX,
+               OBJECTIVES_SUCCESS_STATUS,
+               OBJECTIVES_COMPLETION_STATUS,
+               OBJECTIVES_PROGRESS_MEASURE,
+               OBJECTIVES_DESCRIPTION,
+               USERID,
+               UPDATE_DT,
+               COURSE_MAP_SEQ,
+               ORG_SEQ,
+               ITEM_ID,
+               LEARNER_ID
+        FROM   TB_LCMS_CMI_OBJECTIVES$nowYear$
+        WHERE  OBJECTIVES_SEQ = #objectivesSeq#
+    </select>
+
+    <insert id="lcmsCmiObjectivesDAO.insertLcmsCmiObjectives">
+        <selectKey resultClass="long" keyProperty="objectivesSeq">
+            SELECT NVL(MAX(OBJECTIVES_SEQ)+1, 1)
+            FROM   TB_LCMS_CMI_OBJECTIVES$nowYear$
+            
+        </selectKey>
+        INSERT INTO TB_LCMS_CMI_OBJECTIVES$nowYear$
+        (
+            OBJECTIVES_SEQ,
+            OBJECTIVES_COUNT,
+            OBJECTIVES_ID,
+            OBJECTIVES_SCORE_SCALED,
+            OBJECTIVES_SCORE_RAW,
+            OBJECTIVES_SCORE_MIN,
+            OBJECTIVES_SCORE_MAX,
+            OBJECTIVES_SUCCESS_STATUS,
+            OBJECTIVES_COMPLETION_STATUS,
+            OBJECTIVES_PROGRESS_MEASURE,
+            OBJECTIVES_DESCRIPTION,
+            USERID,
+            UPDATE_DT,
+            COURSE_MAP_SEQ,
+            ORG_SEQ,
+            ITEM_ID,
+            LEARNER_ID
+        )
+        VALUES
+        (
+            #objectivesSeq#,
+            #objectivesCount#,
+            #objectivesId#,
+            #objectivesScoreScaled#,
+            #objectivesScoreRaw#,
+            #objectivesScoreMin#,
+            #objectivesScoreMax#,
+            #objectivesSuccessStatus#,
+            #objectivesCompletionStatus#,
+            #objectivesProgressMeasure#,
+            #objectivesDescription#,
+            #userId#,
+            #updateDt#,
+            #courseMapSeq#,
+            #orgSeq#,
+            #itemId#,
+            #learnerId#
+        )
+
+    </insert>
+
+    <update id="lcmsCmiObjectivesDAO.updateLcmsCmiObjectives">
+        UPDATE TB_LCMS_CMI_OBJECTIVES$nowYear$
+        SET    OBJECTIVES_COUNT = #objectivesCount#,
+               OBJECTIVES_ID = #objectivesId#,
+               OBJECTIVES_SCORE_SCALED = #objectivesScoreScaled#,
+               OBJECTIVES_SCORE_RAW = #objectivesScoreRaw#,
+               OBJECTIVES_SCORE_MIN = #objectivesScoreMin#,
+               OBJECTIVES_SCORE_MAX = #objectivesScoreMax#,
+               OBJECTIVES_SUCCESS_STATUS = #objectivesSuccessStatus#,
+               OBJECTIVES_COMPLETION_STATUS = #objectivesCompletionStatus#,
+               OBJECTIVES_PROGRESS_MEASURE = #objectivesProgressMeasure#,
+               OBJECTIVES_DESCRIPTION = #objectivesDescription#,
+               USERID = #userId#,
+               UPDATE_DT = #updateDt#,
+               COURSE_MAP_SEQ = #courseMapSeq#,
+               ORG_SEQ = #orgSeq#,
+               ITEM_ID = #itemId#,
+               LEARNER_ID = #learnerId#
+        WHERE  OBJECTIVES_SEQ = #objectivesSeq#
+    </update>
+
+    <delete id="lcmsCmiObjectivesDAO.deleteLcmsCmiObjectives">
+        DELETE TB_LCMS_CMI_OBJECTIVES$nowYear$
+        WHERE  COURSE_MAP_SEQ = #courseMapSeq# 
+        AND    ITEM_ID = #itemId# 
+        AND    USERID = #userId#
+    </delete>
+
+    <delete id="lcmsCmiObjectivesDAO.deleteLcmsCmiObjectivesAll">
+        DELETE FROM TB_LCMS_CMI_OBJECTIVES$nowYear$
+        <dynamic prepend="WHERE OBJECTIVES_SEQ IN ">
+            <isNotEmpty property="objectivesSeq">
+                <iterate property="objectivesSeq" open="(" close=")" conjunction=",">
+                    #objectivesSeq[]#
+                </iterate>
+            </isNotEmpty>
+            <isEmpty property="objectivesSeq">
+                ('')
+            </isEmpty>
+        </dynamic>
+    </delete>
+
+    <select id="lcmsCmiObjectivesDAO.existLcmsCmiObjectives" resultClass="long">
+        SELECT COUNT(ROWNUM) 
+        FROM   TB_LCMS_CMI_OBJECTIVES$nowYear$
+        WHERE  OBJECTIVES_SEQ = #objectivesSeq#
+    </select>
+
+</sqlMap>
+

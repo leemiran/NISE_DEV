@@ -1,0 +1,127 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<beans xmlns="http://www.springframework.org/schema/beans"
+	xmlns:p="http://www.springframework.org/schema/p"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:schemaLocation="http://www.springframework.org/schema/beans   
+       http://www.springframework.org/schema/beans/spring-beans-2.5.xsd">
+
+	<bean id="excelZipService"	class="egovframework.rte.fdl.excel.impl.EgovExcelServiceImpl">
+		<property name="propertyPath" value="excelInfo.xml" />
+		<property name="mapClass" value="egovframework.com.sym.ccm.zip.service.impl.EgovCcmExcelZipMapping" />
+		<property name="sqlMapClient" ref="sqlMapClient" />
+	</bean>
+	
+	<bean id="lcmsExcelView" class="egovframework.com.file.excel.download.LcmsExcelView"/>
+	<bean class="org.springframework.web.servlet.view.BeanNameViewResolver">
+		<property name="order" value="0" />
+	</bean>
+	
+	<!-- 과제 제출결과 수강생리스트 -->
+	<bean id="reportResultExcelView" class="egovframework.com.file.excel.download.ReportResultExcelView"/>
+	<bean class="org.springframework.web.servlet.view.BeanNameViewResolver">
+		<property name="order" value="0" />
+	</bean>
+	
+<!--	신청승인-->
+	<bean id="approvalExcelView" class="egovframework.com.file.excel.download.ApprovalExcelView"/>
+	<bean class="org.springframework.web.servlet.view.BeanNameViewResolver">
+		<property name="order" value="0" />
+	</bean>
+	
+<!--	수강생관리-->
+	<bean id="studentManagerExcelView" class="egovframework.com.file.excel.download.studentManagerExcelView"/>
+	<bean class="org.springframework.web.servlet.view.BeanNameViewResolver">
+		<property name="order" value="0" />
+	</bean>
+	
+<!--	취소/반려자-->
+	<bean id="propCancelMemberExcelView" class="egovframework.com.file.excel.download.propCancelMemberExcelView"/>
+	<bean class="org.springframework.web.servlet.view.BeanNameViewResolver">
+		<property name="order" value="0" />
+	</bean>	
+	
+<!--	입과명단-->
+	<bean id="stuMemberExcelView" class="egovframework.com.file.excel.download.stuMemberExcelView"/>
+	<bean class="org.springframework.web.servlet.view.BeanNameViewResolver">
+		<property name="order" value="0" />
+	</bean>
+	
+<!--	입과인원-->
+	<bean id="stuMemberCountExcelView" class="egovframework.com.file.excel.download.stuMemberCountExcelView"/>
+	<bean class="org.springframework.web.servlet.view.BeanNameViewResolver">
+		<property name="order" value="0" />
+	</bean>
+	
+<!--	온라인출석부-->
+	<bean id="lectLearningTimeExcelView" class="egovframework.com.file.excel.download.lectLearningTimeExcelView"/>
+	<bean class="org.springframework.web.servlet.view.BeanNameViewResolver">
+		<property name="order" value="0" />
+	</bean>	
+	
+<!--	종합학습현황-->
+	<bean id="totalScoreMemberExcelView" class="egovframework.com.file.excel.download.totalScoreMemberExcelView"/>
+	<bean class="org.springframework.web.servlet.view.BeanNameViewResolver">
+		<property name="order" value="0" />
+	</bean>	
+	
+<!--	강사정보 -->
+	<bean id="tutorExcelView" class="egovframework.com.file.excel.download.tutorExcelView"/>
+	<bean class="org.springframework.web.servlet.view.BeanNameViewResolver">
+		<property name="order" value="0" />
+	</bean>	
+	
+<!--	과정별 기이수현황 -->
+	<bean id="subjectFinishSatisExcelView" class="egovframework.com.file.excel.download.subjectFinishSatisExcelView"/>
+	<bean class="org.springframework.web.servlet.view.BeanNameViewResolver">
+		<property name="order" value="0" />
+	</bean>		
+	
+	
+	
+	
+	
+	
+	
+	<bean id="LcmsModuleExcelView" class="egovframework.com.file.excel.download.LcmsModuleExcelView"/>
+	<bean id="LcmsLessonExcelView" class="egovframework.com.file.excel.download.LcmsLessonExcelView"/>
+	<bean id="EduOfficeExcelView" class="egovframework.com.file.excel.download.EduOfficeExcelView"/>
+	<bean id="LcmsOldExcelView" class="egovframework.com.file.excel.download.LcmsOldExcelView"/>
+	<bean class="org.springframework.web.servlet.view.BeanNameViewResolver">
+		<property name="order" value="0" />
+	</bean>
+	
+	<bean id="memberSearchExcelView" class="egovframework.com.file.excel.download.MemberSearchExcelView"/>
+	<bean class="org.springframework.web.servlet.view.BeanNameViewResolver">
+		<property name="order" value="0" />
+	</bean>
+	
+	<!-- 이수관리 엑셀 출력 --> 
+	<bean id="finishStudentExcelView" class="egovframework.com.file.excel.download.FinishStudentExcelView"/>
+	<bean class="org.springframework.web.servlet.view.BeanNameViewResolver">
+		<property name="order" value="0" />
+	</bean>
+	
+	<!-- 교재배송 엑셀 출력 --> 
+	<bean id="selectCpBookExcelView" class="egovframework.com.file.excel.download.selectCpBookExcelView"/>
+	<bean class="org.springframework.web.servlet.view.BeanNameViewResolver">
+		<property name="order" value="0" />
+	</bean>
+	
+<!--	과정 다운로드-->
+<!-- 	
+    <bean id="planRegistExcelView" class="egovframework.adm.pln.excel.download.PlanRegistExcelView" />
+		<bean class="org.springframework.web.servlet.view.BeanNameViewResolver">
+		<property name="order" value="0" />
+	</bean>
+ -->
+ 
+	<!-- 관리자 권한 로그 Excel --> 
+	<bean id="ManagerExcelDown" class="egovframework.com.file.excel.download.ManagerExcelDown"/>
+	<bean class="org.springframework.web.servlet.view.BeanNameViewResolver">
+		<property name="order" value="0" />
+	</bean>
+
+	
+
+</beans>

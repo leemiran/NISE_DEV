@@ -1,0 +1,343 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE sqlMap PUBLIC "-//iBATIS.com//DTD SQL Map 2.0//EN" "http://ibatis.apache.org/dtd/sql-map-2.dtd">
+
+<sqlMap namespace="Training">
+<typeAlias  alias="egovMap" type="egovframework.rte.psl.dataaccess.util.EgovMap"/>
+	
+	<select id="trainingDAO.selectTrainingListTotCnt" parameterClass="map" resultClass="int">
+		select count(0) as cnt
+		  from tz_training a
+	</select>
+	
+	<select id="trainingDAO.selectTrainingList" parameterClass="map" resultClass="egovMap">
+		SELECT rownum as rn, iseq,  
+        	[year], 
+            subject,
+            contents,
+            use_yn,
+            luserid,
+            name,
+            ldate
+		FROM (            
+				SELECT  iseq,  
+			        	[year], 
+			            subject,
+			            contents,
+			            use_yn,
+			            luserid,
+			            (select name from tz_member where userid = luserid) as name,
+			            to_char(TO_DATETIME(ldate, 'yyyyMMdd hh24miss'), 'yyyy.MM.dd hh24:mi:ss') AS ldate
+					FROM tz_training 
+					order by iseq desc
+		)		
+	</select>
+	
+	<!-- 등록-->
+	<insert id="trainingDAO.insertTraining">		
+		insert into tz_training(
+			iseq,               
+			[year],
+			subject,
+			contents,
+			use_yn,
+			luserid,
+			ldate
+			
+		)   
+		values (
+			#p_seq#,
+			#ses_search_gyear#,            
+			#p_subject#,
+			#p_contents#,            
+			#p_use#,            
+			#userid#,            
+			to_char(sysdatetime, 'YYYYMMDDHH24MISS')
+		)	
+	</insert>
+	
+	<update id="trainingDAO.updateTrainingUseN">
+		update tz_training set		  
+		use_yn = 'N'
+	</update>
+	
+	<update id="trainingDAO.updateTraining">
+		update tz_training set 
+		[year] = #ses_search_gyear# ,  
+		use_yn = #p_use# , 
+		subject = #p_subject#,
+		contents = #p_contents#,
+		luserid = #userid# , 
+		ldate = to_char(sysdatetime, 'YYYYMMDDHH24MISS')
+		where iseq = #p_seq#	
+	</update>
+	
+	<!--파일등록하기-->
+	<insert id="trainingDAO.insertTrainingFile">		
+		insert	into tz_trainingfile(training_iseq, realfile, savefile, luserid, ldate)
+		values (#p_seq#, #originalFileName#, #uploadFileName#, #userid#, to_char(sysdatetime, 'YYYYMMDDHH24MISS'))
+	</insert>
+	
+	
+	 <select id="trainingDAO.selectTrainingSeq" parameterClass="map" remapResults="true" resultClass="int">
+        select tz_training_seq.nextval as seq from DB_ROOT
+    </select>
+    
+    
+    <select id="trainingDAO.selectTrainingView" parameterClass="map" resultClass="egovMap">
+		SELECT a.[year], 
+            a.subject,
+            a.contents,
+            a.use_yn,
+            to_char(TO_DATETIME(a.ldate, 'yyyyMMdd hh24miss'), 'yyyy.MM.dd hh24:mi:ss') AS ldate,
+            (select name from tz_member where userid = a.luserid) as name
+		FROM tz_training a
+		where iseq = #p_seq# 
+	</select>
+	
+	<!-- 파일 리스트 -->
+	<select id="trainingDAO.selectTrainingFileList" parameterClass="map" resultClass="egovMap">
+		select 
+		   b.realfile,                  
+		   b.savefile,                  
+		   b.iseq                    
+		 from tz_trainingfile B  
+		  where b.training_iseq    = #p_seq#
+	</select>
+	
+	<delete id="trainingDAO.deleteTrainingFile">
+		delete from tz_trainingfile 
+		where training_iseq = #p_seq#
+	</delete>
+	
+	<delete id="trainingDAO.deleteTraining">
+		delete from tz_training
+		where iseq = #p_seq#
+	</delete>
+	
+	<delete id="trainingDAO.deleteTrainingSchedule">
+		delete from tz_training_schedule
+		where training_iseq = #p_seq#
+		<isNotEmpty property="p_iseq"> 
+			and iseq = #p_iseq#
+		</isNotEmpty>
+	</delete>
+	
+	<select id="trainingDAO.selectTrainingScheduleListTotCnt" parameterClass="map" resultClass="int">
+		select count(0) as cnt
+		  from tz_training_schedule a
+		  where training_iseq = #p_seq# 
+	</select>
+	
+	<select id="trainingDAO.selectTrainingScheduleList" parameterClass="map" resultClass="egovMap">
+		SELECT rownum as rn, 
+			    iseq,
+			    training_iseq,
+			    mon,
+			    course,
+			    reg_term,
+			    training_term,
+			    use_yn,
+	            luserid,
+	            name,
+	            ldate
+			FROM ( 
+					SELECT iseq,
+					    training_iseq,
+					    mon,
+					    course,
+					    reg_term,
+					    training_term,
+					    use_yn,
+			            luserid,
+			            (select name from tz_member where userid = luserid) as name,
+			            to_char(TO_DATETIME(ldate, 'yyyyMMdd hh24miss'), 'yyyy.MM.dd hh24:mi:ss') AS ldate
+					FROM tz_training_schedule 
+					where training_iseq = #p_seq# 
+					order by order_num
+			)		
+	</select>
+	
+	<select id="trainingDAO.selectTrainingScheduleView" parameterClass="map" resultClass="egovMap">
+		SELECT a.iseq,
+		    a.training_iseq,
+		    a.mon,
+		    a.course,
+		    a.reg_term,
+		    a.training_term,
+		    a.use_yn,
+            to_char(TO_DATETIME(a.ldate, 'yyyyMMdd hh24miss'), 'yyyy.MM.dd hh24:mi:ss') AS ldate,
+            (select name from tz_member where userid = a.luserid) as name
+		FROM tz_training_schedule a		    
+		where iseq = #p_iseq# 
+	</select>
+	
+	<insert id="trainingDAO.insertTrainingSchedule">
+		<selectKey keyProperty="order_num" resultClass="int">
+			select nvl(max(order_num), 0) + 1 from tz_training_schedule where training_iseq = #p_seq# 
+		</selectKey>				
+		insert into tz_training_schedule(
+			training_iseq,               
+			mon,
+			course,
+			reg_term,
+			training_term,
+			order_num,
+			use_yn,
+			luserid,
+			ldate			
+		)   
+		values (
+			#p_seq#,
+			#p_mon#,            
+			#p_course#, 
+			#p_reg_term#, 
+			#p_training_term#,
+			#order_num#,
+			#p_use#,            
+			#userid#,            
+			to_char(sysdatetime, 'YYYYMMDDHH24MISS')
+		)	
+	</insert>
+	
+	<update id="trainingDAO.updateTrainingSchedule">
+		update tz_training_schedule set 
+		mon = #p_mon# ,  
+		course = #p_course# , 
+		reg_term = #p_reg_term#,
+		training_term = #p_training_term#,
+		use_yn = #p_use#,
+		luserid = #userid# , 
+		ldate = to_char(sysdatetime, 'YYYYMMDDHH24MISS')
+		where iseq = #p_iseq#	
+	</update>
+	
+	
+	<update id="trainingDAO.updateTrainingScheduleOrderNum">
+		update tz_training_schedule set 
+		order_num = #p_order_num#,
+		luserid = #userid# , 
+		ldate = to_char(sysdatetime, 'YYYYMMDDHH24MISS')
+		where iseq = #p_iseq#	
+	</update>
+	
+	<select id="trainingDAO.selectTrainingCourseListTotCnt" parameterClass="map" resultClass="int">
+		select count(0) as cnt
+		  from tz_training_course a
+		  where training_iseq = #p_seq# 
+	</select>
+	
+	<select id="trainingDAO.selectTrainingCourseList" parameterClass="map" resultClass="egovMap">
+		SELECT rownum as rn, 
+			   iseq,
+			   training_iseq,
+			   gubun,					    
+			   coursenm,
+			   edu_time,
+			   edu_target,
+			   total_edu,
+			   assist,
+			   use_yn,
+	           luserid,
+	           name,
+	           ldate
+			FROM ( 
+					SELECT iseq,
+					    training_iseq,
+					    gubun,					    
+					    coursenm,
+					    edu_time,
+					    edu_target,
+					    total_edu,
+					    assist,
+					    use_yn,
+			            luserid,
+			            (select name from tz_member where userid = luserid) as name,
+			            to_char(TO_DATETIME(ldate, 'yyyyMMdd hh24miss'), 'yyyy.MM.dd hh24:mi:ss') AS ldate
+					FROM tz_training_course 
+					where training_iseq = #p_seq# 
+					order by order_num
+			)	
+	</select>
+	
+	<select id="trainingDAO.selectTrainingCourseView" parameterClass="map" resultClass="egovMap">
+		SELECT iseq,
+			   training_iseq,
+			   gubun,					    
+			   coursenm,
+			   edu_time,
+			   edu_target,
+			   total_edu,
+			   assist,
+			   use_yn,
+	           luserid,
+	           (select name from tz_member where userid = luserid) as name,
+	           to_char(TO_DATETIME(ldate, 'yyyyMMdd hh24miss'), 'yyyy.MM.dd hh24:mi:ss') AS ldate
+		FROM tz_training_course a		    
+		where iseq = #p_iseq# 
+	</select>
+	
+	
+	<insert id="trainingDAO.insertTrainingCourse">
+		<selectKey keyProperty="order_num" resultClass="int">
+			select nvl(max(order_num), 0) + 1 from tz_training_course where training_iseq = #p_seq# 
+		</selectKey>				
+		insert into tz_training_course(
+			training_iseq,               
+			gubun,					    
+			coursenm,
+			edu_time,
+			edu_target,
+			total_edu,
+			assist,
+			order_num,
+			use_yn,
+	        luserid,
+			ldate			
+		)   
+		values (
+			#p_seq#,
+			#p_gubun#,            
+			#p_coursenm#, 
+			#p_edu_time#, 
+			#p_edu_target#,
+			#p_total_edu#,
+			#p_assist#,
+			#order_num#,
+			#p_use#,            
+			#userid#,            
+			to_char(sysdatetime, 'YYYYMMDDHH24MISS')
+		)	
+	</insert>
+	
+	<update id="trainingDAO.updateTrainingCourse">
+		update tz_training_course set 
+		gubun = #p_gubun# , 
+		coursenm = #p_coursenm# ,   
+		edu_time = #p_edu_time# , 
+		edu_target = #p_edu_target#,
+		total_edu = #p_total_edu#,
+		assist = #p_assist#,
+		use_yn = #p_use#,
+		luserid = #userid# , 
+		ldate = to_char(sysdatetime, 'YYYYMMDDHH24MISS')
+		where iseq = #p_iseq#	
+	</update>
+	
+	<delete id="trainingDAO.deleteTrainingCourse">
+		delete from tz_training_course
+		where training_iseq = #p_seq#
+		<isNotEmpty property="p_iseq"> 
+			and iseq = #p_iseq#
+		</isNotEmpty>
+	</delete>
+	
+	<update id="trainingDAO.updateTrainingCourseOrderNum">
+		update tz_training_course set 
+		order_num = #p_order_num#,
+		luserid = #userid# , 
+		ldate = to_char(sysdatetime, 'YYYYMMDDHH24MISS')
+		where iseq = #p_iseq#	
+	</update>
+			
+</sqlMap>
+

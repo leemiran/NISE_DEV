@@ -1,0 +1,1 @@
+rdservice.exe -remove

@@ -1,0 +1,32 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE sqlMap PUBLIC "-//iBATIS.com//DTD SQL Map 2.0//EN" "http://ibatis.apache.org/dtd/sql-map-2.dtd">
+
+<sqlMap namespace="userSubj">
+	<typeAlias alias="egovMap" type="egovframework.rte.psl.dataaccess.util.EgovMap"/>
+	
+	<select id="getSubjStudentLimit" parameterClass="map" resultClass="egovMap">
+		select 
+			ss.subj
+			, ss.[year]
+			, ss.subjseq
+			, ss.studentlimit
+			, count(p.userid) propose_cnt 
+		from 
+			tz_subjseq ss
+			, tz_propose p
+		where 
+			ss.subj = p.subj(+)
+			and ss.[year] = p.[year](+) 
+			and ss.subjseq = p.subjseq(+)
+			and p.chkfinal(+) != 'N'
+			and ss.subj = #p_subj# 
+			and ss.[year] = #p_year# 
+			and ss.subjseq = #p_subjseq#
+		group by 
+			ss.subj, ss.[year], ss.subjseq, ss.studentlimit
+		having 
+			count(p.userid) &lt; ss.studentlimit
+	</select>
+	
+</sqlMap>
+

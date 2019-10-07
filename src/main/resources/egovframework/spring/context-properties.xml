@@ -1,0 +1,41 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans-2.5.xsd">
+	
+	<!-- JEUS -->   
+	<bean name="propertiesService" class="egovframework.rte.fdl.property.impl.EgovPropertyServiceImpl" destroy-method="destroy">
+      <property name="properties">
+         <map>
+            <entry key="pageUnit" value="10"/>
+            <entry key="pageSize" value="10"/>
+            <entry key="Globals.isDevelopmentMode" value="true"/>
+<!--             entry key="Globals.fileStorePath" value="/product/jeus/egovProps/upload/"/-->
+<!--            <entry key="Globals.fileStorePath"       value="D:/eduup_egovframework/workspace/lcms/src/main/webapp/upload/"/>-->
+<!--         	<entry key="AspMembers.fileStorePath" 	 value="/neti01_web/wwwroot/homepage/attachfiles/member/"/>-->
+<!--         	<entry key="AspMembers.fileStoreWebPath" value="http://homepage.study.go.kr/attachfiles/member/"/>   -->
+<!--         	<entry key="Asps.fileStorePath" 		 value="/neti01_web/wwwroot/homepage/attachfiles/asp"/>-->
+<!--         	<entry key="Asps.fileStoreWebPath" 		 value="http://homepage.study.go.kr/attachfiles/asp/"/>     -->
+<!--         	<entry key="Asps.fileStoreTmplatWebPath" value="http://homepage.study.go.kr/template/homepage/"/>     -->
+<!--         	<entry key="Board.fileStorePath" 		 value="/neti01_web/wwwroot/homepage/attachfiles/upload/board"/>-->
+<!--         	<entry key="Banner.fileStorePath" 		 value="/neti01_web/wwwroot/homepage/attachfiles/banner"/>-->
+<!--         	<entry key="Faq.fileStorePath" 			 value="/neti01_web/wwwroot/homepage/attachfiles/upload/faq"/>-->
+<!--            <entry key="Qna.fileStorePath" 			 value="/neti01_web/wwwroot/homepage/attachfiles/upload/qna"/>           -->
+<!--            <entry key="Banner.fileStoreWebPath" 	 value="http://homepage.study.go.kr/attachfiles/banner/"/>-->
+         </map>
+      </property>
+	</bean>
+	
+	<!-- JBOSS, WEBLOGIC --> 
+	<!-- 
+	<bean name="propertiesService" class="egovframework.rte.fdl.property.impl.EgovPropertyServiceImpl" destroy-method="destroy">
+      <property name="properties">
+         <map>
+            <entry key="pageUnit" value="10"/>
+            <entry key="pageSize" value="10"/>
+            <entry key="Globals.fileStorePath" value="/user/com/egovProps/upload/"/>
+         </map>
+      </property>
+	</bean>
+	-->
+</beans>	

@@ -1,0 +1,92 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE sqlMap PUBLIC "-//iBATIS.com//DTD SQL Map 2.0//EN" "http://ibatis.apache.org/dtd/sql-map-2.dtd">
+
+<sqlMap namespace="MenuAuthority">
+<typeAlias  alias="egovMap" type="egovframework.rte.psl.dataaccess.util.EgovMap"/>
+
+
+	<select id="menuAuthorityDAO.selectListGadmin" parameterClass="map" resultClass="egovMap">
+		select gadmin, gadminnm
+		  from tz_gadmin
+		 order by gadmin asc
+	</select>
+
+	<select id="menuAuthorityDAO.selectMenuAuthList" parameterClass="map" resultClass="egovMap">
+		select grcode,
+		       menu,
+		       menunm,
+		       levels,
+		       orders,
+		       seq
+		       <![CDATA[
+		       $sqlString$
+		       ]]>
+		  from (
+		         select a.grcode,
+		                a.menu,		                
+		                b.menunm as menunm,
+		                a.seq,
+		                b.levels,
+		                c.gadmin,
+		                c.control,
+		                b.orders,
+		                b.parent
+		           from tz_menusub a, tz_menu b, tz_menuauth c
+		          where a.grcode = b.grcode
+		            and a.menu   = b.menu
+		            and a.grcode = c.grcode(+)
+		            and a.menu   = c.menu(+)
+		            and a.seq    = c.menusubseq(+)
+		            and a.grcode = #grcode#
+		            and b.isdisplay = 'Y'
+		            and a.seq = 0
+		           	<isEmpty property="p_systemgubun">
+		            and b.systemgubun = 1
+		           	</isEmpty>
+		           	<isNotEmpty property="p_systemgubun">
+		            and b.systemgubun = #p_systemgubun#
+		           	</isNotEmpty>
+		       ) y
+		 group by grcode, menu, menunm, seq, levels, orders, parent
+		 order by grcode, (select orders from tz_menu where menu = y.parent), parent, levels, orders, seq
+	</select>
+	
+	<delete id="menuAuthorityDAO.menuAuthDelete">
+		delete tz_menuauth where grcode = #grcode#
+	</delete>
+	
+	<insert id="menuAuthorityDAO.menuAuthInsert">
+		insert into tz_menuauth(
+			grcode,
+			menu,
+			menusubseq,
+			gadmin,
+			control,
+			luserid,
+			ldate
+		)
+		select #grcode#,
+		       menu,
+		       menusubseq,
+		       gadmin,
+		       control,
+		       #userid#,
+		       to_char(sysdatetime, 'yyyyMMddhh24miss')
+		  from (
+				select SUBSTRING_INDEX(tmp, '@', 1) as menu,
+				       SUBSTRING_INDEX(SUBSTRING_INDEX(tmp, '@', 2), '@', -1) as menusubseq,
+				       SUBSTRING_INDEX(SUBSTRING_INDEX(tmp, '@', 3), '@', -1) as gadmin,
+				       SUBSTRING_INDEX(SUBSTRING_INDEX(tmp, '@', 4), '@', -1) as control,    
+				       tmp
+				  from (
+				  		<dynamic prepend=" select ">
+			                <iterate property="param" conjunction=" from DB_ROOT union all select ">
+			                    #param[]# as tmp
+			                </iterate>
+				        </dynamic>
+				        from DB_ROOT
+				       )
+		       )
+	</insert>
+</sqlMap>
+

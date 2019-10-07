@@ -1,0 +1,103 @@
+@charset "utf-8";
+/* common */html{margin:0;padding:0}
+
+body,div,span,object,iframe,h1,h2,h3,h4,h5,h6,p,blockquote,pre,a,abbr,address,big,cite,code,del,dfn,em,font,ins,q,s,samp,small,strike,sub,sup,tt,var,b,u,i,dl,dt,dd,ol,ul,li,fieldset,form,label,legend,table,caption,tbody,tfoot,thead,tr,th,td{margin:0;padding:0;font:12px/1.5em '돋움',tahoma}
+body{height:100%;font:12px/1.5em '돋움',tahoma;color:#333}
+h1,h2,h3,h4,h5,h6{line-height:1.2em}
+ol,ul,li{list-style:none}
+img{border:0;line-height:0;font-size:0}
+table{width:100%;margin:0;padding:0;border-spacing:0;table-layout:fixed}
+legend{display:none}
+caption{position: absolute; left: -999em;}
+button{visibility:visible;margin:0;padding:0;border:none}
+fieldset{border:0}
+a{text-decoration:none}
+a img{font-size:0;line-height:0;vertical-align:middle}
+img{vertical-align:middle}
+
+select{padding:2px;border:1px solid #bababa;font-size:12px;font-family:'돋움';color:#777}
+label{display:inline-block;padding:1px 4px 1px 2px;cursor:pointer}
+th label{padding-left:0;font-weight:bold}
+input[type=text],input[type=password],input[type=file]{height:15px;padding:2px;border:1px solid #c9c9c9;font-size:12px;font-family:'돋움';color:#777}
+input[type=radio]{width:14px;height:14px;vertical-align:-4px;*vertical-align:4px}
+input[type=checkbox]{width:14px;height:14px;vertical-align:-4px;*vertical-align:4px}
+input.txtput{height:17px;margin-bottom:1px;padding:0 2px}
+.chr{width:auto;height:auto;margin:0;padding:0;border:0}
+
+/* input radio버튼 checkbox css */
+textarea{padding:2px;border:1px solid #dadada;font-size:12px;line-height:1.5em;font-family:'돋움';color:#777;resize:none}
+hr{display:none}
+.input_border{border:0}
+
+.png24{tmp:expression(setPng24(this))}
+.bold{font-weight:bold !important}
+
+.blind{display:none;overflow:hidden;position:absolute;top:0;left:0}
+.clear{clear:both}
+.floatL{float:left !important}
+.floatR{float:right !important}
+.txtL{text-align:left !important}
+.txtR{text-align:right !important}
+.txtC{text-align:center !important}
+.vrT{vertical-align:top !important}
+.vrM{vertical-align:middle !important}
+.vrB{vertical-align:bottom !important}
+.mrt3{margin-top:3px !important}
+.mrb15{margin-bottom:15px !important}
+.mrt0{margin-top:0 !important}
+.mrt10{margin-top:10px !important}
+.mrt20{margin-top:20px !important}
+.mrt30{margin-top:30px !important}
+.mrb0{margin-bottom:0 !important}
+.mrb10{margin-bottom:10px !important}
+.mrb20{margin-bottom:20px !important}
+.mrb30{margin-bottom:30px !important}
+.mrr10{margin-right:10px !important}
+.mrr20{margin-right:20px !important}
+.mrr30{margin-right:10px !important}
+.mrl10{margin-left:10px !important}
+.mrl20{margin-left:20px !important}
+.mrl30{margin-left:30px !important}
+.nobtr{border-top:0 !important}
+.nobbr{border-bottom:0 !important}
+.kyo{margin-left:2px;margin-bottom:3px; !important}
+
+
+
+.input01{width:150px}
+.input02{width:20px;text-align:right}
+.input03{width:40px;text-align:right}
+.input04{width:146px;text-align:left}
+.input99{width:99%}
+
+/* link */
+a:link{font-size:12px;color:#333;text-decoration:none}
+a:visited{font-size:12px;color:#333;text-decoration:none}
+a:hover{font-size:12px;color:#ff3c00;text-decoration:underline}
+
+/* 개인정보보호정책 */
+.personal_box{margin:0 20px;padding:15px;border:1px solid #e4e4e4;background:#f9f9f9}
+.personal_blue{color:#44799e}
+.personal_blue1{color:#1184d4}
+.personal_detail{margin:0 20px}
+
+table.personal_t{clear:both;width:95%;margin:15px 20px 0;border-top:1px solid #93c2d0}
+table.personal_t td{overflow:auto;padding:6px;border-left:1px solid #dedede;border-top:1px solid #dedede;border-bottom:1px solid #dedede;background:none;text-align:center}
+table.personal_t td.nocenter{text-align:left}
+table.personal_t .nogridL{border-left:none}
+table.personal_t .nogridR{border-right:none}
+table.personal_t th{padding:5px 0;border-left:1px solid #ccdade;font-size:11px;color:#4f708e}
+table.personal_t tr{background:#fff}
+table.personal_t th{background:#f4fafc}
+
+/* 회원탈퇴 */
+.mypage_out span{padding-left:450px}
+.mypage_outok{width:755px;height:223px;background:url(/images/user/mypage_out2.gif) no-repeat}
+.mypage_outok p{padding:160px 0 0 420px}
+
+/* 비밀번호 변경 */
+.mypage_change{width:635px;height:239px;margin:0 auto;background:url(/images/user/mypage_change2.gif) no-repeat}
+.mypage_change ul{padding:40px 0 0 100px}
+.mypage_change ul li{height:35px;padding-left:20px;background:url(/images/user/bullet02.gif) no-repeat 5px 3px;font-weight:bold}
+.mypage_change p{padding:20px 0 0 50px;color:#317DAC}
+.mypage_change_btn{width:225px;margin:0 auto;padding-top:40px}

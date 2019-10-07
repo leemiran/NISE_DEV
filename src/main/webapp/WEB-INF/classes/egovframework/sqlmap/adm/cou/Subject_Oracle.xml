@@ -1,0 +1,651 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE sqlMap PUBLIC "-//iBATIS.com//DTD SQL Map 2.0//EN" "http://ibatis.apache.org/dtd/sql-map-2.dtd">
+
+<sqlMap namespace="Subject">
+<typeAlias  alias="egovMap" type="egovframework.rte.psl.dataaccess.util.EgovMap"/>
+
+	<!-- 과정 목록 총건수를 조회 -->
+	<select id="subjectDAO.selectSubjectListTotCnt" parameterClass="map" remapResults="true" resultClass="int">
+		 select  
+			count(*) cnt                                                                
+		 from    tz_subj     a                                                        
+		     ,   tz_subjatt  b                                                        
+		     ,   tz_code     c                                                        
+		     ,   tz_member   d                                                        
+		     ,   tz_grsubj   e                                                        
+		     ,   tz_grcode   f                                                        
+		 where   a.upperclass  = b.upperclass                                         
+		 and     a.isonoff     = c.code                                               
+		 and     a.muserid     = d.userid(+)                                            
+		 and     b.middleclass = '000'                                                
+		 and     b.lowerclass  = '000'                                                
+		 and     a.subj        = e.subjcourse                                            
+		 and     e.grcode      = f.grcode                                                 
+		 and     c.gubun       = '0004'                
+		 and     e.grcode = 'N000001'                 
+		 and    a.subj_gu is null 
+		 <isNotEmpty property="ses_search_att">
+		   and a.upperclass = #ses_search_att#
+		 </isNotEmpty>
+		 
+		 <isNotEmpty property="ses_search_subj">
+		   and a.subj = #ses_search_subj#
+		 </isNotEmpty>
+		 
+		 <isNotEmpty property="searchSubjCode">
+		   and a.subj = #searchSubjCode#
+		 </isNotEmpty>
+		 order   by a.subj desc 
+
+	</select>
+	<select id="subjectDAO.selectAreaList" parameterClass="map" resultClass="egovMap">
+		select code, codenm, url, levels
+		  from tz_code
+		 where gubun = '0121'
+		 and use_yn = 'Y'
+		 order by orders, code
+		
+	</select>	
+	
+<!--	과정목록 -->
+	<select id="subjectDAO.selectSubjectList" parameterClass="map" resultClass="egovMap">
+	select * from (
+ 		
+		select rownum as num
+		, classname, isonoff, codenm, subj, subjnm, muserid, name, isuse, grcode, isapproval, isintroduction, introducefilenamereal, mobile
+        , introducefilenamenew, informationfilenamereal, informationfilenamenew, subj_gu, content_cd, study_count, ldate, contenttype
+		  from (
+			select  
+				a.upperclass,   b.classname , a.isonoff     , c.codenm, a.mobile               
+			     ,   a.subj      ,   a.subjnm    , a.muserid     , d.name                 
+			     ,   a.isuse     ,   e.grcode    , a.isapproval  , a.isintroduction       
+			     ,   a.introducefilenamereal     , a.introducefilenamenew                 
+			     ,   a.informationfilenamereal   , a.informationfilenamenew               
+			     ,   nvl(a.subj_gu,'') as subj_gu                                         
+			     ,   a.content_cd                                                            
+			     ,   nvl(a.study_count,0) as study_count                                  
+			     ,   a.ldate, a.contenttype                                                                
+			 from    tz_subj     a                                                        
+			     ,   tz_subjatt  b                                                        
+			     ,   tz_code     c                                                        
+			     ,   tz_member   d                                                        
+			     ,   tz_grsubj   e                                                        
+			     ,   tz_grcode   f                                                        
+			 where   a.upperclass  = b.upperclass                                         
+			 and     a.isonoff     = c.code                                               
+			 and     a.muserid     = d.userid(+)                                            
+			 and     b.middleclass = '000'                                                
+			 and     b.lowerclass  = '000'                                                
+			 and     a.subj        = e.subjcourse                                            
+			 and     e.grcode      = f.grcode                       
+			 and     c.gubun       = '0004'                
+			 and     e.grcode = 'N000001'                 
+			 and    a.subj_gu is null
+			 
+			 <isNotEmpty property="ses_search_att">
+			   and a.upperclass = #ses_search_att#  
+			 </isNotEmpty>
+			 
+			 <isNotEmpty property="ses_search_subj">
+			   and a.subj = #ses_search_subj#
+			 </isNotEmpty>
+			 
+			 <isNotEmpty property="searchSubjCode">
+			   and a.subj = #searchSubjCode#
+			 </isNotEmpty>
+			 
+		 	
+		 	order by 
+		 	<isNotEmpty property="search_orderColumn">
+		 		$search_orderColumn$ $search_orderType$, 
+		 	</isNotEmpty>
+		 	a.subj desc
+		   )
+	)
+	where num BETWEEN #firstIndex# + 1 AND #firstIndex# + #recordCountPerPage#
+	</select>
+	
+	
+	
+	
+	<select id="subjectDAO.selectSubjectView" parameterClass="map" resultClass="egovMap">
+		 select get_subjclassnm(a.upperclass, '000', '000') as upperclassnm
+                , get_subjclassnm(a.upperclass, a.middleclass, '000') as middleclassnm
+                , get_subjclassnm(a.upperclass, a.middleclass, a.lowerclass) as lowerclassnm
+                , a.subj          , a.subjnm          , a.isonoff     , a.subjclass
+                , a.upperclass    , a.middleclass     , a.lowerclass  , a.specials
+                , a.contenttype   , a.muserid         , a.musertel    , a.cuserid
+                , a.isuse         , a.ispropose       , a.biyong      , a.edudays
+                , a.studentlimit  , a.usebook         , a.bookprice   , a.owner
+                , a.producer      , a.crdate          , a.[LANGUAGE]    , a.server
+                , a.dir           , a.eduurl          , a.vodurl      , a.preurl
+                , a.ratewbt       , a.ratevod         , a.env         , a.tutor
+                , a.bookname      , a.sdesc           , a.warndays    , a.stopdays
+                , a.point         , a.edulimit        , a.gradscore   , a.gradstep
+                , a.wstep         , a.wmtest          , a.wftest      , a.wreport 
+                , a.wact          , a.wetc1           , a.wetc2       , a.place
+                , a.placejh       , a.ispromotion     , a.isessential , a.score
+                , a.edumans subjtarget                , a.inuserid    , a.indate
+                , a.luserid       , a.ldate
+                , get_name(cuserid) as cuseridnm  
+                , get_name(a.tutor) as tutornm
+                , get_name(a.muserid) as museridnm
+                , nvl((
+                       select cpnm
+                       from   tz_cpinfo
+                       where  cpseq = a.producer
+                      ), (
+                          select  compnm
+                          from    tz_compclass
+                          where   comp = a.producer
+                         )) as producernm
+                , nvl((
+                       select cpnm
+                       from   tz_cpinfo
+                       where  cpseq = a.owner
+                      ), (
+                           select compnm
+                           from   tz_compclass
+                           where  comp = a.owner
+                           )) as ownernm
+                , a.proposetype       , a.edumans             , a.edutimes        , a.edutype
+                , a.intro             , a.explain             , a.whtest          , a.gradreport
+                , a.gradexam          , a.gradftest           , a.gradhtest       , '' usesubjseqapproval
+                , '' useproposeapproval, '' usemanagerapproval  , 0 rndcreditreq    , 0 rndcreditchoice
+                , 0 rndcreditadd      , 0 rndcreditdeduct     , a.isablereview    , a.isoutsourcing
+                , a.conturl           , a.isapproval          , '' rndjijung       , bookfilenamereal
+                , bookfilenamenew
+                , (
+                   select   count(*)
+                   from    tz_subjseq
+                   where   subj=a.subj
+                  ) as subjseqcount
+                , (
+                   select  count(*)
+                   from    tz_subjobj
+                   where   subj = a.subj
+                  ) as subjobjcount
+                , a.isvisible
+                , a.isalledu
+                , a.isintroduction
+                , a.eduperiod
+                , a.introducefilenamereal
+                , a.introducefilenamenew
+                , a.informationfilenamereal
+                , a.informationfilenamenew
+                , a.contentgrade
+                , a.memo
+                , a.ischarge
+                , a.isopenedu
+                , 0 maleassignrate
+                , a.gradftest_flag
+                , a.gradexam_flag
+                , a.gradhtest_flag
+                , a.gradreport_flag
+                , a.isgoyong
+                , a.goyongpricemajor
+                , a.goyongpriceminor
+                , a.graduatednote
+                , nvl(a.subj_gu,'') as subj_gu
+                , a.content_cd
+                , nvl(a.study_count,0) as study_count
+                , reviewdays
+                , lev
+                , gubn
+                , grade  
+                , test
+                , sel_dept
+                , sel_post
+                , org
+                , nvl(study_time,0) as study_time
+                , nvl(a.cp_accrate,0) as cp_accrate
+                , a.goyongpricestand
+                , a.getmethod
+                , a.cp
+                , nvl((
+                       select cpnm
+                       from   tz_cpinfo
+                       where  cpseq = a.cp
+                      ), (
+                          select compnm
+                          from   tz_compclass
+                          where  comp = a.cp
+                         ))         cpnm
+                , a.firstdate
+                , a.judgedate
+                , a.getdate
+                , a.iscustomedu
+                , a.cp_account
+                , a.cp_vat                
+                , a.contentprogress
+                , a.cpsubj
+                , a.mobile
+                , a.content_lesson_all_view  
+                , a.explainfile
+				, a.explainfilereal
+				, a.left_content_item_list_view
+				, a.iscontentsuse
+				, a.conyear
+				, a.confr
+				, a.conrenum
+				, a.pjobcd
+				, a.youtube_yn
+				, a.youtube_url
+				-- 2017 추가
+				, a.final_content_yn
+				, a.porting_date
+				, a.content_modify_date
+				, a.mp3_possess_yn
+				, a.renewal_year
+				, a.certificate_no
+				-- 2017 추가 끝
+           from   tz_subj     a
+           where  a.subj = #subj#
+	</select>
+	
+	
+	
+	
+	
+	<insert id="subjectDAO.insertSubject">
+		<selectKey keyProperty="subj" resultClass="String">
+			SELECT 
+				SUBSTR(#upperclass#,0,3)||SUBSTR(TO_CHAR(SYSDATE,'YYYY'),3)||NVL(LPAD(MAX(SUBSTR(SUBJ,6))+1,4,'0'),'0001') AS subj 
+			FROM TZ_SUBJ 
+			WHERE SUBJ LIKE SUBSTR(#upperclass#,0,3)||SUBSTR(TO_CHAR(SYSDATE,'YYYY'),3)||'%'
+		</selectKey>
+		
+		insert into tz_subj
+		 (  
+		   subj                    , subjnm                , isonoff                   , subjclass
+		 , upperclass              , middleclass           , lowerclass                , specials
+		 , muserid                 , cuserid               , isuse                     , ispropose
+		 , biyong                  , edudays               , studentlimit              , usebook
+		 , bookprice               , owner                 , producer                  , eduurl
+		 , crdate                  , [LANGUAGE]              , server                    , dir
+		 , vodurl                  , preurl                , conturl                   , ratewbt
+		 , ratevod                 , env                   , tutor                     , bookname
+		 , sdesc                   , warndays              , stopdays                  , point
+		 , edulimit                , gradscore             , gradstep                  , wstep
+		 , wmtest                  , wftest                , wreport                   , wact
+		 , wetc1                   , wetc2                 , inuserid                  , indate
+		 , luserid                 , ldate                 , proposetype               , edumans
+		 , intro                   , explain               , isessential               , score
+		 , contenttype             , gradexam              , gradreport                , whtest
+		 , isoutsourcing           , isablereview          , musertel                  , gradftest
+		 , gradhtest               , isvisible             , isalledu                  , edutimes
+		 , isapproval              , isintroduction        , eduperiod                 , introducefilenamereal
+		 , introducefilenamenew    , informationfilenamereal, informationfilenamenew   , contentgrade
+		 , memo                    , ischarge              , isopenedu
+		 , gradftest_flag          , gradexam_flag         , gradhtest_flag            , gradreport_flag
+		 , isgoyong                , goyongpricemajor      , goyongpriceminor
+		 , subj_gu                 , content_cd            , study_count        		, reviewdays
+		 , lev                     , study_time            , cp_accrate         		, getmethod
+		 , cp               	   , firstdate             , judgedate             		, getdate    
+		 , cp_account          	   , cp_vat                , contentprogress            , cpsubj
+		 , mobile				   , content_lesson_all_view	,explainfile 			,explainfilereal  
+		 , left_content_item_list_view	,iscontentsuse, conyear, confr, conrenum,pjobcd
+		 , youtube_yn, youtube_url
+		 -- 2017 추가
+		 , final_content_yn
+		 , porting_date
+		 , content_modify_date
+		 , mp3_possess_yn
+		 , renewal_year
+		 , certificate_no
+		 -- 2017 추가 끝
+		 )
+		 values 
+		 (
+		   #subj#                    
+		 , #subjnm#                  , #isonoff#               , #upperclass# || #middleclass# || #lowerclass#
+		 , #upperclass#              , #middleclass#           , #lowerclass#                , #specials#
+		 , #muserid#                 , #cuserid#               , #isuse#                     , #ispropose#
+		 , #biyong#                  , #edudays#               , #studentlimit#              , #usebook#
+		 , #bookprice#               , #owner#                 , #producer#                  , #eduurl#
+		 , #crdate#                  , #language#              , #server#                    , #dir#
+		 , #vodurl#                  , #preurl#                , #conturl#                   , #ratewbt#
+		 , #ratevod#                 , #env#                   , #tutor#                     , #bookname#
+		 , #sdesc#                   , #warndays#              , #stopdays#                  , #point#
+		 , #edulimit#                , #gradscore#             , #gradstep#                  , #wstep#
+		 , #wmtest#                  , #wftest#                , #wreport#                   , #wact#
+		 , #wetc1#                   , #wetc2#                 , #userid#                    
+		 <isEqual property="contenttype" compareValue="N">
+		 , '20120301000000'
+		 </isEqual>
+		 <isNotEqual property="contenttype" compareValue="N">
+		 , to_char(sysdatetime, 'yyyyMMddhh24miss')
+		 </isNotEqual>
+		 , #userid#                  , to_char(sysdatetime, 'yyyyMMddhh24miss')           		 , #proposetype#               , #edumans#
+		 , #intro#                   , #explain#               , #isessential#               , #score#
+		 , #contenttype#             , #gradexam#              , #gradreport#                , #whtest#
+		 , #isoutsourcing#           , #isablereview#          , #musertel#                  , #gradftest#
+		 , #gradhtest#               , #isvisible#             , #isalledu#                  , #edutimes#
+		 , 'Y'			             , #isintroduction#        , #eduperiod#                 , #originalFileName#
+		 , #uploadFileName#    		, #informationfilenamereal# , #informationfilenamenew#  , #contentgrade#
+		 , #memo#                    , #ischarge#              , #isopenedu#
+		 , #gradftest_flag#          , #gradexam_flag#         , #gradhtest_flag#            , #gradreport_flag#
+		 , #isgoyong#                , #goyongpricemajor#      , #goyongpriceminor#
+		 , #subj_gu#                 , #subj#            		, #study_count#        		 , #reviewdays#
+		 , #lev#                     , #study_time#            , #cp_accrate#         		 , #getmethod#
+		 , #cp#              	 	 , #firstdate#             , #judgedate#             	 , #getdate# 
+		 , #cp_account#          	 , #cp_vat#                , #contentprogress#           , #cpsubj#
+		 , #mobile#					 , #contentLessonAllView#	,#explainfile# 				 ,#explainfilereal# 
+		 , #leftContentItemListView# , #iscontentsuse#, #conyear#, #confr#, #conrenum#, #pjobcd#
+		 , #youtubeYn# , #youtubeUrl#				 
+		 -- 2017 추가
+		 , #finalContentYn#
+		 , #portingDate#
+		 , #contentModifyDate#
+		 , #mp3PossessYn#
+		 , #renewalYear#
+		 , #certificate_no#
+		 -- 2017 추가 끝
+		)
+	</insert>
+	
+	
+	
+	<update id="subjectDAO.updateSubject">
+		          update tz_subj set                 
+                      subjnm                  = #subjnm#
+                  ,   isonoff                 = #isonoff#
+                  ,   subjclass               = #upperclass# || #middleclass# || #lowerclass#
+                  ,   upperclass              = #upperclass#
+                  ,   middleclass             = #middleclass#
+                  ,   lowerclass              = #lowerclass#
+                  ,   specials                = #specials#
+                  ,   muserid                 = #muserid#
+                  ,   cuserid                 = #cuserid#
+                  ,   isuse                   = #isuse#
+                  ,   ispropose               = #ispropose#
+                  ,   biyong                  = #biyong#
+                  ,   ischarge                = #ischarge#
+                  ,   edudays                 = #edudays#
+                  ,   studentlimit            = #studentlimit#
+                  ,   usebook                 = #usebook#
+                  ,   bookprice               = #bookprice#
+                  ,   owner                   = #owner#
+                  ,   producer                = #producer#
+                  ,   crdate                  = #crdate#
+                  ,   [LANGUAGE]                = #language#
+                  ,   dir                     = #dir#
+                  ,   eduurl                  = #eduurl#
+                  ,   preurl                  = #preurl#
+                  ,   ratewbt                 = #ratewbt#
+                  ,   ratevod                 = #ratevod#
+                  ,   env                     = #env#
+                  ,   tutor                   = #tutor#
+                  ,   bookname                = #bookname#
+                  ,   sdesc                   = #sdesc#
+                  ,   warndays                = #warndays#
+                  ,   stopdays                = #stopdays#
+                  ,   point                   = #point#
+                  ,   edulimit                = #edulimit#
+                  ,   gradscore               = #gradscore#
+                  ,   gradstep                = #gradstep#
+                  ,   wstep                   = #wstep#
+                  ,   wmtest                  = #wmtest#
+                  ,   wftest                  = #wftest#
+                  ,   wreport                 = #wreport#
+                  ,   wact                    = #wact#
+                  ,   wetc1                   = #wetc1#
+                  ,   wetc2                   = #wetc2#
+                  ,   luserid                 = #userid#
+                  ,   ldate                   = to_char(sysdatetime, 'yyyyMMddhh24miss')
+                  ,   proposetype             = #proposetype#
+                  ,   edumans                 = #edumans#
+                  ,   intro                   = #intro#
+                  ,   explain                 = #explain#
+                  ,   contenttype             = #contenttype#
+                  ,   gradexam                = #gradexam#
+                  ,   gradreport              = #gradreport#
+                  ,   whtest                  = #whtest#
+                  ,   isablereview            = #isablereview#
+                  ,   score                   = #score#
+                  ,   isoutsourcing           = #isoutsourcing#
+                  ,   conturl                 = #conturl#
+                  ,   isessential             = #isessential#
+                  ,   musertel                = #musertel#
+                  ,   gradftest               = #gradftest#
+                  ,   gradhtest               = #gradhtest#
+                  ,   isvisible               = #isvisible#
+                  ,   isalledu                = #isalledu#
+                  ,   edutimes                = #edutimes#
+                  ,   isintroduction          = #isintroduction#
+                  ,   eduperiod               = #eduperiod#
+                  
+                  <isEqual property="introducefile0" compareValue="1">
+                  	,   introducefilenamereal   = ''
+                  	,   introducefilenamenew    = ''
+                  </isEqual>
+                  <isEmpty property="introducefile0">
+                  	<isNotEmpty property="uploadFileName">
+                  		,   introducefilenamereal   = #originalFileName#
+	                  	,   introducefilenamenew    = #uploadFileName#
+                  	</isNotEmpty>
+                  </isEmpty>
+                  
+                  ,   informationfilenamereal = #informationfilenamereal#
+                  ,   informationfilenamenew  = #informationfilenamenew#
+                  ,   contentgrade            = #contentgrade#
+                  ,   memo                    = #memo#
+                  ,   isopenedu               = #isopenedu#
+                  ,   gradftest_flag          = #gradftest_flag#
+                  ,   gradexam_flag           = #gradexam_flag#
+                  ,   gradhtest_flag          = #gradhtest_flag#
+                  ,   gradreport_flag         = #gradreport_flag#
+                  ,   isgoyong					= #isgoyong#
+                  ,   goyongpriceminor			= #goyongpriceminor#
+                  ,   subj_gu					= #subj_gu#
+                  ,   content_cd				= #subj#
+                  ,   study_count				= #study_count#
+                  ,   reviewdays				= #reviewdays#
+                  ,   lev						= #lev#
+                  ,   gubn						= #gubn#
+                  ,   grade						= #grade#
+                  ,   test						= #test#
+                  ,   study_time				= #study_time#
+                  ,   cp_accrate				= #cp_accrate#
+                  ,   goyongpricestand			= #goyongpricestand#
+                  ,   getmethod					= #getmethod#
+                  ,   cp						= #cp#
+                  ,   firstdate					= #firstdate#
+                  ,   judgedate					= #judgedate#
+                  ,   getdate					= #getdate#
+                  ,   iscustomedu				= #iscustomedu#
+                  ,   cp_account				= #cp_account#
+                  ,   cp_vat					= #cp_vat#              
+                  ,   contentprogress			= #contentprogress#      
+                  ,   cpsubj			        = #cpsubj#
+                  , 	mobile					= #mobile#
+                  ,   content_lesson_all_view	= #contentLessonAllView#
+                  <isEqual property="explainfile0" compareValue="1">
+                  	,   explainfile   = ''
+                  	,   explainfilereal    = ''
+                  </isEqual>
+                  <isEmpty property="explainfile0">
+                  	<isNotEmpty property="explainfilereal">
+                  		,   explainfile 				= #explainfile# 				   			
+                  		,   explainfilereal			= #explainfilereal#
+                  	</isNotEmpty>
+                  </isEmpty>
+                  , left_content_item_list_view = #leftContentItemListView#
+                  , iscontentsuse = #iscontentsuse#
+                  , conyear = #conyear# 
+                  , confr = #confr# 
+                  , conrenum = #conrenum#
+                  , pjobcd = #pjobcd#
+                  , youtube_yn = #youtubeYn#
+                  , youtube_url = #youtubeUrl#
+                  -- 2017 추가
+                  , final_content_yn = #finalContentYn#
+		 		  , porting_date = #portingDate#
+				  , content_modify_date = #contentModifyDate#
+				  , mp3_possess_yn = #mp3PossessYn#
+				  , renewal_year = #renewalYear#
+				  , certificate_no = #certificate_no#
+				  -- 2017 추가 끝
+                  where   subj                  = #subj#
+	</update>
+	
+	
+	<delete id="subjectDAO.deleteSubject">
+		delete from tz_subj where subj = #subj#
+	</delete>
+	
+	<update id="subjectDAO.updateSubjSeq">
+		update tz_subjseq  set subjnm = #subjnm# where subj = #subj#
+	</update>
+	
+	
+	
+	<insert id="subjectDAO.insertSubjContInfo">
+		insert into tz_subjcontinfo
+        ( 
+        	subj    ,cont_yn   ,ldate
+        ) 
+        values 
+        (
+        	#subj#       ,'N'      ,to_char(sysdatetime,'yyyymmddhh24mmss')
+        )
+	</insert>
+	
+	
+	<insert id="subjectDAO.insertGrpSubj">
+	 insert into tz_grsubj                            
+	 (                                                
+	         grcode                                   
+	     ,   subjcourse                               
+	     ,   isnew                                    
+	     ,   disseq                                   
+	     ,   grpcode
+	     ,   grpname
+	     ,   luserid
+	     ,   ldate
+	 )                                                
+	 values                                           
+	 (       #grcode#                                        
+	     ,   #subj#
+	     ,   'N'                                      
+	     ,   0                                        
+	     ,   ''                                       
+	     ,   ''                                       
+	     ,   #userid#                                    
+	     ,   to_char(sysdatetime,'YYYYMMDDHH24MISS')      
+	 ) 
+	</insert>
+	
+	
+	<delete id="subjectDAO.deleteGrSubj">
+		delete from tz_grsubj where subjcourse = #subj#
+	</delete>
+	
+	<delete id="subjectDAO.deleteBds">
+		delete from tz_bds where subj = #subj# and type ='SD' 
+	</delete>
+	
+	<delete id="subjectDAO.deletePreview">
+		delete from tz_preview where subj = #subj#
+	</delete>
+	
+<!--	나의 관심과정-->
+	<select id="subjectDAO.selectConcernInfoList" parameterClass="map" resultClass="egovMap">
+		select b.isonoff												
+		, get_codenm('0004',b.isonoff) isonoffvalue						 	                   	
+		, GET_SUBJCLASSNM(b.upperclass, '000', '000') upperclassnm			
+		, GET_SUBJCLASSNM(b.upperclass, b.middleclass, '000') middleclassnm	
+		, GET_SUBJCLASSNM(b.upperclass, b.middleclass, b.lowerclass) lowerclassnm	
+		, b.subj                                                             
+		, b.subjnm															
+		, (																	
+			select case when isgraduated = 'Y' then 'Y'when subj is null then 'X' else 'N' end status
+			from tz_stold														 
+			where subj = b.subj													
+			and userid = a.userid
+		    and [year] = 	p.[year]
+		    and subjseq = p.subjseq											
+			and rownum = 1														
+		) stold_gu																
+		, (																		
+			select case when count(subj) > 0 then 'Y' else 'X' end				
+			from tz_student														 
+			where subj = b.subj													
+			and userid = a.userid												
+			and rownum = 1														
+		) student_gu																
+		, (																		
+			select 
+		    case when CANCELKIND is null then 'Y' 
+		    when CANCELKIND is not null then 'N'
+		    else 'X' end 
+			from tz_propose														 
+			where subj = b.subj													
+			and userid = a.userid
+		    and [year] = 	p.[year]
+		    and subjseq = p.subjseq						
+			and rownum = 1														
+		) propose_gu																
+		, (																		
+			select case when count(subj) > 0 and max(plan_gu)='계약' then '학습계약'	 
+			when count(subj) > 0 and max(plan_gu)='계획' then '학습계획'			
+			else 'X' end															
+			from tz_subj_plan														
+			where subj = b.subj														
+			and userid = a.userid													
+		) plan_gu ,d.[year], d.subjseq, d.edustart, d.eduend																	
+		from  tz_subj_concern a
+		    left outer join tz_subjseq d inner join tz_propose p on d.subj = p.subj and d.[year]=p.[year] 
+		    and d.subjseq = p.subjseq and p.userid =  #userid#  on a.subj = d.subj ,  tz_subj b												
+		where a.subj = b.subj															
+		and   b.isopenedu = 'N' 															
+		and   b.isuse = 'Y' 																
+		and   b.isvisible = 'Y' 															
+		and   a.userid =  #userid#
+	</select>
+	
+<!--	관심과정 삭제-->
+	<delete id="subjectDAO.deleteConcernInfo">
+		delete from tz_subj_concern 
+		where subj = #p_subj#
+		and userid = #p_userid#
+	</delete>
+
+<!--관심과정 등록 -->
+	<insert id="subjectDAO.insertConcernInfo">
+		INSERT INTO TZ_SUBJ_CONCERN                      
+		(                                                
+		      SUBJ                                     
+		  ,   USERID                                   
+		  ,   LUSERID                                  
+		  ,   LDATE                                	
+		) VALUES (                                       
+		      #p_subj#                                        
+		  ,   #p_userid# 									    
+		  ,   #p_userid#
+		  ,   to_char(sysdatetime, 'yyyymmddhh24miss')     
+		)
+	
+	</insert>
+	
+	<select id="subjectDAO.selectConcernInfoCnt" parameterClass="map" remapResults="true" resultClass="int">
+		select 
+		count(0) cnt 
+		from TZ_SUBJ_CONCERN a, tz_subj b 
+		where a.subj = b.subj 
+		and a.subj = #p_subj#
+		and userid = #p_userid#
+	</select>
+	
+	<!-- 직무관련 -기타 총건수를 조회 -->
+	<select id="subjectDAO.selectSubjEtcCount" parameterClass="map" remapResults="true" resultClass="int">
+		select count(*) as cnt
+		from tz_subjseq
+		where subj = #ses_search_subj#
+			and [year] = #ses_search_year#
+          	and subjseq  = #ses_search_subjseq#
+          	and duty_yn = 'Y'
+	</select>
+	
+</sqlMap>
+

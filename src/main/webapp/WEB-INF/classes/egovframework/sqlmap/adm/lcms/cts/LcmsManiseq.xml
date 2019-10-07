@@ -1,0 +1,109 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE sqlMap PUBLIC "-//iBATIS.com//DTD SQL Map 2.0//EN" "http://ibatis.apache.org/dtd/sql-map-2.dtd">
+
+<sqlMap namespace="LcmsManiseq">
+
+
+<typeAlias  alias="egovMap" type="egovframework.rte.psl.dataaccess.util.EgovMap"/>
+
+	<!-- 등록순번값 조회 -->
+	<select id="lcmsManiseqDAO.selectLcmsManiSeq" parameterClass="map" resultClass="egovMap">
+		select max(seq)+1 as seq from tb_lcms_maniseq
+	</select>
+
+    <select id="lcmsManiseqDAO.selectLcmsManiseqPageList" parameterClass="map" resultClass="egovMap">
+        SELECT * 
+        FROM
+               (
+                SELECT TEMP.*, 
+                <isNotEmpty property="rowsPerPage">
+                       CEIL(ROWNUM / #rowsPerPage#) AS PAGE 
+                </isNotEmpty>
+                <isEmpty property="rowsPerPage">
+                       CEIL(ROWNUM / 10) AS PAGE 
+                </isEmpty>
+                FROM
+                      (
+                       SELECT 
+	        	              SEQ,
+	        	               INSERT_DATE
+        		       FROM   TB_LCMS_MANISEQ
+        		       <!--  APPEND WHERE CONDITION START  -->
+
+        		       <!--  APPEND WHERE CONDITION END    -->
+        		       <isNotEmpty property="orderBy">
+        			       $orderBy$
+        		       </isNotEmpty>
+        	          ) TEMP 
+               )
+        <isNotEmpty property="page">
+        WHERE PAGE = #page#
+        </isNotEmpty>
+        <isEmpty property="page">
+        WHERE PAGE = 1
+        </isEmpty>
+    </select>
+
+    <select id="lcmsManiseqDAO.selectLcmsManiseqList" parameterClass="map" resultClass="egovMap">
+        SELECT SEQ,
+               INSERT_DATE
+        FROM   TB_LCMS_MANISEQ
+    </select>
+
+    <select id="lcmsManiseqDAO.selectLcmsManiseqPageListTotCnt" parameterClass="map" resultClass="int">
+        SELECT COUNT(ROWNUM) AS [COUNT]
+        FROM   TB_LCMS_MANISEQ
+    </select>
+
+    <select id="lcmsManiseqDAO.selectLcmsManiseq" parameterClass="map" resultClass="egovMap">
+        SELECT SEQ,
+               INSERT_DATE
+        FROM   TB_LCMS_MANISEQ
+        WHERE  SEQ = #seq#
+    </select>
+
+    <insert id="lcmsManiseqDAO.insertLcmsManiseq">
+        <selectKey resultClass="int" keyProperty="seq">
+            SELECT NVL(MAX(SEQ)+1, 1)
+            FROM   TB_LCMS_MANISEQ 
+        </selectKey>
+        INSERT INTO TB_LCMS_MANISEQ
+        (
+            SEQ,
+            INSERT_DATE
+        )
+        VALUES
+        (
+            #seq#,
+            SYSDATE
+        )
+    </insert>
+
+    <update id="lcmsManiseqDAO.updateLcmsManiseq">
+        UPDATE TB_LCMS_MANISEQ
+        SET    INSERT_DATE = #insertDate#,
+        WHERE  SEQ = #seq#
+    </update>
+
+    <delete id="lcmsManiseqDAO.deleteLcmsManiseq">
+        DELETE FROM TB_LCMS_MANISEQ
+        WHERE  SEQ = #seq#
+    </delete>
+
+    <delete id="lcmsManiseqDAO.deleteLcmsManiseqAll">
+        DELETE FROM TB_LCMS_MANISEQ
+        <dynamic prepend="WHERE SEQ IN ">
+            <isNotEmpty property="seq">
+                <iterate property="seq" open="(" close=")" conjunction=",">
+                    #seq[]#
+                </iterate>
+            </isNotEmpty>
+            <isEmpty property="seq">
+                ('')
+            </isEmpty>
+        </dynamic>
+    </delete>
+
+
+</sqlMap>
+

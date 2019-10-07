@@ -1,0 +1,457 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE sqlMap PUBLIC "-//iBATIS.com//DTD SQL Map 2.0//EN" "http://ibatis.apache.org/dtd/sql-map-2.dtd">
+
+<sqlMap namespace="ReportProf">
+<typeAlias  alias="egovMap" type="egovframework.rte.psl.dataaccess.util.EgovMap"/>
+
+	<select id="reportProfDAO.selectReportProfList" parameterClass="map" resultClass="egovMap">
+		select ordseq, weeklyseq, weeklysubseq, title, startdate, expiredate,
+		       score, reptype, restartdate, reexpiredate, weight, perfectscore,
+		       case when to_char(sysdatetime, 'yyyyMMddhh24miss') between startdate and expiredate
+		            then 'Y' else 'N'
+		        end indate,
+		       case when to_char(sysdatetime, 'yyyyMMddhh24miss') between restartdate and reexpiredate
+		            then 'Y' else 'N'
+		        end adddate
+		  from tu_projord
+		 where subj    = #p_subj#
+		   and [year]    = #p_year#
+		   and subjseq = #p_subjseq#
+		   and reptype = 'P'
+		   and (delyn  = 'N' or delyn is null)
+		 order by ordseq desc
+	</select>
+	
+	<insert id="reportProfDAO.insertReportProfData">
+		insert into tu_projord(
+			grcode, subj, [year], subjseq, [CLASS], ordseq,
+			title, weeklyseq, weeklysubseq, reptype,
+			perfectscore, submitscore, notsubmitscore, isopen, isopenscore,
+			startdate, expiredate, restartdate, reexpiredate,
+			contents, submitfiletype, filelimit, luserid, ldate
+		)
+		values(
+			'N000001',
+			#p_subj#,
+			#p_year#,
+			#p_subjseq#,
+			1,
+			(select nvl(max(ordseq), 0)+1 ordseq from tu_projord where subj = #p_subj# and [year] = #p_year# and subjseq = #p_subjseq#),
+			#p_title#,
+			#p_weeklyseq#,
+			#p_weeklysubseq#,
+			#p_reptype#,
+			#p_perfectscore#,
+			#p_submitscore#,
+			#p_notsubmitscore#,
+			#p_isopen#,
+			#p_isopenscore#,
+			replace(#p_startdate#, '-', '')||#p_starthour#||#p_startmin#||#p_startsec#,
+			replace(#p_expiredate#, '-', '')||#p_expirehour#||#p_expiremin#||#p_expiresec#,
+			replace(#p_restartdate#, '-', '')||#p_restarthour#||#p_restartmin#||#p_restartsec#,
+			replace(#p_reexpiredate#, '-', '')||#p_reexpirehour#||#p_reexpiremin#||#p_reexpiresec#,
+			#p_contents#,
+			#p_submitfiletype#,
+			#p_filelimit#,
+			#userid#,
+			to_char(sysdatetime, 'yyyyMMddhh24miss')
+		)
+	</insert>
+	
+	<insert id="reportProfDAO.insertFilesData">
+		insert into tu_projord_file(
+			grcode, subj, [year], subjseq, [CLASS], ordseq, fileseq, realfile, newfile, filepath, filesize, luserid, ldate
+		)
+		values(
+			'N000001',
+			#p_subj#,
+			#p_year#,
+			#p_subjseq#,
+			1,
+			#p_ordseq#,
+			(select count(0) + 1 from tu_projord_file where subj = #p_subj# and [year] = #p_year# and subjseq = #p_subjseq#),
+			#originalFileName#,
+			#uploadFileName#,
+			'',
+			#fileSize#,
+			#userid#,
+			to_char(sysdatetime, 'yyyyMMddhh24miss')
+		)
+	</insert>
+	
+	<update id="reportProfDAO.updateReportProfData">
+		update tu_projord
+		   set title      = #p_title#,
+		   weeklyseq      = #p_weeklyseq#,
+		   weeklysubseq   = #p_weeklysubseq#,
+		   reptype        = #p_reptype#,
+		   perfectscore   = #p_perfectscore#,
+		   submitscore    = #p_submitscore#,
+		   notsubmitscore = #p_notsubmitscore#,
+		   isopen         = #p_isopen#,
+		   isopenscore    = #p_isopenscore#,
+		   startdate      = replace(#p_startdate#, '-', '')||#p_starthour#||#p_startmin#||#p_startsec#,
+		   expiredate     = replace(#p_expiredate#, '-', '')||#p_expirehour#||#p_expiremin#||#p_expiresec#,
+		   restartdate    = replace(#p_restartdate#, '-', '')||#p_restarthour#||#p_restartmin#||#p_restartsec#,
+		   reexpiredate   = replace(#p_reexpiredate#, '-', '')||#p_reexpirehour#||#p_reexpiremin#||#p_reexpiresec#,
+		   contents       = #p_contents#,
+		   submitfiletype = #p_submitfiletype#,
+		   filelimit      = #p_filelimit#,
+		   luserid        = #userid#,
+		   ldate          = to_char(sysdatetime, 'yyyyMMddhh24miss')
+		 where subj    = #p_subj#
+		   and [year]    = #p_year#
+		   and subjseq = #p_subjseq#
+		   and ordseq  = #p_ordseq#
+	</update>
+	
+	<select id="reportProfDAO.selectReportProfData" parameterClass="map" resultClass="egovMap">
+		select grcode, subj, [year], subjseq, [class], ordseq, title, weeklyseq, weeklysubseq, reptype,
+			   perfectscore, submitscore, notsubmitscore, isopen, isopenscore,
+			   startdate, expiredate, restartdate, reexpiredate, contents, submitfiletype, filelimit
+		  from tu_projord
+		 where subj    = #p_subj#
+		   and [year]    = #p_year#
+		   and subjseq = #p_subjseq#
+		   and ordseq  = #p_ordseq#
+	</select>
+	
+	<select id="reportProfDAO.selectProfFiles" parameterClass="map" resultClass="egovMap">
+		select grcode, subj, [year], subjseq, [class], ordseq,
+		       fileseq, realfile, newfile, filepath, filesize
+		  from tu_projord_file
+		 where 1 = 1
+		   and subj    = #p_subj#
+		   and [year]    = #p_year#
+		   and subjseq = #p_subjseq#
+		   and ordseq  = #p_ordseq#
+	</select>
+	
+	<update id="reportProfDAO.reportProfWeightUpdateData">
+		update tu_projord
+		   set weight  = #v_weight#,
+		       luserid = #userid#,
+		       ldate   = to_char(sysdatetime, 'yyyyMMddhh24miss')
+		 where subj    = #p_subj#
+		   and [year]    = #p_year#
+		   and subjseq = #p_subjseq#
+		   and ordseq  = #v_reportseq#
+	</update>
+	
+	
+	<select id="reportProfDAO.selectReportQuestionList" parameterClass="map" resultClass="egovMap">
+		select /*reportProfDAO.selectReportQuestionList*//*과제문항 리스트 조회*/
+                    rownum rn, z.exam_subj
+                    , exam_subjnm
+                    , ques_cnt
+                    ,(select count(0) from tz_report_ques where subj = z.exam_subj and isuse = 'Y') as use_y_cnt
+                    ,(select count(0) from tz_report_ques where subj = z.exam_subj and isuse = 'N') as use_n_cnt
+            from
+            (
+                select a.exam_subj, a.exam_subjnm,
+                       count(b.subj) as ques_cnt
+                from tz_exam_subj a, 
+                     tz_report_ques b
+                where a.exam_subj = b.subj(+)
+                group by a.exam_subj, a.exam_subjnm
+                order by a.exam_subjnm
+            ) z
+            <isNotEmpty property="p_searchtext">
+            	WHERE Z.exam_subjnm LIKE '%'||#p_searchtext#||'%'
+            </isNotEmpty>
+	</select>
+	
+	<!-- 과제문항 보기-->
+    <select id="reportProfDAO.selectReportQuestionView" parameterClass="map" resultClass="egovMap">
+	   SELECT   subj,
+		         quesnum,
+		         questext,
+		         examiner,
+		         indate,
+		         inuserid,
+		         ldate,
+		         luserid,
+		         isuse,
+				 case when (
+					select count(0)
+					from tu_projord_sheet	    
+					where examsubj = #p_subj#
+					and quesnum = #p_quesnum#					
+				 )  > 0 then 'Y'
+				 else 'N'
+				 end useyn
+		  FROM   tz_report_ques
+		 WHERE   subj    = #p_subj#
+	    	 and quesnum   = #p_quesnum#
+     </select> 
+     
+     <!-- 과제 문항 등록-->
+	<insert id="reportProfDAO.insertTzReportQues">
+		
+		insert into tz_report_ques 
+		(
+			 subj,
+	         quesnum,
+	         questext,
+	         examiner,
+	         indate,
+	         inuserid,
+	         ldate,
+	         luserid,
+	         isuse 
+		) 
+		values
+		( 
+			#p_subj#,        
+			tz_report_ques_seq.nextval,     
+			#p_questext#, 
+			#p_examiner#,    
+			TO_CHAR(sysdatetime, 'YYYYMMDDHH24MISS'), 
+			#userid#,			
+			TO_CHAR(sysdatetime, 'YYYYMMDDHH24MISS'), 
+			#userid#,
+			#p_isuse#   
+		)		
+	</insert>
+	
+	
+	<select id="reportProfDAO.selectReportQuestionSubjList" parameterClass="map" resultClass="egovMap">
+		select /*reportProfDAO.selectReportQuestionList*//*과제문항 리스트 조회*/
+                    rownum rn, z.exam_subj
+                    , exam_subjnm
+                    , ques_cnt
+                    ,(select count(0) from tz_report_ques where subj = z.exam_subj and isuse = 'Y') as use_y_cnt
+                    ,(select count(0) from tz_report_ques where subj = z.exam_subj and isuse = 'N') as use_n_cnt
+            from
+            (
+                select a.exam_subj, a.exam_subjnm,
+                       count(b.subj) as ques_cnt
+                from tz_exam_subj a, 
+                     tz_report_ques b
+                where a.exam_subj = b.subj(+)
+                group by a.exam_subj, a.exam_subjnm
+                order by a.exam_subjnm
+            ) z
+            WHERE Z.exam_subjnm LIKE '%'||#p_searchtext#||'%'
+	</select>
+	
+	
+	<select id="reportProfDAO.selectReportProfView" parameterClass="map" resultClass="egovMap">
+		select grcode, subj, [year], subjseq, [class], ordseq, title, weeklyseq, weeklysubseq, reptype,
+			   perfectscore, submitscore, notsubmitscore, isopen, isopenscore,
+			   startdate, expiredate, restartdate, reexpiredate, contents, submitfiletype, filelimit,
+			   examsubj
+		  from tu_projord
+		 where subj    = #p_subj#
+		   and [year]    = #p_year#
+		   and subjseq = #p_subjseq#
+		   and ordseq  = '1'
+	</select>
+	
+	
+	<!-- 과제문항 보기-->
+    <select id="reportProfDAO.selectReportQuesList" parameterClass="map" resultClass="egovMap">
+	   SELECT    a.subj,
+		         a.quesnum,
+		         a.questext,
+		         a.examiner,
+		         to_char(TO_DATETIME(a.indate, 'yyyymmddhh24miss'), 'yyyy.mm.dd') as indate,
+		         a.inuserid,
+		         to_char(TO_DATETIME(a.ldate, 'yyyymmddhh24miss'), 'yyyy.mm.dd') as ldate,
+		         a.luserid,
+		         a.isuse,
+		         (select to_char(TO_DATETIME(min(indate), 'yyyymmddhh24miss'), 'yyyy.mm.dd') from tu_projord_sheet where examsubj = a.subj) as fusedate,
+		         (select to_char(TO_DATETIME(max(indate), 'yyyymmddhh24miss'), 'yyyy.mm.dd') from tu_projord_sheet where examsubj = a.subj) as lusedate,
+   		         (select count(0) from tu_projord_sheet where examsubj = a.subj and quesnum=a.quesnum) as usecnt
+		  FROM   tz_report_ques a
+		 WHERE   a.subj    = #p_exam_subj#
+				 	
+				         	
+				 <isNotEmpty property="p_quesnum">
+						 and a.quesnum   = #p_quesnum# 
+				 </isNotEmpty>
+				 
+				 <isNotEmpty property="isuse">
+						 and a.isuse   = #isuse# 
+				 </isNotEmpty>
+		 
+	    
+     </select> 
+     
+     
+     <insert id="reportProfDAO.insertReportProf">
+		insert into tu_projord(
+			grcode, subj, [year], subjseq, [CLASS], ordseq,
+			title, weeklyseq, weeklysubseq, reptype,
+			perfectscore, submitscore, notsubmitscore, isopen, isopenscore,
+			startdate, expiredate, restartdate, reexpiredate,
+			contents, submitfiletype, filelimit, luserid, ldate,
+			examsubj
+		)
+		values(
+			'N000001',
+			#p_subj#,
+			#p_year#,
+			#p_subjseq#,
+			1,
+			(select nvl(max(ordseq), 0)+1 ordseq from tu_projord where subj = #p_subj# and [year] = #p_year# and subjseq = #p_subjseq#),
+			#p_title#,
+			#p_weeklyseq#,
+			#p_weeklysubseq#,
+			#p_reptype#,
+			#p_perfectscore#,
+			#p_submitscore#,
+			#p_notsubmitscore#,
+			#p_isopen#,
+			#p_isopenscore#,
+			replace(#p_startdate#, '-', '')||#p_starthour#||#p_startmin#||#p_startsec#,
+			replace(#p_expiredate#, '-', '')||#p_expirehour#||#p_expiremin#||#p_expiresec#,
+			replace(#p_restartdate#, '-', '')||#p_restarthour#||#p_restartmin#||#p_restartsec#,
+			replace(#p_reexpiredate#, '-', '')||#p_reexpirehour#||#p_reexpiremin#||#p_reexpiresec#,
+			#p_contents#,
+			#p_submitfiletype#,
+			#p_filelimit#,
+			#userid#,
+			to_char(sysdatetime, 'yyyyMMddhh24miss'),
+			#p_exam_subj#
+		)
+	</insert>
+	
+	
+	<insert id="reportProfDAO.insertProjordSheet">
+		insert into tu_projord_sheet(
+			subj,
+			[year],
+			subjseq,
+			examsubj,
+			quesnum,
+			inuserid,
+			indate
+		)
+		values(			
+			#p_subj#,
+			#p_year#,
+			#p_subjseq#,
+			#p_exam_subj#,
+			#v_quesnum#,
+			#userid#,
+			to_char(sysdatetime, 'yyyyMMddhh24miss')
+		)
+	</insert>
+	
+	
+	<update id="reportProfDAO.updateReportProf">
+		update tu_projord
+		   set title      = #p_title#,	   
+		   reptype        = #p_reptype#,
+		   perfectscore   = #p_perfectscore#,
+		   submitscore    = #p_submitscore#,
+		   notsubmitscore = #p_notsubmitscore#,
+		   isopen         = #p_isopen#,
+		   isopenscore    = #p_isopenscore#,
+		   startdate      = replace(#p_startdate#, '-', '')||#p_starthour#||#p_startmin#||#p_startsec#,
+		   expiredate     = replace(#p_expiredate#, '-', '')||#p_expirehour#||#p_expiremin#||#p_expiresec#,
+		   restartdate    = replace(#p_restartdate#, '-', '')||#p_restarthour#||#p_restartmin#||#p_restartsec#,
+		   reexpiredate   = replace(#p_reexpiredate#, '-', '')||#p_reexpirehour#||#p_reexpiremin#||#p_reexpiresec#,
+		   contents       = #p_contents#,
+		   submitfiletype = #p_submitfiletype#,
+		   filelimit      = #p_filelimit#,
+		   luserid        = #userid#,
+		   ldate          = to_char(sysdatetime, 'yyyyMMddhh24miss'),
+		   examsubj 	  = #p_exam_subj#
+		 where subj    = #p_subj#
+		   and [year]    = #p_year#
+		   and subjseq = #p_subjseq#
+		   and ordseq  = #p_ordseq#
+	</update>
+     
+	<delete id="reportProfDAO.deleteProjordSheet">
+		delete from tu_projord_sheet 
+		 where subj    = #p_subj#
+		   and [year]    = #p_year#
+		   and subjseq = #p_subjseq#
+	</delete>
+	
+	
+	<delete id="reportProfDAO.deleteReportProfFiles">
+		delete from tu_projord_file 
+		 where subj    = #p_subj#
+		   and [year]    = #p_year#
+		   and subjseq = #p_subjseq#
+	</delete>
+	
+	<!-- 과제 문항 등록-->
+	<update id="reportProfDAO.updateTzReportQues">		
+		update tz_report_ques
+		set questext = #p_questext#
+		   ,examiner = #p_examiner#
+	       ,ldate = TO_CHAR(sysdatetime, 'YYYYMMDDHH24MISS')
+	       ,luserid = #userid# 
+	       ,isuse = #p_isuse#	
+		where subj = #p_subj#
+		  and quesnum = #p_quesnum# 
+	</update>
+	
+	<delete id="reportProfDAO.deleteTzReportQues">
+		delete from tz_report_ques 
+		 where subj = #p_subj#
+		  and quesnum = #p_quesnum# 
+	</delete>
+	
+	
+	<!-- 과제 출제 문항 보기-->
+    <select id="reportProfDAO.selectReportQuesSubjseqList" parameterClass="map" resultClass="egovMap">
+	   SELECT    c.exam_subjnm,
+	             a.subj,
+		         a.quesnum,
+		         a.questext,
+		         a.examiner,
+		         to_char(TO_DATETIME(a.indate, 'yyyymmddhh24miss'), 'yyyy.mm.dd') as indate,
+		         a.inuserid,
+		         to_char(TO_DATETIME(a.ldate, 'yyyymmddhh24miss'), 'yyyy.mm.dd') as ldate,
+		         a.luserid,
+		         a.isuse,
+		         case when (select count(0)
+							from tu_projord_sheet	    
+							where subj = #p_subj#
+								and [year] = #p_year#
+								and subjseq = #p_subjseq#
+								and examsubj = a.subj
+								and quesnum = a.quesnum) > 0  then 'Y'
+		         	else 'N'
+		         end quesnumchk,
+		         (select to_char(TO_DATETIME(min(indate), 'yyyymmddhh24miss'), 'yyyy.mm.dd') from tu_projord_sheet where examsubj = a.subj) as fusedate,
+		         (select to_char(TO_DATETIME(max(indate), 'yyyymmddhh24miss'), 'yyyy.mm.dd') from tu_projord_sheet where examsubj = a.subj) as lusedate,
+   		         (select count(0) from tu_projord_sheet where examsubj = a.subj and quesnum=a.quesnum) as usecnt
+		  FROM   tz_report_ques a
+		       ,tu_projord_sheet b
+		       ,tz_exam_subj c
+		 WHERE   a.subj    = #p_exam_subj# 
+				 and a.subj = b.examsubj(+)
+				 and a.quesnum = b.quesnum(+)
+		         and a.subj = c.exam_subj
+
+				 
+				 
+				 <isNotEmpty property="p_subj">
+				 	and b.subj(+) = #p_subj#
+				 </isNotEmpty>
+				 
+				 <isNotEmpty property="p_subjseq">
+				 	and b.subjseq(+) = #p_subjseq#
+				 </isNotEmpty>
+				
+				         	
+				 <isNotEmpty property="p_quesnum">
+						 and a.quesnum   = #p_quesnum# 
+				 </isNotEmpty>
+				 
+				 <isNotEmpty property="isuse">
+						 and a.isuse   = #isuse# 
+				 </isNotEmpty>
+		 
+	    
+     </select> 
+	
+	
+</sqlMap>

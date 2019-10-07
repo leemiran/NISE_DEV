@@ -1,0 +1,37 @@
+﻿<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+<meta http-equiv="content-type" content="text/html; charset=utf-8" />
+<head>
+<title>Innorix File Transfer Solution - InnoEX Upload</title>
+<script type="text/javascript" src="../common/innorix.js"></script>
+
+<script type="text/javascript">
+window.onload = function()
+{
+	innoInit({
+		ContainElementID : "innorix_component", // 컴포넌트 출력객체 ID
+		ActionElementID : "form_write",			// 메타정보 전송폼 ID
+		UploadURL : "upload.jsp", 				// 업로드 처리 페이지
+		ResultURL : "result.jsp", 				// 업로드 결과 페이지
+		ViewType : "2", 						// 폴더전용 출력
+		MaxTotalSize : "5GB",					// 첨부가능 전체용량
+		MaxFileSize : "5GB",					// 첨부가능 1개파일 용량
+		MaxFileCount : "200",					// 첨부가능 파일개수
+		TransferMode : "innoexu"				// InnoEX 업로드 모드 설정		
+	});
+}
+</script>
+</head>
+
+<body>
+<form name="form_write" id="form_write" method="post">
+test1 : <input type="text" name="test1" id="test1" />
+</form><br />
+	
+<div id="innorix_component" style="border: 1px solid #97b4cc; width:500px; height:200px"></div><br />
+
+<input class="innoBlueBtn" type="button" value="폴더추가" onClick="File.OpenFolderDialog();" />
+<input class="innoGreenBtn" type="button" value="전송하기" onClick="File.Upload();" />
+
+</body>
+</html>

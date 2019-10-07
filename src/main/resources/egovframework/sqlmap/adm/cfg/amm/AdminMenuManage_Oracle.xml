@@ -1,0 +1,145 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE sqlMap PUBLIC "-//iBATIS.com//DTD SQL Map 2.0//EN" "http://ibatis.apache.org/dtd/sql-map-2.dtd">
+
+<sqlMap namespace="AdminMenuManage">
+<typeAlias  alias="egovMap" type="egovframework.rte.psl.dataaccess.util.EgovMap"/>
+
+	<select id="adminMenuManageDAO.adminMenuMngList" parameterClass="map" resultClass="egovMap">
+		select menu, menunm, [upper], parent, pgm, isdisplay,
+		       para1, para2, para3, para4, para5, para6, para7, para8, para9, para10, para11, para12,
+		       created, luserid, ldate, levels, orders
+		  from tz_menu
+		 where grcode = #grcode#
+		<isEmpty property="p_levels">
+		   and levels = 1
+		</isEmpty>
+		<isNotEmpty property="p_levels">
+		   and levels = $p_levels$
+		</isNotEmpty>
+		<isNotEqual property="p_levels" compareValue="1">
+		<isNotEmpty property="p_parent">
+		   and parent = #p_parent#
+		</isNotEmpty>
+		<isNotEmpty property="p_upper">
+		   and [upper]  = #p_upper#
+		</isNotEmpty>
+		</isNotEqual>
+		<isNotEmpty property="p_searchtext">
+		   and menunm like '%' || #p_searchtext# || '%'
+		</isNotEmpty>
+		 order by orders, menunm
+	</select>
+	
+	<select id="adminMenuManageDAO.adminMenuMngView" parameterClass="map" resultClass="egovMap">
+		select menu, menunm, [upper], parent, pgm, isdisplay, created, luserid, ldate, levels, orders, systemgubun,
+		       para1, para2, para3, para4, para5, para6, para7, para8, para9, para10, para11, para12
+		  from tz_menu
+		 where grcode = #grcode#
+		   and menu   = #p_menu# 
+	</select>
+	
+	<update id="adminMenuManageDAO.adminMenuMngUpdate">
+		update tz_menu
+		   set menunm 	= #p_menunm#,
+		       pgm 		= #p_pgm#,
+		       isdisplay= #p_isdisplay#,
+		       para1 	= #p_para1#,
+		       para2 	= #p_para2#,
+		       para3 	= #p_para3#,
+		       para4 	= #p_para4#,
+		       para5	= #p_para5#,
+		       para6 	= #p_para6#,
+		       para7 	= #p_para7#,
+		       para8 	= #p_para8#,
+		       para9 	= #p_para9#,
+		       para10 	= #p_para10#,
+		       para11 	= #p_para11#,
+		       para12 	= #p_para12#,
+		       orders	= #p_orders#,
+		       luserid 	= #userid#,
+		       ldate   	= to_char(sysdatetime, 'yyyyMMddhh24miss')
+		 where grcode = #grcode#
+		   and levels = #p_levels#
+		   and menu   = #p_menu#
+	</update>
+	
+	<select id="adminMenuManageDAO.getUpperInfo" parameterClass="map" resultClass="egovMap">
+		select menu, menunm, parent, levels, [upper]
+		  from tz_menu
+		 where grcode = #grcode#
+		   and menu   = #p_menu#
+	</select>
+	
+	<select id="adminMenuManageDAO.getMenuKey" parameterClass="map" resultClass="String">
+          select trim(nvl(reverse(to_char(reverse(to_char(to_number(max(substr(menu, 1, (2 * 2))))+1, '0000')), '00000000')), '01000000')) as menu
+			from tz_menu
+           where grcode = #grcode#
+      <isNotEmpty property="p_parent">
+             and parent = #p_parent#
+      </isNotEmpty>
+	</select>
+	
+	<insert id="adminMenuManageDAO.adminMenuMngInsert">
+		insert into tz_menu(
+			grcode,
+			menu,
+			menunm,
+			[upper],
+			parent,
+			pgm,
+			isdisplay,
+			para1,
+			para2,
+			para3,
+			para4,
+			para5,
+			para6,
+			para7,
+			para8,
+			para9,
+			para10,
+			para11,
+			para12,
+			created,
+			luserid,
+			ldate,
+			levels,
+			orders,
+			systemgubun
+		)
+		values(
+			#grcode#,
+			#menu#,
+			#p_menunm#,
+		<isEqual property="p_levels" compareValue="1">
+			#menu#,
+			#menu#,
+		</isEqual>
+		<isNotEqual property="p_levels" compareValue="1">
+			#p_parent#,
+			#p_parent#,
+		</isNotEqual>
+			#p_pgm#,
+			#p_isdisplay#,
+			#p_para1#,
+			#p_para2#,
+			#p_para3#,
+			#p_para4#,
+			#p_para5#,
+			#p_para6#,
+			#p_para7#,
+			#p_para8#,
+			#p_para9#,
+			#p_para10#,
+			#p_para11#,
+			#p_para12#,
+			to_char(sysdatetime, 'YYYYMMDDHH24MISS'),
+			#userid#,
+			to_char(sysdatetime, 'YYYYMMDDHH24MISS'),
+			#p_levels#,
+			#p_orders#,
+			#p_systemgubun#
+		)	
+	</insert>
+</sqlMap>
+

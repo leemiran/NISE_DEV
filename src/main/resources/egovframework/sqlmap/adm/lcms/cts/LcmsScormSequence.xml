@@ -1,0 +1,327 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE sqlMap PUBLIC "-//iBATIS.com//DTD SQL Map 2.0//EN" "http://ibatis.apache.org/dtd/sql-map-2.dtd">
+
+<sqlMap namespace="LcmsScormSequence">
+	<typeAlias  alias="egovMap" type="egovframework.rte.psl.dataaccess.util.EgovMap"/>
+
+    <select id="lcmsScormSequenceDAO.selectLcmsScormSequencePageList" parameterClass="map" resultClass="egovMap">
+        SELECT * 
+        FROM
+               (
+                SELECT TEMP.*, 
+                <isNotEmpty property="rowsPerPage">
+                       CEIL(ROWNUM / #rowsPerPage#) AS PAGE 
+                </isNotEmpty>
+                <isEmpty property="rowsPerPage">
+                       CEIL(ROWNUM / 10) AS PAGE 
+                </isEmpty>
+                FROM
+                      (
+                       SELECT 
+	        	              SEQ_IDX_NUM,
+	        	              ITEM_SEQ,
+	        	              ORG_SEQ,
+	        	              SEQ_ID,
+	        	              SEQ_IDREF,
+	        	              CHOICE,
+	        	              CHOICE_EXIT,
+	        	              FLOW,
+	        	              FORWARD_ONLY,
+	        	              USE_ATTEMPT_OBJ_INFO,
+	        	              USE_ATTEMPT_PROGRESS_INFO,
+	        	              ATTEMPT_LIMIT,
+	        	              ATTEMPT_DURATION_LIMIT,
+	        	              RANDOM_TIMING,
+	        	              SELECT_COUNT,
+	        	              REORDER_CHILDREN,
+	        	              SELECTION_TIMING,
+	        	              TRACKED,
+	        	              COMPLET_SETBY_CONTENT,
+	        	              OBJ_SETBY_CONTENT,
+	        	              PREVENT_ACTIVATION,
+	        	              CONSTRAIN_CHOICE,
+	        	              REQUIRED_SATISFIED,
+	        	              REQUIRED_NOT_SATISFIED,
+	        	              REQUIRED_COMPLETED,
+	        	              REQUIRED_INCOMPLETED,
+	        	              MEASURE_SATISFI_IF_ACTION,
+	        	              ROLLUP_OBJ_SATISFIED,
+	        	              ROLLUP_PROGRESS_COMPLETION,
+	        	              OBJ_MEASURE_WEIGHT,
+	        	              HIDE_UI_PRE,
+	        	              HIDE_UI_CON,
+	        	              HIDE_UI_EX,
+	        	              HIDE_UI_ABD,
+	        	              userid,
+	        	              UPDATE_DT,
+	        	              COURSE_CD,
+	        	               BEFORE_SEQ_IDX_NUM
+        		       FROM   TB_LCMS_SCORM_SEQUENCE
+        		       <!--  APPEND WHERE CONDITION START  -->
+
+        		       <!--  APPEND WHERE CONDITION END    -->
+        		       <isNotEmpty property="orderBy">
+        			       $orderBy$
+        		       </isNotEmpty>
+        	          ) TEMP 
+               )
+        <isNotEmpty property="page">
+        WHERE PAGE = #page#
+        </isNotEmpty>
+        <isEmpty property="page">
+        WHERE PAGE = 1
+        </isEmpty>
+    </select>
+    
+    <!-- 학습창  -->
+    <select id="lcmsScormSequenceDAO.selectLcmsScormSequenceList" parameterClass="map" resultClass="egovMap">
+        SELECT SEQ_IDX_NUM,
+               ITEM_SEQ,
+               ORG_SEQ,
+               SEQ_ID,
+               SEQ_IDREF,
+               CHOICE,
+               CHOICE_EXIT,
+               FLOW,
+               FORWARD_ONLY,
+               USE_ATTEMPT_OBJ_INFO,
+               USE_ATTEMPT_PROGRESS_INFO,
+               ATTEMPT_LIMIT,
+               ATTEMPT_DURATION_LIMIT,
+               RANDOM_TIMING,
+               SELECT_COUNT,
+               REORDER_CHILDREN,
+               SELECTION_TIMING,
+               TRACKED,
+               COMPLET_SETBY_CONTENT,
+               OBJ_SETBY_CONTENT,
+               PREVENT_ACTIVATION,
+               CONSTRAIN_CHOICE,
+               REQUIRED_SATISFIED,
+               REQUIRED_NOT_SATISFIED,
+               REQUIRED_COMPLETED,
+               REQUIRED_INCOMPLETED,
+               MEASURE_SATISFI_IF_ACTION,
+               ROLLUP_OBJ_SATISFIED,
+               ROLLUP_PROGRESS_COMPLETION,
+               OBJ_MEASURE_WEIGHT,
+               HIDE_UI_PRE,
+               HIDE_UI_CON,
+               HIDE_UI_EX,
+               HIDE_UI_ABD,
+               userid,
+               UPDATE_DT,
+               COURSE_CD,
+               BEFORE_SEQ_IDX_NUM
+        FROM   TB_LCMS_SCORM_SEQUENCE
+        WHERE  ORG_SEQ = #orgSeq#
+    </select>
+
+    <select id="lcmsScormSequenceDAO.selectLcmsScormSequencePageListTotCnt" parameterClass="map" resultClass="long">
+        SELECT COUNT(ROWNUM) AS [COUNT]
+        FROM   TB_LCMS_SCORM_SEQUENCE
+    </select>
+
+    <select id="lcmsScormSequenceDAO.selectLcmsScormSequenceMaxSeq" parameterClass="map" resultClass="int">
+        select nvl(max(seq_idx_num),0)+1 as seq from tb_lcms_scorm_sequence
+    </select>
+
+    <select id="lcmsScormSequenceDAO.selectLcmsScormSequence" parameterClass="map" resultClass="egovMap">
+        SELECT SEQ_IDX_NUM,
+               ITEM_SEQ,
+               ORG_SEQ,
+               SEQ_ID,
+               SEQ_IDREF,
+               CHOICE,
+               CHOICE_EXIT,
+               FLOW,
+               FORWARD_ONLY,
+               USE_ATTEMPT_OBJ_INFO,
+               USE_ATTEMPT_PROGRESS_INFO,
+               ATTEMPT_LIMIT,
+               ATTEMPT_DURATION_LIMIT,
+               RANDOM_TIMING,
+               SELECT_COUNT,
+               REORDER_CHILDREN,
+               SELECTION_TIMING,
+               TRACKED,
+               COMPLET_SETBY_CONTENT,
+               OBJ_SETBY_CONTENT,
+               PREVENT_ACTIVATION,
+               CONSTRAIN_CHOICE,
+               REQUIRED_SATISFIED,
+               REQUIRED_NOT_SATISFIED,
+               REQUIRED_COMPLETED,
+               REQUIRED_INCOMPLETED,
+               MEASURE_SATISFI_IF_ACTION,
+               ROLLUP_OBJ_SATISFIED,
+               ROLLUP_PROGRESS_COMPLETION,
+               OBJ_MEASURE_WEIGHT,
+               HIDE_UI_PRE,
+               HIDE_UI_CON,
+               HIDE_UI_EX,
+               HIDE_UI_ABD,
+               userid,
+               UPDATE_DT,
+               COURSE_CD,
+               BEFORE_SEQ_IDX_NUM
+        FROM   TB_LCMS_SCORM_SEQUENCE
+        WHERE  SEQ_IDX_NUM = #seqIdxNum#
+    </select>
+
+	<!-- 스콤계열화 등록 -->
+    <insert id="lcmsScormSequenceDAO.insertLcmsScormSequence">
+        INSERT INTO TB_LCMS_SCORM_SEQUENCE
+        (
+            SEQ_IDX_NUM,
+            ITEM_SEQ,
+            ORG_SEQ,
+            SEQ_ID,
+            SEQ_IDREF,
+            CHOICE,
+            CHOICE_EXIT,
+            FLOW,
+            FORWARD_ONLY,
+            USE_ATTEMPT_OBJ_INFO,
+            USE_ATTEMPT_PROGRESS_INFO,
+            ATTEMPT_LIMIT,
+            ATTEMPT_DURATION_LIMIT,
+            RANDOM_TIMING,
+            SELECT_COUNT,
+            REORDER_CHILDREN,
+            SELECTION_TIMING,
+            TRACKED,
+            COMPLET_SETBY_CONTENT,
+            OBJ_SETBY_CONTENT,
+            PREVENT_ACTIVATION,
+            CONSTRAIN_CHOICE,
+            REQUIRED_SATISFIED,
+            REQUIRED_NOT_SATISFIED,
+            REQUIRED_COMPLETED,
+            REQUIRED_INCOMPLETED,
+            MEASURE_SATISFI_IF_ACTION,
+            ROLLUP_OBJ_SATISFIED,
+            ROLLUP_PROGRESS_COMPLETION,
+            OBJ_MEASURE_WEIGHT,
+            HIDE_UI_PRE,
+            HIDE_UI_CON,
+            HIDE_UI_EX,
+            HIDE_UI_ABD,
+            userid,
+            UPDATE_DT,
+            COURSE_CD,
+            BEFORE_SEQ_IDX_NUM
+        )
+        VALUES
+        (
+            #seqIdxNum#,
+            #itemSeq#,
+            #orgSeq#,
+            #seqId#,
+            #seqIdref#,
+            #choice#,
+            #choiceExit#,
+            #flow#,
+            #forwardOnly#,
+            #useAttemptObjInfo#,
+            #useAttemptProgressInfo#,
+            #attemptLimit#,
+            #attemptDurationLimit#,
+            #randomTiming#,
+            #selectCount#,
+            #reorderChildren#,
+            #selectionTiming#,
+            #tracked#,
+            #completSetbyContent#,
+            #objSetbyContent#,
+            #preventActivation#,
+            #constrainChoice#,
+            #requiredSatisfied#,
+            #requiredNotSatisfied#,
+            #requiredCompleted#,
+            #requiredIncompleted#,
+            #measureSatisfiIfAction#,
+            #rollupObjSatisfied#,
+            #rollupProgressCompletion#,
+            #objMeasureWeight#,
+            #hideUiPre#,
+            #hideUiCon#,
+            #hideUiEx#,
+            #hideUiAbd#,
+            #userid#,
+            sysdate,
+            #courseCd#,
+            #beforeSeqIdxNum#
+        )
+    </insert>
+
+    <update id="lcmsScormSequenceDAO.updateLcmsScormSequence">
+        UPDATE TB_LCMS_SCORM_SEQUENCE
+        SET    ITEM_SEQ = #itemSeq#,
+               ORG_SEQ = #orgSeq#,
+               SEQ_ID = #seqId#,
+               SEQ_IDREF = #seqIdref#,
+               CHOICE = #choice#,
+               CHOICE_EXIT = #choiceExit#,
+               FLOW = #flow#,
+               FORWARD_ONLY = #forwardOnly#,
+               USE_ATTEMPT_OBJ_INFO = #useAttemptObjInfo#,
+               USE_ATTEMPT_PROGRESS_INFO = #useAttemptProgressInfo#,
+               ATTEMPT_LIMIT = #attemptLimit#,
+               ATTEMPT_DURATION_LIMIT = #attemptDurationLimit#,
+               RANDOM_TIMING = #randomTiming#,
+               SELECT_COUNT = #selectCount#,
+               REORDER_CHILDREN = #reorderChildren#,
+               SELECTION_TIMING = #selectionTiming#,
+               TRACKED = #tracked#,
+               COMPLET_SETBY_CONTENT = #completSetbyContent#,
+               OBJ_SETBY_CONTENT = #objSetbyContent#,
+               PREVENT_ACTIVATION = #preventActivation#,
+               CONSTRAIN_CHOICE = #constrainChoice#,
+               REQUIRED_SATISFIED = #requiredSatisfied#,
+               REQUIRED_NOT_SATISFIED = #requiredNotSatisfied#,
+               REQUIRED_COMPLETED = #requiredCompleted#,
+               REQUIRED_INCOMPLETED = #requiredIncompleted#,
+               MEASURE_SATISFI_IF_ACTION = #measureSatisfiIfAction#,
+               ROLLUP_OBJ_SATISFIED = #rollupObjSatisfied#,
+               ROLLUP_PROGRESS_COMPLETION = #rollupProgressCompletion#,
+               OBJ_MEASURE_WEIGHT = #objMeasureWeight#,
+               HIDE_UI_PRE = #hideUiPre#,
+               HIDE_UI_CON = #hideUiCon#,
+               HIDE_UI_EX = #hideUiEx#,
+               HIDE_UI_ABD = #hideUiAbd#,
+               userid = #userId#,
+               UPDATE_DT = #updateDt#,
+               COURSE_CD = #courseCd#,
+               BEFORE_SEQ_IDX_NUM = #beforeSeqIdxNum#
+        WHERE  SEQ_IDX_NUM = #seqIdxNum#
+    </update>
+
+    <delete id="lcmsScormSequenceDAO.deleteLcmsScormSequence">
+        delete tb_lcms_scorm_sequence where org_seq in <iterate property="orgSeq" conjunction="," open="(" close=")">$orgSeq[]$</iterate>
+    </delete>
+
+    <delete id="lcmsScormSequenceDAO.deleteLcmsScormSequenceAll">
+        DELETE FROM TB_LCMS_SCORM_SEQUENCE
+        <dynamic prepend="WHERE SEQ_IDX_NUM IN ">
+            <isNotEmpty property="seqIdxNum">
+                <iterate property="seqIdxNum" open="(" close=")" conjunction=",">
+                    #seqIdxNum[]#
+                </iterate>
+            </isNotEmpty>
+            <isEmpty property="seqIdxNum">
+                ('')
+            </isEmpty>
+        </dynamic>
+    </delete>
+    
+    <!-- 학습창  -->
+    <select id="lcmsScormSequenceDAO.selectLcmsScormSequenceSeqIdxNum" parameterClass="map" resultClass="egovMap">
+        SELECT MAX(SEQ_IDX_NUM) as seq_idx_num 
+        FROM   TB_LCMS_SCORM_SEQUENCE 
+        WHERE  ITEM_SEQ = #itemSeq#
+    </select>
+
+
+</sqlMap>
+

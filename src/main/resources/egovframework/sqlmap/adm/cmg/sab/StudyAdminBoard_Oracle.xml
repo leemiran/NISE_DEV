@@ -1,0 +1,46 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE sqlMap PUBLIC "-//iBATIS.com//DTD SQL Map 2.0//EN" "http://ibatis.apache.org/dtd/sql-map-2.dtd">
+
+<sqlMap namespace="StudyAdminBoard">
+<typeAlias  alias="egovMap" type="egovframework.rte.psl.dataaccess.util.EgovMap"/>
+
+
+	<select id="studyAdminBoardDAO.selectAdminList" parameterClass="map" resultClass="egovMap">
+		select a.course, a.cyear, a.courseseq, a.coursenm, a.subj, a.subjnm, a.[year], a.subjseq, a.subjseqgr, a.isonoff, a.isclosed,
+		       to_char(to_date(substr(edustart, 1, 8), 'yyyyMMdd'), 'yyyy.MM.dd') as edustart,
+		       to_char(to_date(substr(eduend, 1, 8), 'yyyyMMdd'), 'yyyy.MM.dd') as eduend,
+		       (select count(distinct refseq) from tz_board where tabseq = b.tabseq and subj = a.subj and [year] = a.[year] and subjseq = a.subjseq) as cnt,
+		       b.tabseq, get_grcodenm(a.grcode) as grcodenm
+		  from vz_scsubjseq a, tz_bds b
+		<isEqual property="gadmin" compareValue="P">
+		     , tz_classtutor d 
+		</isEqual>
+		 where a.subj = b.subj
+		   and a.[year] = b.[year]
+		   and a.subjseq = b.subjseq
+		   and b.type = 'SB'
+		   and a.gyear = #ses_search_gyear#
+		<isEqual property="gadmin" compareValue="P">
+		   and a.subj = d.subj(+)
+		   and a.[year] = d.[year](+)
+		   and a.subjseq = d.subjseq(+)
+		   and d.tuserid(+) = #userid#
+		</isEqual>
+		<isNotEmpty property="ses_search_grseq">
+		   and a.grseq = #ses_search_grseq#
+		</isNotEmpty>
+		<isNotEmpty property="ses_search_att">
+		   and a.oriupperclass = #ses_search_att#
+		</isNotEmpty>
+		   
+		<isNotEmpty property="ses_search_subj">
+		   and a.subj = #ses_search_subj#
+		</isNotEmpty>
+		   
+		<isNotEmpty property="ses_search_subjseq">
+		   and a.subjseq = #ses_search_subjseq#
+		</isNotEmpty>
+		 order by a.course, a.cyear, a.courseseq, a.subj, a.[year], a.subjseqgr,a.subjseq
+	</select>
+</sqlMap>
+

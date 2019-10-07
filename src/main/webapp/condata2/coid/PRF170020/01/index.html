@@ -1,0 +1,28 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml" lang="ko" xml:lang="ko">
+<head>
+<title></title>
+<meta http-equiv="Content-Type" content="text/html; charset=euc-kr">
+<script language="JavaScript">
+function init(){
+	url=window.location.href;
+	sURL=url.split("?")[0];
+	sURL=sURL.split("/");
+	
+	tName=sURL[sURL.length-1];
+	tModule=sURL[sURL.length-2];
+	
+	sp="1301.html";
+	mainFrame.location.href=sp;
+}
+</script>
+</head>
+<frameset rows="710"  cols="1024" frameborder="NO"  framespacing="0" onload="init();">
+	<frame src="" name="mainFrame" scrolling="NO"><!-- 최초 페이지 넣어줌 -->
+
+</frameset>
+<noframes><body leftmargin="0" topmargin="0" marginwidth="0" marginheight="0" style="overflow-x:hidden;overflow-y:hidden">
+
+
+</body></noframes>
+</html>

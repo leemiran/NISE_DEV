@@ -1,0 +1,1289 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE sqlMap PUBLIC "-//iBATIS.com//DTD SQL Map 2.0//EN" "http://ibatis.apache.org/dtd/sql-map-2.dtd">
+
+<sqlMap namespace="satisticsDAO">
+<typeAlias  alias="egovMap" type="egovframework.rte.psl.dataaccess.util.EgovMap"/>
+
+	
+	
+<!--	회원통계 -->
+	<select id="satisticsDAO.memberSatisList" parameterClass="map" resultClass="egovMap">
+	 select nvl(a.comp,'-') as comp, Decode(a.emp_gubun, 'T', '교원', 'E', '보조인력', 'R', '교육전문직', 'P', '일반회원(학부모 등)', 'O', '공무원')  emp_gubun
+	   , nvl(get_compnm(a.comp),'-') as compnm                
+	   , count(a.userid) * 1.00 cnt           
+	from tz_member a , tz_grcomp b          
+	where  1=1             
+	 and  a.comp = b.comp  
+	 and a.comp = '1001'         
+	group  by a.comp, a.emp_gubun
+	order by cnt desc
+
+	</select>
+	
+	
+	<!--	과정별교육실적 상세통계 -->
+	<select id="satisticsDAO.subjectSatisDetailList" parameterClass="map" resultClass="egovMap">
+	SELECT  b.examnum, a.emp_gubun, get_deptnm(a.DEPT_CD) as DEPT_CDNM                                                                                       
+	     ,  get_agencynm(a.AGENCY_CD) as AGENCY_CDNM                                                                                     
+	    ,   a.user_path                                                                                   
+	    ,   a.userid                                                                                 
+	     ,   a.name                                                                                  
+	      ,    a.birth_date                      
+	     ,   a.email                     
+	     ,    a.handphone               
+	     , a.address                                           	
+	     , a.zip_cd                                           	
+	     , a.address1                                           	
+	     , a.zip_cd1                                           	
+	     , a.hrdc	                                           	
+	 	 ,   a.hometel                                                                                   
+		 ,   a.zip_cd                                           post                    
+		 ,   a.address                                     addr                     
+		 ,   ''                                          issms                    
+		 ,   NVL(a.ismailling    , 'Y')                                          ismailling              
+		 ,   TO_CHAR(TO_DATE(SUBSTR(a.indate, 1, 8), 'YYYYMMDD'), 'YYYY.MM.DD')  indate                   
+		     ,   c.subjnm                                                                                    
+		     ,   c.subj                                                                                       
+		     ,   c.subjseq                                                                                    
+		     ,   c.[year]       
+		     ,   (select EDUTIMES from tz_subj ts where c.subj = ts.subj) edutimes          
+		     ,   b.avetc2																   
+		     ,   b.avftest														   
+		     ,   b.avmtest           
+		     ,   b.avreport     
+		     ,   b.score     
+		     ,   c.edustart
+		     ,   c.eduend  
+		     ,ROW_NUMBER() OVER(ORDER BY  b.score  DESC,b.avreport  DESC, b.avftest  DESC, b.avetc2  DESC, a.birth_date asc   ) AS RANKING       
+	 ,   d.isgraduated                                                                                  
+	 ,    DECODE(d.isgraduated, 'N', '미수료', '수료')     isgraduatedname            
+	 ,   b.serno        ,b.editscore                                                                            
+	    , (select get_subjclass_fullnm (subjclass) from tz_subj ts where  c.subj = ts.subj) upperclassnm 
+	FROM    tz_member       a                                                                           
+	    ,   tz_student      b                                                                           
+	    ,   VZ_SCSUBJSEQ    c                                                                           
+	    ,   tz_stold   d                                                                           
+	WHERE   1           = 1                                                                             
+	AND     c.subj      = b.subj                                                                        
+	AND     c.subj      = d.subj                                                                        
+	AND     c.subjseq   = b.subjseq                                                                     
+	AND     c.subjseq   = d.subjseq                                                                     
+	AND     c.[year]      = b.[year]                                                                        
+	AND     c.[year]      = d.[year]                                                                        
+	AND     b.userid    = a.userid                                                                      
+	AND     b.userid    = d.userid        
+	
+	and    	c.[year] 		=  #p_year#
+	and     c.subj 		=  #p_subj#
+ 	and 	c.subjseq  	=  #p_subjseq#
+	
+	
+	<isNotEmpty property="p_isgraduated">
+		<isEqual property="p_isgraduated" compareValue="Y">
+			and d.isgraduated    = 'Y'
+		</isEqual>
+		<isEqual property="p_isgraduated" compareValue="N">
+			and   ( d.isgraduated   IS NULL OR d.isgraduated = 'N')
+		</isEqual>
+	</isNotEmpty>
+	
+	
+	 order by a.name, a.userid, b.serno, b.score desc, b.avreport desc, b.avftest desc, b.avetc2 desc
+	</select>
+	
+		
+<!--	연도별 교육실절 -->
+	<select id="satisticsDAO.yearSubjectSatisList" parameterClass="map" resultClass="egovMap">
+	
+	 select a.subj 
+	      , a.[year] 
+	      , a.scupperclass as upperclass 
+	      , max(get_subjclassnm(a.scupperclass,'000','000')) as classname 
+	      , max(a.subjnm) as subjnm 
+	      , max(a.isonoff) as isonoff 
+	      , sum(nvl((  
+	                 select count(distinct aa.userid) 
+	                 from   tz_student aa inner join tz_stold bb
+	                 on aa.subj=bb.subj and aa.[year]=bb.[year] and aa.subjseq = bb.subjseq  and aa.userid=bb.userid
+	                 where  aa.subj = a.subj 
+	                 and    aa.[year] = a.[year] 
+	                 and    aa.subjseq = a.subjseq 
+	 				and    aa.comp = '1001' 
+	 				and aa.stustatus = 'Y'
+	                ), 0)) educnt 
+	      , sum(nvl((  
+	                 select count(distinct aa.userid) 
+	                 from   tz_stold aa inner join tz_student bb
+	                 on aa.subj=bb.subj and aa.[year]=bb.[year] and aa.subjseq = bb.subjseq  and aa.userid=bb.userid 
+	                 where  aa.subj = a.subj 
+	                 and    aa.[year] = a.[year] 
+	                 and    aa.subjseq = a.subjseq 
+	 				 and    aa.comp = '1001' 
+	 				 and 	aa.isgraduated = 'Y'
+	                ), 0)) gradcnt 
+	 from   vz_scsubjseq a 
+	      , tz_grsubj b 
+	 where  1=1 
+	 and    a.grcode = b.grcode 
+	 and    a.subj = b.subjcourse 
+	 and    a.grcode = 'N000001'
+	 <isNotEmpty property="ses_search_gyear">
+		and    a.gyear =  #ses_search_gyear#
+	 </isNotEmpty>
+	 
+	 <isEmpty property="ses_search_gyear">
+		and    a.gyear =  -1
+	 </isEmpty>
+	 
+	 
+	 <isNotEmpty property="ses_search_att">
+		and    a.oriupperclass =  #ses_search_att#
+	 </isNotEmpty>
+	 
+	 group  by a.scupperclass, a.subj, a.[year] 
+	 order  by a.scupperclass, a.subj, a.[year] 
+		
+	
+	</select>
+	
+	
+<!--	분야별교육실적-->
+	<select id="satisticsDAO.classSubjectSatisList" parameterClass="map" resultClass="egovMap">
+	SELECT  GRCODE 
+		,GYEAR 
+		,GRSEQ 
+		,GRSEQNM
+		,UPPERCLASS
+		,EDUCNT
+		,GRADCNT
+		,get_subjclassnm(upperclass,'000','000') as upclassname 
+		FROM(	
+			 select c.grcode 
+			      , c.gyear 
+			      , c.grseq 
+			      , c.grseqnm 
+			      , a.scupperclass as upperclass 
+			     -- , get_subjclassnm(a.scupperclass,'000','000') as upclassname 
+			      , sum(nvl((  
+		                 select count(distinct aa.userid) 
+		                 from   tz_student aa inner join tz_stold bb
+		                 on aa.subj=bb.subj and aa.[year]=bb.[year] and aa.subjseq = bb.subjseq  and aa.userid=bb.userid
+		                 where  aa.subj = a.subj 
+		                 and    aa.[year] = a.[year] 
+		                 and    aa.subjseq = a.subjseq 
+		 				and    aa.comp = '1001' 
+		 				and aa.stustatus = 'Y'
+		                ), 0)) educnt 
+			      , sum(nvl((  
+		                 select count(distinct aa.userid) 
+		                 from   tz_stold aa inner join tz_student bb
+		                 on aa.subj=bb.subj and aa.[year]=bb.[year] and aa.subjseq = bb.subjseq  and aa.userid=bb.userid 
+		                 where  aa.subj = a.subj 
+		                 and    aa.[year] = a.[year] 
+		                 and    aa.subjseq = a.subjseq 
+		 				 and    aa.comp = '1001' 
+		 				 and 	aa.isgraduated = 'Y'
+		                ), 0)) gradcnt 
+			 from   vz_scsubjseq a 
+			      , tz_grseq c 
+			      , tz_grsubj b 
+			 where  a.grcode = c.grcode(+) 
+			 and    a.gyear = c.gyear(+) 
+			 and    a.grseq = c.grseq(+) 
+			 and    a.grcode = b.grcode 
+			 and    a.subj = b.subjcourse  
+			 and a.grcode(+) = 'N000001' 
+	
+	
+			 <isNotEmpty property="ses_search_gyear">
+				and    a.gyear =  #ses_search_gyear#
+			 </isNotEmpty>
+			 
+			 <isEmpty property="ses_search_gyear">
+				and    a.gyear =  -1
+			 </isEmpty>
+			 
+			 
+			 <isNotEmpty property="ses_search_att">
+				and    a.oriupperclass =  #ses_search_att#
+			 </isNotEmpty>
+			 
+			 group  by a.scupperclass, c.grcode, c.gyear, c.grseq, c.grseqnm
+		 	order by scupperclass
+		)
+	
+	</select>
+
+
+
+<!--	접속통계 연도별-->
+	<select id="satisticsDAO.countYearSatisList" parameterClass="map" resultClass="egovMap">
+		select date_year, date_month, sum(cnt) cnt
+		from TZ_HOMECOUNT 
+		where date_year   = #ses_search_gyear#
+		and gubun      = 'N000001' 
+		group by date_year, date_month
+		order by date_month asc
+	</select>
+	
+	
+	
+	
+<!--	접속통계 월별-->
+	<select id="satisticsDAO.countMonthSatisList" parameterClass="map" resultClass="egovMap">
+		select date_year, date_month, date_day, sum(cnt) cnt
+		from TZ_HOMECOUNT                                        
+		where date_year   = #ses_search_gyear#
+		and date_month  = #ses_search_gmonth#
+		and gubun      = 'N000001' 
+		group by date_year, date_month, date_day          
+		order by date_day asc	
+	</select>
+	
+	<!-- 
+	ID   : satisticsDAO.yearMemberList
+	설명 : 연도별 회원 현황
+	수정일			수정자				수정내용
+	===========================================
+	유상도			2014.12.26		최초생성
+	-->
+	<select id="satisticsDAO.yearMemberList" parameterClass="map" resultClass="egovMap">
+	<![CDATA[
+		select z.*   /*satisticsDAO.yearMemberList*//*연도별 회원 현황*/     
+		from
+		(
+		select  [year],
+		        tt.UPPERCLASS,
+		        max(tt.upperclassnm) as upperclassnm,
+		        sum(case when tt.dept_cd = '00001' then 1 else 0 end) as deptcd_00001,
+		        sum(case when tt.dept_cd = '00002' then 1 else 0 end) as deptcd_00002,
+		        sum(case when tt.dept_cd = '00003' then 1 else 0 end) as deptcd_00003,
+		        sum(case when tt.dept_cd = '00004' then 1 else 0 end) as deptcd_00004,
+		        sum(case when tt.dept_cd = '00005' then 1 else 0 end) as deptcd_00005,
+		        sum(case when tt.dept_cd = '00006' then 1 else 0 end) as deptcd_00006,
+		        sum(case when tt.dept_cd = '00007' then 1 else 0 end) as deptcd_00007,
+		        sum(case when tt.dept_cd = '00008' then 1 else 0 end) as deptcd_00008,
+		        sum(case when tt.dept_cd = '00009' then 1 else 0 end) as deptcd_00009,
+		        sum(case when tt.dept_cd = '00010' then 1 else 0 end) as deptcd_00010,
+		        sum(case when tt.dept_cd = '00011' then 1 else 0 end) as deptcd_00011,
+		        sum(case when tt.dept_cd = '00012' then 1 else 0 end) as deptcd_00012,
+		        sum(case when tt.dept_cd = '00013' then 1 else 0 end) as deptcd_00013,
+		        sum(case when tt.dept_cd = '00014' then 1 else 0 end) as deptcd_00014,
+		        sum(case when tt.dept_cd = '00015' then 1 else 0 end) as deptcd_00015,
+		        sum(case when tt.dept_cd = '00016' then 1 else 0 end) as deptcd_00016,
+		        sum(case when tt.dept_cd = '00017' then 1 else 0 end) as deptcd_00017,
+		        sum(case when tt.dept_cd = '00018' then 1 else 0 end) as deptcd_00018,
+		        sum(case when tt.dept_cd not in ('00001','00002','00003','00004','00005','00006','00007','00008','00009','00010','00011','00012','00013','00014','00015','00016','00017','00018') then 1 else 0 end) as deptcd_00019
+		
+		from (          
+		                 select     
+		                 /*
+		                 		a.[year],
+		                          get_subjclassnm(d.upperclass,'000','000') upperclassnm,
+		                        REPLACE(get_deptnm(b.dept_cd),'-','') dept_nm,
+		                        (
+		                         select code
+		                          from tz_code
+		                         where gubun = '0117'  and get_deptnm(b.dept_cd) like '%'||codenm||'%' and rownum = 1   
+		                        ) as dept_cd,
+		                        get_agencynm(b.agency_cd) agency_nm,		                        
+		                        DECODE(b.emp_gubun, 'T', '교원', 'E', '보조인력', 'R', '교육전문직', 'P', '일반회원(학부모등)', 'O', '공무원') as emp_gubun_nm,
+		                        b.user_path,
+		                        b.name,
+		                        a.subjseq,
+		                         d.UPPERCLASS,
+		                       
+		                        Decode(c.chkfinal , 'B', '미처리', 'Y', '승인', 'N', '반려') as chkfinalnm, 
+		                        a.isgraduated
+		                        */
+		                        
+		                        a.[year],
+                                  get_subjclassnm(d.upperclass,'000','000') upperclassnm,
+                                  (
+                                 select code
+                                  from tz_code
+                                 where gubun = '0117'  and get_deptnm(b.dept_cd) like '%'||codenm||'%' and rownum = 1   
+                                ) as dept_cd,
+                                REPLACE(get_deptnm(b.dept_cd),'-','') dept_nm,
+                                b.USERID,
+                                 d.UPPERCLASS
+		                  from tz_student a
+		                     , tz_member b
+		                     , tz_propose c
+		                     , tz_subj d
+		                where  c.subj         = a.subj 
+		                and    c.[year]         = a.[year] 
+		                and    c.subjseq      = a.subjseq 
+		                and    c.userid       = a.userid      
+		                and    c.subj       = d.subj                
+		                and a.userid        = b.userid(+)
+		                and a.[year]        = nvl(#ses_search_gyear#, to_char(sysdate, 'YYYY'))
+		                and d.UPPERCLASS like '%'||#ses_search_att#||'%'
+		                 group by a.[year] , d.UPPERCLASS,b.dept_cd,b.USERID 
+		                
+		               ) tt
+		               WHERE 1=1
+		               group by [year], UPPERCLASS
+		) z        
+		]]>
+	</select>
+	
+	<!-- 
+	ID   : satisticsDAO.yearMemberList_ver01
+	설명 : 연도별 회원 현황
+	수정일			수정자				수정내용
+	===========================================
+	유상도			2014.12.26		최초생성
+	-->
+	<select id="satisticsDAO.yearMemberList_ver01" parameterClass="map" resultClass="egovMap">
+	<![CDATA[
+		WITH MEMBER AS
+						(
+						    SELECT 
+						    Z.*, 
+						    (CASE WHEN ADD_CODE1 IS NOT NULL THEN ADD_CODE1 ELSE ADD_CODE2 END) ADRS
+						    FROM
+						    (
+						    select b.USERID, NAME, SEX, emp_gubun, Decode(emp_gubun, 'T', '교원', '일반'), HISTORY
+						    ,ADDRESS 
+						    ,(CASE WHEN CAREER = '00001' THEN '1' ELSE '0' END) HISTORY_00001
+                            ,(CASE WHEN CAREER = '00002' THEN '1' ELSE '0' END) HISTORY_00002
+                            ,(CASE WHEN CAREER = '00003' THEN '1' ELSE '0' END) HISTORY_00003
+                            ,(CASE WHEN CAREER = '00004' THEN '1' ELSE '0' END) HISTORY_00004
+                            ,(CASE WHEN CAREER = '00005' THEN '1' ELSE '0' END) HISTORY_00005
+						    ,(CASE WHEN ADDRESS LIKE '서울%' THEN '00001'
+						          WHEN ADDRESS LIKE '부산%' THEN '00002' 
+						          WHEN ADDRESS LIKE '대구%' THEN '00003'
+						          WHEN ADDRESS LIKE '인천%' THEN '00004'
+						          WHEN ADDRESS LIKE '광주%' THEN '00005'
+						          WHEN ADDRESS LIKE '대전%' THEN '00006'
+						          WHEN ADDRESS LIKE '울산%' THEN '00007'
+						          WHEN ADDRESS LIKE '경기%' THEN '00008'
+						          WHEN ADDRESS LIKE '강원%' THEN '00009'
+						          WHEN ADDRESS LIKE '세종%' THEN '00011'
+						          WHEN ADDRESS LIKE '제주%' THEN '00017'
+						          WHEN ADDRESS LIKE '충청북도%' OR ADDRESS LIKE '충북%' THEN '00010'
+						          WHEN ADDRESS LIKE '충청남도%' OR ADDRESS LIKE '충남%' THEN '00012'
+						          WHEN ADDRESS LIKE '전라북도%' OR ADDRESS LIKE '전북%' THEN '00013'  
+						          WHEN ADDRESS LIKE '전라남도%' OR ADDRESS LIKE '전남%' THEN '00014'  
+						          WHEN ADDRESS LIKE '경상북도%' OR ADDRESS LIKE '경북%' THEN '00015'  
+						          WHEN ADDRESS LIKE '경상남도%' OR ADDRESS LIKE '경남%' THEN '00016' 
+						          WHEN ADDRESS LIKE '%국립학교%' THEN '00018' 
+						          ELSE ''
+						          END) AS ADD_CODE1
+						          ,ADDRESS1
+						    ,(CASE WHEN ADDRESS1 LIKE '서울%' THEN '00001'
+						          WHEN ADDRESS1 LIKE '부산%' THEN '00002' 
+						          WHEN ADDRESS1 LIKE '대구%' THEN '00003'
+						          WHEN ADDRESS1 LIKE '인천%' THEN '00004'
+						          WHEN ADDRESS1 LIKE '광주%' THEN '00005'
+						          WHEN ADDRESS1 LIKE '대전%' THEN '00006'
+						          WHEN ADDRESS1 LIKE '울산%' THEN '00007'
+						          WHEN ADDRESS1 LIKE '경기%' THEN '00008'
+						          WHEN ADDRESS1 LIKE '강원%' THEN '00009'
+						          WHEN ADDRESS1 LIKE '세종%' THEN '00011'
+						          WHEN ADDRESS1 LIKE '제주%' THEN '00017'
+						          WHEN ADDRESS1 LIKE '충청북도%' OR ADDRESS1 LIKE '충북%' THEN '00010'
+						          WHEN ADDRESS1 LIKE '충청남도%' OR ADDRESS1 LIKE '충남%' THEN '00012'
+						          WHEN ADDRESS1 LIKE '전라북도%' OR ADDRESS1 LIKE '전북%' THEN '00013'  
+						          WHEN ADDRESS1 LIKE '전라남도%' OR ADDRESS1 LIKE '전남%' THEN '00014'  
+						          WHEN ADDRESS1 LIKE '경상북도%' OR ADDRESS1 LIKE '경북%' THEN '00015'  
+						          WHEN ADDRESS1 LIKE '경상남도%' OR ADDRESS1 LIKE '경남%' THEN '00016'  
+						          WHEN ADDRESS LIKE '%국립학교%' THEN '00018' 
+						          ELSE '00019'
+						          END) AS ADD_CODE2,
+						          c.ischarge,
+						           (select count(1) from tz_member where isretire= 'N') as member_cnt
+						    from tz_propose   a                                                          
+                                 , tz_member    b                                                          
+                                 , vz_scsubjseq c
+                                     where 1 = 1
+                                    and a.userid        = b.userid                                                    
+                                    and    a.subj		= c.subj                                                      
+                                    and    a.[year]		= c.[year]                                                      
+                                    and    a.subjseq	= c.subjseq         
+                                    and    a.CHKFINAL= 'Y'               
+                                    and b.comp 		= '1001'
+                                    and c.gyear 		= #ses_search_gyear#
+						    ) Z        
+						    WHERE 1=1
+						    order by Z.name    
+						)
+						
+						SELECT 
+						    sum(case when ADRS = '00001' then 1 else 0 end) as deptcd_00001,
+						    sum(case when ADRS = '00002'  then 1 else 0 end) as deptcd_00002,
+						    sum(case when ADRS = '00003'  then 1 else 0 end) as deptcd_00003,
+						    sum(case when ADRS = '00004'  then 1 else 0 end) as deptcd_00004,
+						    sum(case when ADRS = '00005' then 1 else 0 end) as deptcd_00005,
+						    sum(case when ADRS = '00006'  then 1 else 0 end) as deptcd_00006,
+						    sum(case when ADRS = '00007' then 1 else 0 end) as deptcd_00007,
+						    sum(case when ADRS = '00008' then 1 else 0 end) as deptcd_00008,
+						    sum(case when ADRS = '00009'  then 1 else 0 end) as deptcd_00009,
+						    sum(case when ADRS = '00010'  then 1 else 0 end) as deptcd_00010,
+						    sum(case when ADRS = '00011'  then 1 else 0 end) as deptcd_00011,
+						    sum(case when ADRS = '00012'  then 1 else 0 end) as deptcd_00012,
+						    sum(case when ADRS = '00013'  then 1 else 0 end) as deptcd_00013,
+						    sum(case when ADRS = '00014'  then 1 else 0 end) as deptcd_00014,
+						    sum(case when ADRS = '00015'  then 1 else 0 end) as deptcd_00015,
+						    sum(case when ADRS = '00016'  then 1 else 0 end) as deptcd_00016,
+						    sum(case when ADRS = '00017'  then 1 else 0 end) as deptcd_00017,
+						    sum(case when ADRS = '00018'  then 1 else 0 end) as deptcd_00018,
+						      sum(case when ADRS = '00019'  then 1 else 0 end) as deptcd_00019,
+						    SUM(CASE WHEN SEX = 'M' THEN 1 ELSE 0 END) SEX_M,
+						    SUM(CASE WHEN SEX = 'F' THEN 1 ELSE 0 END) SEX_F,
+						    SUM(CASE WHEN emp_gubun = 'T' THEN 1 ELSE 0 END) AS emp_gubun_T,/*교원*/
+                            SUM(CASE WHEN emp_gubun = 'E' THEN 1 ELSE 0 END) AS emp_gubun_E,/*보조*/
+                            SUM(CASE WHEN emp_gubun = 'R' THEN 1 ELSE 0 END) AS emp_gubun_R,/*교육전문직*/
+                            SUM(CASE WHEN emp_gubun <> 'T' AND emp_gubun <> 'E' AND emp_gubun <> 'R'  THEN 1 ELSE 0 END) AS emp_gubun_W,/*일반*/
+                            SUM(CASE WHEN ischarge = 'C' THEN 1 ELSE 0 END) AS ischarge_C,/*일반*/
+                            SUM(CASE WHEN ischarge = 'S' THEN 1 ELSE 0 END) AS ischarge_S,/*특별*/
+                            SUM(CASE WHEN ischarge = 'F' THEN 1 ELSE 0 END) AS ischarge_F,/*무료*/
+						    SUM(HISTORY_00001) AS HISTORY_00001,
+                            SUM(HISTORY_00002) AS HISTORY_00002,
+                            SUM(HISTORY_00003) AS HISTORY_00003,
+                            SUM(HISTORY_00004) AS HISTORY_00004,
+                            SUM(HISTORY_00005) AS HISTORY_00005,
+                            max(member_cnt) as member_cnt
+						FROM MEMBER
+						
+						ORDER BY ADRS
+		]]>
+	</select>
+	
+	<!-- 
+	ID   : satisticsDAO.yearContentsList
+	설명 : 연도별 콘텐츠 보유 현황
+	수정일			수정자				수정내용
+	============================
+	유상도			2015.01.13		최초생성
+	-->
+	<select id="satisticsDAO.yearContentsList" parameterClass="map" resultClass="egovMap">
+		select 
+			s.upperclass
+			, max(sa.classname) classname
+			, s.subj
+			--, regexp_replace(max(s.subjnm), '^[[0-9년_-]|[:blank:]]+') subjnm
+			,trim(REPLACE(replace(replace(max(s.subjnm), '2017_', ''),'2016 ', ''), '2015', '')) AS subjnm
+			, count(s.subj) subj_cnt
+			, sum(cnt.student_cnt) student_cnt
+			, sum(cnt.subjseq_cnt) subjseq_cnt
+			, max(s.conyear) conyear
+			, max(s.renewal_year) renewal_year
+			, max(s.edutimes) edutimes
+			--, grouping(s.upperclass) grouping_upperclass
+			, nvl2(s.upperclass,0,1) grouping_upperclass
+			--, grouping(s.subj) grouping_subj
+			, nvl2(s.subj,0,1) grouping_subj
+			,case 
+				when s.upperclass = 'PRF' then 1 
+				when s.upperclass = 'EXT' then 2 
+				when s.upperclass = 'PAR' then 3 
+				when s.upperclass = 'SCP' then 4
+				when s.upperclass = 'COUR' then 5
+				else 6 
+			end upperclass_order
+		from (
+			select 
+				ss.subj
+		        , count(stu.userid) student_cnt
+		        , count(distinct(ss.subjseq)) subjseq_cnt
+			from 
+				tz_subjseq ss
+		        , tz_student stu
+			where ss.subj = stu.subj (+)
+				and ss.[year] = stu.[year] (+)
+				and ss.subjseq = stu.subjseq (+)
+				and ss.[year] = #ses_search_gyear#
+			group by ss.subj
+			) cnt
+			, tz_subj s
+			, tz_subjatt sa
+		where 
+			cnt.subj = s.subj
+			and s.isonoff in('ON', 'ML')
+			and s.upperclass != 'OTH'
+			and s.upperclass = sa.upperclass
+			and sa.use_yn = 'Y'
+			<isNotEmpty property="ses_search_subjnm">						                       
+				and s.subjnm like '%'||#ses_search_subjnm#||'%' 
+			</isNotEmpty>
+		group by s.upperclass, s.subj with rollup
+		order by upperclass_order
+			, decode(s.subj, null, 1, 0)
+			--, regexp_replace(max(s.subjnm), '^[[0-9년_-]|[:blank:]]+')
+			, subjnm
+			, s.subj
+	</select>
+	
+	<!-- 
+	ID   : satisticsDAO.subjectResultReportList
+	설명 : 과정별 결과 보고서 > 결과보고서(이수현황)
+	수정일			수정자				수정내용
+	==========================
+	유상도			2015.01.14		최초생성
+	-->
+	<select id="satisticsDAO.subjectResultReportList" parameterClass="map" resultClass="egovMap">
+		<![CDATA[
+							/*satisticsDAO.subjectResultReportList*//*과정별 결과 보고서 > 결과보고서(이수현황)*/
+							SELECT 
+									 Z.SUBJ
+                                    ,Z.SUBJNM
+                                    ,LAG(TO_NUMBER(Z.SUBJSEQ)) OVER(ORDER BY SUBJ,SUBJSEQ,DEPT_IDX) AS SUBJSEQ_LAG
+                                    ,TO_NUMBER(Z.SUBJSEQ) AS SUBJSEQ
+                                    ,LEAD(TO_NUMBER(Z.SUBJSEQ)) OVER(ORDER BY SUBJ,SUBJSEQ,DEPT_IDX) AS SUBJSEQ_LEAD
+                                    ,Z.EDUSTART						/*연수시작일*/
+                                    ,Z.EDUEND							/*연수종료일*/
+                                    ,Z.EDUTIMES						/*시간*/
+                                    ,Z.BIYONG							/*수강료*/
+                                    ,Z.EDUMANS						/*대상*/
+                                    ,Z.DEPT_NM						/*입금자*/
+                                    ,LAG(CASE WHEN Z.DEPT_NM = '개인' THEN Z.DEPT_NM ELSE '교육청' END) OVER(ORDER BY SUBJ,SUBJSEQ,DEPT_IDX) AS DEPT_GUBUN_LAG
+                                    ,(CASE WHEN Z.DEPT_NM = '개인' THEN Z.DEPT_NM ELSE '교육청' END) AS PAY_GUBUN
+                                    ,LEAD(CASE WHEN Z.DEPT_NM = '개인' THEN Z.DEPT_NM ELSE '교육청' END) OVER(ORDER BY SUBJ,SUBJSEQ,DEPT_IDX) AS DEPT_GUBUN_LEAD
+                                     ,COUNT(1) OVER(PARTITION BY SUBJ,SUBJSEQ,PAY_GUBUN)                                         AS GUBUN_CNT
+                                     ,SUM(ISGRADUATED_Y_CNT) OVER(PARTITION BY SUBJ,SUBJSEQ,PAY_GUBUN)                                         AS ISGRADUATED_Y_GUBUN
+                                     ,SUM(ISGRADUATED_N_CNT) OVER(PARTITION BY SUBJ,SUBJSEQ,PAY_GUBUN)                                         AS ISGRADUATED_N_GUBUN
+                                   /* ,Z.PAY*/								/*입금방법*/
+                                    /*,Z.PAY_CNT*/						/*입금방법별인원*/
+                                    ,Z.ISGRADUATED_Y_CNT		/*이수인원(내역전체)*/
+                                    ,Z.ISGRADUATED_N_CNT		/*미이수인원(내역전체)*/
+                                    ,to_number(SUM(ISGRADUATED_Y_CNT) OVER(PARTITION BY SUBJ,SUBJSEQ,DEPT_NM)) 	AS ISGRADUATED_Y_DEPTCNT		/*이수인원(입금자별)*/
+                                    ,to_number(SUM(ISGRADUATED_N_CNT) OVER(PARTITION BY SUBJ,SUBJSEQ,DEPT_NM)) 	AS ISGRADUATED_N_DEPTCNT		/*미이수인원(입금자별)*/
+                                    ,SUM(ISGRADUATED_Y_CNT) OVER(PARTITION BY SUBJ,SUBJSEQ) 				AS ISGRADUATED_Y_SUBJSEQCNT	/*이수인원(기수별)*/
+                                    ,SUM(ISGRADUATED_N_CNT) OVER(PARTITION BY SUBJ,SUBJSEQ) 				AS ISGRADUATED_N_SUBJSEQCNT	/*미이수인원(기수별)*/
+                                    ,SUM(PAY_CNT) OVER(PARTITION BY SUBJ,SUBJSEQ,DEPT_NM) 					AS PAY_DEPT_CNT						/*징수인원(입금자별)*/
+                                    ,SUM(PAY_CNT) OVER(PARTITION BY SUBJ,SUBJSEQ) 									AS PAY_SUBJSEQ_CNT					/*징수인원(입금자별)*/
+                                    ,SUM(PAY_CNT) OVER(PARTITION BY SUBJ) 												AS PAY_SUBJ_CNT						/*징수인원(과정별)*/
+                                    ,SUM(PAY_CNT) OVER() 																		AS PAY_TOTAL_CNT						/*징수인원(내역전체)*/
+                                    ,SUM(TOT) OVER(PARTITION BY SUBJ,SUBJSEQ) 										AS SUBJSEQ_TOT							/*수강인원(기수별)*/
+                                    ,Z.TOT_CNT																																		/*수강인원(내역전체)*/
+                                    ,Z.PAY_AMOUNT																																	/*입금액(내역전체)*/
+                                    ,SUM(PAY_AMOUNT) OVER(PARTITION BY SUBJ,SUBJSEQ,DEPT_NM) 				AS DEPT_AMOUNT						/*입금액(입금자별)*/
+                                    ,SUM(PAY_AMOUNT) OVER(PARTITION BY SUBJ,SUBJSEQ) 							AS SUBJSEQ_AMOUNT					/*입금액(기수별)*/
+                                    ,SUM(PAY_AMOUNT) OVER(PARTITION BY SUBJ) 										AS SUBJ_AMOUNT						/*입금액(과정별)*/
+                                    ,SUM(PAY_AMOUNT) OVER() 																	AS TOTAL_AMOUNT						/*입금액(내역전체)*/								
+                                    ,LAG(DEPT_IDX) OVER(ORDER BY SUBJ,SUBJSEQ,DEPT_IDX) 					AS DEPT_LAG
+                                    ,Z.DEPT_IDX
+                                    ,LEAD(DEPT_IDX) OVER(ORDER BY SUBJ,SUBJSEQ,DEPT_IDX) 					AS DEPT_LEAD
+                                    ,COUNT(1) OVER(PARTITION BY SUBJ,SUBJSEQ) 										AS ALL_SUBJSEQ_CNT
+                                    ,COUNT(1) OVER(PARTITION BY SUBJ,SUBJSEQ,DEPT_NM) 							AS ALL_DEPT_CNT
+                                    ,SUM(TOT) OVER(PARTITION BY SUBJ,SUBJSEQ,DEPT_NM) 							AS DEPT_CNT								/*수강인원(입금자별)*/
+                                    ,Z.AUTH_DATE
+							FROM
+							(
+							SELECT  SUBJ
+									   ,SUBJSEQ
+									   ,DEPT_NM
+									  /* ,PAY*/
+									   ,MAX(EDUSTART) 			AS EDUSTART
+									   ,MAX(EDUEND) 				AS EDUEND
+									   ,MAX(EDUTIMES) 			AS EDUTIMES
+									   ,MAX(BIYONG) 				AS BIYONG
+									   ,MAX(EDUMANS) 			AS EDUMANS
+								       ,MAX(grseqnm) 			AS GRSEQNM 
+								       ,MAX(subjnm) 				AS SUBJNM
+								       ,SUM(AMOUNT_CNT)     	AS PAY_CNT
+								       ,SUM(ISGRADUATED_Y)  AS ISGRADUATED_Y_CNT
+								       ,SUM(ISGRADUATED_N)  AS ISGRADUATED_N_CNT
+								       ,SUM(AMOUNT)         	AS PAY_AMOUNT
+								       ,MAX(TOT_CNT)        	AS TOT_CNT
+								       ,MAX(AUTH_DATE)      	AS AUTH_DATE
+								       ,MAX(DEPT_IDX)       	AS DEPT_IDX
+								       ,MAX(PAY_GUBUN) 		AS PAY_GUBUN
+								       ,COUNT(1)            		AS TOT
+							FROM (
+									select 
+									 c.[year]      
+									             ,c.subj                                                             
+									             , c.subjnm                                                                
+									             , c.subjseq 
+									             , c.EDUSTART
+									             , c.EDUEND
+									             , c.EDUDAYS
+									             , c.EDUTIMES
+									             , c.EDUMANS
+									             , c.BIYONG
+									             , b.dept_cd
+									             , b.name     
+									             , b.userid
+									             ,(select  grseqnm  from tz_grseq where grcode=c.grcode and grseq=c.grseq and gyear=c.gyear) grseqnm
+									             , CASE WHEN d.ISGRADUATED IS NOT NULL THEN d.ISGRADUATED ELSE 'N' END AS ISGRADUATED 
+		                                         , CASE WHEN d.ISGRADUATED = 'Y' THEN '1' ELSE '0' END AS ISGRADUATED_Y
+		                                         , CASE WHEN d.ISGRADUATED IS NULL OR d.ISGRADUATED <> 'N' THEN '0' ELSE '1' END AS ISGRADUATED_N
+									             , case when type = 'OB' then (case when 
+									             										(select org_nm from (
+																					             select org_nm from (
+																					                    select 0 as idx, org_nm from   tz_school_org where  org_cd = b.dept_cd
+																					                    union all
+																					                    select 1 as idx,  org_nm from   tz_eduorg where  orgid = b.dept_cd
+																					                ) order by idx
+																					            ) where rownum = 1
+																					      ) is null 
+									             										or (select org_nm from (
+																					             select org_nm from (
+																					                    select 0 as idx, org_nm from   tz_school_org where  org_cd = b.dept_cd
+																					                    union all
+																					                    select 1 as idx,  org_nm from   tz_eduorg where  orgid = b.dept_cd
+																					                ) order by idx
+																					            ) where rownum = 1
+																					      ) = '-' 
+									             									then '기타' else (select org_nm from (
+																							             select org_nm from (
+																							                    select 0 as idx, org_nm from   tz_school_org where  org_cd = b.dept_cd
+																							                    union all
+																							                    select 1 as idx,  org_nm from   tz_eduorg where  orgid = b.dept_cd
+																							                ) order by idx
+																							            ) where rownum = 1
+																							      ) 
+									             						  end ) 
+									                else '개인' end as dept_nm
+									            , case when type = 'OB' then (case when (select org_nm from (
+																					             select org_nm from (
+																					                    select 0 as idx, org_nm from   tz_school_org where  org_cd = b.dept_cd
+																					                    union all
+																					                    select 1 as idx,  org_nm from   tz_eduorg where  orgid = b.dept_cd
+																					                ) order by idx
+																					            ) where rownum = 1
+																					      ) is null or (select org_nm from (
+																					             select org_nm from (
+																					                    select 0 as idx, org_nm from   tz_school_org where  org_cd = b.dept_cd
+																					                    union all
+																					                    select 1 as idx,  org_nm from   tz_eduorg where  orgid = b.dept_cd
+																					                ) order by idx
+																					            ) where rownum = 1
+																					      ) = '-' then 'M99' else b.dept_cd end ) 
+		                                            else '00' end as dept_idx
+									             , type
+									             , (
+									                 decode(trim(type), 'OB','교육청일괄납부','PB','무통장','RE','재수강','SC0010','신용카드','SC0030','계좌이체','SC0040','가상계좌','FE','무료',type) 
+									                 ) as pay
+									             , (
+		                                             decode(trim(type), 'OB','교육청','개인') 
+		                                             ) as pay_gubun    
+									             , case when pa.AMOUNT is null or pa.AMOUNT = '0' then '0' else pa.AMOUNT end AMOUNT
+		                                         , case when pa.AMOUNT is null or pa.AMOUNT = '0' then '0' else '1' end AMOUNT_CNT
+									             , case when type = 'OB' then TO_DATE(SUBSTR(AUTH_DATE,1, 8),'YYYYMMDD') else NULL end as AUTH_DATE
+									             ,count(1) over() tot_cnt
+									from   tz_propose   a                                                          
+									             , tz_member    b                                                          
+									             , vz_scsubjseq c                                                          
+									             , tz_stold d                                                              
+									             , tz_student ts
+									             , pa_payment pa                                                       
+									        where  a.userid  			= b.userid                                                    
+									        and    a.subj    			= c.subj                                                      
+									        and    a.[year]    			= c.[year]                                                      
+									        and    a.subjseq 			= c.subjseq                                                   
+									        and    a.subj    			= d.subj(+)                                                   
+									        and    a.[year]    			= d.[year](+)                                                   
+									        and    a.subjseq 			= d.subjseq(+)                                                
+									        and    a.userid  			= d.userid(+)                                                 
+									        and    a.userid 			= ts.userid(+)                                                 
+									        and    a.subj				= ts.subj(+)                                                  
+									        and    a.subjseq 			= ts.subjseq(+)                                                   
+									        and    a.[year] 				= ts.[year](+) 
+									        and    pa.order_id(+) 	= a.order_id 
+									        and 	 pa.useyn(+) 		= 'Y' 
+									        and 	 pa.userid(+) 		= a.userid	
+									        and 	a.chkfinal 			= 'Y'     
+									         and   c.grcode 			= 'N000001'            						        
+											and    c.gyear 				=  nvl(#ses_search_gyear#, to_char(sysdate, 'YYYY'))
+											
+									     ]]>
+									     <isPropertyAvailable property="ses_search_subj">
+											<isNotEmpty property="ses_search_subj">
+											    and 	c.subj  =  #ses_search_subj#
+											</isNotEmpty>
+									     </isPropertyAvailable>
+									     <isNotEmpty property="ses_search_subjseq">
+											    and 	c.subjseq  =  #ses_search_subjseq#
+											</isNotEmpty>
+										
+										 <![CDATA[
+										 
+									         order by c.[year]  ,c.subj , c.subjseq  
+									)
+							GROUP BY SUBJ,SUBJSEQ,DEPT_NM
+							ORDER BY SUBJ,SUBJSEQ,DEPT_NM
+							) Z
+							WHERE 1=1
+							ORDER BY SUBJ,SUBJSEQ,DEPT_IDX
+		]]>
+	</select>
+	
+	<!-- 
+	ID   : satisticsDAO.subjectResultReporAmounttList
+	설명 : 과정별 결과 보고서 > 결과보고서(입금현황)
+	수정일			수정자				수정내용
+	==========================
+	유상도			2015.01.14		최초생성
+	-->
+	<select id="satisticsDAO.subjectResultReporAmounttList" parameterClass="map" resultClass="egovMap">
+		<![CDATA[
+							/*satisticsDAO.subjectResultReporAmounttList*//*과정별 결과 보고서 > 결과보고서(입금현황)*/
+							SELECT 
+									 Z.SUBJ
+                                    ,Z.SUBJNM
+                                    ,LAG(TO_NUMBER(Z.SUBJSEQ)) OVER(ORDER BY SUBJ,SUBJSEQ,DEPT_IDX) AS SUBJSEQ_LAG
+                                    ,TO_NUMBER(Z.SUBJSEQ) AS SUBJSEQ
+                                    ,LEAD(TO_NUMBER(Z.SUBJSEQ)) OVER(ORDER BY SUBJ,SUBJSEQ,DEPT_IDX) AS SUBJSEQ_LEAD
+                                    ,Z.EDUSTART						/*연수시작일*/
+                                    ,Z.EDUEND							/*연수종료일*/
+                                    ,Z.EDUTIMES						/*시간*/
+                                    ,nvl(Z.BIYONG, '0') AS 	BIYONG						/*수강료*/
+                                    ,Z.EDUMANS						/*대상*/
+                                    ,Z.DEPT_NM						/*입금자*/
+                                    ,LAG(CASE WHEN Z.DEPT_NM = '개인' THEN Z.DEPT_NM ELSE '교육청' END) OVER(ORDER BY SUBJ,SUBJSEQ,DEPT_IDX) AS DEPT_GUBUN_LAG
+                                    ,(CASE WHEN Z.DEPT_NM = '개인' THEN Z.DEPT_NM ELSE '교육청' END) AS PAY_GUBUN
+                                    ,LEAD(CASE WHEN Z.DEPT_NM = '개인' THEN Z.DEPT_NM ELSE '교육청' END) OVER(ORDER BY SUBJ,SUBJSEQ,DEPT_IDX) AS DEPT_GUBUN_LEAD
+                                     ,COUNT(1) OVER(PARTITION BY SUBJ,SUBJSEQ,PAY_GUBUN)                                         							AS GUBUN_CNT
+                                     ,SUM(PAY_CNT) OVER(PARTITION BY SUBJ,SUBJSEQ,PAY_GUBUN)                                         					AS GUBUN_TOTAL_CNT
+                                     ,SUM(ISGRADUATED_Y_CNT) OVER(PARTITION BY SUBJ,SUBJSEQ,PAY_GUBUN)                                         	AS ISGRADUATED_Y_GUBUN
+                                     ,SUM(ISGRADUATED_N_CNT) OVER(PARTITION BY SUBJ,SUBJSEQ,PAY_GUBUN)                                         	AS ISGRADUATED_N_GUBUN
+                                    ,Z.PAY								/*입금방법*/
+                                    ,Z.PAY_CNT						/*입금방법별인원*/
+                                    ,Z.CHKFINAL_CNT
+                                    ,Z.ISGRADUATED_Y_CNT		/*이수인원(내역전체)*/
+                                    ,Z.ISGRADUATED_N_CNT		/*미이수인원(내역전체)*/
+                                    ,to_number(SUM(ISGRADUATED_Y_CNT) OVER(PARTITION BY SUBJ,SUBJSEQ,DEPT_NM)) 	AS ISGRADUATED_Y_DEPTCNT		/*이수인원(입금자별)*/
+                                    ,to_number(SUM(ISGRADUATED_N_CNT) OVER(PARTITION BY SUBJ,SUBJSEQ,DEPT_NM)) 	AS ISGRADUATED_N_DEPTCNT		/*미이수인원(입금자별)*/
+                                    ,SUM(ISGRADUATED_Y_CNT) OVER(PARTITION BY SUBJ,SUBJSEQ) 				AS ISGRADUATED_Y_SUBJSEQCNT	/*이수인원(기수별)*/
+                                    ,SUM(ISGRADUATED_N_CNT) OVER(PARTITION BY SUBJ,SUBJSEQ) 				AS ISGRADUATED_N_SUBJSEQCNT	/*미이수인원(기수별)*/
+                                    ,SUM(PAY_CNT) OVER(PARTITION BY SUBJ,SUBJSEQ,DEPT_NM) 					AS PAY_DEPT_CNT						/*징수인원(입금자별)*/
+                                    ,SUM(CHKFINAL_CNT) OVER(PARTITION BY SUBJ,SUBJSEQ,DEPT_NM)            AS CHKFINAL_DEPT_CNT
+                                    ,SUM(PAY_CNT) OVER(PARTITION BY SUBJ,SUBJSEQ) 									AS PAY_SUBJSEQ_CNT					/*징수인원(입금자별)*/
+                                    ,SUM(PAY_CNT) OVER(PARTITION BY SUBJ) 												AS PAY_SUBJ_CNT						/*징수인원(과정별)*/
+                                    ,SUM(CHKFINAL_CNT) OVER(PARTITION BY SUBJ)                           			AS CHKFINAL_SUBJ_CNT
+                                    ,SUM(PAY_CNT) OVER() 																		AS PAY_TOTAL_CNT						/*징수인원(내역전체)*/
+                                    ,SUM(TOT) OVER(PARTITION BY SUBJ,SUBJSEQ) 										AS SUBJSEQ_TOT							/*수강인원(기수별)*/
+                                    ,Z.TOT_CNT																																		/*수강인원(내역전체)*/
+                                    ,Z.PAY_AMOUNT																																	/*입금액(내역전체)*/
+                                    ,Z.CHKFINAL_AMOUNT
+                                    ,SUM(PAY_AMOUNT) OVER(PARTITION BY SUBJ,SUBJSEQ,DEPT_NM) 				AS DEPT_AMOUNT						/*입금액(입금자별)*/
+                                    ,SUM(CHKFINAL_AMOUNT) OVER(PARTITION BY SUBJ, SUBJSEQ,DEPT_NM)     AS CHKFINAL_DEPT_AMOUNT
+                                    ,SUM(PAY_AMOUNT) OVER(PARTITION BY SUBJ,SUBJSEQ) 							AS SUBJSEQ_AMOUNT					/*입금액(기수별)*/
+                                    ,SUM(PAY_AMOUNT) OVER(PARTITION BY SUBJ) 										AS SUBJ_AMOUNT						/*입금액(과정별)*/
+                                    ,SUM(CHKFINAL_AMOUNT) OVER(PARTITION BY SUBJ)                                AS SUBJ_CHKFINAL_AMOUNT
+                                    ,SUM(PAY_AMOUNT) OVER(PARTITION BY SUBJ,PAY_GUBUN)   						AS GUBUN_AMOUNT /*개인및 교육청별 금액*/
+                                    ,SUM(PAY_AMOUNT) OVER() 																	AS TOTAL_AMOUNT						/*입금액(내역전체)*/								
+                                    ,LAG(DEPT_IDX) OVER(ORDER BY SUBJ,SUBJSEQ,DEPT_IDX,PAY) 					AS DEPT_LAG
+                                    ,Z.DEPT_IDX
+                                    ,LEAD(DEPT_IDX) OVER(ORDER BY SUBJ,SUBJSEQ,DEPT_IDX,PAY) 					AS DEPT_LEAD
+                                    ,COUNT(1) OVER(PARTITION BY SUBJ,SUBJSEQ) 										AS ALL_SUBJSEQ_CNT
+                                    ,COUNT(1) OVER(PARTITION BY SUBJ,SUBJSEQ,DEPT_NM) 							AS ALL_DEPT_CNT
+                                    ,SUM(TOT) OVER(PARTITION BY SUBJ,SUBJSEQ,DEPT_NM) 							AS DEPT_CNT								/*수강인원(입금자별)*/
+                                    ,Z.AUTH_DATE
+                                    ,biyong3_cnt
+							FROM
+							(
+							SELECT  SUBJ
+									   ,SUBJSEQ
+									   ,DEPT_NM
+									   ,PAY
+									   ,MAX(EDUSTART) 			AS EDUSTART
+									   ,MAX(EDUEND) 				AS EDUEND
+									   ,MAX(EDUTIMES) 			AS EDUTIMES
+									   ,MAX(BIYONG) 				AS BIYONG
+									   ,MAX(EDUMANS) 			AS EDUMANS
+								       ,MAX(grseqnm) 			AS GRSEQNM 
+								       ,MAX(subjnm) 				AS SUBJNM
+								       ,SUM(AMOUNT_CNT)     	AS PAY_CNT
+								       ,SUM(CHKFINAL_CNT)         AS CHKFINAL_CNT
+								       ,SUM(ISGRADUATED_Y)  AS ISGRADUATED_Y_CNT
+								       ,SUM(ISGRADUATED_N)  AS ISGRADUATED_N_CNT
+								       ,SUM(AMOUNT)         	AS PAY_AMOUNT
+								       ,SUM(CHKFINAL_AMOUNT)   AS CHKFINAL_AMOUNT
+								       ,MAX(TOT_CNT)        	AS TOT_CNT
+								       ,MAX(AUTH_DATE)      	AS AUTH_DATE
+								       ,MAX(DEPT_IDX)       	AS DEPT_IDX
+								       ,MAX(PAY_GUBUN) 		AS PAY_GUBUN
+								       ,COUNT(1)            		AS TOT
+								       ,max(biyong3_cnt) as biyong3_cnt
+							FROM (
+									select 
+									 c.[year]      
+									             ,c.subj                                                             
+									             , c.subjnm                                                                
+									             , c.subjseq 
+									             , c.EDUSTART
+									             , c.EDUEND
+									             , c.EDUDAYS
+									             , c.EDUTIMES
+									             , c.EDUMANS
+									             , case when (
+									             				(a.subj = 'EXT160001' and a.subjseq = '0010') or
+									             				(a.subj = 'EXT160002' and a.subjseq = '0011') or
+									             				(a.subj = 'EXT160003' and a.subjseq = '0012')
+									             			  ) and type = 'OB' and (b.dept_cd = 'M08' or b.dept_cd = '7530000') then nvl(c.BIYONG3, '0') 
+		   							               when (
+		   							               		   (a.subj != 'EXT160001' and a.subjseq != '0010') or
+									             		   (a.subj != 'EXT160002' and a.subjseq != '0011') or
+									             		   (a.subj != 'EXT160003' and a.subjseq != '0012')
+		   							               ) and type = 'OB' and (b.dept_cd != 'M08' or b.dept_cd != '7530000') then nvl(c.BIYONG2, '0') 
+		                                           when type != 'OB' and type != 'FE'  then nvl(c.BIYONG, '0')
+		                                           when type = 'FE' then 0 
+		                                          else 0 end BIYONG
+									             , b.dept_cd
+									             , b.name     
+									             , b.userid
+									             ,(select  grseqnm  from tz_grseq where grcode=c.grcode and grseq=c.grseq and gyear=c.gyear) grseqnm
+									             , CASE WHEN d.ISGRADUATED IS NOT NULL THEN d.ISGRADUATED ELSE 'N' END AS ISGRADUATED
+		                                         , CASE WHEN d.ISGRADUATED = 'Y' THEN '1' ELSE '0' END AS ISGRADUATED_Y
+		                                         , CASE WHEN d.ISGRADUATED IS NULL OR d.ISGRADUATED <> 'N' THEN '0' ELSE '1' END AS ISGRADUATED_N
+									             , case when type = 'OB' then (case when (select org_nm from (
+																					             select org_nm from (
+																					                    select 0 as idx, org_nm from   tz_school_org where  org_cd = b.dept_cd
+																					                    union all
+																					                    select 1 as idx,  org_nm from   tz_eduorg where  orgid = b.dept_cd
+																					                ) order by idx
+																					            ) where rownum = 1
+																					      ) is null or (select org_nm from (
+																					             select org_nm from (
+																					                    select 0 as idx, org_nm from   tz_school_org where  org_cd = b.dept_cd
+																					                    union all
+																					                    select 1 as idx,  org_nm from   tz_eduorg where  orgid = b.dept_cd
+																					                ) order by idx
+																					            ) where rownum = 1
+																					      ) = '-' then '기타' else (select org_nm from (
+																					             select org_nm from (
+																					                    select 0 as idx, org_nm from   tz_school_org where  org_cd = b.dept_cd
+																					                    union all
+																					                    select 1 as idx,  org_nm from   tz_eduorg where  orgid = b.dept_cd
+																					                ) order by idx
+																					            ) where rownum = 1
+																					      ) end ) 
+									                else '개인' end as dept_nm
+									            , case when type = 'OB' then (case when (select org_nm from (
+																					             select org_nm from (
+																					                    select 0 as idx, org_nm from   tz_school_org where  org_cd = b.dept_cd
+																					                    union all
+																					                    select 1 as idx,  org_nm from   tz_eduorg where  orgid = b.dept_cd
+																					                ) order by idx
+																					            ) where rownum = 1
+																					      ) is null or (select org_nm from (
+																					             select org_nm from (
+																					                    select 0 as idx, org_nm from   tz_school_org where  org_cd = b.dept_cd
+																					                    union all
+																					                    select 1 as idx,  org_nm from   tz_eduorg where  orgid = b.dept_cd
+																					                ) order by idx
+																					            ) where rownum = 1
+																					      ) = '-' then 'M99' else b.dept_cd end ) 
+		                                            else '00' end as dept_idx
+									             , type
+									             , (
+									                 decode(trim(type), 'OB','교육청일괄납부','PB','무통장','RE','재수강','SC0010','신용카드','SC0030','계좌이체','SC0040','가상계좌','FE','무료',type) 
+									                 ) as pay
+									             , (
+		                                             decode(trim(type), 'OB','교육청','개인') 
+		                                             ) as pay_gubun    
+		                                         , case when a.CHKFINAL = 'Y' then '1' else '0' end CHKFINAL_CNT
+		                                         , case when (
+		                                         				(
+		                                         					(a.subj = 'EXT160001' and a.subjseq = '0010') or
+										             				(a.subj = 'EXT160002' and a.subjseq = '0011') or
+										             				(a.subj = 'EXT160003' and a.subjseq = '0012')
+		                                         				)
+		                                         				and a.CHKFINAL = 'Y' and  type = 'OB' and (b.dept_cd = 'M08' or b.dept_cd = '7530000')
+		                                         			 ) then nvl(to_char(c.biyong3), 0) 
+		                                                when (
+		                                                		(
+		                                                			(a.subj != 'EXT160001' and a.subjseq != '0010') or
+									             		   			(a.subj != 'EXT160002' and a.subjseq != '0011') or
+									             		   			(a.subj != 'EXT160003' and a.subjseq != '0012')
+		                                                		) and a.CHKFINAL = 'Y' and type = 'OB' and (b.dept_cd != 'M08' and b.dept_cd != '7530000')
+		                                                	)then nvl(to_char(c.biyong2), 0) 
+		                                                when (a.CHKFINAL = 'Y' and type != 'OB') then nvl(to_char(c.biyong), 0) 
+		                                                else '0' end CHKFINAL_AMOUNT
+									             --, case when (d.ISGRADUATED = 'Y' and type = 'OB' ) then nvl(to_char(c.biyong2), 0)
+									            , case when (
+									             				(a.subj = 'EXT160001' and a.subjseq = '0010') or
+									             				(a.subj = 'EXT160002' and a.subjseq = '0011') or
+									             				(a.subj = 'EXT160003' and a.subjseq = '0012')
+									             			  ) and type = 'OB' and (b.dept_cd = 'M08' or b.dept_cd = '7530000') then nvl(to_char(c.biyong3), 0) 
+		   							               when (
+		   							               		   (a.subj != 'EXT160001' and a.subjseq != '0010') or
+									             		   (a.subj != 'EXT160002' and a.subjseq != '0011') or
+									             		   (a.subj != 'EXT160003' and a.subjseq != '0012')
+		   							               ) and type = 'OB' and (b.dept_cd != 'M08' and b.dept_cd != '7530000') then nvl(to_char(c.biyong2), 0)  
+		    	    						            when (d.ISGRADUATED = 'Y' and type != 'OB' ) then nvl(to_char(c.biyong), 0) 
+									                    else '0' end AMOUNT
+		                                         --, case when d.ISGRADUATED <> 'Y' then '0' else '1' end AMOUNT_CNT
+		                                         --, case when d.ISGRADUATED <> 'Y' then '1' else '1' end AMOUNT_CNT
+		                                         ,case when type = 'FE' then '0' 
+		                                                when type != 'FE' then '1' 
+		                                           else '1' end AMOUNT_CNT
+									             , case when type = 'OB' then TO_DATE(SUBSTR(AUTH_DATE,1, 8),'YYYYMMDD') else NULL end as AUTH_DATE
+									             ,count(1) over() tot_cnt
+									             ,(select max(biyong3) from tz_subjseq where subj  =  #ses_search_subj# and subjseq  =  #ses_search_subjseq#) as biyong3_cnt
+									from   tz_propose   a                                                          
+									             , tz_member    b                                                          
+									             , vz_scsubjseq c                                                          
+									             , tz_stold d                                                              
+									             , tz_student ts
+									             , pa_payment pa                                                       
+									        where  a.userid  			= b.userid                                                    
+									        and    a.subj    			= c.subj                                                      
+									        and    a.[year]    			= c.[year]                                                      
+									        and    a.subjseq 			= c.subjseq                                                   
+									        and    a.subj    			= d.subj(+)                                                   
+									        and    a.[year]    			= d.[year](+)                                                   
+									        and    a.subjseq 			= d.subjseq(+)                                                
+									        and    a.userid  			= d.userid(+)                                                 
+									        and    a.userid 			= ts.userid(+)                                                 
+									        and    a.subj				= ts.subj(+)                                                  
+									        and    a.subjseq 			= ts.subjseq(+)                                                   
+									        and    a.[year] 				= ts.[year](+) 
+									        and    pa.order_id(+) 	= a.order_id 
+									        and 	 pa.useyn(+) 		= 'Y' 
+									        and 	 pa.userid(+) 		= a.userid	
+									        and 	a.chkfinal 			= 'Y'        
+									        and   c.grcode 			= 'N000001'            						        
+											and    c.gyear 				=  nvl(#ses_search_gyear#, to_char(sysdate, 'YYYY'))
+											
+									     ]]>
+									     <isPropertyAvailable property="ses_search_subj">
+											<isNotEmpty property="ses_search_subj">
+											    and 	c.subj  =  #ses_search_subj#
+											</isNotEmpty>
+									     </isPropertyAvailable>
+									     <isNotEmpty property="ses_search_subjseq">
+											    and 	c.subjseq  =  #ses_search_subjseq#
+											</isNotEmpty>
+										
+										 <![CDATA[
+										 
+									         order by c.[year]  ,c.subj , c.subjseq  
+									)
+							GROUP BY SUBJ,SUBJSEQ,DEPT_NM, PAY
+							ORDER BY SUBJ,SUBJSEQ,DEPT_NM, PAY
+							) Z
+							WHERE 1=1
+							ORDER BY SUBJ,SUBJSEQ,DEPT_IDX, PAY
+		]]>
+	</select>
+	
+	<!-- 
+	ID   : satisticsDAO.subjectResultReportCommunityList
+	설명 : 과정별 결과 보고서 > 결과보고서(시도별)
+	수정일			수정자				수정내용
+	==========================
+	유상도			2015.01.14		최초생성
+	-->
+	<select id="satisticsDAO.subjectResultReportCommunityList" parameterClass="map" resultClass="egovMap">
+	<![CDATA[
+							/*satisticsDAO.subjectResultReportCommunityList*//*과정별 결과 보고서 > 결과보고서(시도별)*/
+							select  '1' AS RN, '이수' AS GRP_NM,
+                           NVL(SUM(CASE WHEN ADD_CODE = '00001' THEN 1 ELSE 0 END), '0') AS GROUP_00001,
+                            NVL(SUM(CASE WHEN ADD_CODE = '00002' THEN 1 ELSE 0 END), '0') AS GROUP_00002,
+                            NVL(SUM(CASE WHEN ADD_CODE = '00003' THEN 1 ELSE 0 END), '0') AS GROUP_00003,
+                            NVL(SUM(CASE WHEN ADD_CODE = '00004' THEN 1 ELSE 0 END), '0') AS GROUP_00004,
+                            NVL(SUM(CASE WHEN ADD_CODE = '00005' THEN 1 ELSE 0 END), '0') AS GROUP_00005,
+                            NVL(SUM(CASE WHEN ADD_CODE = '00006' THEN 1 ELSE 0 END), '0') AS GROUP_00006,
+                            NVL(SUM(CASE WHEN ADD_CODE = '00007' THEN 1 ELSE 0 END), '0') AS GROUP_00007,
+                            NVL(SUM(CASE WHEN ADD_CODE = '00008' THEN 1 ELSE 0 END), '0') AS GROUP_00008,
+                            NVL(SUM(CASE WHEN ADD_CODE = '00009' THEN 1 ELSE 0 END), '0') AS GROUP_00009,
+                            NVL(SUM(CASE WHEN ADD_CODE = '00010' THEN 1 ELSE 0 END), '0') AS GROUP_00010,
+                            NVL(SUM(CASE WHEN ADD_CODE = '00011' THEN 1 ELSE 0 END), '0') AS GROUP_00011,
+                            NVL(SUM(CASE WHEN ADD_CODE = '00012' THEN 1 ELSE 0 END), '0') AS GROUP_00012,
+                            NVL(SUM(CASE WHEN ADD_CODE = '00013' THEN 1 ELSE 0 END), '0') AS GROUP_00013,
+                            NVL(SUM(CASE WHEN ADD_CODE = '00014' THEN 1 ELSE 0 END), '0') AS GROUP_00014,
+                            NVL(SUM(CASE WHEN ADD_CODE = '00015' THEN 1 ELSE 0 END), '0') AS GROUP_00015,
+                            NVL(SUM(CASE WHEN ADD_CODE = '00016' THEN 1 ELSE 0 END), '0') AS GROUP_00016,
+                            NVL(SUM(CASE WHEN ADD_CODE = '00017' THEN 1 ELSE 0 END), '0') AS GROUP_00017,
+                            NVL(SUM(CASE WHEN ADD_CODE = '00020' THEN 1 ELSE 0 END), '0') AS GROUP_00020,
+                            NVL(SUM(CASE WHEN ADD_CODE = '00001' THEN 1 ELSE 1 END), '0')  AS TOTAL_CNT
+							from (
+								select * from (          
+								                 select 
+								                        -- get_subjclassnm(d.upperclass,'000','000') upperclassnm,
+								                        (select classname 
+														    from tz_subjatt
+														    where upperclass= d.upperclass
+														    and middleclass = '000'
+														    and lowerclass = '000') as  upperclassnm,
+								                        -- get_deptnm(b.dept_cd) dept_nm,
+								                        (select org_nm from (
+												             select org_nm from (
+												                    select 0 as idx, org_nm from   tz_school_org where  org_cd = b.dept_cd
+												                    union all
+												                    select 1 as idx,  org_nm from   tz_eduorg where  orgid = b.dept_cd
+												                ) order by idx
+												            ) where rownum = 1
+													    ) as  dept_nm,                      
+								                        -- get_agencynm(b.agency_cd) agency_nm,
+								                        (select org_nm from (
+												            select org_nm from (
+												                    select 0 as idx, org_nm from   tz_school_org where  org_cd = b.agency_cd
+												                    union all
+												                    select 1 as idx,  org_nm from   tz_eduorg where  orgid = b.agency_cd
+												                ) order by idx
+												            ) where rownum = 1
+														) as agency_nm,						                        
+								                        DECODE(a.emp_gubun, 'T', '교원', 'E', '보조인력', 'R', '교육전문직', 'P', '일반회원(학부모등)', 'O', '공무원') as emp_gubun_nm,
+								                        b.user_path,
+								                        b.name,
+								                        a.subjseq,
+								                        b.birth_date,
+								                        d.ischarge,
+								                        b.nice_personal_num,
+								                        -- get_compnm(b.comp) as compnm,
+								                        (select compnm from tz_compclass where comp= b.comp) as compnm,
+								                        a.score, 
+								                        a.editscore, 
+								                        trim(a.serno) as serno, 
+								                        (select decode(trim(type), 'OB','교육청일괄납부','PB','무통장','RE','재수강','SC0010','신용카드','SC0030','계좌이체','SC0040','가상계좌', 'FE', '무료',type) from pa_payment pa 
+								                        where pa.order_id = c.order_id and pa.useyn='Y' and pa.userid=c.userid) as pay,
+								                        Decode(c.chkfinal , 'B', '미처리', 'Y', '승인', 'N', '반려') as chkfinalnm, 							                        
+								                        nvl(a.isgraduated,'X') isgraduated, 
+								                       (CASE WHEN c.area_code = 'B10' and b.dept_cd is not null THEN '00001'
+	                                                              WHEN c.area_code = 'C10' and b.dept_cd is not null   THEN '00002' 
+	                                                              WHEN c.area_code = 'D10' and b.dept_cd is not null   THEN '00003'
+	                                                              WHEN c.area_code = 'E10' and b.dept_cd is not null   THEN '00004'
+	                                                              WHEN c.area_code = 'F10' and b.dept_cd is not null   THEN '00005'
+	                                                              WHEN c.area_code = 'G10' and b.dept_cd is not null   THEN '00006'
+	                                                              WHEN c.area_code = 'H10' and b.dept_cd is not null   THEN '00007'
+	                                                              WHEN c.area_code = 'J10' and b.dept_cd is not null   THEN '00008'
+	                                                              WHEN c.area_code = 'K10' and b.dept_cd is not null   THEN '00009'
+	                                                              WHEN c.area_code = 'I10' and b.dept_cd is not null   THEN '00011'
+	                                                              WHEN c.area_code = 'T10' and b.dept_cd is not null   THEN '00017'
+	                                                              WHEN c.area_code = 'M10' and b.dept_cd is not null   THEN '00010'
+	                                                              WHEN c.area_code = 'N10' and b.dept_cd is not null   THEN '00012'
+	                                                              WHEN c.area_code = 'P10' and b.dept_cd is not null   THEN '00013'  
+	                                                              WHEN c.area_code = 'Q10' and b.dept_cd is not null   THEN '00014'  
+	                                                              WHEN c.area_code = 'R10' and b.dept_cd is not null   THEN '00015'  
+	                                                              WHEN c.area_code = 'S10' and b.dept_cd is not null   THEN '00016' 
+	                                                              ELSE '00020'
+	                                                              END) AS ADD_CODE
+								                  from tz_student a
+								                     , tz_member b
+								                     , tz_propose c
+								                     , tz_subj d
+								                where  c.subj      = a.subj(+) 
+								                and    c.[year]       = a.[year](+)
+								                and    c.subjseq   = a.subjseq(+) 
+								                and    c.userid     = a.userid(+)
+								                and    c.subj       	= d.subj                
+								                and 	c.userid     	= b.userid(+)
+								                and 	c.chkfinal 	= 'Y'     
+								                and 	c.subj        = #ses_search_subj#
+								                and 	c.[year]        = #ses_search_year#
+								                and 	c.subjseq    = #ses_search_subjseq#
+								                
+								               ) tt
+								               order by dept_nm, agency_nm, name, serno							               
+								)  A
+							where  isgraduated = 'Y'    
+							UNION ALL
+							select  '2' AS RN, '미이수' AS GRP_NM,
+                           NVL(SUM(CASE WHEN ADD_CODE = '00001' THEN 1 ELSE 0 END), '0') AS GROUP_00001,
+                            NVL(SUM(CASE WHEN ADD_CODE = '00002' THEN 1 ELSE 0 END), '0') AS GROUP_00002,
+                            NVL(SUM(CASE WHEN ADD_CODE = '00003' THEN 1 ELSE 0 END), '0') AS GROUP_00003,
+                            NVL(SUM(CASE WHEN ADD_CODE = '00004' THEN 1 ELSE 0 END), '0') AS GROUP_00004,
+                            NVL(SUM(CASE WHEN ADD_CODE = '00005' THEN 1 ELSE 0 END), '0') AS GROUP_00005,
+                            NVL(SUM(CASE WHEN ADD_CODE = '00006' THEN 1 ELSE 0 END), '0') AS GROUP_00006,
+                            NVL(SUM(CASE WHEN ADD_CODE = '00007' THEN 1 ELSE 0 END), '0') AS GROUP_00007,
+                            NVL(SUM(CASE WHEN ADD_CODE = '00008' THEN 1 ELSE 0 END), '0') AS GROUP_00008,
+                            NVL(SUM(CASE WHEN ADD_CODE = '00009' THEN 1 ELSE 0 END), '0') AS GROUP_00009,
+                            NVL(SUM(CASE WHEN ADD_CODE = '00010' THEN 1 ELSE 0 END), '0') AS GROUP_00010,
+                            NVL(SUM(CASE WHEN ADD_CODE = '00011' THEN 1 ELSE 0 END), '0') AS GROUP_00011,
+                            NVL(SUM(CASE WHEN ADD_CODE = '00012' THEN 1 ELSE 0 END), '0') AS GROUP_00012,
+                            NVL(SUM(CASE WHEN ADD_CODE = '00013' THEN 1 ELSE 0 END), '0') AS GROUP_00013,
+                            NVL(SUM(CASE WHEN ADD_CODE = '00014' THEN 1 ELSE 0 END), '0') AS GROUP_00014,
+                            NVL(SUM(CASE WHEN ADD_CODE = '00015' THEN 1 ELSE 0 END), '0') AS GROUP_00015,
+                            NVL(SUM(CASE WHEN ADD_CODE = '00016' THEN 1 ELSE 0 END), '0') AS GROUP_00016,
+                            NVL(SUM(CASE WHEN ADD_CODE = '00017' THEN 1 ELSE 0 END), '0') AS GROUP_00017,
+                            NVL(SUM(CASE WHEN ADD_CODE = '00020' THEN 1 ELSE 0 END), '0') AS GROUP_00020,
+                            NVL(SUM(CASE WHEN ADD_CODE = '00001' THEN 1 ELSE 1 END), '0')  AS TOTAL_CNT
+							from (
+								select * from (          
+								                 select 
+								                       -- get_subjclassnm(d.upperclass,'000','000') upperclassnm,
+								                       (select classname 
+														    from tz_subjatt
+														    where upperclass= d.upperclass
+														    and middleclass = '000'
+														    and lowerclass = '000') as  upperclassnm,
+								                        -- get_deptnm(b.dept_cd) dept_nm,
+								                        (select org_nm from (
+												             select org_nm from (
+												                    select 0 as idx, org_nm from   tz_school_org where  org_cd = b.dept_cd
+												                    union all
+												                    select 1 as idx,  org_nm from   tz_eduorg where  orgid = b.dept_cd
+												                ) order by idx
+												            ) where rownum = 1
+													    ) as  dept_nm,
+								                        -- get_agencynm(b.agency_cd) agency_nm,
+								                        (select org_nm from (
+												            select org_nm from (
+												                    select 0 as idx, org_nm from   tz_school_org where  org_cd = b.agency_cd
+												                    union all
+												                    select 1 as idx,  org_nm from   tz_eduorg where  orgid = b.agency_cd
+												                ) order by idx
+												            ) where rownum = 1
+														) as agency_nm,								                        
+								                        DECODE(b.emp_gubun, 'T', '교원', 'E', '보조인력', 'R', '교육전문직', 'P', '일반회원(학부모등)', 'O', '공무원') as emp_gubun_nm,
+								                        b.user_path,
+								                        b.name,
+								                        a.subjseq,
+								                        b.birth_date,
+								                        d.ischarge,
+								                        b.nice_personal_num,
+								                        -- get_compnm(b.comp) as compnm,
+								                        (select compnm from tz_compclass where comp= b.comp) as compnm,
+								                        a.score, 
+								                        a.editscore, 
+								                        trim(a.serno) as serno, 
+								                        (select decode(trim(type), 'OB','교육청일괄납부','PB','무통장','RE','재수강','SC0010','신용카드','SC0030','계좌이체','SC0040','가상계좌', 'FE', '무료',type) from pa_payment pa 
+								                        where pa.order_id = c.order_id and pa.useyn='Y' and pa.userid=c.userid) as pay,
+								                        Decode(c.chkfinal , 'B', '미처리', 'Y', '승인', 'N', '반려') as chkfinalnm, 							                        
+								                        nvl(a.isgraduated,'X') isgraduated, 
+								                       (CASE WHEN c.area_code = 'B10' and b.dept_cd is not null THEN '00001'
+	                                                              WHEN c.area_code = 'C10' and b.dept_cd is not null   THEN '00002' 
+	                                                              WHEN c.area_code = 'D10' and b.dept_cd is not null   THEN '00003'
+	                                                              WHEN c.area_code = 'E10' and b.dept_cd is not null   THEN '00004'
+	                                                              WHEN c.area_code = 'F10' and b.dept_cd is not null   THEN '00005'
+	                                                              WHEN c.area_code = 'G10' and b.dept_cd is not null   THEN '00006'
+	                                                              WHEN c.area_code = 'H10' and b.dept_cd is not null   THEN '00007'
+	                                                              WHEN c.area_code = 'J10' and b.dept_cd is not null   THEN '00008'
+	                                                              WHEN c.area_code = 'K10' and b.dept_cd is not null   THEN '00009'
+	                                                              WHEN c.area_code = 'I10' and b.dept_cd is not null   THEN '00011'
+	                                                              WHEN c.area_code = 'T10' and b.dept_cd is not null   THEN '00017'
+	                                                              WHEN c.area_code = 'M10' and b.dept_cd is not null   THEN '00010'
+	                                                              WHEN c.area_code = 'N10' and b.dept_cd is not null   THEN '00012'
+	                                                              WHEN c.area_code = 'P10' and b.dept_cd is not null   THEN '00013'  
+	                                                              WHEN c.area_code = 'Q10' and b.dept_cd is not null   THEN '00014'  
+	                                                              WHEN c.area_code = 'R10' and b.dept_cd is not null   THEN '00015'  
+	                                                              WHEN c.area_code = 'S10' and b.dept_cd is not null   THEN '00016' 
+	                                                              ELSE '00020'
+	                                                              END) AS ADD_CODE
+								                  from tz_student a
+								                     , tz_member b
+								                     , tz_propose c
+								                     , tz_subj d
+								                where  c.subj      = a.subj(+) 
+								                and    c.[year]       = a.[year](+)
+								                and    c.subjseq   = a.subjseq(+) 
+								                and    c.userid     = a.userid(+)
+								                and    c.subj       	= d.subj                
+								                and 	c.userid     	= b.userid(+)
+								                and 	c.chkfinal 	= 'Y'     
+								                and 	c.subj        = #ses_search_subj#
+								                and 	c.[year]        = #ses_search_year#
+								                and 	c.subjseq    = #ses_search_subjseq#
+								                
+								               ) tt
+								               order by dept_nm, agency_nm, name, serno							               
+								)  A
+							where  isgraduated != 'Y'  
+							UNION ALL
+							select  '3' AS RN, '총 수강자' AS GRP_NM,
+                           NVL(SUM(CASE WHEN ADD_CODE = '00001' THEN 1 ELSE 0 END), '0') AS GROUP_00001,
+                            NVL(SUM(CASE WHEN ADD_CODE = '00002' THEN 1 ELSE 0 END), '0') AS GROUP_00002,
+                            NVL(SUM(CASE WHEN ADD_CODE = '00003' THEN 1 ELSE 0 END), '0') AS GROUP_00003,
+                            NVL(SUM(CASE WHEN ADD_CODE = '00004' THEN 1 ELSE 0 END), '0') AS GROUP_00004,
+                            NVL(SUM(CASE WHEN ADD_CODE = '00005' THEN 1 ELSE 0 END), '0') AS GROUP_00005,
+                            NVL(SUM(CASE WHEN ADD_CODE = '00006' THEN 1 ELSE 0 END), '0') AS GROUP_00006,
+                            NVL(SUM(CASE WHEN ADD_CODE = '00007' THEN 1 ELSE 0 END), '0') AS GROUP_00007,
+                            NVL(SUM(CASE WHEN ADD_CODE = '00008' THEN 1 ELSE 0 END), '0') AS GROUP_00008,
+                            NVL(SUM(CASE WHEN ADD_CODE = '00009' THEN 1 ELSE 0 END), '0') AS GROUP_00009,
+                            NVL(SUM(CASE WHEN ADD_CODE = '00010' THEN 1 ELSE 0 END), '0') AS GROUP_00010,
+                            NVL(SUM(CASE WHEN ADD_CODE = '00011' THEN 1 ELSE 0 END), '0') AS GROUP_00011,
+                            NVL(SUM(CASE WHEN ADD_CODE = '00012' THEN 1 ELSE 0 END), '0') AS GROUP_00012,
+                            NVL(SUM(CASE WHEN ADD_CODE = '00013' THEN 1 ELSE 0 END), '0') AS GROUP_00013,
+                            NVL(SUM(CASE WHEN ADD_CODE = '00014' THEN 1 ELSE 0 END), '0') AS GROUP_00014,
+                            NVL(SUM(CASE WHEN ADD_CODE = '00015' THEN 1 ELSE 0 END), '0') AS GROUP_00015,
+                            NVL(SUM(CASE WHEN ADD_CODE = '00016' THEN 1 ELSE 0 END), '0') AS GROUP_00016,
+                            NVL(SUM(CASE WHEN ADD_CODE = '00017' THEN 1 ELSE 0 END), '0') AS GROUP_00017,
+                            NVL(SUM(CASE WHEN ADD_CODE = '00020' THEN 1 ELSE 0 END), '0') AS GROUP_00020,
+                            NVL(SUM(CASE WHEN ADD_CODE = '00001' THEN 1 ELSE 1 END), '0')  AS TOTAL_CNT
+							from (
+								select * from (          
+								                 select 
+								                        -- get_subjclassnm(d.upperclass,'000','000') upperclassnm,
+								                        (select classname 
+														    from tz_subjatt
+														    where upperclass= d.upperclass
+														    and middleclass = '000'
+														    and lowerclass = '000') as  upperclassnm,
+								                        -- get_deptnm(b.dept_cd) dept_nm,
+								                        (select org_nm from (
+												             select org_nm from (
+												                    select 0 as idx, org_nm from   tz_school_org where  org_cd = b.dept_cd
+												                    union all
+												                    select 1 as idx,  org_nm from   tz_eduorg where  orgid = b.dept_cd
+												                ) order by idx
+												            ) where rownum = 1
+													    ) as  dept_nm,                      
+								                        -- get_agencynm(b.agency_cd) agency_nm,
+								                        (select org_nm from (
+												            select org_nm from (
+												                    select 0 as idx, org_nm from   tz_school_org where  org_cd = b.agency_cd
+												                    union all
+												                    select 1 as idx,  org_nm from   tz_eduorg where  orgid = b.agency_cd
+												                ) order by idx
+												            ) where rownum = 1
+														) as agency_nm,								                        
+								                        DECODE(b.emp_gubun, 'T', '교원', 'E', '보조인력', 'R', '교육전문직', 'P', '일반회원(학부모등)', 'O', '공무원') as emp_gubun_nm,
+								                        b.user_path,
+								                        b.name,
+								                        a.subjseq,
+								                        b.birth_date,
+								                        d.ischarge,
+								                        b.nice_personal_num,
+								                        -- get_compnm(b.comp) as compnm,
+								                        (select compnm from tz_compclass where comp= b.comp) as compnm,
+								                        a.score, 
+								                        a.editscore, 
+								                        trim(a.serno) as serno, 
+								                        (select decode(trim(type), 'OB','교육청일괄납부','PB','무통장','RE','재수강','SC0010','신용카드','SC0030','계좌이체','SC0040','가상계좌', 'FE', '무료',type) from pa_payment pa 
+								                        where pa.order_id = c.order_id and pa.useyn='Y' and pa.userid=c.userid) as pay,
+								                        Decode(c.chkfinal , 'B', '미처리', 'Y', '승인', 'N', '반려') as chkfinalnm, 							                        
+								                        nvl(a.isgraduated,'X') isgraduated, 
+								                       (CASE WHEN c.area_code = 'B10' and b.dept_cd is not null THEN '00001'
+	                                                              WHEN c.area_code = 'C10' and b.dept_cd is not null   THEN '00002' 
+	                                                              WHEN c.area_code = 'D10' and b.dept_cd is not null   THEN '00003'
+	                                                              WHEN c.area_code = 'E10' and b.dept_cd is not null   THEN '00004'
+	                                                              WHEN c.area_code = 'F10' and b.dept_cd is not null   THEN '00005'
+	                                                              WHEN c.area_code = 'G10' and b.dept_cd is not null   THEN '00006'
+	                                                              WHEN c.area_code = 'H10' and b.dept_cd is not null   THEN '00007'
+	                                                              WHEN c.area_code = 'J10' and b.dept_cd is not null   THEN '00008'
+	                                                              WHEN c.area_code = 'K10' and b.dept_cd is not null   THEN '00009'
+	                                                              WHEN c.area_code = 'I10' and b.dept_cd is not null   THEN '00011'
+	                                                              WHEN c.area_code = 'T10' and b.dept_cd is not null   THEN '00017'
+	                                                              WHEN c.area_code = 'M10' and b.dept_cd is not null   THEN '00010'
+	                                                              WHEN c.area_code = 'N10' and b.dept_cd is not null   THEN '00012'
+	                                                              WHEN c.area_code = 'P10' and b.dept_cd is not null   THEN '00013'  
+	                                                              WHEN c.area_code = 'Q10' and b.dept_cd is not null   THEN '00014'  
+	                                                              WHEN c.area_code = 'R10' and b.dept_cd is not null   THEN '00015'  
+	                                                              WHEN c.area_code = 'S10' and b.dept_cd is not null   THEN '00016' 
+	                                                              ELSE '00020'
+	                                                              END) AS ADD_CODE
+								                  from tz_student a
+								                     , tz_member b
+								                     , tz_propose c
+								                     , tz_subj d
+								                where  c.subj      = a.subj(+) 
+								                and    c.[year]       = a.[year](+)
+								                and    c.subjseq   = a.subjseq(+) 
+								                and    c.userid     = a.userid(+)
+								                and    c.subj       	= d.subj                
+								                and 	c.userid     	= b.userid(+)
+								                and 	c.chkfinal 	= 'Y'     
+								                and 	c.subj        = #ses_search_subj#
+								                and 	c.[year]        = #ses_search_year#
+								                and 	c.subjseq    = #ses_search_subjseq#
+								                
+								               ) tt
+								               order by dept_nm, agency_nm, name, serno							               
+								)  A
+							  
+              ]]>
+	</select>
+	
+</sqlMap>
+
+ 
+
+
+

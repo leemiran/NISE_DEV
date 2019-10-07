@@ -1,0 +1,85 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE sqlMap PUBLIC "-//iBATIS.com//DTD SQL Map 2.0//EN" "http://ibatis.apache.org/dtd/sql-map-2.dtd">
+
+<sqlMap namespace="StudyCommentManage">
+<typeAlias  alias="egovMap" type="egovframework.rte.psl.dataaccess.util.EgovMap"/>
+
+
+	<select id="studyCommentManageDAO.selectCommentDateList" parameterClass="map" resultClass="egovMap">
+		select seq, b.subj, b.[year], b.subjseq, userid, comments, get_name(userid) as name,
+			   to_char(to_date(substr(b.ldate, 1, 8), 'yyyyMMdd'), 'yyyy.MM.dd') as ldate,
+		       hidden_yn, a.grseq, a.scsubjnm
+		  from vz_scsubjseq a, tz_stold_comments b
+		 where a.scsubj = b.subj
+		   and a.scyear = b.[year]
+		   and a.scsubjseq = b.subjseq
+		<isNotEmpty property="ses_search_gyear">
+		   and a.gyear = #ses_search_gyear#
+		</isNotEmpty>
+		<isNotEmpty property="ses_search_grseq">
+		   and a.grseq = #ses_search_grseq#
+		</isNotEmpty>
+		<isNotEmpty property="ses_search_att">
+		   and a.oriupperclass = #ses_search_att#
+		</isNotEmpty>
+		<isNotEmpty property="ses_search_subj">
+		   and a.subj = #ses_search_subj#
+		</isNotEmpty>
+		<isNotEmpty property="ses_search_year">
+		   and a.[year] = #ses_search_year#
+		</isNotEmpty>
+		<isNotEmpty property="ses_search_subjseq">
+		   and a.subjseq = #ses_search_subjseq#
+		</isNotEmpty>
+		 order by ldate desc
+	</select>
+	
+	<select id="studyCommentManageDAO.selectCommentSubList" parameterClass="map" resultClass="egovMap">
+		select seq, b.subj, b.[year], b.subjseq, userid, comments, get_name(userid) as name,
+			   to_char(to_date(substr(b.ldate, 1, 8), 'yyyyMMdd'), 'yyyy.MM.dd') as ldate,
+		       hidden_yn, a.grseq, a.scsubjnm
+		  from vz_scsubjseq a, tz_stold_comments b
+		 where a.scsubj = b.subj
+		   and a.scyear = b.[year]
+		   and a.scsubjseq = b.subjseq
+		   and a.subj = #p_subj#
+		   and a.[year] = #p_year#
+		   and a.subjseq = #p_subjseq#
+		 order by ldate desc
+	</select>
+	
+	<select id="studyCommentManageDAO.selectCommentList" parameterClass="map" resultClass="egovMap">
+        select get_grcodenm(a.grcode) as grcodenm, course, cyear, courseseq, coursenm, a.subj, a.subjnm, a.[year], a.subjseq, a.isonoff, a.subjseqgr,
+               (select count(seq) from tz_stold_comments where subj = a.subj and [year] = a.[year] and subjseq = a.subjseq) as cnt
+          from vz_scsubjseq a
+         where 1 = 1
+           and (select count(seq) from tz_stold_comments where subj = a.subj and [year] = a.[year] and subjseq = a.subjseq) > 0
+		<isNotEmpty property="ses_search_gyear">
+		   and a.gyear = #ses_search_gyear#
+		</isNotEmpty>
+		<isNotEmpty property="ses_search_grseq">
+		   and a.grseq = #ses_search_grseq#
+		</isNotEmpty>
+		<isNotEmpty property="ses_search_att">
+		   and a.oriupperclass = #ses_search_att#
+		</isNotEmpty>
+		<isNotEmpty property="ses_search_subj">
+		   and a.scsubj = #ses_search_subj#
+		</isNotEmpty>
+		<isNotEmpty property="ses_search_subjseq">
+		   and a.scsubjseq = #ses_search_subjseq#
+		</isNotEmpty>
+	     order by grcode, course, cyear, courseseq, a.subjnm
+	</select>
+	
+	<update id="studyCommentManageDAO.updateCommentDateList">
+		update tz_stold_comments
+		   set hidden_yn = #p_hidden#
+		 where seq 		 = #p_seq#
+		   and subj 	 = #p_subj#
+		   and [year] 	 = #p_year#
+		   and subjseq 	 = #p_subjseq#
+		   and userid 	 = #p_userid#
+	</update>
+</sqlMap>
+

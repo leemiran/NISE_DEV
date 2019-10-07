@@ -1,0 +1,51 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE sqlMap PUBLIC "-//iBATIS.com//DTD SQL Map 2.0//EN" "http://ibatis.apache.org/dtd/sql-map-2.dtd">
+
+<sqlMap namespace="SelectCompany">
+<typeAlias  alias="egovMap" type="egovframework.rte.psl.dataaccess.util.EgovMap"/>
+
+	<select id="selectCompanyDAO.getCompany1" parameterClass="map" resultClass="egovMap">
+		select distinct a.comp, a.compnm as companynm
+		  from tz_compclass a, tz_grcomp b,
+		       (
+		         select grcode from tz_grcodeman where userid = #userid# and gadmin = #gadmin#
+		       ) c
+		 where a.comp   = b.comp
+		   and b.grcode = c.grcode
+		<isNotEqual property="grcode" compareValue="">
+			<isNotEqual property="grcode" compareValue="ALL">
+			and b.grcode = #grcode#
+			</isNotEqual>
+		</isNotEqual>
+		 order by a.compnm
+	</select>
+	
+	<select id="selectCompanyDAO.getCompany2" parameterClass="map" resultClass="egovMap">
+		select distinct a.comp, a.compnm as companynm
+		  from tz_compclass a, tz_compman b, tz_grcomp c
+		 where a.comp = b.comp
+		   and a.comp = c.comp
+		   and b.userid = #userid#
+		   and b.gadmin = #gadmin#
+		<isNotEqual property="grcode" compareValue="">
+			<isNotEqual property="grcode" compareValue="ALL">
+			and c.grcode = #grcode#
+			</isNotEqual>
+		</isNotEqual>
+		 order by a.compnm
+	</select>
+	
+	<select id="selectCompanyDAO.getCompany3" parameterClass="map" resultClass="egovMap">
+		select distinct a.comp, compnm as companynm
+		  from tz_compclass a, tz_grcomp b
+		 where a.comp = b.comp(+)
+		<isNotEqual property="grcode" compareValue="">
+			<isNotEqual property="grcode" compareValue="ALL">
+			and b.grcode = #grcode#
+			</isNotEqual>
+		</isNotEqual>
+		 order by compnm
+	</select>
+	
+</sqlMap>
+

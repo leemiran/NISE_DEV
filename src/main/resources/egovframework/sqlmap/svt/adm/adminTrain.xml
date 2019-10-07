@@ -1,0 +1,166 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE sqlMap PUBLIC "-//iBATIS.com//DTD SQL Map 2.0//EN" "http://ibatis.apache.org/dtd/sql-map-2.dtd">
+
+<sqlMap namespace="adminTrain">
+	<typeAlias alias="egovMap" type="egovframework.rte.psl.dataaccess.util.EgovMap"/>
+	
+	<select id="getTrainList" resultClass="egovMap">
+		select
+			train_seq
+			, category_nm
+		from
+			tz_train
+		order by train_seq desc
+	</select>
+	
+	<insert id="insertTrain" parameterClass="map">
+		insert into tz_train
+		(
+			train_seq
+			, category_nm
+			, reg_date
+			, mod_date
+		)
+		values
+		(
+			(select nvl(max(train_seq), 0) + 1 from tz_train)
+			, #categoryNm#
+			, sysdate
+			, sysdate
+		)
+	</insert>
+	
+	<select id="getTrainDetail" parameterClass="string" resultClass="egovMap">
+		select
+			train_seq
+			, category_nm
+			, to_char(reg_date, 'yyyy-mm-dd') reg_date
+		from
+			tz_train
+		where
+			train_seq = #trainSeq#
+	</select>
+	
+	<update id="updateTrain" parameterClass="map">
+		update tz_train
+		set
+			category_nm = #categoryNm#
+			, mod_date = sysdate
+		where
+			train_seq = #trainSeq#
+	</update>
+	
+	<delete id="deleteTrain" parameterClass="map">
+		delete from tz_train
+		where
+			train_seq = #trainSeq#
+	</delete>
+	
+	<delete id="deleteTrainSubjFromTrain" parameterClass="map">
+		delete from tz_train_subj
+		where
+			train_seq = #trainSeq#
+	</delete>
+	
+	
+	<select id="getTrainSubjList" resultClass="egovMap">
+		select
+			train_subj_seq
+			, subj_nm
+			, lesson_num
+			, use_yn
+			, to_char(reg_date, 'yyyy-mm-dd') reg_date
+		from
+			tz_train_subj
+		where
+			train_seq = #trainSeq#
+			<isNotEmpty property="keyword">
+				<isEqual property="schType" compareValue="subjNm">
+					and subj_nm like #keyword# || '%'
+				</isEqual>
+				<isEqual property="schType" compareValue="lessonNum">
+					and lesson_num = #keyword#
+				</isEqual>
+			</isNotEmpty>
+		order by train_subj_seq desc
+	</select>
+	
+	<insert id="insertTrainSubj">
+		insert into tz_train_subj
+		(
+			train_subj_seq
+			, train_seq
+			, subj_nm
+			, lesson_num
+			, img_ori_nm
+			, img_id
+			, link_url
+			, use_yn
+			, reg_date
+			, mod_date
+		)
+		values
+		(
+			(select nvl(max(train_subj_seq), 0) + 1 from tz_train_subj)
+			, #trainSeq#
+			, #subjNm#
+			, #lessonNum#
+			, #originalFileName#
+			, #uploadFileName#
+			, #linkUrl#
+			, #useYn#
+			, sysdate
+			, sysdate
+		)
+	</insert>
+	
+	<select id="getTrainSubjDetail" parameterClass="string" resultClass="egovMap">
+		select
+			train_subj_seq
+			, train_seq
+			, subj_nm
+			, lesson_num
+			, img_ori_nm
+			, img_id
+			, link_url
+			, use_yn
+		from
+			tz_train_subj
+		where
+			train_subj_seq = #trainSubjSeq#
+	</select>
+	
+	<update id="updateTrainSubj" parameterClass="map">
+		update tz_train_subj
+		set
+			subj_nm = #subjNm#
+			, lesson_num = #lessonNum#
+			<isNotEmpty property="uploadFileName">
+				, img_ori_nm = #originalFileName#
+				, img_id = #uploadFileName#
+			</isNotEmpty>
+			, link_url = #linkUrl#
+			, use_yn = #useYn#
+			, mod_date = sysdate
+		where
+			train_subj_seq = #trainSubjSeq#
+	</update>
+	
+	<delete id="deleteTrainSubj" parameterClass="map">
+		delete from tz_train_subj
+		where
+			train_subj_seq = #trainSubjSeq#
+	</delete>
+	
+	<update id="deleteTrainSubjImg" parameterClass="string">
+		update tz_train_subj
+		set
+			img_ori_nm = ''
+			, img_id = ''
+			, mod_date = sysdate
+		where
+			img_id = #imgId#
+	</update>
+	
+</sqlMap>
+

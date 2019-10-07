@@ -1,0 +1,148 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE sqlMap PUBLIC "-//iBATIS.com//DTD SQL Map 2.0//EN" "http://ibatis.apache.org/dtd/sql-map-2.dtd">
+
+<sqlMap namespace="SearchBars">
+<typeAlias  alias="egovMap" type="egovframework.rte.psl.dataaccess.util.EgovMap"/>
+
+
+<cacheModel id="SearchBar-Cache" type="LRU">
+	<flushInterval hours="12" />
+	<property name="size" value="1000" />
+</cacheModel>
+ 
+ 
+	<select id="searchBarsDAO.selectSearchYearList" parameterClass="map" resultClass="egovMap" cacheModel="SearchBar-Cache" >
+		select distinct gyear
+		  from tz_grseq
+		 union
+		select to_char(sysdate, 'yyyy') as gyear
+		  from DB_ROOT
+		 order by gyear desc
+	</select>
+	
+	<select id="searchBarsDAO.selectGrSeqAjaxList" parameterClass="map" resultClass="egovMap" cacheModel="SearchBar-Cache">
+<!--		강사라면-->	
+		<isEqual compareValue="P1" property="gadmin">
+			select distinct a.grseq, a.grseqnm from  tz_grseq a,                                                
+			(
+			    select c.grseq  as grseq from  tz_subjman b, tz_subjseq c 
+			    where b.userid = #userid#
+			    and   b.subj = c.subj
+			    and	  b.gadmin = #gadmin#                                      
+			) b                                                        
+			where a.grseq = b.grseq                                        
+			and a.gyear = #searchGyear#
+			and a.grcode = #grcode#
+			<isNotEmpty property="searchGmonth">
+				and a.gmonth = #searchGmonth#
+			</isNotEmpty>
+			
+			order by a.grseq desc
+		</isEqual>
+<!--		강사가 아니라면-->
+		<isNotEqual compareValue="P1" property="gadmin">
+			select grseq, grseqnm
+			from tz_grseq
+			where 1=1 
+			<isNotEmpty property="searchGyear">
+				and gyear = #searchGyear#
+			</isNotEmpty>
+			<isNotEmpty property="searchGmonth">
+				and gmonth = #searchGmonth#
+			</isNotEmpty>
+			and grcode = #grcode#
+			<isNotEmpty property="searchAtt">
+				and grseq in (
+	                select a.grseq from tz_subjseq a inner join tz_subj b on a.subj = b.subj
+	                <isNotEmpty property="searchGyear">
+	                where a.gyear = #searchGyear#
+	                </isNotEmpty>
+	                and a.grcode = #grcode#
+	                and B.UPPERCLASS = #searchAtt#      
+	            )
+            </isNotEmpty>
+			order by grseq desc
+		</isNotEqual>
+	</select>
+	
+	
+	<select id="searchBarsDAO.selectSubjAjaxList" parameterClass="map" resultClass="egovMap" cacheModel="SearchBar-Cache">
+	<![CDATA[
+		select distinct a.subj, a.subjnm 
+		from tz_subj a, tz_grsubj b, tz_subjseq c 
+		Where b.grcode = 'N000001'
+		 and a.subj = b.subjcourse
+         and a.isuse='Y'
+         and a.subj = c.subj(+)
+         --and b.grcode = c.grcode
+         --and c.course = '000000'
+     ]]>
+		<isNotEmpty property="searchGyear">
+		   and c.[year] = #searchGyear#
+		</isNotEmpty>
+		
+		<isNotEmpty property="searchAtt">
+		   and a.upperclass = #searchAtt#
+		</isNotEmpty>
+		
+		<isNotEmpty property="searchGrSeq">
+		   and c.grseq = #searchGrSeq#
+		</isNotEmpty>
+		
+		<isNotEmpty property="searchSubjnm">
+		   and lower(a.subjnm) like '%'||lower(#searchSubjnm#)||'%'
+		</isNotEmpty>
+		order by a.subj, a.subjnm
+	</select>
+	
+	<select id="searchBarsDAO.selectSubjseqAjaxList" parameterClass="map" resultClass="egovMap" cacheModel="SearchBar-Cache">
+	<![CDATA[
+		select distinct a.subj, a.subjnm, b.[year], b.subjseq, to_number(b.subjseq) as number_subjseq,
+               to_char(to_date(substr(b.edustart, 1, 8), 'yyyyMMdd'), 'yyyy.MM.dd') as edustart, 
+               to_char(to_date(substr(b.eduend, 1, 8), 'yyyyMMdd'), 'yyyy.MM.dd') as eduend
+		  from tz_subj a, tz_subjseq b, tz_grsubj c 
+		 where a.subj = b.subj
+		 and b.subj = c.subjcourse
+		 and b.grcode = c.grcode
+		 -- and b.course = '000000'
+		 and b.grcode = 'N000001'
+         and a.isuse='Y'
+     ]]>
+		<isNotEmpty property="searchAtt">
+		   and a.upperclass = #searchAtt#
+		</isNotEmpty>
+		
+<!--		강사라면-->
+		<isEqual compareValue="P1" property="gadmin">
+			   and a.subj in (select distinct subj from tz_subjman where gadmin = #gadmin# and userid = #userid#)  
+		</isEqual>
+		
+		<isNotEmpty property="searchGyear">
+		   and b.[year] = #searchGyear#
+		</isNotEmpty>
+		
+		<isNotEmpty property="searchGrSeq">
+		   and b.grseq = #searchGrSeq#
+		</isNotEmpty>
+		
+		
+		
+		<isNotEmpty property="searchSubjnm">
+		   and lower(a.subjnm) like '%'||lower(#searchSubjnm#)||'%'
+		</isNotEmpty>
+		
+		order by a.subj, a.subjnm
+	</select>
+	
+		
+	<!-- 사용자 과정 리스트 조회 -->
+ 	<select id="searchBarsDAO.selectUserSubjAjaxListList" parameterClass="map" resultClass="egovMap" cacheModel="SearchBar-Cache">
+		<![CDATA[
+			select a.subj ||'/'|| a.[year] ||'/'|| a.subjseq subj, b.subjnm, a.subjseq 
+			from tz_student a, tz_subj b 
+            where a.subj = b.subj
+            and a.userid = #searchUserid#
+		 ]]>
+	</select>
+</sqlMap>
+

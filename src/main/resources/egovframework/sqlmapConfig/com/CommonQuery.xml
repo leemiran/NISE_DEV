@@ -1,0 +1,20 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE sqlMap PUBLIC "-//iBATIS.com//DTD SQL Map 2.0//EN" "http://www.ibatis.com/dtd/sql-map-2.dtd">
+
+<sqlMap namespace="CommonSql">
+	<typeAlias  alias="egovMap" type="egovframework.rte.psl.dataaccess.util.EgovMap"/>
+	
+	<sql id="getSysdate">
+		(SELECT TO_CHAR(sysdatetime, 'YYYYMMDDHH24MISS') LDATE FROM db_root)
+    </sql>
+
+	<sql id="getUpDateDate">
+		TO_CHAR(TO_DATETIME(UPDATE_DATE_TIME, 'YYYYMMDDHH24MISS'), 'YYYY-MM-DD')
+    </sql>
+     
+	<sql id="getWriteDate">
+		TO_CHAR(TO_DATETIME(WRITE_DATE_TIME, 'YYYYMMDDHH24MISS'), 'YYYY-MM-DD') 
+    </sql> 
+</sqlMap>  
+
+                       

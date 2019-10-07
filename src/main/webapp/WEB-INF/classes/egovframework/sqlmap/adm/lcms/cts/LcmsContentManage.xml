@@ -1,0 +1,16 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE sqlMap PUBLIC "-//iBATIS.com//DTD SQL Map 2.0//EN" "http://ibatis.apache.org/dtd/sql-map-2.dtd">
+
+<sqlMap namespace="LcmsContentManage">
+<typeAlias  alias="egovMap" type="egovframework.rte.psl.dataaccess.util.EgovMap"/>
+
+
+    <select id="lcmsContentManageDAO.selectContentPath" parameterClass="map" resultClass="String">
+            select rsrc_base_dir 
+              from tb_lcms_item a, tb_lcms_item_resource b
+             where a.item_seq = #itemSeq#
+               and a.rsrc_seq = b.rsrc_seq
+    </select>
+
+</sqlMap>
+

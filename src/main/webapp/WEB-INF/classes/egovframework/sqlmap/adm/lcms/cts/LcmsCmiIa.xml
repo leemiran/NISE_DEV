@@ -1,0 +1,193 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE sqlMap PUBLIC "-//iBATIS.com//DTD SQL Map 2.0//EN" "http://ibatis.apache.org/dtd/sql-map-2.dtd">
+
+<sqlMap namespace="LcmsCmiIa">
+
+
+<typeAlias  alias="egovMap" type="egovframework.rte.psl.dataaccess.util.EgovMap"/>
+
+    <select id="lcmsCmiIaDAO.selectLcmsCmiIaPageList" parameterClass="map" resultClass="egovMap">
+        SELECT * 
+        FROM
+               (
+                SELECT TEMP.*, 
+                <isNotEmpty property="rowsPerPage">
+                       CEIL(ROWNUM / #rowsPerPage#) AS PAGE 
+                </isNotEmpty>
+                <isEmpty property="rowsPerPage">
+                       CEIL(ROWNUM / 10) AS PAGE 
+                </isEmpty>
+                FROM
+                      (
+                       SELECT 
+	        	              INTERACTIONS_SEQ,
+	        	              INTERACTIONS_COUNT,
+	        	              INTERACTIONS_ID,
+	        	              INTERACTIONS_TYPE,
+	        	              INTERACTIONS_WEIGHTING,
+	        	              INTERACTIONS_LEARNER_RESPONSE,
+	        	              INTERACTIONS_RESULT,
+	        	              INTERACTIONS_LATENCY,
+	        	              INTERACTIONS_DESCRIPTION,
+	        	              INTERACTIONS_TIMESTAMP,
+	        	              USER_ID,
+	        	              UPDATE_DT,
+	        	              COURSE_MAP_SEQ,
+	        	              ORG_SEQ,
+	        	              ITEM_ID,
+	        	               LEARNER_ID
+        		       FROM   TB_LCMS_CMI_IA
+        		       <!--  APPEND WHERE CONDITION START  -->
+
+        		       <!--  APPEND WHERE CONDITION END    -->
+        		       <isNotEmpty property="orderBy">
+        			       $orderBy$
+        		       </isNotEmpty>
+        	          ) TEMP 
+               )
+        <isNotEmpty property="page">
+        WHERE PAGE = #page#
+        </isNotEmpty>
+        <isEmpty property="page">
+        WHERE PAGE = 1
+        </isEmpty>
+    </select>
+
+    <select id="lcmsCmiIaDAO.selectLcmsCmiIaList" parameterClass="map" resultClass="egovMap">
+        SELECT INTERACTIONS_SEQ,
+               INTERACTIONS_COUNT,
+               INTERACTIONS_ID,
+               INTERACTIONS_TYPE,
+               INTERACTIONS_WEIGHTING,
+               INTERACTIONS_LEARNER_RESPONSE,
+               INTERACTIONS_RESULT,
+               INTERACTIONS_LATENCY,
+               INTERACTIONS_DESCRIPTION,
+               INTERACTIONS_TIMESTAMP,
+               USER_ID,
+               UPDATE_DT,
+               COURSE_MAP_SEQ,
+               ORG_SEQ,
+               ITEM_ID,
+               LEARNER_ID
+        FROM   TB_LCMS_CMI_IA
+    </select>
+
+    <select id="lcmsCmiIaDAO.selectLcmsCmiIaPageListTotCnt" parameterClass="map" resultClass="int">
+        SELECT COUNT(ROWNUM) AS [COUNT]
+        FROM   TB_LCMS_CMI_IA
+    </select>
+
+    <select id="lcmsCmiIaDAO.selectLcmsCmiIa" parameterClass="map" resultClass="egovMap">
+        SELECT INTERACTIONS_SEQ,
+               INTERACTIONS_COUNT,
+               INTERACTIONS_ID,
+               INTERACTIONS_TYPE,
+               INTERACTIONS_WEIGHTING,
+               INTERACTIONS_LEARNER_RESPONSE,
+               INTERACTIONS_RESULT,
+               INTERACTIONS_LATENCY,
+               INTERACTIONS_DESCRIPTION,
+               INTERACTIONS_TIMESTAMP,
+               USER_ID,
+               UPDATE_DT,
+               COURSE_MAP_SEQ,
+               ORG_SEQ,
+               ITEM_ID,
+               LEARNER_ID
+        FROM   TB_LCMS_CMI_IA
+        WHERE  INTERACTIONS_SEQ = #interactionsSeq#
+    </select>
+
+    <insert id="lcmsCmiIaDAO.insertLcmsCmiIa">
+        <selectKey resultClass="long" keyProperty="interactionsSeq">
+            SELECT NVL(MAX(INTERACTIONS_SEQ)+1, 1)
+            FROM   TB_LCMS_CMI_IA
+        </selectKey>
+        INSERT INTO TB_LCMS_CMI_IA
+        (
+            INTERACTIONS_SEQ,
+            INTERACTIONS_COUNT,
+            INTERACTIONS_ID,
+            INTERACTIONS_TYPE,
+            INTERACTIONS_WEIGHTING,
+            INTERACTIONS_LEARNER_RESPONSE,
+            INTERACTIONS_RESULT,
+            INTERACTIONS_LATENCY,
+            INTERACTIONS_DESCRIPTION,
+            INTERACTIONS_TIMESTAMP,
+            USER_ID,
+            UPDATE_DT,
+            COURSE_MAP_SEQ,
+            ORG_SEQ,
+            ITEM_ID,
+            LEARNER_ID
+        )
+        VALUES
+        (
+            #interactionsSeq#,
+            #interactionsCount#,
+            #interactionsId#,
+            #interactionsType#,
+            #interactionsWeighting#,
+            #interactionsLearnerResponse#,
+            #interactionsResult#,
+            #interactionsLatency#,
+            #interactionsDescription#,
+            #interactionsTimestamp#,
+            #userId#,
+            #updateDt#,
+            #courseMapSeq#,
+            #orgSeq#,
+            #itemId#,
+            #learnerId#
+        )
+    </insert>
+
+    <update id="lcmsCmiIaDAO.updateLcmsCmiIa">
+        UPDATE TB_LCMS_CMI_IA
+        SET    INTERACTIONS_COUNT = #interactionsCount#,
+               INTERACTIONS_ID = #interactionsId#,
+               INTERACTIONS_TYPE = #interactionsType#,
+               INTERACTIONS_WEIGHTING = #interactionsWeighting#,
+               INTERACTIONS_LEARNER_RESPONSE = #interactionsLearnerResponse#,
+               INTERACTIONS_RESULT = #interactionsResult#,
+               INTERACTIONS_LATENCY = #interactionsLatency#,
+               INTERACTIONS_DESCRIPTION = #interactionsDescription#,
+               INTERACTIONS_TIMESTAMP = #interactionsTimestamp#,
+               USER_ID = #userId#,
+               UPDATE_DT = #updateDt#,
+               COURSE_MAP_SEQ = #courseMapSeq#,
+               ORG_SEQ = #orgSeq#,
+               ITEM_ID = #itemId#,
+               LEARNER_ID = #learnerId#
+        WHERE  INTERACTIONS_SEQ = #interactionsSeq#
+    </update>
+
+    <delete id="lcmsCmiIaDAO.deleteLcmsCmiIa">
+        DELETE FROM TB_LCMS_CMI_IA
+        WHERE  INTERACTIONS_SEQ = #interactionsSeq#
+    </delete>
+
+    <delete id="lcmsCmiIaDAO.deleteLcmsCmiIaAll">
+        DELETE FROM TB_LCMS_CMI_IA
+        <dynamic prepend="WHERE INTERACTIONS_SEQ IN ">
+            <isNotEmpty property="interactionsSeq">
+                <iterate property="interactionsSeq" open="(" close=")" conjunction=",">
+                    #interactionsSeq[]#
+                </iterate>
+            </isNotEmpty>
+            <isEmpty property="interactionsSeq">
+                ('')
+            </isEmpty>
+        </dynamic>
+    </delete>
+
+    <select id="lcmsCmiIaDAO.existLcmsCmiIa" resultClass="long">
+        SELECT COUNT(ROWNUM) 
+        FROM   TB_LCMS_CMI_IA
+        WHERE  INTERACTIONS_SEQ = #interactionsSeq#
+    </select>
+
+</sqlMap>
+

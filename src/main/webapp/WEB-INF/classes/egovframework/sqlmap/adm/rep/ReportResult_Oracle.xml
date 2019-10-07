@@ -1,0 +1,227 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE sqlMap PUBLIC "-//iBATIS.com//DTD SQL Map 2.0//EN" "http://ibatis.apache.org/dtd/sql-map-2.dtd">
+
+<sqlMap namespace="ReportResult">
+<typeAlias  alias="egovMap" type="egovframework.rte.psl.dataaccess.util.EgovMap"/>
+
+
+	<select id="reportResultDAO.selectReportResultList" parameterClass="map" resultClass="egovMap">
+		select subj, [year], subjseq,
+		       ordseq, weeklyseq, weeklysubseq, title, startdate, expiredate, restartdate, reexpiredate, score, reptype,
+		       case when to_char(sysdatetime, 'yyyyMMddhh24miss') between startdate and expiredate then 'Y' else 'N' end indate,
+		       case when restartdate is null 
+		            then case when to_char(sysdatetime, 'yyyyMMddhh24miss') between restartdate and reexpiredate then 'Y' else 'N' end
+		        end adddate,
+		       (select count(0) from tz_student where grcode = a.grcode and subj = a.subj and [year] = a.[year] and subjseq = a.subjseq) as total,
+		       (select count(0)
+		          from tu_projrep
+		         where ldate is not null and grcode = a.grcode and subj = a.subj 
+		           and [year] = a.[year] and subjseq = a.subjseq and ordseq = a.ordseq) as submitcnt
+		 from tu_projord a
+		where grcode     = 'N000001'
+		<isNotEmpty property="ses_search_subj">
+		  and subj       = #ses_search_subj#
+		</isNotEmpty>
+		  and [year]       = #ses_search_year#
+		  and subjseq    = #ses_search_subjseq#
+		  and [class]      = '1'
+		  and reptype    = 'P'
+		  and (delyn = 'N' or delyn is null)
+	    order by [year] desc, subjseq, ordseq desc
+	</select>
+	
+	<select id="reportResultDAO.selectViewOrder" parameterClass="map" resultClass="egovMap">
+		select a.ordseq, a.weeklyseq, a.weeklysubseq, a.title, a.score, a.basicscore, a.perfectscore, a.submitscore, a.notsubmitscore, a.[CLASS], 
+		       a.reptype, a.startdate, a.expiredate, a.isopenscore, b.subjnm,
+		       case when a.reexpiredate = ''
+		            then case when to_char(sysdatetime, 'yyyyMMddhh24miss') between a.startdate and a.expiredate
+		                      then 'Y' else 'N'
+		                  end
+		            else case when to_char(sysdatetime, 'yyyyMMddhh24miss') between a.restartdate and a.reexpiredate
+		                      then 'Y' else 'N'
+		                  end
+		        end indate,
+		       (select count(0) from tz_student where grcode = a.grcode and subj = a.subj and [year] = a.[year] and subjseq = a.subjseq) as total,
+		       (select count(0)
+		          from tu_projrep
+		         where ldate is not null and grcode = a.grcode and subj = a.subj 
+		           and [year] = a.[year] and subjseq = a.subjseq and ordseq = a.ordseq) as submitcnt
+		  from tu_projord a left join tz_subj b on a.subj = b.subj
+		 where a.subj    = #p_subj#
+		   and a.[year]    = #p_year#
+		   and a.subjseq = #p_subjseq#
+		   and a.[CLASS]   = '1'
+		   and a.ordseq  = #p_ordseq#
+	</select>
+	
+	<select id="reportResultDAO.selectReportStudentList" parameterClass="map" resultClass="egovMap">
+	select userid,
+	     SUBJ,
+        [YEAR],
+        SUBJSEQ,
+        PROJID,
+        LDATE,
+        ISBESTREPORT,
+        REALFILE,
+        NEWFILE,
+        FINALSCORE,
+        get_name(userid) as name,
+        LDATE2,       
+        INDATE,
+        EMAIL,
+        MOBILE,
+        SCOREEXISTS,
+        TUTORDATE,
+        MINUSDAY,
+        GETSCORE,
+        MINUSSCORE,
+        [CLASS],
+        ADDDATE
+	from(		
+		select a.subj, a.[year], a.subjseq, a.userid as projid, d.ldate, d.isbestreport, d.realfile, d.newfile, d.score as finalscore, 
+			   -- get_name(a.userid) as name,
+			   a.userid,
+			   decode(d.ldate, null, '-', to_char(to_date(substr(d.ldate, 0, 8), 'yyyyMMdd'), 'yyyy.MM.dd')) as ldate2,
+		       b.comp,
+		       case when (d.ldate is null or d.ldate = '') then 'NOT'
+		            else case when (d.ldate <![CDATA[<=]]> c.expiredate)
+		                      then case when d.ldate between c.startdate and c.expiredate
+		                                then 'IN' else 'OUT'
+		                            end
+		                      else case when d.ldate between c.restartdate and c.reexpiredate
+		                                then 'RE' else 'OUT'
+		                            end
+		                  end
+		        end as indate,
+		       b.email, b.handphone as mobile,
+		       case when d.score is null then 'N' else 'Y' end as scoreexists,
+		       d.tutordate,
+		       round((TO_DATETIME(c.restartdate, 'yyyyMMddhh24miss') - (TO_DATETIME(d.ldate, 'yyyyMMddhh24miss'))) / (24*60*60*1000) -0.5) as minusday,
+		       getscore, minusscore, d.[CLASS],
+		       decode(d.adddate, null, '-', to_char(to_date(substr(d.adddate, 0, 8), 'yyyyMMdd'), 'yyyy.MM.dd')) as adddate
+		  from tz_student a inner join tz_member b
+		    on (trim(a.userid) = trim(b.userid))
+		       inner join tu_projord c
+		    on (trim(a.subj) = trim(c.subj))
+		   and (trim(a.[year]) = trim(c.[year]))
+		   and (trim(a.subjseq) = trim(c.subjseq))
+		   and c.ordseq = #p_ordseq#
+		       left join (select * 
+			       from tu_projrep
+			        where subj    = #p_subj#
+					   and [year]    = #p_year#
+					   and subjseq = #p_subjseq#
+		       ) d
+		    on (trim(a.subj) = trim(d.subj))
+		   and (trim(a.[year]) = trim(d.[year]))
+		   and (trim(a.subjseq) = trim(d.subjseq))
+		   and (trim(a.userid) = trim(d.projid))
+		   and d.ordseq = #p_ordseq#
+		 where a.subj    = #p_subj#
+		   and a.[year]    = #p_year#
+		   and a.subjseq = #p_subjseq#
+		   AND a.userid = b.userid
+		)   
+		order by userid
+	</select>
+	
+
+	<update id="reportResultDAO.updateReportResultData">
+		merge into tu_projrep tp
+			using (
+			
+				select a.score as a_score, 
+					   to_number(b.getscore, '999.99')+ to_number(b.minusscore, '999.99') as b_score,				 
+				       a.minusscore as a_minusscore, b.minusscore as b_minusscore,
+				       a.getscore as a_getscore, b.getscore as b_getscore,
+				       a.isbestreport, a.tutordate,
+				       a.subj,
+				       a.[year],
+				       a.subjseq,
+				       a.ordseq,
+				       a.projid
+				  from tu_projrep a, (
+										select SUBSTRING_INDEX(proj, '!_', '1') AS projid
+										        , SUBSTRING_INDEX(SUBSTRING_INDEX(proj, '!_', '4'), '!_', '-1') AS score        
+										        , SUBSTRING_INDEX(SUBSTRING_INDEX(proj, '!_', '3'), '!_', '-1') AS minusscore
+										        , SUBSTRING_INDEX(SUBSTRING_INDEX(proj, '!_', '2'), '!_', '-1') AS getscore
+										  from (
+												<dynamic prepend=" select ">
+										               <iterate property="tmp" conjunction=" from DB_ROOT union all select ">
+										                   #tmp[]# as proj
+										               </iterate>
+										        </dynamic>
+										           from DB_ROOT
+										       )
+				                     ) b
+			     where a.subj    = #p_subj#
+			       and a.[year]    = #p_year#
+			       and a.subjseq = #p_subjseq#
+			       and a.ordseq  = #p_ordseq#
+			       and a.projid = b.projid
+			    ) b
+			    on (
+			       tp.subj    = b.subj
+			       and tp.[year]    = b.[year]
+			       and tp.subjseq = b.subjseq
+			       and tp.ordseq  = b.ordseq
+			       and tp.projid = b.projid
+			    )
+	       when matched then 
+	        update set tp.score = b.b_score,
+		           tp.minusscore = b.b_minusscore,
+		           tp.getscore = b.b_getscore,
+		           tp.isbestreport = 'N',
+		           tp.tutordate = to_char(sysdatetime, 'yyyyMMddhh24miss')
+	           
+	</update>
+	
+	<insert id="reportResultDAO.insertReportResultData">
+    	insert into tu_projrep(
+    		grcode, subj, [year], subjseq, [CLASS], ordseq, projid,
+    		score, isbestreport, tutordate, seq, title, minusscore, getscore
+    	)
+		select 'N000001',
+		       #p_subj#,
+		       #p_year#,
+		       #p_subjseq#,
+		       1,
+		       #p_ordseq#,		       
+		       SUBSTRING_INDEX(proj, '!_', '1') AS projid,
+		       SUBSTRING_INDEX(SUBSTRING_INDEX(proj, '!_', '4'), '!_', '-1') AS score, 
+		       'N',
+		       to_char(sysdatetime, 'yyyyMMddhh24miss'),
+		       0,
+		       ' ',		       
+		       SUBSTRING_INDEX(SUBSTRING_INDEX(proj, '!_', '3'), '!_', '-1') AS minusscore,		       
+		       SUBSTRING_INDEX(SUBSTRING_INDEX(proj, '!_', '2'), '!_', '-1') AS getscore
+		       
+		  from (
+				<dynamic prepend=" select ">
+		               <iterate property="tmp" conjunction=" from DB_ROOT union all select ">
+		                   #tmp[]# as proj
+		               </iterate>
+		        </dynamic>
+		           from DB_ROOT
+		       ) a, tu_projrep b
+		 --where substr(proj, 0, instr(proj, '!_', 1, 1)-1) = b.projid(+)
+		 where projid = b.projid(+)
+		   and b.subj(+)    = #p_subj#
+		   and b.[year](+)    = #p_year#
+		   and b.subjseq(+) = #p_subjseq#
+		   and b.projid is null
+	</insert>
+	
+	<update id="reportResultDAO.updateReportResult">
+		update tu_projrep
+		   set score = to_number(#p_getscore#, '999.99')+to_number(#p_minusscore#, '999.99'),
+		       getscore = #p_getscore#,
+		       minusscore = #p_minusscore#
+		 where subj    = #p_subj#
+		   and [year]    = #p_year#
+		   and subjseq = #p_subjseq#
+		   and ordseq  = #p_ordseq#
+		   and projid  = #p_projid#
+		   and luserid is not null
+	</update>
+</sqlMap>

@@ -1,0 +1,1901 @@
+<?xml version="1.0" encoding="euc-kr"?>
+<docreglist>
+<regitem>
+<title>전자 문서작성 요령.</title>
+<regnumber>1</regnumber>
+<classnumber>총무 01238 -1</classnumber>
+<approvaldate>2000/01/10</approvaldate>
+<operation>
+<date>2000/01/10</date>
+<recipient>다(제외시 -기호사용  예 , -05)</recipient>
+<method>전산망</method>
+<sign>sysop</sign>
+</operation>
+<remark></remark>
+</regitem>
+<regitem>
+<title>rrttrr</title>
+<regnumber>2</regnumber>
+<classnumber>총무 01238 -2</classnumber>
+<approvaldate>2000/01/10</approvaldate>
+<operation>
+<date>2000/01/10</date>
+<recipient>다(제외시 -기호사용  예 , -05)</recipient>
+<method>전산망</method>
+<sign>sysop</sign>
+</operation>
+<remark></remark>
+</regitem>
+<regitem>
+<title>ttrr</title>
+<regnumber>3</regnumber>
+<classnumber>총무 01238 -3</classnumber>
+<approvaldate>2000/01/10</approvaldate>
+<operation>
+<date>2000/01/10</date>
+<recipient>다(제외시 -기호사용  예 , -05)</recipient>
+<method>전산망</method>
+<sign>sysop</sign>
+</operation>
+<remark></remark>
+</regitem>
+<regitem>
+<title>일괄관인  (test1)</title>
+<regnumber>3</regnumber>
+<classnumber>총무 01238 -</classnumber>
+<approvaldate>1999/10/15</approvaldate>
+<operation>
+<date>1999/10/15</date>
+<recipient>내부결재</recipient>
+<method>전산망</method>
+<sign></sign>
+</operation>
+<remark></remark>
+</regitem>
+<regitem>
+<title>test1</title>
+<regnumber>4</regnumber>
+<classnumber>총무 01238 -4</classnumber>
+<approvaldate>2000/01/10</approvaldate>
+<operation>
+<date>2000/01/10</date>
+<recipient>다(제외시 -기호사용  예 , -05)</recipient>
+<method>전산망</method>
+<sign>sysop</sign>
+</operation>
+<remark></remark>
+</regitem>
+<regitem>
+<title>일괄관인  (test1)</title>
+<regnumber>4</regnumber>
+<classnumber>총무 01238 -4</classnumber>
+<approvaldate>1999/10/15</approvaldate>
+<operation>
+<date>1999/10/15</date>
+<recipient>내부결재</recipient>
+<method>전산망</method>
+<sign></sign>
+</operation>
+<remark></remark>
+</regitem>
+<regitem>
+<title>test2</title>
+<regnumber>5</regnumber>
+<classnumber>총무 01238 -5</classnumber>
+<approvaldate>2000/01/10</approvaldate>
+<operation>
+<date>2000/01/10</date>
+<recipient>다(제외시 -기호사용  예 , -05)</recipient>
+<method>전산망</method>
+<sign>sysop</sign>
+</operation>
+<remark></remark>
+</regitem>
+<regitem>
+<title>일괄관인  (test1)</title>
+<regnumber>5</regnumber>
+<classnumber>총무 01238 -5</classnumber>
+<approvaldate>1999/10/15</approvaldate>
+<operation>
+<date>1999/10/15</date>
+<recipient>내부결재</recipient>
+<method>전산망</method>
+<sign></sign>
+</operation>
+<remark></remark>
+</regitem>
+<regitem>
+<title>test4</title>
+<regnumber>6</regnumber>
+<classnumber>총무 01238 -6</classnumber>
+<approvaldate>2000/01/10</approvaldate>
+<operation>
+<date>2000/01/10</date>
+<recipient>다(제외시 -기호사용  예 , -05)</recipient>
+<method>전산망</method>
+<sign>sysop</sign>
+</operation>
+<remark></remark>
+</regitem>
+<regitem>
+<title>일괄관인  (test1)</title>
+<regnumber>6</regnumber>
+<classnumber>총무 01238 -6</classnumber>
+<approvaldate>1999/10/15</approvaldate>
+<operation>
+<date>1999/10/15</date>
+<recipient>내부결재</recipient>
+<method>전산망</method>
+<sign></sign>
+</operation>
+<remark></remark>
+</regitem>
+<regitem>
+<title>test5</title>
+<regnumber>7</regnumber>
+<classnumber>총무 01238 -7</classnumber>
+<approvaldate>2000/01/10</approvaldate>
+<operation>
+<date>2000/01/10</date>
+<recipient>다(제외시 -기호사용  예 , -05)</recipient>
+<method>전산망</method>
+<sign>sysop</sign>
+</operation>
+<remark></remark>
+</regitem>
+<regitem>
+<title>일괄관인  (test1)</title>
+<regnumber>7</regnumber>
+<classnumber>총무 01238 -7</classnumber>
+<approvaldate>1999/10/15</approvaldate>
+<operation>
+<date>1999/10/15</date>
+<recipient>내부결재</recipient>
+<method>전산망</method>
+<sign></sign>
+</operation>
+<remark></remark>
+</regitem>
+<regitem>
+<title>test6</title>
+<regnumber>8</regnumber>
+<classnumber>총무 01238 -8</classnumber>
+<approvaldate>2000/01/10</approvaldate>
+<operation>
+<date>2000/01/10</date>
+<recipient>다(제외시 -기호사용  예 , -05)</recipient>
+<method>전산망</method>
+<sign>sysop</sign>
+</operation>
+<remark></remark>
+</regitem>
+<regitem>
+<title>test7</title>
+<regnumber>9</regnumber>
+<classnumber>총무 01238 -9</classnumber>
+<approvaldate>2000/01/10</approvaldate>
+<operation>
+<date>2000/01/10</date>
+<recipient>서울시교육청</recipient>
+<method>전산망</method>
+<sign>sysop</sign>
+</operation>
+<remark></remark>
+</regitem>
+<regitem>
+<title>규정 시행 공포</title>
+<regnumber>10</regnumber>
+<classnumber>기획11250-10</classnumber>
+<approvaldate>2000/01/10</approvaldate>
+<operation>
+<date>2000/01/10</date>
+<recipient>본1-5, 학1-9, 원1, 부1-7, 연1-5, 교1-8</recipient>
+<method>전산망</method>
+<sign>sysop</sign>
+</operation>
+<remark></remark>
+</regitem>
+<regitem>
+<title>일괄기안문 테스트 1안  그 두번째</title>
+<regnumber>11</regnumber>
+<classnumber>전산실12312-11</classnumber>
+<approvaldate>2000/01/10</approvaldate>
+<operation>
+<date>2000/01/10</date>
+<recipient>내부결재</recipient>
+<method>전산망</method>
+<sign></sign>
+</operation>
+<remark></remark>
+</regitem>
+<regitem>
+<title>일괄관인  (test1)</title>
+<regnumber>11</regnumber>
+<classnumber>11</classnumber>
+<approvaldate>1999/10/16</approvaldate>
+<operation>
+<date>1999/10/16</date>
+<recipient>내부결재</recipient>
+<method>전산망</method>
+<sign></sign>
+</operation>
+<remark></remark>
+</regitem>
+<regitem>
+<title>전자결재 전면실시</title>
+<regnumber>12</regnumber>
+<classnumber>서무12345-12</classnumber>
+<approvaldate>2000/01/10</approvaldate>
+<operation>
+<date>2000/01/10</date>
+<recipient>내부결재</recipient>
+<method>전산망</method>
+<sign></sign>
+</operation>
+<remark></remark>
+</regitem>
+<regitem>
+<title>전자 문서작성 요령</title>
+<regnumber>13</regnumber>
+<classnumber>총무 01238 -13</classnumber>
+<approvaldate>2000/01/13</approvaldate>
+<operation>
+<date>2000/01/13</date>
+<recipient>다(제외시 -기호사용  예 , -05)</recipient>
+<method>전산망</method>
+<sign>sysop</sign>
+</operation>
+<remark></remark>
+</regitem>
+<regitem>
+<title>일괄기안문 3안 제목입니다.</title>
+<regnumber>14</regnumber>
+<classnumber>전산실12312-11</classnumber>
+<approvaldate>2000/01/10</approvaldate>
+<operation>
+<date>2000/01/17</date>
+<recipient>한국정보공학</recipient>
+<method>전산망</method>
+<sign>sysop</sign>
+</operation>
+<remark></remark>
+</regitem>
+<regitem>
+<title>핸디로15:55 2000.01.12</title>
+<regnumber>15</regnumber>
+<classnumber>총무 01238 -15</classnumber>
+<approvaldate>2000/01/17</approvaldate>
+<operation>
+<date>2000/01/17</date>
+<recipient>부01</recipient>
+<method>전산망</method>
+<sign>sysop</sign>
+</operation>
+<remark></remark>
+</regitem>
+<regitem>
+<title>전자 문서작성 요령.</title>
+<regnumber>16</regnumber>
+<classnumber>총무 01238 -16</classnumber>
+<approvaldate>2000/01/18</approvaldate>
+<operation>
+<date>2000/01/18</date>
+<recipient>총무과</recipient>
+<method>전산망</method>
+<sign>sysop</sign>
+</operation>
+<remark></remark>
+</regitem>
+<regitem>
+<title>일괄기안 요령</title>
+<regnumber>16</regnumber>
+<classnumber>교정 01238 -</classnumber>
+<approvaldate>1999/10/26</approvaldate>
+<operation>
+<date>1999/10/26</date>
+<recipient>내부결재</recipient>
+<method>전산망</method>
+<sign></sign>
+</operation>
+<remark></remark>
+</regitem>
+<regitem>
+<title>11</title>
+<regnumber>17</regnumber>
+<classnumber>총무 01238 -17</classnumber>
+<approvaldate>2000/01/23</approvaldate>
+<operation>
+<date>2000/01/23</date>
+<recipient>다(제외시 -기호사용  예 , -05)</recipient>
+<method>전산망</method>
+<sign>sysop</sign>
+</operation>
+<remark></remark>
+</regitem>
+<regitem>
+<title>전자 문서작성 요령.</title>
+<regnumber>18</regnumber>
+<classnumber>총무 01238</classnumber>
+<approvaldate>2000/01/23</approvaldate>
+<operation>
+<date>2000/01/23</date>
+<recipient>다01-10,냉동중,생림중,신어중</recipient>
+<method>전산망</method>
+<sign>sysop</sign>
+</operation>
+<remark></remark>
+</regitem>
+<regitem>
+<title>sdfsdf</title>
+<regnumber>18</regnumber>
+<classnumber>safsdf18</classnumber>
+<approvaldate>1999/10/27</approvaldate>
+<operation>
+<date>1999/10/27</date>
+<recipient>sfsdf</recipient>
+<method>우  편</method>
+<sign>sysop</sign>
+</operation>
+<remark></remark>
+</regitem>
+<regitem>
+<title>전자 문서작성 요령.</title>
+<regnumber>19</regnumber>
+<classnumber>총무 01238-19</classnumber>
+<approvaldate>2000/01/23</approvaldate>
+<operation>
+<date>2000/01/23</date>
+<recipient>다01-10,냉동중,생림중,신어중</recipient>
+<method>전산망</method>
+<sign>sysop</sign>
+</operation>
+<remark></remark>
+</regitem>
+<regitem>
+<title>sdfsdf</title>
+<regnumber>19</regnumber>
+<classnumber>werwesd19</classnumber>
+<approvaldate>1999/10/27</approvaldate>
+<operation>
+<date>1999/10/27</date>
+<recipient>sdfsfsd</recipient>
+<method>우  편</method>
+<sign>sysop</sign>
+</operation>
+<remark></remark>
+</regitem>
+<regitem>
+<title>ff</title>
+<regnumber>20</regnumber>
+<classnumber>총무 01238 -22</classnumber>
+<approvaldate>2000/01/24</approvaldate>
+<operation>
+<date>2000/01/24</date>
+<recipient>다(제외시 -기호사용  예 , -05)</recipient>
+<method>전산망</method>
+<sign>sysop</sign>
+</operation>
+<remark>33</remark>
+</regitem>
+<regitem>
+<title>sdfsdf</title>
+<regnumber>20</regnumber>
+<classnumber>sfsdfsd20</classnumber>
+<approvaldate>1999/10/27</approvaldate>
+<operation>
+<date>1999/10/27</date>
+<recipient>sdfsdf</recipient>
+<method>우  편</method>
+<sign>sysop</sign>
+</operation>
+<remark></remark>
+</regitem>
+<regitem>
+<title>tt</title>
+<regnumber>21</regnumber>
+<classnumber>총무 01238 -23</classnumber>
+<approvaldate>2000/01/24</approvaldate>
+<operation>
+<date>2000/01/24</date>
+<recipient>다(제외시 -기호사용  예 , -05)</recipient>
+<method>전산망</method>
+<sign>sysop</sign>
+</operation>
+<remark>11</remark>
+</regitem>
+<regitem>
+<title>문서제목</title>
+<regnumber>21</regnumber>
+<classnumber>문서 12345-21</classnumber>
+<approvaldate>1999/11/01</approvaldate>
+<operation>
+<date>1999/11/01</date>
+<recipient>아무데나</recipient>
+<method>우  편</method>
+<sign>sysop</sign>
+</operation>
+<remark></remark>
+</regitem>
+<regitem>
+<title>문서 문서 문서</title>
+<regnumber>22</regnumber>
+<classnumber>문서 1234522</classnumber>
+<approvaldate>1999/11/01</approvaldate>
+<operation>
+<date>1999/11/01</date>
+<recipient>ㄴㅇㄹㄴㅇㄹ</recipient>
+<method>우  편</method>
+<sign>sysop</sign>
+</operation>
+<remark></remark>
+</regitem>
+<regitem>
+<title>문서 쓰리</title>
+<regnumber>23</regnumber>
+<classnumber>문서 12342-23</classnumber>
+<approvaldate>1999/11/01</approvaldate>
+<operation>
+<date>1999/11/01</date>
+<recipient>우리집</recipient>
+<method>우  편</method>
+<sign>sysop</sign>
+</operation>
+<remark></remark>
+</regitem>
+<regitem>
+<title>99년 8월 16일, 1번째 시험 문서수발(시교육청, 교육정보화과)</title>
+<regnumber>10001</regnumber>
+<classnumber>교정12410-1</classnumber>
+<approvaldate>1999/08/16</approvaldate>
+<operation>
+<date>1999/08/16</date>
+<recipient> 청</recipient>
+<method>전산망</method>
+<sign></sign>
+</operation>
+<remark></remark>
+</regitem>
+<regitem>
+<title>수시보고인 점검</title>
+<regnumber>10002</regnumber>
+<classnumber>교정12410-10001</classnumber>
+<approvaldate>1999/08/16</approvaldate>
+<operation>
+<date>1999/08/16</date>
+<recipient>대구광역시서부교육장</recipient>
+<method>전산망</method>
+<sign>sysop</sign>
+</operation>
+<remark></remark>
+</regitem>
+<regitem>
+<title>수시보고인 점검2</title>
+<regnumber>10003</regnumber>
+<classnumber>교정12410-10002</classnumber>
+<approvaldate>1999/08/16</approvaldate>
+<operation>
+<date>1999/08/16</date>
+<recipient>대구광역시서부교육장</recipient>
+<method>전산망</method>
+<sign>sysop</sign>
+</operation>
+<remark></remark>
+</regitem>
+<regitem>
+<title>항목테스트</title>
+<regnumber>10004</regnumber>
+<classnumber>총무12345-10004</classnumber>
+<approvaldate>1999/10/02</approvaldate>
+<operation>
+<date>1999/10/02</date>
+<recipient>총무과</recipient>
+<method>우  편</method>
+<sign>sysop</sign>
+</operation>
+<remark></remark>
+</regitem>
+<regitem>
+<title>99년 8월 6일, 1번째 시험 문서수발(시교육청, 교육정보화과)</title>
+<regnumber>10004</regnumber>
+<classnumber>교정12410-10003</classnumber>
+<approvaldate>1999/08/16</approvaldate>
+<operation>
+<date>1999/08/16</date>
+<recipient> 청</recipient>
+<method>전산망</method>
+<sign></sign>
+</operation>
+<remark></remark>
+</regitem>
+<regitem>
+<title>전 항목 테스트</title>
+<regnumber>10005</regnumber>
+<classnumber>교정12410-10001</classnumber>
+<approvaldate>1999/10/02</approvaldate>
+<operation>
+<date>1999/10/02</date>
+<recipient>다(제외시 -기호사용  예 , -05)</recipient>
+<method>전산망</method>
+<sign>sysop</sign>
+</operation>
+<remark></remark>
+</regitem>
+<regitem>
+<title>전자 문서작성 요령</title>
+<regnumber>10006</regnumber>
+<classnumber>총무 01238 -10002</classnumber>
+<approvaldate>1999/10/01</approvaldate>
+<operation>
+<date>1999/10/02</date>
+<recipient>다(제외시 -기호사용  예 , -05)</recipient>
+<method>전산망</method>
+<sign>sysop</sign>
+</operation>
+<remark></remark>
+</regitem>
+<regitem>
+<title>전 항목테스트</title>
+<regnumber>10007</regnumber>
+<classnumber>교정12410-10003</classnumber>
+<approvaldate>1999/10/02</approvaldate>
+<operation>
+<date>1999/10/02</date>
+<recipient>다(제외시 -기호사용  예 , -05)</recipient>
+<method>전산망</method>
+<sign>mun000</sign>
+</operation>
+<remark>수정</remark>
+</regitem>
+<regitem>
+<title>전자결재시스템 사용자 교육을 위한 교육장소 협조</title>
+<regnumber>10008</regnumber>
+<classnumber>교정12410-10004</classnumber>
+<approvaldate>1999/10/02</approvaldate>
+<operation>
+<date>1999/10/02</date>
+<recipient>대구광역시교육과학연구원장</recipient>
+<method>전산망</method>
+<sign>sysop</sign>
+</operation>
+<remark></remark>
+</regitem>
+<regitem>
+<title>문서수발 테스트</title>
+<regnumber>10009</regnumber>
+<classnumber>총무 01238 -10005</classnumber>
+<approvaldate>1999/10/04</approvaldate>
+<operation>
+<date>1999/10/04</date>
+<recipient>다12, 가 12</recipient>
+<method>전산망</method>
+<sign>sysop</sign>
+</operation>
+<remark></remark>
+</regitem>
+<regitem>
+<title>전자 문서작성 요령.</title>
+<regnumber>10010</regnumber>
+<classnumber>총무 01238 -10006</classnumber>
+<approvaldate>1999/10/06</approvaldate>
+<operation>
+<date>1999/10/06</date>
+<recipient>다(제외시 -기호사용  예 , -05)</recipient>
+<method>전산망</method>
+<sign>sysop</sign>
+</operation>
+<remark></remark>
+</regitem>
+<regitem>
+<title>전자 문서작성 요령.11111</title>
+<regnumber>10011</regnumber>
+<classnumber>총무 01238 -10007</classnumber>
+<approvaldate>1999/10/06</approvaldate>
+<operation>
+<date>1999/10/06</date>
+<recipient>다(제외시 -기호사용  예 , -05)</recipient>
+<method>전산망</method>
+<sign>sysop</sign>
+</operation>
+<remark></remark>
+</regitem>
+<regitem>
+<title>전자 문서작성 요령.</title>
+<regnumber>10012</regnumber>
+<classnumber>총무 01238 -10008</classnumber>
+<approvaldate>1999/10/06</approvaldate>
+<operation>
+<date>1999/10/06</date>
+<recipient>다(제외시 -기호사용  예 , -05)</recipient>
+<method>전산망</method>
+<sign>sysop</sign>
+</operation>
+<remark></remark>
+</regitem>
+<regitem>
+<title>전자 문서작성 요령.</title>
+<regnumber>10013</regnumber>
+<classnumber>총무 01238 -10009</classnumber>
+<approvaldate>1999/10/06</approvaldate>
+<operation>
+<date>1999/10/06</date>
+<recipient>다(제외시 -기호사용  예 , -05)</recipient>
+<method>전산망</method>
+<sign>sysop</sign>
+</operation>
+<remark></remark>
+</regitem>
+<regitem>
+<title>전자 문서작성 요령.</title>
+<regnumber>10014</regnumber>
+<classnumber>총무 01238 -10010</classnumber>
+<approvaldate>1999/10/06</approvaldate>
+<operation>
+<date>1999/10/06</date>
+<recipient>다(제외시 -기호사용  예 , -05)</recipient>
+<method>전산망</method>
+<sign>sysop</sign>
+</operation>
+<remark></remark>
+</regitem>
+<regitem>
+<title>전자 문서작성 요령.</title>
+<regnumber>10015</regnumber>
+<classnumber>총무 01238 -10011</classnumber>
+<approvaldate>1999/10/02</approvaldate>
+<operation>
+<date>1999/10/06</date>
+<recipient>다(제외시 -기호사용  예 , -05)</recipient>
+<method>전산망</method>
+<sign>sysop</sign>
+</operation>
+<remark></remark>
+</regitem>
+<regitem>
+<title>전자 문서작성 요령.</title>
+<regnumber>10016</regnumber>
+<classnumber>총무 01238 -10012</classnumber>
+<approvaldate>1999/10/06</approvaldate>
+<operation>
+<date>1999/10/06</date>
+<recipient>다(제외시 -기호사용  예 , -05)</recipient>
+<method>전산망</method>
+<sign>sysop</sign>
+</operation>
+<remark></remark>
+</regitem>
+<regitem>
+<title>전자 문서작성 요령.</title>
+<regnumber>10017</regnumber>
+<classnumber>총무 01238 -10013</classnumber>
+<approvaldate>1999/10/06</approvaldate>
+<operation>
+<date>1999/10/06</date>
+<recipient>다(제외시 -기호사용  예 , -05)</recipient>
+<method>전산망</method>
+<sign>sysop</sign>
+</operation>
+<remark></remark>
+</regitem>
+<regitem>
+<title>전자 문서작성 요령.</title>
+<regnumber>10018</regnumber>
+<classnumber>총무 01238 -10014</classnumber>
+<approvaldate>1999/10/06</approvaldate>
+<operation>
+<date>1999/10/06</date>
+<recipient>다(제외시 -기호사용  예 , -05)</recipient>
+<method>전산망</method>
+<sign>sysop</sign>
+</operation>
+<remark></remark>
+</regitem>
+<regitem>
+<title>전자 문서작성 요령.</title>
+<regnumber>10019</regnumber>
+<classnumber>총무 01238 -10015</classnumber>
+<approvaldate>1999/10/06</approvaldate>
+<operation>
+<date>1999/10/06</date>
+<recipient>다(제외시 -기호사용  예 , -05)</recipient>
+<method>전산망</method>
+<sign>sysop</sign>
+</operation>
+<remark></remark>
+</regitem>
+<regitem>
+<title>전자 문서작성 요령.</title>
+<regnumber>10020</regnumber>
+<classnumber>총무 01238 -10016</classnumber>
+<approvaldate>1999/10/06</approvaldate>
+<operation>
+<date>1999/10/06</date>
+<recipient>다(제외시 -기호사용  예 , -05)</recipient>
+<method>전산망</method>
+<sign>sysop</sign>
+</operation>
+<remark></remark>
+</regitem>
+<regitem>
+<title>전자 문서작성 요령.</title>
+<regnumber>10021</regnumber>
+<classnumber>총무 01238 -10017</classnumber>
+<approvaldate>1999/10/06</approvaldate>
+<operation>
+<date>1999/10/06</date>
+<recipient>다(제외시 -기호사용  예 , -05)</recipient>
+<method>전산망</method>
+<sign>sysop</sign>
+</operation>
+<remark></remark>
+</regitem>
+<regitem>
+<title>전자 문서작성 요령.</title>
+<regnumber>10022</regnumber>
+<classnumber>총무 01238 -10018</classnumber>
+<approvaldate>1999/10/06</approvaldate>
+<operation>
+<date>1999/10/06</date>
+<recipient>다(제외시 -기호사용  예 , -05)</recipient>
+<method>전산망</method>
+<sign>sysop</sign>
+</operation>
+<remark></remark>
+</regitem>
+<regitem>
+<title>전자 문서작성 요령.</title>
+<regnumber>10023</regnumber>
+<classnumber>총무 01238 -10019</classnumber>
+<approvaldate>1999/10/06</approvaldate>
+<operation>
+<date>1999/10/06</date>
+<recipient>다(제외시 -기호사용  예 , -05)</recipient>
+<method>전산망</method>
+<sign>sysop</sign>
+</operation>
+<remark></remark>
+</regitem>
+<regitem>
+<title>전자 문서작성 요령.</title>
+<regnumber>10024</regnumber>
+<classnumber>총무 01238 -10020</classnumber>
+<approvaldate>1999/10/06</approvaldate>
+<operation>
+<date>1999/10/06</date>
+<recipient>다(제외시 -기호사용  예 , -05)</recipient>
+<method>전산망</method>
+<sign>sysop</sign>
+</operation>
+<remark></remark>
+</regitem>
+<regitem>
+<title>전자 문서작성 요령.</title>
+<regnumber>10025</regnumber>
+<classnumber>총무 01238 -10021</classnumber>
+<approvaldate>1999/10/06</approvaldate>
+<operation>
+<date>1999/10/06</date>
+<recipient>다(제외시 -기호사용  예 , -05)</recipient>
+<method>전산망</method>
+<sign>sysop</sign>
+</operation>
+<remark></remark>
+</regitem>
+<regitem>
+<title>전자 문서작성 요령.</title>
+<regnumber>10026</regnumber>
+<classnumber>총무 01238 -10022</classnumber>
+<approvaldate>1999/10/06</approvaldate>
+<operation>
+<date>1999/10/06</date>
+<recipient>다(제외시 -기호사용  예 , -05)</recipient>
+<method>전산망</method>
+<sign>sysop</sign>
+</operation>
+<remark></remark>
+</regitem>
+<regitem>
+<title>전자 문서작성 요령.</title>
+<regnumber>10027</regnumber>
+<classnumber>총무 01238 -10023</classnumber>
+<approvaldate>1999/10/06</approvaldate>
+<operation>
+<date>1999/10/06</date>
+<recipient>다(제외시 -기호사용  예 , -05)</recipient>
+<method>전산망</method>
+<sign>sysop</sign>
+</operation>
+<remark></remark>
+</regitem>
+<regitem>
+<title>전자 문서작성 요령.</title>
+<regnumber>10028</regnumber>
+<classnumber>총무 01238 -10024</classnumber>
+<approvaldate>1999/10/06</approvaldate>
+<operation>
+<date>1999/10/06</date>
+<recipient>다(제외시 -기호사용  예 , -05)</recipient>
+<method>전산망</method>
+<sign>sysop</sign>
+</operation>
+<remark></remark>
+</regitem>
+<regitem>
+<title>전자 문서작성 요령.</title>
+<regnumber>10029</regnumber>
+<classnumber>총무 01238 -10025</classnumber>
+<approvaldate>1999/10/06</approvaldate>
+<operation>
+<date>1999/10/06</date>
+<recipient>다(제외시 -기호사용  예 , -05)</recipient>
+<method>전산망</method>
+<sign>sysop</sign>
+</operation>
+<remark></remark>
+</regitem>
+<regitem>
+<title>전자 문서작성 요령.11</title>
+<regnumber>10030</regnumber>
+<classnumber>총무 01238 -10026</classnumber>
+<approvaldate>1999/10/06</approvaldate>
+<operation>
+<date>1999/10/06</date>
+<recipient>다(제외시 -기호사용  예 , -05)</recipient>
+<method>전산망</method>
+<sign>sysop</sign>
+</operation>
+<remark></remark>
+</regitem>
+<regitem>
+<title>전자 문서작성 요령.</title>
+<regnumber>10031</regnumber>
+<classnumber>총무 01238 -10027</classnumber>
+<approvaldate>1999/10/06</approvaldate>
+<operation>
+<date>1999/10/06</date>
+<recipient>다(제외시 -기호사용  예 , -05)</recipient>
+<method>전산망</method>
+<sign>sysop</sign>
+</operation>
+<remark></remark>
+</regitem>
+<regitem>
+<title>전자 문서작성 요령.</title>
+<regnumber>10032</regnumber>
+<classnumber>총무 01238 -10028</classnumber>
+<approvaldate>1999/10/06</approvaldate>
+<operation>
+<date>1999/10/06</date>
+<recipient>다(제외시 -기호사용  예 , -05)</recipient>
+<method>전산망</method>
+<sign>sysop</sign>
+</operation>
+<remark></remark>
+</regitem>
+<regitem>
+<title>전자 문서작성 요령.</title>
+<regnumber>10033</regnumber>
+<classnumber>총무 01238 -10029</classnumber>
+<approvaldate>1999/10/06</approvaldate>
+<operation>
+<date>1999/10/06</date>
+<recipient>다(제외시 -기호사용  예 , -05)</recipient>
+<method>전산망</method>
+<sign>sysop</sign>
+</operation>
+<remark></remark>
+</regitem>
+<regitem>
+<title>전자 문서작성 요령.</title>
+<regnumber>10034</regnumber>
+<classnumber>총무 01238 -10030</classnumber>
+<approvaldate>1999/10/06</approvaldate>
+<operation>
+<date>1999/10/06</date>
+<recipient>다(제외시 -기호사용  예 , -05)</recipient>
+<method>전산망</method>
+<sign>sysop</sign>
+</operation>
+<remark></remark>
+</regitem>
+<regitem>
+<title>전자 문서작성 요령.</title>
+<regnumber>10035</regnumber>
+<classnumber>총무 01238 -10031</classnumber>
+<approvaldate>1999/10/06</approvaldate>
+<operation>
+<date>1999/10/06</date>
+<recipient>다(제외시 -기호사용  예 , -05)</recipient>
+<method>전산망</method>
+<sign>sysop</sign>
+</operation>
+<remark></remark>
+</regitem>
+<regitem>
+<title>전자 문서작성 요령.</title>
+<regnumber>10036</regnumber>
+<classnumber>총무 01238 -10032</classnumber>
+<approvaldate>1999/10/06</approvaldate>
+<operation>
+<date>1999/10/06</date>
+<recipient>다(제외시 -기호사용  예 , -05)</recipient>
+<method>전산망</method>
+<sign>sysop</sign>
+</operation>
+<remark></remark>
+</regitem>
+<regitem>
+<title>전자 문서작성 요령.</title>
+<regnumber>10037</regnumber>
+<classnumber>총무 01238 -10033</classnumber>
+<approvaldate>1999/10/06</approvaldate>
+<operation>
+<date>1999/10/06</date>
+<recipient>다(제외시 -기호사용  예 , -05)</recipient>
+<method>전산망</method>
+<sign>sysop</sign>
+</operation>
+<remark></remark>
+</regitem>
+<regitem>
+<title>전자 문서작성 요령.</title>
+<regnumber>10038</regnumber>
+<classnumber>총무 01238 -10034</classnumber>
+<approvaldate>1999/10/06</approvaldate>
+<operation>
+<date>1999/10/06</date>
+<recipient>다(제외시 -기호사용  예 , -05)</recipient>
+<method>전산망</method>
+<sign>sysop</sign>
+</operation>
+<remark></remark>
+</regitem>
+<regitem>
+<title>전자 문서작성 요령.16</title>
+<regnumber>10039</regnumber>
+<classnumber>총무 01238 -10035</classnumber>
+<approvaldate>1999/10/06</approvaldate>
+<operation>
+<date>1999/10/06</date>
+<recipient>다(제외시 -기호사용  예 , -05)</recipient>
+<method>전산망</method>
+<sign>sysop</sign>
+</operation>
+<remark></remark>
+</regitem>
+<regitem>
+<title>11111111111111</title>
+<regnumber>10040</regnumber>
+<classnumber>총무 01238 -10036</classnumber>
+<approvaldate>1999/10/06</approvaldate>
+<operation>
+<date>1999/10/06</date>
+<recipient>다(제외시 -기호사용  예 , -05)</recipient>
+<method>전산망</method>
+<sign>sysop</sign>
+</operation>
+<remark></remark>
+</regitem>
+<regitem>
+<title>전자 문서작성 요령.</title>
+<regnumber>10041</regnumber>
+<classnumber>총무 01238 -10037</classnumber>
+<approvaldate>1999/10/06</approvaldate>
+<operation>
+<date>1999/10/06</date>
+<recipient>다(제외시 -기호사용  예 , -05)</recipient>
+<method>전산망</method>
+<sign>sysop</sign>
+</operation>
+<remark></remark>
+</regitem>
+<regitem>
+<title>2222222222222222</title>
+<regnumber>10042</regnumber>
+<classnumber>총무 01238 -10038</classnumber>
+<approvaldate>1999/10/06</approvaldate>
+<operation>
+<date>1999/10/06</date>
+<recipient>다(제외시 -기호사용  예 , -05)</recipient>
+<method>전산망</method>
+<sign>sysop</sign>
+</operation>
+<remark></remark>
+</regitem>
+<regitem>
+<title>33333333333333333</title>
+<regnumber>10043</regnumber>
+<classnumber>총무 01238 -10039</classnumber>
+<approvaldate>1999/10/06</approvaldate>
+<operation>
+<date>1999/10/06</date>
+<recipient>다(제외시 -기호사용  예 , -05)</recipient>
+<method>전산망</method>
+<sign>sysop</sign>
+</operation>
+<remark></remark>
+</regitem>
+<regitem>
+<title>5555555555555555555</title>
+<regnumber>10044</regnumber>
+<classnumber>총무 01238 -10040</classnumber>
+<approvaldate>1999/10/06</approvaldate>
+<operation>
+<date>1999/10/06</date>
+<recipient>다(제외시 -기호사용  예 , -05)</recipient>
+<method>전산망</method>
+<sign>sysop</sign>
+</operation>
+<remark></remark>
+</regitem>
+<regitem>
+<title>666666666666666666</title>
+<regnumber>10045</regnumber>
+<classnumber>총무 01238 -10041</classnumber>
+<approvaldate>1999/10/06</approvaldate>
+<operation>
+<date>1999/10/06</date>
+<recipient>다(제외시 -기호사용  예 , -05)</recipient>
+<method>전산망</method>
+<sign>sysop</sign>
+</operation>
+<remark></remark>
+</regitem>
+<regitem>
+<title>전자 문서작성 요령.</title>
+<regnumber>10046</regnumber>
+<classnumber>총무 01238 -10042</classnumber>
+<approvaldate>1999/10/06</approvaldate>
+<operation>
+<date>1999/10/06</date>
+<recipient>다(제외시 -기호사용  예 , -05)</recipient>
+<method>전산망</method>
+<sign>sysop</sign>
+</operation>
+<remark></remark>
+</regitem>
+<regitem>
+<title>9999999999999999999999</title>
+<regnumber>10047</regnumber>
+<classnumber>총무 01238 -10043</classnumber>
+<approvaldate>1999/10/06</approvaldate>
+<operation>
+<date>1999/10/06</date>
+<recipient>다(제외시 -기호사용  예 , -05)</recipient>
+<method>전산망</method>
+<sign>sysop</sign>
+</operation>
+<remark></remark>
+</regitem>
+<regitem>
+<title>00000000000000000</title>
+<regnumber>10048</regnumber>
+<classnumber>총무 01238 -10044</classnumber>
+<approvaldate>1999/10/06</approvaldate>
+<operation>
+<date>1999/10/06</date>
+<recipient>다(제외시 -기호사용  예 , -05)</recipient>
+<method>전산망</method>
+<sign>sysop</sign>
+</operation>
+<remark></remark>
+</regitem>
+<regitem>
+<title>aaaaaaaaaaaaaaaa</title>
+<regnumber>10049</regnumber>
+<classnumber>총무 01238 -10045</classnumber>
+<approvaldate>1999/10/06</approvaldate>
+<operation>
+<date>1999/10/06</date>
+<recipient>다(제외시 -기호사용  예 , -05)</recipient>
+<method>전산망</method>
+<sign>sysop</sign>
+</operation>
+<remark></remark>
+</regitem>
+<regitem>
+<title>BBBBBBBBBBBBBBBBB</title>
+<regnumber>10050</regnumber>
+<classnumber>총무 01238 -10046</classnumber>
+<approvaldate>1999/10/06</approvaldate>
+<operation>
+<date>1999/10/06</date>
+<recipient>다(제외시 -기호사용  예 , -05)</recipient>
+<method>전산망</method>
+<sign>sysop</sign>
+</operation>
+<remark></remark>
+</regitem>
+<regitem>
+<title>CCCCCCCCCCCCCCCCCC</title>
+<regnumber>10051</regnumber>
+<classnumber>총무 01238 -10047</classnumber>
+<approvaldate>1999/10/06</approvaldate>
+<operation>
+<date>1999/10/06</date>
+<recipient>다(제외시 -기호사용  예 , -05)</recipient>
+<method>전산망</method>
+<sign>sysop</sign>
+</operation>
+<remark></remark>
+</regitem>
+<regitem>
+<title>DDDDDDDDDDDDDD</title>
+<regnumber>10052</regnumber>
+<classnumber>총무 01238 -10048</classnumber>
+<approvaldate>1999/10/06</approvaldate>
+<operation>
+<date>1999/10/06</date>
+<recipient>다(제외시 -기호사용  예 , -05)</recipient>
+<method>전산망</method>
+<sign>sysop</sign>
+</operation>
+<remark></remark>
+</regitem>
+<regitem>
+<title>EEEEEEEEEEEEEEEEEE</title>
+<regnumber>10053</regnumber>
+<classnumber>총무 01238 -10049</classnumber>
+<approvaldate>1999/10/06</approvaldate>
+<operation>
+<date>1999/10/06</date>
+<recipient>다(제외시 -기호사용  예 , -05)</recipient>
+<method>전산망</method>
+<sign>sysop</sign>
+</operation>
+<remark></remark>
+</regitem>
+<regitem>
+<title>FFFFFFFFFFFFF</title>
+<regnumber>10054</regnumber>
+<classnumber>총무 01238 -10050</classnumber>
+<approvaldate>1999/10/06</approvaldate>
+<operation>
+<date>1999/10/06</date>
+<recipient>다(제외시 -기호사용  예 , -05)</recipient>
+<method>전산망</method>
+<sign>sysop</sign>
+</operation>
+<remark></remark>
+</regitem>
+<regitem>
+<title>TTTTTTTTTTTTTT</title>
+<regnumber>10055</regnumber>
+<classnumber>총무 01238 -10051</classnumber>
+<approvaldate>1999/10/06</approvaldate>
+<operation>
+<date>1999/10/06</date>
+<recipient>다(제외시 -기호사용  예 , -05)</recipient>
+<method>전산망</method>
+<sign>sysop</sign>
+</operation>
+<remark></remark>
+</regitem>
+<regitem>
+<title>GGGGGGGGGGGGG</title>
+<regnumber>10056</regnumber>
+<classnumber>총무 01238 -10052</classnumber>
+<approvaldate>1999/10/06</approvaldate>
+<operation>
+<date>1999/10/06</date>
+<recipient>다(제외시 -기호사용  예 , -05)</recipient>
+<method>전산망</method>
+<sign>sysop</sign>
+</operation>
+<remark></remark>
+</regitem>
+<regitem>
+<title>ZZZZZZZZZZZZZZ</title>
+<regnumber>10057</regnumber>
+<classnumber>총무 01238 -10053</classnumber>
+<approvaldate>1999/10/06</approvaldate>
+<operation>
+<date>1999/10/06</date>
+<recipient>다(제외시 -기호사용  예 , -05)</recipient>
+<method>전산망</method>
+<sign>sysop</sign>
+</operation>
+<remark></remark>
+</regitem>
+<regitem>
+<title>PPPPPPPPPPPPPPPPSSSSSSSSSS</title>
+<regnumber>10058</regnumber>
+<classnumber>총무 01238 -10054</classnumber>
+<approvaldate>1999/10/06</approvaldate>
+<operation>
+<date>1999/10/06</date>
+<recipient>다(제외시 -기호사용  예 , -05)</recipient>
+<method>전산망</method>
+<sign>sysop</sign>
+</operation>
+<remark></remark>
+</regitem>
+<regitem>
+<title>수신처 마니 지정한 문서</title>
+<regnumber>10059</regnumber>
+<classnumber>총무 01238 -10055</classnumber>
+<approvaldate>1999/10/06</approvaldate>
+<operation>
+<date>1999/10/06</date>
+<recipient>수신처 마니</recipient>
+<method>전산망</method>
+<sign>sysop</sign>
+</operation>
+<remark></remark>
+</regitem>
+<regitem>
+<title>수신처 더 마니마니 지정한거</title>
+<regnumber>10060</regnumber>
+<classnumber>총무 01238 -10056</classnumber>
+<approvaldate>1999/10/06</approvaldate>
+<operation>
+<date>1999/10/06</date>
+<recipient>수신처 진짜 만니</recipient>
+<method>전산망</method>
+<sign>sysop</sign>
+</operation>
+<remark></remark>
+</regitem>
+<regitem>
+<title>HHHHHHHHHHHHHHHHHHHHH</title>
+<regnumber>10061</regnumber>
+<classnumber>총무 01238 -10057</classnumber>
+<approvaldate>1999/10/06</approvaldate>
+<operation>
+<date>1999/10/06</date>
+<recipient>다(제외시 -기호사용  예 , -05)</recipient>
+<method>전산망</method>
+<sign>sysop</sign>
+</operation>
+<remark></remark>
+</regitem>
+<regitem>
+<title>특수고만 지정</title>
+<regnumber>10062</regnumber>
+<classnumber>총무 01238 -10058</classnumber>
+<approvaldate>1999/10/06</approvaldate>
+<operation>
+<date>1999/10/06</date>
+<recipient>다(제외시 -기호사용  예 , -05)</recipient>
+<method>전산망</method>
+<sign>sysop</sign>
+</operation>
+<remark></remark>
+</regitem>
+<regitem>
+<title>수발 테스트</title>
+<regnumber>10063</regnumber>
+<classnumber>교정12410-10059</classnumber>
+<approvaldate>1999/10/07</approvaldate>
+<operation>
+<date>1999/10/07</date>
+<recipient>다(제외시 -기호사용  예 , -05)</recipient>
+<method>전산망</method>
+<sign>sysop</sign>
+</operation>
+<remark></remark>
+</regitem>
+<regitem>
+<title>전자 문서작성 요령.</title>
+<regnumber>10064</regnumber>
+<classnumber>총무 01238 -10060</classnumber>
+<approvaldate>1999/10/07</approvaldate>
+<operation>
+<date>1999/10/07</date>
+<recipient>다(제외시 -기호사용  예 , -05)</recipient>
+<method>전산망</method>
+<sign>sysop</sign>
+</operation>
+<remark></remark>
+</regitem>
+<regitem>
+<title>부서대 부서</title>
+<regnumber>10065</regnumber>
+<classnumber>총무 01238 -10101</classnumber>
+<approvaldate>1999/10/08</approvaldate>
+<operation>
+<date>1999/10/08</date>
+<recipient>다(제외시 -기호사용  예 , -05)</recipient>
+<method>전산망</method>
+<sign>sysop</sign>
+</operation>
+<remark></remark>
+</regitem>
+<regitem>
+<title>전자 문서작성 요령.</title>
+<regnumber>10066</regnumber>
+<classnumber>총무 01238 -1</classnumber>
+<approvaldate>1999/10/11</approvaldate>
+<operation>
+<date>1999/10/11</date>
+<recipient>다(제외시 -기호사용  예 , -05)</recipient>
+<method>전산망</method>
+<sign>sysop</sign>
+</operation>
+<remark></remark>
+</regitem>
+<regitem>
+<title>전자 문서작성 요령.</title>
+<regnumber>10067</regnumber>
+<classnumber>총무 01238 -2</classnumber>
+<approvaldate>1999/10/15</approvaldate>
+<operation>
+<date>1999/10/15</date>
+<recipient>다(제외시 -기호사용  예 , -05)</recipient>
+<method>전산망</method>
+<sign>sysop</sign>
+</operation>
+<remark></remark>
+</regitem>
+<regitem>
+<title>일괄관인 3</title>
+<regnumber>10068</regnumber>
+<classnumber>총무 01238 -1212</classnumber>
+<approvaldate>1999/10/16</approvaldate>
+<operation>
+<date>1999/10/16</date>
+<recipient>다03</recipient>
+<method>전산망</method>
+<sign>sysop</sign>
+</operation>
+<remark></remark>
+</regitem>
+<regitem>
+<title>일괄관인 3</title>
+<regnumber>10069</regnumber>
+<classnumber>총무 01238 -13</classnumber>
+<approvaldate>1999/10/16</approvaldate>
+<operation>
+<date>1999/10/16</date>
+<recipient>다03</recipient>
+<method>전산망</method>
+<sign>sysop</sign>
+</operation>
+<remark></remark>
+</regitem>
+<regitem>
+<title>일괄관인 2</title>
+<regnumber>10070</regnumber>
+<classnumber>총무 01238 -13</classnumber>
+<approvaldate>1999/10/16</approvaldate>
+<operation>
+<date>1999/10/16</date>
+<recipient>부04</recipient>
+<method>전산망</method>
+<sign>sysop</sign>
+</operation>
+<remark></remark>
+</regitem>
+<regitem>
+<title>일괄관인 1</title>
+<regnumber>10071</regnumber>
+<classnumber>총무 01238 -13</classnumber>
+<approvaldate>1999/10/16</approvaldate>
+<operation>
+<date>1999/10/16</date>
+<recipient>부01</recipient>
+<method>전산망</method>
+<sign>sysop</sign>
+</operation>
+<remark></remark>
+</regitem>
+<regitem>
+<title>edu215에서 첨부 발송테스트sfsd</title>
+<regnumber>10072</regnumber>
+<classnumber>전산 12410 -14</classnumber>
+<approvaldate>1999/10/21</approvaldate>
+<operation>
+<date>1999/10/21</date>
+<recipient>외부1-5, 외기1-6sdfs</recipient>
+<method>전산망</method>
+<sign>sysop</sign>
+</operation>
+<remark>수정</remark>
+</regitem>
+<regitem>
+<title>전자관인테스트</title>
+<regnumber>10073</regnumber>
+<classnumber>총무 01238 -15</classnumber>
+<approvaldate>1999/10/25</approvaldate>
+<operation>
+<date>1999/10/25</date>
+<recipient>다01</recipient>
+<method>전산망</method>
+<sign>sysop</sign>
+</operation>
+<remark></remark>
+</regitem>
+<regitem>
+<title>등록번호 처리</title>
+<regnumber>10074</regnumber>
+<classnumber>총무 01238 -24</classnumber>
+<approvaldate>1999/11/01</approvaldate>
+<operation>
+<date>1999/11/01</date>
+<recipient>다(제외시 -기호사용  예 , -05)</recipient>
+<method>전산망</method>
+<sign>sysop</sign>
+</operation>
+<remark></remark>
+</regitem>
+<regitem>
+<title>일괄관인 (test3)</title>
+<regnumber>10075</regnumber>
+<classnumber>총무 01238 -17</classnumber>
+<approvaldate>1999/10/26</approvaldate>
+<operation>
+<date>1999/11/01</date>
+<recipient>다03</recipient>
+<method>전산망</method>
+<sign>sysop</sign>
+</operation>
+<remark></remark>
+</regitem>
+<regitem>
+<title>일괄관인 (test2)</title>
+<regnumber>10076</regnumber>
+<classnumber>총무 01238 -17</classnumber>
+<approvaldate>1999/10/26</approvaldate>
+<operation>
+<date>1999/11/01</date>
+<recipient>부04</recipient>
+<method>전산망</method>
+<sign>sysop</sign>
+</operation>
+<remark></remark>
+</regitem>
+<regitem>
+<title>일반문서 등록 예</title>
+<regnumber>10077</regnumber>
+<classnumber>일반 12355-25</classnumber>
+<approvaldate>1999/11/01</approvaldate>
+<operation>
+<date>1999/11/01</date>
+<recipient>우리집</recipient>
+<method>우  편</method>
+<sign>sysop</sign>
+</operation>
+<remark></remark>
+</regitem>
+<regitem>
+<title>일반 문서 등록예2</title>
+<regnumber>10078</regnumber>
+<classnumber>문서 1231-26</classnumber>
+<approvaldate>1999/11/01</approvaldate>
+<operation>
+<date>1999/11/01</date>
+<recipient>너희집</recipient>
+<method>우  편</method>
+<sign>sysop</sign>
+</operation>
+<remark></remark>
+</regitem>
+<regitem>
+<title>수발결재</title>
+<regnumber>10079</regnumber>
+<classnumber>관리자23456-</classnumber>
+<approvaldate>1999/11/03</approvaldate>
+<operation>
+<date>1999/11/03</date>
+<recipient>내부결재</recipient>
+<method>전산망</method>
+<sign></sign>
+</operation>
+<remark></remark>
+</regitem>
+<regitem>
+<title>수발 테스트동환</title>
+<regnumber>10080</regnumber>
+<classnumber>총무 01238 -27</classnumber>
+<approvaldate>1999/11/03</approvaldate>
+<operation>
+<date>1999/11/03</date>
+<recipient>다(제외시 -기호사용  예 , -05)</recipient>
+<method>전산망</method>
+<sign>sysop</sign>
+</operation>
+<remark></remark>
+</regitem>
+<regitem>
+<title>일괄관인  (test1)</title>
+<regnumber>10081</regnumber>
+<classnumber>총무 01238 -</classnumber>
+<approvaldate>1999/11/13</approvaldate>
+<operation>
+<date>1999/11/13</date>
+<recipient>내부결재</recipient>
+<method>전산망</method>
+<sign></sign>
+</operation>
+<remark></remark>
+</regitem>
+<regitem>
+<title>일괄관인 (test3)</title>
+<regnumber>10082</regnumber>
+<classnumber>총무 01238 -29</classnumber>
+<approvaldate>1999/11/13</approvaldate>
+<operation>
+<date>1999/11/13</date>
+<recipient>내부01-10,고01-20,다01-12</recipient>
+<method>전산망</method>
+<sign>sysop</sign>
+</operation>
+<remark></remark>
+</regitem>
+<regitem>
+<title>전자결재 양식 테스트</title>
+<regnumber>10083</regnumber>
+<classnumber>전산 12323-30</classnumber>
+<approvaldate>1999/11/27</approvaldate>
+<operation>
+<date>1999/11/27</date>
+<recipient>한국정보공학</recipient>
+<method>전산망</method>
+<sign>sysop</sign>
+</operation>
+<remark></remark>
+</regitem>
+<regitem>
+<title>전자결재 양식 테스트</title>
+<regnumber>10084</regnumber>
+<classnumber>전산 12323-31</classnumber>
+<approvaldate>1999/11/27</approvaldate>
+<operation>
+<date>1999/11/27</date>
+<recipient>한국정보공학</recipient>
+<method>전산망</method>
+<sign>sysop</sign>
+</operation>
+<remark></remark>
+</regitem>
+<regitem>
+<title>전자결재 양식 테스트</title>
+<regnumber>10085</regnumber>
+<classnumber>전산 12323-32</classnumber>
+<approvaldate>1999/11/27</approvaldate>
+<operation>
+<date>1999/11/27</date>
+<recipient>한국정보공학</recipient>
+<method>전산망</method>
+<sign>sysop</sign>
+</operation>
+<remark></remark>
+</regitem>
+<regitem>
+<title>전자결재 양식 테스트</title>
+<regnumber>10086</regnumber>
+<classnumber>전산 12323-33</classnumber>
+<approvaldate>1999/11/27</approvaldate>
+<operation>
+<date>1999/11/27</date>
+<recipient>한국정보공학</recipient>
+<method>전산망</method>
+<sign>sysop</sign>
+</operation>
+<remark></remark>
+</regitem>
+<regitem>
+<title>전자 문서작성 요령.</title>
+<regnumber>10087</regnumber>
+<classnumber>총무 01238 -34</classnumber>
+<approvaldate>1999/11/27</approvaldate>
+<operation>
+<date>1999/11/27</date>
+<recipient>다(제외시 -기호사용  예 , -05)</recipient>
+<method>전산망</method>
+<sign>sysop</sign>
+</operation>
+<remark></remark>
+</regitem>
+<regitem>
+<title>전자결재 양식 테스트</title>
+<regnumber>10088</regnumber>
+<classnumber>전산 12323-35</classnumber>
+<approvaldate>1999/11/27</approvaldate>
+<operation>
+<date>1999/11/27</date>
+<recipient>한국정보공학</recipient>
+<method>전산망</method>
+<sign>sysop</sign>
+</operation>
+<remark></remark>
+</regitem>
+<regitem>
+<title>전자결재 양식 테스트</title>
+<regnumber>10089</regnumber>
+<classnumber>전산 12323-36</classnumber>
+<approvaldate>1999/11/27</approvaldate>
+<operation>
+<date>1999/11/27</date>
+<recipient>한국정보공학</recipient>
+<method>전산망</method>
+<sign>sysop</sign>
+</operation>
+<remark></remark>
+</regitem>
+<regitem>
+<title>전자 문서작성 요령.</title>
+<regnumber>10090</regnumber>
+<classnumber>총무 01238 -37</classnumber>
+<approvaldate>1999/11/27</approvaldate>
+<operation>
+<date>1999/11/27</date>
+<recipient>동초32,40,51,동중4,동사중12</recipient>
+<method>전산망</method>
+<sign>sysop</sign>
+</operation>
+<remark></remark>
+</regitem>
+<regitem>
+<title>전자결재 양식 테스트</title>
+<regnumber>10091</regnumber>
+<classnumber>전산 12323-38</classnumber>
+<approvaldate>1999/11/27</approvaldate>
+<operation>
+<date>1999/11/27</date>
+<recipient>한국정보공학</recipient>
+<method>전산망</method>
+<sign>sysop</sign>
+</operation>
+<remark></remark>
+</regitem>
+<regitem>
+<title>전자결재 양식 테스트</title>
+<regnumber>10092</regnumber>
+<classnumber>전산 12323-39</classnumber>
+<approvaldate>1999/11/27</approvaldate>
+<operation>
+<date>1999/11/27</date>
+<recipient>한국정보공학</recipient>
+<method>전산망</method>
+<sign>sysop</sign>
+</operation>
+<remark></remark>
+</regitem>
+<regitem>
+<title>전자결재 양식 테스트</title>
+<regnumber>10093</regnumber>
+<classnumber>전산 12323-40</classnumber>
+<approvaldate>1999/11/27</approvaldate>
+<operation>
+<date>1999/11/27</date>
+<recipient>한국정보공학</recipient>
+<method>전산망</method>
+<sign>sysop</sign>
+</operation>
+<remark></remark>
+</regitem>
+<regitem>
+<title>전자 문서작성 요령.</title>
+<regnumber>10094</regnumber>
+<classnumber>총무 01238 -41</classnumber>
+<approvaldate>1999/12/01</approvaldate>
+<operation>
+<date>1999/12/01</date>
+<recipient>동초32,40,51,동중4,동사중12</recipient>
+<method>전산망</method>
+<sign>sysop</sign>
+</operation>
+<remark></remark>
+</regitem>
+<regitem>
+<title>제4회 전국 학교신문, 교지 지도교사 워크숍 참가자 추천</title>
+<regnumber>10095</regnumber>
+<classnumber>초등 01238-</classnumber>
+<approvaldate>1999/12/01</approvaldate>
+<operation>
+<date>1999/12/01</date>
+<recipient>내부결재</recipient>
+<method>전산망</method>
+<sign></sign>
+</operation>
+<remark></remark>
+</regitem>
+<regitem>
+<title>1안 제4회 전국 학교신문, 교지 지도교사 워크숍 참가자 추천 </title>
+<regnumber>10096</regnumber>
+<classnumber>초등 01238-</classnumber>
+<approvaldate>1999/12/01</approvaldate>
+<operation>
+<date>1999/12/01</date>
+<recipient>내부결재</recipient>
+<method>전산망</method>
+<sign></sign>
+</operation>
+<remark></remark>
+</regitem>
+<regitem>
+<title>전자 문서작성 요령.</title>
+<regnumber>10097</regnumber>
+<classnumber>총무 01238 -5</classnumber>
+<approvaldate>1999/12/02</approvaldate>
+<operation>
+<date>1999/12/02</date>
+<recipient>동초32,40,51,동중4,동사중12</recipient>
+<method>전산망</method>
+<sign>sysop</sign>
+</operation>
+<remark></remark>
+</regitem>
+<regitem>
+<title>aaa</title>
+<regnumber>10098</regnumber>
+<classnumber>총무 01238 -44</classnumber>
+<approvaldate>1999/12/09</approvaldate>
+<operation>
+<date>1999/12/09</date>
+<recipient>다(제외시 -기호사용  예 , -05)</recipient>
+<method>전산망</method>
+<sign>sysop</sign>
+</operation>
+<remark></remark>
+</regitem>
+<regitem>
+<title>11</title>
+<regnumber>10099</regnumber>
+<classnumber>총무 01238 -45</classnumber>
+<approvaldate>1999/12/09</approvaldate>
+<operation>
+<date>1999/12/09</date>
+<recipient>다(제외시 -기호사용  예 , -05)</recipient>
+<method>전산망</method>
+<sign>sysop</sign>
+</operation>
+<remark></remark>
+</regitem>
+<regitem>
+<title>전자 문서작성 요령.</title>
+<regnumber>10100</regnumber>
+<classnumber>총무 01238 -46</classnumber>
+<approvaldate>1999/12/09</approvaldate>
+<operation>
+<date>1999/12/09</date>
+<recipient>김해중,냉동중,생림중,신어중</recipient>
+<method>전산망</method>
+<sign>sysop</sign>
+</operation>
+<remark></remark>
+</regitem>
+<regitem>
+<title>aaa11</title>
+<regnumber>10101</regnumber>
+<classnumber>총무 01238 -47</classnumber>
+<approvaldate>1999/12/09</approvaldate>
+<operation>
+<date>1999/12/09</date>
+<recipient>다(제외시 -기호사용  예 , -05)</recipient>
+<method>전산망</method>
+<sign>sysop</sign>
+</operation>
+<remark></remark>
+</regitem>
+<regitem>
+<title>4rfv</title>
+<regnumber>10102</regnumber>
+<classnumber>총무 01238 -48</classnumber>
+<approvaldate>1999/12/09</approvaldate>
+<operation>
+<date>1999/12/09</date>
+<recipient>다(제외시 -기호사용  예 , -05)</recipient>
+<method>전산망</method>
+<sign>sysop</sign>
+</operation>
+<remark></remark>
+</regitem>
+<regitem>
+<title>1qaz</title>
+<regnumber>10103</regnumber>
+<classnumber>총무 01238 -49</classnumber>
+<approvaldate>1999/12/09</approvaldate>
+<operation>
+<date>1999/12/09</date>
+<recipient>다(제외시 -기호사용  예 , -05)</recipient>
+<method>전산망</method>
+<sign>sysop</sign>
+</operation>
+<remark></remark>
+</regitem>
+<regitem>
+<title>3edc</title>
+<regnumber>10104</regnumber>
+<classnumber>총무 01238 -50</classnumber>
+<approvaldate>1999/12/09</approvaldate>
+<operation>
+<date>1999/12/09</date>
+<recipient>다(제외시 -기호사용  예 , -05)</recipient>
+<method>전산망</method>
+<sign>sysop</sign>
+</operation>
+<remark></remark>
+</regitem>
+<regitem>
+<title>6yhn</title>
+<regnumber>10105</regnumber>
+<classnumber>총무 01238 -51</classnumber>
+<approvaldate>1999/12/09</approvaldate>
+<operation>
+<date>1999/12/09</date>
+<recipient>다(제외시 -기호사용  예 , -05)</recipient>
+<method>전산망</method>
+<sign>sysop</sign>
+</operation>
+<remark></remark>
+</regitem>
+<regitem>
+<title>9olp</title>
+<regnumber>10106</regnumber>
+<classnumber>총무 01238 -52</classnumber>
+<approvaldate>1999/12/09</approvaldate>
+<operation>
+<date>1999/12/09</date>
+<recipient>다(제외시 -기호사용  예 , -05)</recipient>
+<method>전산망</method>
+<sign>sysop</sign>
+</operation>
+<remark></remark>
+</regitem>
+<regitem>
+<title>8ikk</title>
+<regnumber>10107</regnumber>
+<classnumber>총무 01238 -53</classnumber>
+<approvaldate>1999/12/09</approvaldate>
+<operation>
+<date>1999/12/09</date>
+<recipient>다(제외시 -기호사용  예 , -05)</recipient>
+<method>전산망</method>
+<sign>sysop</sign>
+</operation>
+<remark></remark>
+</regitem>
+<regitem>
+<title>7ujm</title>
+<regnumber>10108</regnumber>
+<classnumber>총무 01238 -54</classnumber>
+<approvaldate>1999/12/09</approvaldate>
+<operation>
+<date>1999/12/09</date>
+<recipient>다(제외시 -기호사용  예 , -05)</recipient>
+<method>전산망</method>
+<sign>sysop</sign>
+</operation>
+<remark></remark>
+</regitem>
+<regitem>
+<title>asdfg</title>
+<regnumber>10109</regnumber>
+<classnumber>총무 01238 -55</classnumber>
+<approvaldate>1999/12/09</approvaldate>
+<operation>
+<date>1999/12/09</date>
+<recipient>다(제외시 -기호사용  예 , -05)</recipient>
+<method>전산망</method>
+<sign>sysop</sign>
+</operation>
+<remark></remark>
+</regitem>
+<regitem>
+<title>테스트..</title>
+<regnumber>10110</regnumber>
+<classnumber>총무 01238 -56</classnumber>
+<approvaldate>1999/12/15</approvaldate>
+<operation>
+<date>1999/12/15</date>
+<recipient>다(제외시 -기호사용  예 , -05)</recipient>
+<method>전산망</method>
+<sign>sysop</sign>
+</operation>
+<remark></remark>
+</regitem>
+<regitem>
+<title>sdfsdf</title>
+<regnumber>10111</regnumber>
+<classnumber>asdfs-57</classnumber>
+<approvaldate>1999/12/23</approvaldate>
+<operation>
+<date>1999/12/23</date>
+<recipient>sdfsdf</recipient>
+<method>우  편</method>
+<sign>sysop</sign>
+</operation>
+<remark></remark>
+</regitem>
+</docreglist>

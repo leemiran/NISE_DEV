@@ -1,0 +1,490 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE sqlMap PUBLIC "-//iBATIS.com//DTD SQL Map 2.0//EN" "http://ibatis.apache.org/dtd/sql-map-2.dtd">
+
+<sqlMap namespace="tutorDAO">
+<typeAlias  alias="egovMap" type="egovframework.rte.psl.dataaccess.util.EgovMap"/>
+	
+<!--	강사 목록 총개수 -->
+	<select id="tutorDAO.selectTutorTotCnt" parameterClass="map" remapResults="true" resultClass="int">
+	select count(*) from (
+	<![CDATA[
+		select a.userid                     -- 튜터id 
+	      , a.name                       -- 튜터명 
+	      , c.position_nm                -- 조직 
+	      , a.comp                       -- 튜터소속회사 
+	      , a.dept                       -- 부서명 
+	      , a.email                      -- 이메일 
+	      , a.ismanager                  -- 권한여부 
+	      , decode( a.handphone,null, a.phone, '', a.phone, a.handphone ) handphone  -- 휴대폰번호 
+	      , c.email as mememail 
+	      , nvl( d.fmon, '' ) as fmon 
+	      , nvl( d.tmon, '' ) as tmon 
+	      --, fn_crypt('2', c.pwd, 'knise') as pwd 
+	      , d.gadmin 
+	      --, get_codenm('0102', a.bank) as banknm 
+	      , a.account 
+		 from   tz_tutor a 
+		      , tz_member c 
+		      , tz_manager d 
+	]]>
+	
+	<isNotEmpty property="p_selectvalue">
+			<isEqual property="p_selectType" compareValue="3">
+	<!--		담당과정으로 조회-->
+					, ( 
+				         select distinct x.userid 
+				         from   tz_subjman x 
+				              , tz_subj y 
+				         where  x.subj = y.subj 
+				         and    (upper(x.subj) like upper(#p_selectvalue#) or upper(y.subjnm) like upper(#p_selectvalue#) ) 
+				        ) e 
+			</isEqual>
+		</isNotEmpty>
+		
+		 where  a.userid = c.userid                                                                  
+		 and    a.userid = d.userid(+) 
+		 and    d.gadmin(+) like 'P%' 
+		 
+		<isNotEmpty property="p_selectvalue">
+		
+			<isEqual property="p_selectType" compareValue="1">
+	<!--		// 강사명으로 조회-->
+			 and    upper(a.name) like upper('%' || #p_selectvalue# || '%')             
+			</isEqual>
+			
+			<isEqual property="p_selectType" compareValue="2">
+	<!--		// 이름으로 조회-->
+			 and    upper(a.userid) like upper('%' || #p_selectvalue# || '%') 
+			</isEqual>
+			
+			<isEqual property="p_selectType" compareValue="3">
+	<!--		// 담당과정으로 조회-->
+			 and    a.userid = e.userid 
+			</isEqual>
+			
+			<isEqual property="p_selectType" compareValue="4">
+	<!--		// 전공분야으로 조회-->
+			 and    upper(a.professional) like upper('%' || #p_selectvalue# || '%') 
+			</isEqual>
+		</isNotEmpty>	 
+		)
+		
+		
+	</select>
+<!--	강사 목록 -->
+	<select id="tutorDAO.selectTutorList" parameterClass="map" resultClass="egovMap">
+	select * from (
+	<![CDATA[
+	select rownum as num
+         , userid                     -- 튜터id 
+         , name                       -- 튜터명 
+         , position_nm                -- 조직 
+         , comp                       -- 튜터소속회사 
+         , dept                       -- 부서명 
+         , email                      -- 이메일 
+         , ismanager                  -- 권한여부 
+         , handphone  -- 휴대폰번호 
+         , mememail 
+         , fmon 
+         , tmon 
+         --, pwd 
+         , gadmin 
+        -- , get_codenm('0102', bank) as banknm
+         ,(select codenm from  tz_code where gubun = '0102' and  code  = bank) as banknm 
+         , account
+         from (
+		  select a.userid                     -- 튜터id 
+	      , a.name                       -- 튜터명 
+	      , c.position_nm                -- 조직 
+	      , a.comp                       -- 튜터소속회사 
+	      , a.dept                       -- 부서명 
+	      , a.email                      -- 이메일 
+	      , a.ismanager                  -- 권한여부 
+	      , decode( a.handphone,null, a.phone, '', a.phone, a.handphone ) handphone  -- 휴대폰번호 
+	      , c.email as mememail 
+	      , nvl( d.fmon, '' ) as fmon 
+	      , nvl( d.tmon, '' ) as tmon 
+	      --, fn_crypt('2', c.pwd, 'knise') as pwd 
+	      , d.gadmin 
+	      --, get_codenm('0102', a.bank) as banknm
+	      , a.bank 
+	      , a.account 
+	 from   tz_tutor a 
+	      , tz_member c 
+	      , tz_manager d 
+	]]>
+	
+	<isNotEmpty property="p_selectvalue">
+			<isEqual property="p_selectType" compareValue="3">
+	<!--		담당과정으로 조회-->
+					, ( 
+				         select distinct x.userid 
+				         from   tz_subjman x 
+				              , tz_subj y 
+				         where  x.subj = y.subj 
+				         and    (upper(x.subj) like upper(#p_selectvalue#) or upper(y.subjnm) like upper(#p_selectvalue#) ) 
+				        ) e 
+			</isEqual>
+		</isNotEmpty>
+		
+		
+		 where  a.userid = c.userid                                                                  
+		 and    a.userid = d.userid(+) 
+		 and    d.gadmin(+) like 'P%' 
+		 
+		<isNotEmpty property="p_selectvalue">
+		
+			<isEqual property="p_selectType" compareValue="1">
+	<!--		// 강사명으로 조회-->
+			 and    upper(a.name) like upper('%' || #p_selectvalue# || '%')             
+			</isEqual>
+			
+			<isEqual property="p_selectType" compareValue="2">
+	<!--		// 이름으로 조회-->
+			 and    upper(a.userid) like upper('%' || #p_selectvalue# || '%') 
+			</isEqual>
+			
+			<isEqual property="p_selectType" compareValue="3">
+	<!--		// 담당과정으로 조회-->
+			 and    a.userid = e.userid 
+			</isEqual>
+			
+			<isEqual property="p_selectType" compareValue="4">
+	<!--		// 전공분야으로 조회-->
+			 and    upper(a.professional) like upper('%' || #p_selectvalue# || '%') 
+			</isEqual>
+		</isNotEmpty>	 
+	
+		<isNotEmpty property="search_orderColumn">
+			  order  by $search_orderColumn$ $search_orderType$, a.userid
+	 	</isNotEmpty>
+	    <isEmpty property="search_orderColumn">
+	          order  by a.name, a.userid
+	    </isEmpty>
+	    
+	       )
+	)
+	where 1=1
+	<isNotEmpty property="firstIndex">
+		and num BETWEEN #firstIndex# + 1 AND #firstIndex# + #recordCountPerPage#
+	</isNotEmpty>
+	
+	</select>
+	
+	<!--	강사 중복체크  -->
+	<select id="tutorDAO.selectTutorUserIdCount" parameterClass="map" remapResults="true" resultClass="int">
+	<![CDATA[
+		select count(0) cnt from TZ_TUTOR where userid = #p_userid#
+	]]>
+	</select>
+	
+	
+	
+<!--	강사보기페이지-->
+	<select id="tutorDAO.selectTutorView" parameterClass="map" resultClass="egovMap">
+	SELECT GRCODE,
+       GRCODENM,
+       USERID,
+       NAME,
+      -- PWD,
+       POST1,
+       POST2,
+       ADD1,
+       ADD2,
+       PHONE,
+       HANDPHONE,
+       FAX,
+       EMAIL,
+       DECODE(compcd, null, comp, compcd) as compcd,
+       DECODE(compcd, null, get_compnm(comp), get_compnm(compcd)) as comp,
+       JIK,
+       DEPT,
+       ACADEMIC,
+       MAJOR,
+       ISADD,
+       ISCYBER,
+       ISGUBUNTYPE,
+       ISGUBUN,
+       ISSTATUS,
+       ISTUTOR,
+       CAREERYEAR,
+       LICENSE,
+       CAREER,
+       BOOK,
+       PROFESSIONAL,
+       CHARGE,
+       ISINFO,
+       ETC,
+       PHONE,
+       BIRTH_DATE,
+       INTRO,
+       ISMANAGER,
+       SUBJCLASS,
+       PROFILE,
+       TUTORGUBUN,
+       PRICE,
+       BANK,
+       ACCOUNT,
+       MANAGERCHK,
+       FMON,
+       TMON,
+       GADMIN,
+       GADMINNM
+FROM( 
+	select a.grcode                                                                                          
+			 , nvl((select grcodenm from tz_grcode where grcode = a.grcode),'전체') as grcodenm					
+			 , a.userid                                                                                          
+			 , a.name                                                                                            
+			 --, fn_crypt('2', b.pwd, 'knise') pwd                                                                                             
+			 , a.post1                                                                                           
+			 , a.post2                                                                                           
+			 , a.add1                                                                                            
+			 , a.add2                                                                                            
+			 , a.phone											                                                
+			 , a.handphone												                                        
+			 , a.fax                                                                                             
+			 , b.email											                                                
+			 --, decode(a.compcd, null, b.comp, a.compcd) as compcd
+			 , a.compcd as compcd	                                            
+			 --, decode(a.compcd, null, get_compnm(b.comp), get_compnm(a.compcd)) as comp
+			 , b.comp as comp								
+			 , decode(a.jik, null, b.lvl_nm, decode(a.jik, 'null', '', a.jik)) as jik
+			 , a.dept                                                                                            
+			 , a.academic                                                                                        
+			 , a.major                                                                                           
+			 , a.isadd                                                                                           
+			 , a.iscyber                                                                                         
+			 , a.isgubuntype                                                                                     
+			 , a.isgubun                                                                                         
+			 , a.isstatus                                                                                        
+			 , a.istutor                                                                                         
+			 , a.careeryear                                                                                      
+			 , a.license                                                                                         
+			 , a.career                                                                                          
+			 , a.book                                                                                            
+			 , a.professional                                                                                    
+			 , a.charge                                                                                          
+			 , a.isinfo                                                                                          
+			 , a.etc                                                                                    
+			 , b.birth_date					                                                
+			 , a.intro                                                                                           
+			 , ismanager                                                                                         
+			 , a.subjclass                                                                                    	
+			 , a.profile              																			
+			 , a.tutorgubun             																			
+			 , a.price             																			
+			 , a.bank   		          																			
+			 , a.account             																			
+			 , decode(c.userid, null, 0, 1) as managerchk														
+			 , c.fmon             																				
+			 , c.tmon             																				
+			 , c.gadmin       																					
+			 , d.gadminnm       																					
+		from   tz_tutor a                                                                                        
+			 , tz_member b                                                                                       
+			 , tz_manager c                                                                                      
+			 , tz_gadmin d                                                                                      	
+		where  a.userid = b.userid(+)                                                                         	
+		and    b.userid = c.userid(+)                                                                         	
+		and    c.gadmin = d.gadmin(+)                                                                         	
+		and    c.gadmin(+) like 'P%'                                                                         	
+		and    a.userid =  #p_userid#
+	)	
+	</select>
+	
+<!--	강의과목조회-->
+	<select id="tutorDAO.selectTutorSubjList" parameterClass="map" resultClass="egovMap">
+		select a.subj,b.subjnm 
+		from   tz_subjman a, tz_subj b 
+		where  a.userid = #p_userid#
+		and    a.gadmin like 'P%' 
+		and    a.subj = b.subj
+	</select>
+	
+<!--	강의 이력조회-->
+	<select id="tutorDAO.selectTutorSubjHistoryList" parameterClass="map" resultClass="egovMap">
+		select c.subj 
+			  , c.[year] 
+			  , c.subjnm 
+			  , c.subjseq 
+			  , a.[CLASS] 
+			  , c.edustart 
+			  , c.eduend 
+			  , c.isclosed 
+			  , b.tutorgubun 
+			  , e.edutimes 
+			  , b.price 
+			  , decode(g.jigub1, null, b.price, g.jigub1) jigub1 
+			  , ( 
+				 select count(userid) 
+				 from   tz_student 
+				 where  subj    = a.subj 
+				 and    [year]    = a.[year] 
+				 and    subjseq = a.subjseq 
+				 and    [CLASS]   = a.[CLASS] 
+				) as stucnt 
+			  , decode(g.isjungsan, 'Y', g.inwon 
+			  , ( 
+				 select count(userid) 
+				 from   tz_student 
+				 where  subj    = a.subj 
+				 and    [year]    = a.[year] 
+				 and    subjseq = a.subjseq 
+				 and    [CLASS]   = a.[CLASS] 
+				 and    isgraduated = 'Y' 
+				) 
+				) as grayncnt 
+			  , satisfaction 
+		 from   tz_classtutor a 
+			  , tz_tutor b 
+			  , tz_subjseq c 
+			  , tz_subj e 
+			  , (select subj
+					  , round(avg(distcode7), 1) satisfaction 
+				 from   tz_suleach 
+				 group  by subj) f 
+			  , tz_tutorgrade g 
+		 where  a.tuserid = b.userid 
+		 and    a.subj    = c.subj 
+		 and    a.[year]    = c.[year] 
+		 and    a.subjseq = c.subjseq 
+		 and    c.subj    = e.subj 
+		 and    e.subj    = f.subj(+) 
+		 and    a.tuserid = #p_userid#
+		 and    g.subj(+)    = a.subj 
+		 and    g.[year](+)    = a.[year] 
+		 and    g.subjseq(+) = a.subjseq 
+		 and    g.userid(+) = a.tuserid 
+		 order  by edustart desc
+	</select>
+	
+<!--	강사등록-->
+	<insert id="tutorDAO.insertTutor">
+	<![CDATA[
+		insert into tz_tutor(                  
+				 userid                   
+				,name                     
+				,sex                      
+				,post1                    
+				,post2                    
+				,add1                     
+				,add2                     
+				,phone                    
+				,handphone                
+				,fax                      -- 10
+				,email                    
+				,comp                     
+				,dept                     
+				,jik                      
+				,academic                 
+				,major                    
+				,iscyber                  
+				,isgubun                  
+				,isgubuntype              
+				,license                  -- 20
+				,career                   
+				,book                     
+				,grcode                   
+				,professional             
+				,charge                   
+				,isinfo                   
+				,etc                      
+				,photo                    
+				,indate                   
+				,luserid                  -- 30
+				,ldate                    
+				,photoTerms               
+				,compcd                   
+				,tutorgubun               
+				,intro                    
+				,subjclass                
+				,ismanager                
+			--	,birth_date                    
+	            ,profile                  
+				,bank                     --40
+				,account                  
+				,price                  
+	        )                             
+	values  (#p_userid#, #p_name#, #p_sex#, #p_post1#, #p_post2#, #p_addr#, #p_addr2#, #p_phone#, #p_handphone#, #p_fax# 
+	       , #p_email#, #p_comp#, #p_dept#, #p_jik#, #p_academic#, #p_major#, #p_isCyber#, #p_tutorgubun#, #p_isGubuntype#, #p_license# 
+	       , #p_career#, #p_book#, #grcode#, #p_professional#, #p_charge#, #p_isinfo#, #p_etc#, #p_photo#, to_char(sysdate, 'YYYYMMDD'), #userid# 
+	       , to_char(sysdate, 'YYYYMMDD'), #p_phototerms#, #p_compcd#, #p_tutorgubun#, #p_intro#, #p_subjclass#, #p_manager#, #p_profile#, #p_bank# 
+	       , #p_account# , #p_price#)
+	]]>
+	</insert>
+	
+	
+<!--	강사과정등록-->
+	<insert id="tutorDAO.insertTutorSubj">
+		insert into tz_subjman (
+		   userid
+		 , gadmin
+		 , subj
+		 , luserid
+		 , ldate
+		  )
+	values(
+		   #p_userid#
+		 , #p_gadmin#
+		 , #v_subj#
+		 , #userid#
+		 , to_char(sysdatetime, 'YYYYMMDDHH24MISS')
+		  ) 
+	</insert>
+	
+	
+<!--	강사수정-->
+	<update id="tutorDAO.updateTutor">
+		update                                   	
+		  tz_tutor                        	    
+		set 	                                    
+		  	name  =  #p_name#,                    		        
+			post1  =  #p_post1#,                                
+			post2  =  #p_post2#,                                
+			add1  =  #p_addr#,                                 
+			add2  =  #p_addr2#,                                 
+			phone  =  #p_phone#,                                
+			handphone  =  #p_handphone#,                            
+			email  =  #p_email#,                                
+			comp  =  #p_comp#,                                 
+			dept  =  #p_dept#,                                 
+			jik  =  #p_jik#,                                  
+			intro  =  #p_intro#,                                
+			academic  =  #p_academic#,                             
+			major  =  #p_major#,                                
+			career  =  #p_career#,                               
+			book  =  #p_book#,                                 
+			charge  =  #p_charge#,                               
+			isinfo  =  #p_isinfo#,                               
+			luserid  =  #userid#,                              
+			subjclass  =  #p_subjclass#,                            
+			ismanager  =  #p_manager#,                            
+			ldate  =  to_char(sysdate, 'YYYYMMDD'),     
+			profile  =  #p_profile#,      						
+			isgubun  =  #p_tutorgubun#,      						
+			tutorgubun  =  #p_tutorgubun#,      						
+			bank  =  #p_bank#,  	    						
+			account  =  #p_account#,   	   						
+			professional  =  #p_professional#,   	   					
+			price  =  #p_price#   	   					
+		where                                       
+		  userid   =   #p_userid# 	
+	</update>
+	
+<!--	강사삭제-->
+	<delete id="tutorDAO.deleteTutor">
+		delete from tz_tutor where  userid = #p_userid# 	
+	</delete>
+	
+	
+<!--	강사과정 모두 삭제-->
+	<delete id="tutorDAO.deleteTutorSubj">
+		delete from tz_subjman
+		where  userid = #p_userid# 	
+	</delete>
+</sqlMap>
+
+ 
+
+
+

@@ -1,0 +1,208 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE sqlMap PUBLIC "-//iBATIS.com//DTD SQL Map 2.0//EN" "http://ibatis.apache.org/dtd/sql-map-2.dtd">
+
+<sqlMap namespace="StudyAdminData">
+<typeAlias  alias="egovMap" type="egovframework.rte.psl.dataaccess.util.EgovMap"/>
+
+	<resultMap id="boardResult" class="egovframework.rte.psl.dataaccess.util.EgovMap">
+		<result property="seq"      		column="seq" />
+		<result property="userid"      		column="userid" />
+		<result property="name"      		column="name" />
+		<result property="title"      		column="title" />
+		<result property="fileseq"      	column="fileseq" />
+		<result property="realfile"      	column="realfile" />
+		<result property="content"    		column="content"  jdbcType="CLOB" javaType="java.lang.String"/>
+		<result property="gadmin_value"     column="gadmin_value" />
+		<result property="gadmin"      		column="gadmin" />
+		<result property="position"      	column="position" />
+		<result property="savefile"      	column="savefile" />
+		<result property="cnt"      		column="cnt" />
+		<result property="refseq"      		column="refseq" />
+		<result property="levels"      		column="levels" />
+		<result property="isimport"      	column="isimport" />
+		<result property="delyn"      		column="delyn" />
+		<result property="isopen"      		column="isopen" />
+		<result property="indate"      		column="indate" />
+		<result property="sangdam_gubun"    column="sangdam_gubun" />
+		<result property="sangdam_gubun_name" 	column="sangdam_gubun_name" />
+	</resultMap>
+	
+	<select id="studyAdminDataDAO.selectStudyAdminDataList" parameterClass="map" resultClass="egovMap">
+		select a.course, a.cyear, a.courseseq, a.coursenm, a.subj, a.isclosed, a.subjnm,
+		       a.[year], a.subjseq, a.subjseqgr, a.isonoff, 
+		       to_char(to_date(substr(a.edustart, 1, 8), 'yyyyMMdd'), 'yyyy.MM.dd') as edustart,
+		       to_char(to_date(substr(a.eduend, 1, 8), 'yyyyMMdd'), 'yyyy.MM.dd') as eduend,
+		       (select count(0) from tz_board where tabseq = b.tabseq) as cnt, b.tabseq,
+		       to_number(a.subjseq) as number_subjseq
+		  from vz_scsubjseq a, tz_bds b
+		  
+		  <isNotEmpty property="ses_search_gmonth">
+		  	 ,tz_grseq c		   
+		  </isNotEmpty>
+		
+		 where a.subj = b.subj
+		   and a.[year] = b.[year]
+		   and a.subjseq = b.subjseq
+		   and b.type = 'SD'
+		
+		<isEmpty property="ses_search_gyear">
+		   and a.gyear = to_char(sysdate, 'yyyy')
+		</isEmpty>
+		
+		<isNotEmpty property="ses_search_gyear">
+		   and a.gyear = #ses_search_gyear#
+		</isNotEmpty>
+		<isNotEmpty property="ses_search_grseq">
+		   and a.grseq = #ses_search_grseq#
+		</isNotEmpty>
+		<isNotEmpty property="ses_search_att">
+		   and a.oriupperclass = #ses_search_att#
+		</isNotEmpty>
+		<isNotEmpty property="ses_search_subj">
+		   and a.subj = #ses_search_subj#
+		</isNotEmpty>
+		<isNotEmpty property="ses_search_year">
+		   and a.[year] = #ses_search_year#
+		</isNotEmpty>
+		<isNotEmpty property="ses_search_subjseq">
+		   and a.subjseq = #ses_search_subjseq#
+		</isNotEmpty>
+		
+		  <isNotEmpty property="ses_search_gmonth">		
+		     AND a.gyear = c.gyear
+		     AND  a.grseq = c.grseq  	 
+		  	 AND c.gmonth = #ses_search_gmonth#
+		  </isNotEmpty>
+		  
+		 order by a.[year] desc, a.course, a.cyear, a.courseseq, a.subj, a.subjseqgr, a.subjseq   
+	</select>
+	
+	<select id="studyAdminDataDAO.selectBoardListForAdmin" parameterClass="map" resultClass="egovMap">
+		select a.seq, a.userid, a.name, a.title, count(b.realfile) as upfilecnt,
+		       decode(substr(a.gadmin, 1, 1), 'Z', 'ZZ', 'P', '강사', '운영자') as gadmin,
+		       a.cnt, a.refseq, a.levels, a.[position], isopen, a.isimport,
+		       to_char(to_date(substr(a.indate, 1, 8), 'yyyyMMdd'), 'yyyy.MM.dd') as indate,
+		       max(b.savefile) as savefile, max(b.realfile) as realfile, max(b.fileseq) as fileseq
+		  from tz_board a, tz_boardfile b
+		 where a.tabseq = b.tabseq(+)
+		   and a.seq    = b.seq(+)
+		   and a.tabseq = #p_tabseq#
+		   and a.subj   = #p_subj#
+		   and a.[year]   = #p_year#
+		   and a.subjseq= #p_subjseq#
+		<isNotEmpty property="p_searchtext">
+			<isEqual property="p_search" compareValue="title">		and lower(a.title) like '%'|| lower(#p_searchtext#) ||'%'</isEqual>
+			<isEqual property="p_search" compareValue="content">	and lower(a.content) like '%'|| lower(#p_searchtext#) ||'%'</isEqual>
+			<isEqual property="p_search" compareValue="name">		and lower(a.name) like '%'|| lower(#p_searchtext#) ||'%'</isEqual>
+			<isEqual property="p_search" compareValue="userid">		and lower(a.userid) like '%'|| lower(#p_searchtext#) ||'%'</isEqual>
+			<isEqual property="p_search" compareValue="ldate">		and substr(a.indate) = #p_searchtext#</isEqual>
+		</isNotEmpty>
+		 group by a.seq, a.userid, a.name, a.title, a.indate, a.cnt, a.refseq, a.levels, a.[position], decode(substr(a.gadmin,1,1), 'Z', 'ZZ', 'P', '강사',  '운영자'), isopen, a.isimport
+		 order by a.refseq desc, [position] asc
+	</select>
+	
+	<!-- <select id="studyAdminDataDAO.selectBoardViewData" parameterClass="map" resultMap="boardResult"> -->
+	<select id="studyAdminDataDAO.selectBoardViewData" parameterClass="map" resultClass="egovMap">
+		select a.seq, a.userid, a.name, a.title, b.fileseq, b.realfile, a.content, a.gadmin as gadmin_value,
+		       decode(substr(a.gadmin,1,1), 'Z', 'ZZ', 'P', '강사',  '운영자') gadmin, a.[position],
+		       b.savefile, a.cnt, a.refseq, a.levels, a.isimport,
+		       to_char(to_date(substr(a.indate, 1, 8), 'yyyyMMdd'), 'yyyy.MM.dd') as indate,
+		       (select count(realfile) from TZ_BOARDFILE where tabseq = a.tabseq and seq = a.seq) upfilecnt, 
+		       (
+		       	 select decode(count(0), 0, 'Y', 'N') from tz_board c, tz_board d
+		       	  where c.refseq = d.refseq and d.levels = (c.levels +1) and d.[position] = (c.[position] +1)
+		       	    and c.tabseq = a.tabseq and c.seq = a.seq and c.tabseq = d.tabseq 
+		       ) as delyn,
+		       isopen, a.sangdam_gubun, nvl(c.codenm, '') sangdam_gubun_name
+		  from tz_board a, tz_boardfile b, tz_code c
+		 where a.tabseq = b.tabseq(+)
+		   and a.seq    = b.seq(+)
+		   and a.tabseq = #p_tabseq#
+		   and a.seq	= #p_seq#
+		   and c.gubun(+) = '0047'
+		   and a.sangdam_gubun = c.code(+)
+	</select>
+	
+	<update id="studyAdminDataDAO.updateBoardData">
+		update tz_board
+		   set title 	= #p_title#,
+		       content 	= #p_content:CLOB#,
+		       luserid	= #userid#,
+		       ldate	= to_char(sysdatetime, 'yyyyMMddhh24miss')
+		<isNotEmpty property="p_isimport">
+		       , isimport = 'Y'
+		</isNotEmpty>
+		<isEmpty property="p_isimport">
+		       , isimport = 'N'
+		</isEmpty>
+		 where tabseq = #p_tabseq#
+		   and seq	  = #p_seq#
+	</update>
+	
+	<select id="studyAdminDataDAO.selectMaxBoardseq" parameterClass="map" resultClass="int">
+		select nvl(max(seq), 0)+1 as seq from tz_board where tabseq = #p_tabseq#
+	</select>
+	
+	<insert id="studyAdminDataDAO.insertBoardData">
+		insert into tz_board(
+			tabseq, seq, userid, name, indate, title, content, cnt, refseq, levels, [position], luserid, ldate, gadmin, isimport, subj, [year], subjseq
+		)
+		values(
+			#p_tabseq#,
+			#p_seq#,
+			#userid#,
+			#name#,
+			to_char(sysdatetime, 'yyyyMMddhh24miss'),
+			#p_title#,
+			#p_content:CLOB#,
+			0,
+			#p_seq#,
+			1,
+			1,
+			#userid#,
+			to_char(sysdatetime, 'yyyyMMddhh24miss'),
+			#gadmin#,
+		<isNotEmpty property="p_isimport">
+		    'Y',
+		</isNotEmpty>
+		<isEmpty property="p_isimport">
+		    'N',
+		</isEmpty>
+			#p_subj#,
+			#p_year#,
+			#p_subjseq#
+		)
+		
+	</insert>
+	
+	<delete id="studyAdminDataDAO.deleteBoardFile">
+		delete tz_boardfile where tabseq = #p_tabseq# and seq = #p_seq# and fileseq = #p_fileseq#
+	</delete>
+	
+	<insert id="studyAdminDataDAO.insertBoardFile">
+		insert into tz_boardfile(
+			tabseq, seq, fileseq, realfile, savefile, luserid, ldate
+		)
+		values(
+			#p_tabseq#,
+			#p_seq#,
+			#fileseq#,
+			#originalFileName#,
+			#uploadFileName#,
+			#userid#,
+			to_char(sysdatetime, 'yyyyMMddhh24miss')
+		)
+	</insert>
+	
+	<select id="studyAdminDataDAO.selectMaxFileseq" parameterClass="map" resultClass="int">
+		select nvl(max(fileseq), 0)+1 as seq from tz_boardfile where tabseq = #p_tabseq# and seq = #p_seq#
+	</select>
+	
+	<delete id="studyAdminDataDAO.deleteBoardData">
+		delete tz_board where tabseq = #p_tabseq# and seq = #p_seq#
+	</delete>
+	<delete id="studyAdminDataDAO.deleteBoardAllFile">
+		delete tz_boardfile where tabseq = #p_tabseq# and seq = #p_seq#
+	</delete>
+</sqlMap>
+

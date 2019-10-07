@@ -1,0 +1,888 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE sqlMap PUBLIC "-//iBATIS.com//DTD SQL Map 2.0//EN" "http://ibatis.apache.org/dtd/sql-map-2.dtd">
+
+<sqlMap namespace="MainManage">
+<typeAlias  alias="egovMap" type="egovframework.rte.psl.dataaccess.util.EgovMap"/>
+
+	<select id="MainManageDAO.selectTotalSubSeqList" parameterClass="map" resultClass="egovMap">
+		
+select 
+    '1' as stnum
+    , subj, [year], subjseq, scupperclass, subjnm
+    , isonoff, propstart, propend, edustart, studentlimit
+    , eduend, isclosed, educnt, gradcnt, grseq
+    , Case When educnt > 0 Then 
+        Round(gradcnt * 100 / educnt , 2)
+      Else
+       0.0 
+      End gradper
+    , grseqnm
+ From (
+ select a.subj 
+          , a.[year] 
+          , a.subjseq
+          , a.scupperclass
+          , a.subjnm
+          , a.isonoff
+          , a.propstart
+          , a.propend
+          , a.edustart
+          , a.eduend
+          , a.isclosed
+          , a.studentlimit
+          , a.grseq
+          , nvl((  
+                     select count(distinct aa.userid) 
+                     from   tz_student aa
+                     where  aa.subj = a.subj 
+                     and    aa.[year] = a.[year] 
+                     and    aa.subjseq = a.subjseq 
+                    ), 0) educnt 
+          , nvl((  
+                     select count(distinct aa.userid) 
+                     from   tz_stold aa inner join tz_student bb
+                     on aa.subj=bb.subj and aa.[year]=bb.[year] and aa.subjseq = bb.subjseq  and aa.userid=bb.userid 
+                     where  aa.subj = a.subj 
+                     and    aa.[year] = a.[year] 
+                     and    aa.subjseq = a.subjseq 
+                      and    aa.comp = '1001' 
+                      and     aa.isgraduated = 'Y'
+                    ), 0) gradcnt 
+           ,(select grseqnm 
+            from tz_grseq 
+            where grseq = a.grseq 
+            and gyear = a.[year]) as grseqnm
+     from   vz_scsubjseq a 
+          , tz_grsubj b 
+     where  1=1 
+     and    a.grcode = b.grcode 
+     and    a.subj = b.subjcourse 
+     and    a.grcode = 'N000001'
+        
+     and to_char(sysdatetime, 'YYYYMMDDHH24') Between a.propstart and a.propend
+     <isEqual property="p_gadmin" compareValue="P1">
+     	and	a.subj in (select subj from tz_subjman where userid = #userid# and  gadmin like 'P%')
+     </isEqual>
+     
+     order by a.propend Desc, a.propstart Desc, a.subj, a.subjseq
+   ) 
+   	<![CDATA[
+     Where rownum <= 5
+     ]]>
+		Union All
+		
+select 
+    '2' as stnum
+    , subj, [year], subjseq, scupperclass, subjnm
+    , isonoff, propstart, propend, edustart, studentlimit
+    , eduend, isclosed, educnt, gradcnt, grseq
+    , Case When educnt > 0 Then 
+        Round(gradcnt * 100 / educnt , 2)
+      Else
+       0.0 
+      End gradper
+    , grseqnm
+ From (
+ select a.subj 
+          , a.[year] 
+          , a.subjseq
+          , a.scupperclass
+          , a.subjnm
+          , a.isonoff
+          , a.propstart
+          , a.propend
+          , a.edustart
+          , a.eduend
+          , a.isclosed
+          , a.studentlimit
+          , a.grseq
+          , nvl((  
+                     select count(distinct aa.userid) 
+                     from   tz_student aa
+                     where  aa.subj = a.subj 
+                     and    aa.[year] = a.[year] 
+                     and    aa.subjseq = a.subjseq
+                    ), 0) educnt 
+          , nvl((  
+                     select count(distinct aa.userid) 
+                     from   tz_stold aa inner join tz_student bb
+                     on aa.subj=bb.subj and aa.[year]=bb.[year] and aa.subjseq = bb.subjseq  and aa.userid=bb.userid 
+                     where  aa.subj = a.subj 
+                     and    aa.[year] = a.[year] 
+                     and    aa.subjseq = a.subjseq 
+                      and    aa.comp = '1001' 
+                      and     aa.isgraduated = 'Y'
+                    ), 0) gradcnt 
+          ,(select grseqnm 
+            from tz_grseq 
+            where grseq = a.grseq 
+            and gyear = a.[year]) as grseqnm
+     from   vz_scsubjseq a 
+          , tz_grsubj b 
+     where  1=1 
+     and    a.grcode = b.grcode 
+     and    a.subj = b.subjcourse 
+     and    a.grcode = 'N000001'
+        
+     and to_char(sysdatetime, 'YYYYMMDDHH24') Between a.edustart and a.eduend
+     <isEqual property="p_gadmin" compareValue="P1">
+     	and	a.subj in (select subj from tz_subjman where userid = #userid# and  gadmin like 'P%')
+     </isEqual>
+     
+      order by a.eduend Desc, a.edustart Desc, a.subj, a.subjseq
+   ) 
+   	<![CDATA[
+     Where rownum <= 5
+     ]]>
+   Union All
+   
+   select 
+    '3' as stnum
+    , subj, [year], subjseq, scupperclass, subjnm
+    , isonoff, propstart, propend, edustart, studentlimit
+    , eduend, isclosed, educnt, gradcnt, grseq
+    , Case When educnt > 0 Then 
+        Round(gradcnt * 100 / educnt , 2)
+      Else
+       0.0 
+      End gradper
+    , grseqnm
+ From (
+ select a.subj 
+          , a.[year] 
+          , a.subjseq
+          , a.scupperclass
+          , a.subjnm
+          , a.isonoff
+          , a.propstart
+          , a.propend
+          , a.edustart
+          , a.eduend
+          , a.isclosed
+          , a.studentlimit
+          , a.grseq
+          , nvl((  
+                     select count(distinct aa.userid) 
+                     from   tz_student aa inner join tz_stold bb
+                     on aa.subj=bb.subj and aa.[year]=bb.[year] and aa.subjseq = bb.subjseq  and aa.userid=bb.userid
+                     where  aa.subj = a.subj 
+                     and    aa.[year] = a.[year] 
+                     and    aa.subjseq = a.subjseq 
+                     and    aa.comp = '1001' 
+                     and aa.stustatus = 'Y'
+                    ), 0) educnt 
+          , nvl((  
+                     select count(distinct aa.userid) 
+                     from   tz_stold aa inner join tz_student bb
+                     on aa.subj=bb.subj and aa.[year]=bb.[year] and aa.subjseq = bb.subjseq  and aa.userid=bb.userid 
+                     where  aa.subj = a.subj 
+                     and    aa.[year] = a.[year] 
+                     and    aa.subjseq = a.subjseq 
+                      and    aa.comp = '1001' 
+                      and     aa.isgraduated = 'Y'
+                    ), 0) gradcnt 
+          ,(select grseqnm 
+            from tz_grseq 
+            where grseq = a.grseq 
+            and gyear = a.[year]) as grseqnm
+     from    (
+     			SELECT   *
+          			FROM   (  SELECT   ROWNUM AS rn, a.*
+                  		FROM   (  SELECT   *
+                      		FROM   vz_scsubjseq a
+                     		WHERE       1 = 1
+                         		AND a.grcode = 'N000001'
+                         		AND a.isclosed = 'Y'
+                         		<![CDATA[                         		
+                             		and to_char(sysdatetime, 'YYYYMMDDHH24') > a.eduend
+                             	]]>                         		
+                      			ORDER BY   a.eduend DESC,
+                         		a.edustart DESC,
+                         		a.subj,
+                         		a.subjseq) a
+              	ORDER BY   rn) 
+              	<![CDATA[
+         		WHERE   rn <= 5
+         		]]>
+              ) a  
+          , tz_grsubj b 
+     where  1=1 
+     and    a.grcode = b.grcode 
+     and    a.subj = b.subjcourse 
+     and    a.grcode = 'N000001'
+     and    a.isclosed = 'Y'
+     <![CDATA[
+     and to_char(sysdatetime, 'YYYYMMDDHH24') > a.eduend
+     ]]>
+     <isEqual property="p_gadmin" compareValue="P1">
+     	and	a.subj in (select subj from tz_subjman where userid = #userid# and  gadmin like 'P%')
+     </isEqual> 
+      
+     order by a.eduend Desc, a.edustart Desc, a.subj, a.subjseq
+   ) 
+   	<![CDATA[
+     Where rownum <= 5
+     ]]>
+     
+	</select>
+
+<!--	과정 자료실, 질문방 리스트-->
+	<select id="MainManageDAO.selectPdsBoardList" parameterClass="map" resultClass="egovMap">
+		select 
+		* 
+		from (
+		    select 
+		        bb.type,
+		        aa.subjnm,
+		        aa.subj,
+		        aa.[year],
+		        aa.subjseq,
+		        a.title,
+		        a.tabseq,
+		        a.seq,
+		        a.name, 
+		         aa.grseq,
+		        to_number(aa.subjseq) as subjseqnum,
+		        to_char(to_date(substr(a.indate, 1, 8), 'yyyyMMdd'), 'yyyy.MM.dd') as indate,
+		       count(b.realfile) as upfilecnt,
+        	  (select count(distinct refseq) from tz_board where  tabseq = a.tabseq and subj = aa.subj and [year] = aa.[year] and subjseq = aa.subjseq and refseq = a.seq and <![CDATA[[position] > 1]]> ) as answercnt,
+        	  (select grseqnm from tz_grseq where grseq = aa.grseq and gyear = aa.[year]) as grseqnm
+		          from vz_scsubjseq aa 
+		          inner join tz_bds bb  on aa.subj = bb.subj and aa.[year]=bb.[year] and aa.subjseq=bb.subjseq
+		          inner join tz_board a  on bb.tabseq=a.tabseq
+		          left outer join tz_boardfile b on a.tabseq = b.tabseq and a.seq  = b.seq
+		           where bb.type = 'SQ'
+		           and a.[position] = 1
+		           <isEqual property="p_gadmin" compareValue="P1">
+				   	and	bb.subj in (select subj from tz_subjman where userid = #userid# and  gadmin like 'P%')
+				   </isEqual> 
+		           group by bb.type,
+		            aa.subjnm,
+		            aa.subj,
+		            aa.[year],
+		            aa.subjseq,
+		            a.title,
+		            a.tabseq,
+		            a.seq,
+		            a.name, 
+		            a.indate,
+		            b.realfile,
+		             aa.grseq,
+		            to_number(aa.subjseq) 
+		          order by aa.[year] desc, a.indate desc, a.seq desc
+		) aaaa
+	<![CDATA[
+     Where rownum <= 5
+     ]]>
+		
+	<isNotEqual property="p_gadmin" compareValue="P1">
+		union all
+		select 
+		* 
+		from (
+		    select 
+		        bb.type,
+		        aa.subjnm,
+		        aa.subj,
+		        aa.[year],
+		        aa.subjseq,
+		        a.title,
+		        a.tabseq,
+		        a.seq,
+		         a.name, 
+		          aa.grseq,
+		         to_number(aa.subjseq) as subjseqnum,
+		        to_char(to_date(substr(a.indate, 1, 8), 'yyyyMMdd'), 'yyyy.MM.dd') as indate,
+		         count(b.realfile) as upfilecnt,
+        	  (select count(distinct refseq) from tz_board where  tabseq = a.tabseq and subj = aa.subj and [year] = aa.[year] and subjseq = aa.subjseq and refseq = a.seq and <![CDATA[[position] > 1]]> ) as answercnt,
+        	  (select grseqnm from tz_grseq where grseq = aa.grseq and gyear = aa.[year]) as grseqnm
+		          from vz_scsubjseq aa 
+		          inner join tz_bds bb  on aa.subj = bb.subj and aa.[year]=bb.[year] and aa.subjseq=bb.subjseq
+		          inner join tz_board a  on bb.tabseq=a.tabseq
+		          left outer join tz_boardfile b on a.tabseq = b.tabseq and a.seq  = b.seq
+		           where bb.type = 'SD'
+		           and a.[position] = 1
+		           group by bb.type,
+		            aa.subjnm,
+		            aa.subj,
+		            aa.[year],
+		            aa.subjseq,
+		            a.title,
+		            a.tabseq,
+		            a.seq,
+		            a.name, 
+		            a.indate,
+		            b.realfile,
+		            aa.grseq,
+		            to_number(aa.subjseq) 
+		          order by aa.[year] desc, a.indate desc, a.seq desc
+		) bbbb
+	<![CDATA[
+     Where rownum <= 5
+     ]]>
+	</isNotEqual>
+
+	
+	
+	</select>
+	
+	<!--	연수문의 리스트-->
+	<select id="MainManageDAO.selectQnaBoardList" parameterClass="map" resultClass="egovMap">
+	<![CDATA[	
+		select * from (
+        select rownum as rn, tabseq, seq, userid, name, title, filecnt, gadmin,         
+            indate, cnt, refseq, levels, [position], hasanswer, aname, adate, isopen, gubuna
+          from (
+              select a.tabseq, a.seq seq, a.userid userid, a.name name, a.title title, 0 filecnt, decode(a.gadmin, 'ZZ', 'ZZ', 'P1', '강사',  '운영자') gadmin,         
+            a.indate indate, a.cnt cnt, a.refseq refseq, a.levels levels, a.[position] [position], a.hasanswer, a.aname, a.adate, isopen,
+            a.gubuna     
+            from TZ_CENTER_BOARD a         
+            where 1=1
+                        and a.tabseq  = '1'
+            order by a.refseq desc, [position] asc  
+         )
+        ) 
+        where rownum <= 5
+        union all
+        select * from (
+        select rownum as rn, tabseq, seq, userid, name, title, filecnt, gadmin,         
+            indate, cnt, refseq, levels, [position], hasanswer, aname, adate, isopen, gubuna
+          from (
+              select a.tabseq, a.seq seq, a.userid userid, a.name name, a.title title, 0 filecnt, decode(a.gadmin, 'ZZ', 'ZZ', 'P1', '강사',  '운영자') gadmin,         
+            a.indate indate, a.cnt cnt, a.refseq refseq, a.levels levels, a.[position] [position], a.hasanswer, a.aname, a.adate, isopen,
+            a.gubuna     
+            from TZ_CENTER_BOARD a         
+            where 1=1
+                        and a.tabseq  = '2'
+            order by a.refseq desc, [position] asc  
+         )
+        ) 
+        where rownum <= 5
+        union all
+        select * from (
+        select rownum as rn, tabseq, seq, userid, name, title, filecnt, gadmin,         
+            indate, cnt, refseq, levels, [position], hasanswer, aname, adate, isopen, gubuna
+          from (
+              select a.tabseq, a.seq seq, a.userid userid, a.name name, a.title title, 0 filecnt, decode(a.gadmin, 'ZZ', 'ZZ', 'P1', '강사',  '운영자') gadmin,         
+            a.indate indate, a.cnt cnt, a.refseq refseq, a.levels levels, a.[position] [position], a.hasanswer, a.aname, a.adate, isopen,
+            a.gubuna     
+            from TZ_CENTER_BOARD a         
+            where 1=1
+                        and a.tabseq  = '3'
+            order by a.refseq desc, [position] asc  
+         )
+        ) 
+        where rownum <= 5
+	]]>
+	</select>
+	
+<!--	과정 공지사항리스트-->
+	<select id="MainManageDAO.selectNoticeBoardList" parameterClass="map" resultClass="egovMap">
+	
+	select * from ( 
+
+		select tg.seq,
+		   tg.types,
+		   a.subjnm, a.subj, a.[year], a.subjseq,
+		   to_number(a.subjseq) as subjseqnum,
+		   (select codenm from tz_code where gubun = '0008' and code = tg.types) as typesnm,
+		   to_char(to_date(substr(tg.addate, 1, 8), 'yyyyMMdd'), 'yyyy.MM.dd') as addate,
+		   tg.title,
+		   tg.userid,
+		   tg.adcontent,
+		   tg.cnt,
+		   tg.isimport,
+		   tg.upfile,
+		   tg.realfile,
+		   a.grseq
+		from tz_gong tg 
+		inner join vz_scsubjseq a 
+		on tg.subj = a.subj
+		and tg.[year] = a.[year]
+		and tg.subjseq = a.subjseq
+		
+		order by a.[year] desc, a.ldate desc, tg.addate desc, tg.seq desc
+	) aaaa
+	<![CDATA[
+     Where rownum <= 5
+     ]]>
+	         
+	</select>	
+	
+	<!-- 
+	ID   : MainManageDAO.admYearEduStatus
+	설명 : 당해 연도 운영 현황 데이터 생성
+	수정일			수정자				수정내용
+	==========================
+	유상도			2015.01.30		최초생성
+	--> 
+	<select id="MainManageDAO.admYearEduStatus" parameterClass="map" resultClass="egovMap">
+	<![CDATA[
+			SELECT	/*MainManageDAO.admYearEduStatus*//*당해 연도 운영 현황 데이터 생성*/
+				ROWNUM RN, Z.*
+				,(ROUND(SUM(SUBJ_CHKFINAL) OVER(PARTITION BY UPPERCLASS)/UPPERCLASS_CNT, 4)) AS SUBJ_CHKFINAL_AVG
+				,(ROUND(SUM(CONTENT_DO) OVER(PARTITION BY UPPERCLASS)/UPPERCLASS_CNT, 4)) AS CONTENT_DO_AVG
+				,(ROUND(SUM(PROFESSOR_CONTENT_DO) OVER(PARTITION BY UPPERCLASS)/UPPERCLASS_CNT, 4)) AS PROFESSOR_CONTENT_DO_AVG
+			FROM
+			(
+				SELECT
+				     [year]
+				    ,LAG(UPPERCLASS) OVER(ORDER BY DECODE(UPPERCLASS,'PRF', 1, 'EXT', 2, 'PAR', 3), TO_NUMBER(SUBJSEQ), TO_NUMBER(GRSEQ)) UPPERCLASS_LAG
+				    ,UPPERCLASS
+				    ,LEAD(UPPERCLASS) OVER(ORDER BY DECODE(UPPERCLASS,'PRF', 1, 'EXT', 2, 'PAR', 3), TO_NUMBER(SUBJSEQ), TO_NUMBER(GRSEQ)) UPPERCLASS_LEAD
+				    ,UPPERCLASS_NM
+				    ,ISCHARGE       /*종별코드*/
+				    ,ISCHARGE_NM/*종별명*/
+				    ,SUBJ
+				    ,SUBJSEQ
+				    ,(CASE WHEN SUBJ_CNT = 2 THEN REPLACE(SUBJ_NM,'2','1,2') 
+				           WHEN SUBJ_CNT = 3 THEN REPLACE(SUBJ_NM,'3','1,2,3') 
+				      ELSE SUBJ_NM END
+				      ) SUBJ_NM
+				    ,SUBJ_CNT
+				    ,GRSEQ
+				    ,TO_NUMBER(SUBJSEQ) AS SUBJ_SEQ
+				    ,GIGUBUN
+				    ,GRSEQNM_GUBUN
+				    ,GRSEQNM					/*교육기수*/
+				    ,STUDENTLIMIT			/*정원*/
+				    , '0' AS PLAN_CNT 		/*계획*/
+				    ,CHKFINAL_CNT			/*승인인원*/
+				    ,GRADUATED_CNT			/*실적(수료)인원*/
+				    ,(CASE WHEN GRADUATED_CNT <> '0' AND CHKFINAL_CNT <> '0' THEN (ROUND(GRADUATED_CNT/CHKFINAL_CNT, 3)*100) ELSE '0' END) AS SUBJ_CHKFINAL
+				    ,'0' AS SUBJ_LIMIT
+				    ,'0' AS SUBJ_COMPLET
+				    --,GET_SULMUN(SUBJ,[year], SUBJSEQ,GRSEQ, '10','1','1') AS CONTENT_DO
+                    , CONTENT_DO
+    				--,GET_SULMUN(SUBJ,[year], SUBJSEQ,GRSEQ, '10','5','2') AS PROFESSOR_CONTENT_DO
+                    ,PROFESSOR_CONTENT_DO  
+				    ,BIYONG
+				    ,TYPE_OB_CNT			/*교육청인원*/
+				    ,TYPE_OB_AMOUNT		/*교육청수입액*/
+				    ,AMOUNT					/*수입액*/
+				    ,'0' AS EDUCATION_INSTI /*교육청수입*/
+    				,'0' AS INCOME_AMOUNT /*수입*/
+				    ,SUBSTR(PROPSTART, 5, 2)||'.'||SUBSTR(PROPSTART, 7, 2) 	AS PROPSTART		/*수강신청시작일자*/
+				    ,SUBSTR(PROPEND, 5, 2)||'.'||SUBSTR(PROPEND, 7, 2) 			AS PROPEND			/*수강신청종료일*/
+				    ,SUBSTR(EDUSTART, 5, 2)||'.'||SUBSTR(EDUSTART, 7, 2) 		AS EDUSTART			/*교육시작일*/
+				    ,SUBSTR(EDUEND, 5, 2)||'.'||SUBSTR(EDUEND, 7, 2) 				AS EDUEND      		/*교육종료*/
+				     --,TO_CHAR(TO_DATETIME(SUBSTR(PROPSTART,1, 8)), 'DY') 			AS PROPSTART_DY
+				   , CASE WHEN dayofweek(SUBSTR(NVL(PROPSTART,''),1, 8)) = 1  THEN '일'
+                   WHEN dayofweek(SUBSTR(NVL(PROPSTART,''),1, 8)) = 2  THEN '월'
+                   WHEN dayofweek(SUBSTR(NVL(PROPSTART,''),1, 8)) = 3  THEN '화'                   
+                   WHEN dayofweek(SUBSTR(NVL(PROPSTART,''),1, 8)) = 4  THEN '수'                                      
+                   WHEN dayofweek(SUBSTR(NVL(PROPSTART,''),1, 8)) = 5  THEN '목'                                                         
+                   WHEN dayofweek(SUBSTR(NVL(PROPSTART,''),1, 8)) = 6  THEN '금'                 
+                   WHEN dayofweek(SUBSTR(NVL(PROPSTART,''),1, 8)) = 6  THEN '토'                 
+                   ELSE ''
+                  END PROPSTART_DY
+				 --   ,TO_CHAR(TO_DATE(SUBSTR(PROPEND,1, 8)), 'DY') 				AS PROPEND_DY
+				  , CASE WHEN dayofweek(SUBSTR(NVL(PROPEND,''),1, 8)) = 1  THEN '일'
+                   WHEN dayofweek(SUBSTR(NVL(PROPEND,''),1, 8)) = 2  THEN '월'
+                   WHEN dayofweek(SUBSTR(NVL(PROPEND,''),1, 8)) = 3  THEN '화'                   
+                   WHEN dayofweek(SUBSTR(NVL(PROPEND,''),1, 8)) = 4  THEN '수'                                      
+                   WHEN dayofweek(SUBSTR(NVL(PROPEND,''),1, 8)) = 5  THEN '목'                                                         
+                   WHEN dayofweek(SUBSTR(NVL(PROPEND,''),1, 8)) = 6  THEN '금'                 
+                   WHEN dayofweek(SUBSTR(NVL(PROPEND,''),1, 8)) = 6  THEN '토'                 
+                   ELSE ''
+                  END PROPEND_DY
+				  --  ,TO_CHAR(TO_DATE(SUBSTR(EDUSTART,1, 8)), 'DY') 				AS EDUSTART_DY
+				   , CASE WHEN dayofweek(SUBSTR(NVL(EDUSTART,''),1, 8)) = 1  THEN '일'
+                   WHEN dayofweek(SUBSTR(NVL(EDUSTART,''),1, 8)) = 2  THEN '월'
+                   WHEN dayofweek(SUBSTR(NVL(EDUSTART,''),1, 8)) = 3  THEN '화'                   
+                   WHEN dayofweek(SUBSTR(NVL(EDUSTART,''),1, 8)) = 4  THEN '수'                                      
+                   WHEN dayofweek(SUBSTR(NVL(EDUSTART,''),1, 8)) = 5  THEN '목'                                                         
+                   WHEN dayofweek(SUBSTR(NVL(EDUSTART,''),1, 8)) = 6  THEN '금'                 
+                   WHEN dayofweek(SUBSTR(NVL(EDUSTART,''),1, 8)) = 6  THEN '토'                 
+                   ELSE ''
+                  END EDUSTART_DY
+				  --  ,TO_CHAR(TO_DATE(SUBSTR(EDUEND,1, 8)), 'DY') 					AS EDUEND_DY
+				   , CASE WHEN dayofweek(SUBSTR(NVL(EDUEND,''),1, 8)) = 1  THEN '일'
+                   WHEN dayofweek(SUBSTR(NVL(EDUEND,''),1, 8)) = 2  THEN '월'
+                   WHEN dayofweek(SUBSTR(NVL(EDUEND,''),1, 8)) = 3  THEN '화'                   
+                   WHEN dayofweek(SUBSTR(NVL(EDUEND,''),1, 8)) = 4  THEN '수'                                      
+                   WHEN dayofweek(SUBSTR(NVL(EDUEND,''),1, 8)) = 5  THEN '목'                                                         
+                   WHEN dayofweek(SUBSTR(NVL(EDUEND,''),1, 8)) = 6  THEN '금'                 
+                   WHEN dayofweek(SUBSTR(NVL(EDUEND,''),1, 8)) = 6  THEN '토'                 
+                   ELSE ''
+                  END EDUEND_DY
+				    ,EDUTIMES					/*시간*/
+				    ,EDUMANS 					/*연수대상*/
+				    , '0' 	AS PROPO_CNT    /*신청인원*/
+				    , '0' 	AS GROUP_CNT   	/*단체신청내역*/
+				     , '0' AS GROUP_TOTAL   /*단체신청인원*/
+				    , '0' 	AS PRESENT_CNT	/*제출인원*/
+				    ,NORMAL_PRO_CNT 		/*일반수강인원*/
+				    ,GROUP_PRO_TOTTAL
+				    ,GROUP_PRO_CNT			/*단체신청인원*/
+				    ,COUNT(1) OVER(PARTITION BY UPPERCLASS) 							AS UPPERCLASS_CNT
+				    ,COUNT(1) OVER(PARTITION BY ISCHARGE) 								AS ISCHARGE_CNT
+				    ,SUM(case when GRADUATED_CNT <> '0' THEN 1 ELSE 0 END) OVER(PARTITION BY ISCHARGE) AS SUBJ_CHKFINAL_CNT
+				    ,SUM(CHKFINAL_CNT) OVER(PARTITION BY UPPERCLASS) 			AS CHKFINAL_TOTAL
+				    ,SUM(GRADUATED_CNT) OVER(PARTITION BY UPPERCLASS) 		AS GRADUATED_TOTAL
+				    ,SUM(NORMAL_PRO_CNT) OVER(PARTITION BY UPPERCLASS) 		AS NORMAL_PRO_TOTAL
+				     ,SUM(GROUP_PRO_TOTTAL) OVER(PARTITION BY UPPERCLASS) 	AS GROUP_PRO_TOTAL_CNT
+				    ,ALL_TOTAL_CNT
+				FROM
+				    (
+					    SELECT 
+					     X0.[year]
+					    ,X0.UPPERCLASS
+					    ,MAX(X0.UPPERCLASS_NM) 		AS UPPERCLASS_NM
+					    ,MAX(X0.ISCHARGE) 					AS ISCHARGE 
+					    ,MAX(X0.ISCHARGE_NM) 			AS ISCHARGE_NM  /*종별명*/
+					    ,MAX(X0.SUBJ) AS SUBJ
+					    ,MAX(REPLACE(X0.SUBJ_NM,X0.[year]||'-','')) AS SUBJ_NM
+					    ,COUNT(1) 								AS SUBJ_CNT
+					    ,X0.GRSEQ
+					    ,X0.SUBJSEQ
+                                            ,MAX(X0.CONTENT_DO) AS CONTENT_DO
+					    ,MAX(PROFESSOR_CONTENT_DO) AS PROFESSOR_CONTENT_DO
+					    ,MAX(SUBSTR(X0.GRSEQNM, 0, 1)) AS GRSEQNM_GUBUN
+					    ,MAX(CASE WHEN SUBSTR(X0.GRSEQNM, 0, 1) <> '교' AND SUBSTR(X0.GRSEQNM, 0, 1) <> '보' THEN SUBSTR(X0.GRSEQNM, 0, 1)||TO_NUMBER(SUBJSEQ) ELSE TO_CHAR(TO_NUMBER(SUBJSEQ)) END) AS GIGUBUN
+					    ,MAX(X0.GRSEQNM) 					AS GRSEQNM /*교육기수*/
+					    ,MAX(X0.STUDENTLIMIT) 			AS STUDENTLIMIT /*계획인원(정원)*/
+					    ,MAX(X0.CHKFINAL_CNT) 			AS CHKFINAL_CNT /*승인인원*/
+					    ,MAX(X0.GRADUATED_CNT) 		AS GRADUATED_CNT /*실적(수료)인원*/
+					    ,MAX(X0.BIYONG) 					AS BIYONG
+					    ,MAX(X0.TYPE_OB_CNT) 			AS TYPE_OB_CNT /*교육청인원*/
+					    ,MAX(X0.TYPE_OB_CNT * X0.BIYONG) AS TYPE_OB_AMOUNT /*교육청수입액*/
+					    ,MAX(X0.GRADUATED_CNT * X0.BIYONG) AS AMOUNT /*수입액*/
+					    ,MIN(X0.PROPSTART) 				AS PROPSTART /*수강신청시작일자*/
+					    ,MAX(X0.PROPEND) 					AS PROPEND /*수강신청종료일*/
+					    ,MIN(X0.EDUSTART) 					AS EDUSTART/*교육시작일*/
+					    ,MAX(X0.EDUEND)  					AS EDUEND/*교육종료*/
+					    ,MAX(X0.EDUTIMES) 				AS EDUTIMES /*시간*/
+					    ,MAX(X0.EDUMANS) 					AS EDUMANS /*연수대상*/
+					    ,MAX(X0.NORMAL_PRO_CNT) 		AS NORMAL_PRO_CNT /*일반수강인원*/
+					    ,MAX(X0.GROUP_PRO_TOTTAL) 	AS GROUP_PRO_TOTTAL
+					    ,MAX(X0.GROUP_PRO_CNT) 		AS GROUP_PRO_CNT/*단체신청인원*/
+--	수정				    ,COUNT(1) OVER() 					AS ALL_TOTAL_CNT
+					    ,COUNT(1)  					AS ALL_TOTAL_CNT
+					    FROM
+					    (
+					    SELECT 
+						 [YEAR],
+						       UPPERCLASS,
+						       UPPERCLASS_NM,
+						       ISCHARGE,
+						       ISCHARGE_NM,
+						       SUBJ,
+						       SUBJ_NM,
+						       GRSEQ,
+						       SUBJSEQ,
+						       GRSEQNM,
+						       STUDENTLIMIT,
+						       CHKFINAL_CNT,
+						       TYPE_OB_CNT,
+                                                       GET_SULMUN(SUBJ, [year], SUBJSEQ, GRSEQ, '10','1','1')   AS CONTENT_DO,
+						       GET_SULMUN(SUBJ,[year], SUBJSEQ,GRSEQ, '10','5','2') AS PROFESSOR_CONTENT_DO,
+							   F_GRSEQ_COUNT([year],SUBJSEQ,GRSEQ) AS GRADUATED_CNT,
+						       BIYONG,
+						       PROPSTART,
+						       PROPEND,
+						       EDUSTART,
+						       EDUEND,
+						       EDUTIMES,
+						       EDUMANS,
+						       NORMAL_PRO_CNT,
+						       GROUP_PRO_TOTTAL,
+						       F_DEPT_NAMES_COUNT([year], SUBJ, SUBJSEQ,GRSEQ, 'OB') AS GROUP_PRO_CNT
+						FROM (  
+						    SELECT   B.[year], 
+						            A.UPPERCLASS,
+							            (SELECT 
+							                CLASSNAME
+							            FROM TZ_SUBJATT
+							            WHERE MIDDLECLASS = '000'
+							            AND LOWERCLASS = '000'
+							            AND USE_YN = 'Y'
+							            AND UPPERCLASS = A.UPPERCLASS) AS UPPERCLASS_NM,
+						            B.ISCHARGE,
+						            (CASE WHEN B.ISCHARGE = 'C' THEN '정규' 
+						                  WHEN B.ISCHARGE = 'S' THEN '특별'
+						                  ELSE '무료과정'
+						                  END) AS ISCHARGE_NM,
+						            A.SUBJ, 
+						            REPLACE(REPLACE(A.SUBJNM, '「',''),'」','') AS SUBJ_NM,
+						            B.GRSEQ,
+						            B.SUBJSEQ,
+						            D.GRSEQNM, 
+						            B.STUDENTLIMIT,
+						            (	SELECT COUNT(1) FROM TZ_PROPOSE 
+							            WHERE [year] 	= B.[year] 
+							            AND SUBJ 		= A.SUBJ 
+							            AND SUBJSEQ 	= B.SUBJSEQ 
+							            AND CHKFINAL = 'Y'         
+						            ) AS CHKFINAL_CNT,
+						            (SELECT COUNT(1) 
+						                FROM TZ_STOLD A0, 
+                                                                     PA_PAYMENT PA
+						                WHERE A0.[year] = B.[year]
+						                AND A0.SUBJ = B.SUBJ    -- 수정
+--	수정					                    AND A0.SUBJ IN (
+--	수정					                                              SELECT SUBJ 
+--	수정					                                               FROM TZ_SUBJSEQ
+--	수정					                                             WHERE [year] = B.[year]
+--	수정					                                                AND SUBJSEQ = B.SUBJSEQ 
+--	수정					                                                AND GRSEQ = B.GRSEQ
+--	수정					                         )
+						                AND A0.SUBJSEQ 			= B.SUBJSEQ  
+						                AND A0.ISGRADUATED 	= 'Y' 
+						                AND PA.[year] 				= A0.[year]
+						                AND PA.LECCODE 			= A0.SUBJ
+						                AND PA.LECNUMB 		= A0.SUBJSEQ
+						                AND PA.USERID 			= A0.USERID
+						                AND PA.TYPE 				= 'OB'
+                                                                USING INDEX idx_pa_payment_leccode_year_lecnumb_userid_type   -- 수정
+						            ) AS TYPE_OB_CNT,					                  
+						          -- F_GRSEQ_COUNT(B.[year],B.SUBJSEQ,B.GRSEQ) AS GRADUATED_CNT,
+						            A.BIYONG,
+						            B.PROPSTART,
+						            B.PROPEND,
+						            B.EDUSTART,
+						            B.EDUEND,
+						            /*
+						            TO_CHAR(TO_DATE(SUBSTR(B.PROPSTART, 1, 8), 'yyyy.MM.dd'), 'yyyy.MM.dd') 		AS PROPSTART,
+						            TO_CHAR(TO_DATE(SUBSTR(B.PROPEND, 1, 8), 'yyyy.MM.dd'), 'yyyy.MM.dd') 			AS PROPEND,
+						            TO_CHAR(TO_DATE(SUBSTR(B.EDUSTART, 1, 8), 'yyyy.MM.dd'), 'yyyy.MM.dd') 		AS EDUSTART,
+						            TO_CHAR(TO_DATE(SUBSTR(B.EDUEND, 1, 8), 'yyyy.MM.dd'), 'yyyy.MM.dd') 			AS EDUEND,
+						            */
+						            A.EDUTIMES,
+						            A.EDUMANS,
+						            (SELECT COUNT(1) FROM TZ_PROPOSE A1 WHERE A1.[year] = B.[year] AND A1.SUBJ = A.SUBJ AND A1.SUBJSEQ = B.SUBJSEQ AND A1.CHKFINAL = 'Y' 
+						                    AND (SELECT TRIM(TYPE) FROM PA_PAYMENT PA  WHERE PA.ORDER_ID = A1.ORDER_ID AND A1.USERID=PA.USERID AND PA.USEYN='Y')  <> 'OB'
+						                    )  AS NORMAL_PRO_CNT,
+						            (SELECT COUNT(1) FROM TZ_PROPOSE A1 WHERE A1.[year] = B.[year] AND A1.SUBJ = A.SUBJ AND A1.SUBJSEQ = B.SUBJSEQ AND A1.CHKFINAL = 'Y' 
+						                    AND (SELECT TRIM(TYPE) FROM PA_PAYMENT PA  WHERE PA.ORDER_ID = A1.ORDER_ID AND A1.USERID=PA.USERID AND PA.USEYN='Y')  = 'OB'
+						                    )  AS GROUP_PRO_TOTTAL        
+						            --,F_DEPT_NAMES_COUNT(B.[year], A.SUBJ, B.SUBJSEQ,B.GRSEQ, 'OB') AS GROUP_PRO_CNT
+						    FROM    TZ_SUBJSEQ B 
+						                INNER JOIN TZ_SUBJ A ON  A.SUBJ 	= B.SUBJ
+						          --  	INNER JOIN TZ_SUBJSEQ B ON  A.SUBJ 	= B.SUBJ
+						            	LEFT OUTER JOIN TZ_GRSUBJ C ON B.SUBJ = C.SUBJCOURSE AND B.GRCODE = C.GRCODE
+						            	LEFT OUTER JOIN TZ_GRSEQ D ON B.[year] = D.GYEAR AND B.GRSEQ = D.GRSEQ
+						    WHERE 1 = 1
+						    AND B.GRCODE 	= 'N000001'
+						    AND A.ISUSE 		= 'Y'						    
+						    AND B.[year] 		= #ses_search_gyear#
+						    and b.isyearedustatus = 'Y' 
+						    ORDER BY A.UPPERCLASS ,TO_NUMBER(B.SUBJSEQ)
+							)   	 
+					    ) X0        
+				    WHERE X0.UPPERCLASS LIKE '%'||#ses_search_att#||'%'
+				    /*AND SUBSTR(X0.GRSEQNM,0,1) IN ('교','보','기','학')*/
+				    GROUP BY X0.[year],X0.UPPERCLASS, X0.GRSEQ, X0.SUBJSEQ
+				    )Y
+		/*ORDER BY [year], DECODE(GRSEQNM_GUBUN,'교', 1, '보', 2, '학', 3, '기', 4), TO_NUMBER(SUBJSEQ), GRSEQ*/
+		ORDER BY DECODE(Y.UPPERCLASS,'PRF', 1, 'EXT', 2, 'PAR', 3), TO_NUMBER(Y.SUBJSEQ), TO_NUMBER(Y.GRSEQ)
+		) Z
+		ORDER BY DECODE(UPPERCLASS,'PRF', 1, 'EXT', 2, 'PAR', 3), TO_NUMBER(SUBJSEQ), TO_NUMBER(GRSEQ)
+     ]]>	         
+	</select> 
+	
+	<!-- 
+	ID   : MainManageDAO.admYearEduStatusList
+	설명 : 당해 연도 운영 현황 내역 조회
+	수정일			수정자				수정내용
+	==========================
+	유상도			2015.01.30		최초생성
+	-->
+	<select id="MainManageDAO.admYearEduStatusList" parameterClass="map" resultClass="egovMap">
+	<![CDATA[
+			SELECT ROWNUM RN,
+			Z.*
+			--,TO_CHAR((ROUND(SUM(SUBJ_CHKFINAL) OVER(PARTITION BY UPPERCLASS)/UPPERCLASS_CNT, 4)),'FM900.0') 				AS SUBJ_CHKFINAL_AVG
+			,(ROUND(SUM(SUBJ_CHKFINAL) OVER(PARTITION BY UPPERCLASS)/UPPERCLASS_CNT, 4)) 				AS SUBJ_CHKFINAL_AVG
+			--,TO_CHAR((ROUND(SUM(SUBJ_PLAN) OVER(PARTITION BY UPPERCLASS)/UPPERCLASS_CNT, 4)),'FM900.0') 						AS SUBJ_PLAN_AVG
+			,(ROUND(SUM(SUBJ_PLAN) OVER(PARTITION BY UPPERCLASS)/UPPERCLASS_CNT, 4)) 						AS SUBJ_PLAN_AVG
+			--,TO_CHAR((ROUND(SUM(CONTENT_DO) OVER(PARTITION BY UPPERCLASS)/UPPERCLASS_CNT, 4)),'FM900.0') 					AS CONTENT_DO_AVG
+			,(ROUND(SUM(CONTENT_DO) OVER(PARTITION BY UPPERCLASS)/UPPERCLASS_CNT, 4)) 					AS CONTENT_DO_AVG
+			--,TO_CHAR((ROUND(SUM(PROFESSOR_CONTENT_DO) OVER(PARTITION BY UPPERCLASS)/UPPERCLASS_CNT, 4)),'FM900.0') 	AS PROFESSOR_CONTENT_DO_AVG
+			,(ROUND(SUM(PROFESSOR_CONTENT_DO) OVER(PARTITION BY UPPERCLASS)/UPPERCLASS_CNT, 4)) 	AS PROFESSOR_CONTENT_DO_AVG
+			FROM
+			(
+				SELECT	
+					A.[year], 									/*년도*/
+					LAG(UPPERCLASS) OVER(ORDER BY DECODE(UPPERCLASS,'PRF', 1, 'EXT', 2, 'PAR', 3), TO_NUMBER(SUBJ_SEQ), TO_NUMBER(GRSEQ)) UPPERCLASS_LAG,
+				    A.UPPERCLASS, 						/*구분*/
+					    (SELECT 
+		                     CLASSNAME
+		                 FROM TZ_SUBJATT
+		                 WHERE MIDDLECLASS = '000'
+		                 AND LOWERCLASS = '000'
+		                 AND USE_YN = 'Y'
+		                 AND UPPERCLASS = A.UPPERCLASS
+		            ) AS UPPERCLASS_NM,                        /*구분명*/
+				    --LEAD(UPPERCLASS) OVER(ORDER BY DECODE(UPPERCLASS,'PRF', 1, 'EXT', 2, 'PAR', 3), TO_NUMBER(SUBJ_SEQ), TO_NUMBER(GRSEQ)) UPPERCLASS_LEAD,
+				    LEAD(UPPERCLASS) OVER(ORDER BY UPPERCLASS, TO_NUMBER(SUBJ_SEQ), TO_NUMBER(GRSEQ)) UPPERCLASS_LEAD,
+				    A.ISCHARGE, 							/*종별*/
+				     (CASE WHEN A.ISCHARGE = 'C' THEN '정규' 
+	                                      WHEN A.ISCHARGE = 'S' THEN '특별'
+	                                      ELSE '무료과정'
+	                                      END) AS ISCHARGE_NM,
+				    A.SUBJ_NM, 							/*과정명*/
+				    A.GRSEQ, 								/*교육기수*/
+				    A.SUBJ_SEQ 		AS SUBJSEQ, 		/*기수*/
+				    TO_NUMBER(A.SUBJ_SEQ) AS SUBJ_SEQ, 
+				    A.PLAN_CNT, 							/*계획*/
+				    SUM(PLAN_CNT) OVER(PARTITION BY UPPERCLASS)             	AS PLAN_TOTAL,
+				    A.CHKFINAL_CNT, 					/*승인*/
+				    SUM(CHKFINAL_CNT) OVER(PARTITION BY UPPERCLASS)         AS CHKFINAL_TOTAL, 
+				    A.GRADUATED_CNT, 					/*실적*/
+				    SUM(GRADUATED_CNT) OVER(PARTITION BY UPPERCLASS)      AS GRADUATED_TOTAL,
+				    --(CASE WHEN GRADUATED_CNT <> '0' AND CHKFINAL_CNT <> '0' THEN TO_CHAR((ROUND(GRADUATED_CNT/CHKFINAL_CNT, 3)*100),'FM900.0') ELSE '0' END) AS SUBJ_CHKFINAL,/*과정내이수율*/
+				    (CASE WHEN GRADUATED_CNT <> '0' AND CHKFINAL_CNT <> '0' THEN (ROUND(GRADUATED_CNT/CHKFINAL_CNT, 3)*100) ELSE '0' END) AS SUBJ_CHKFINAL,/*과정내이수율*/
+	                --(CASE WHEN GRADUATED_CNT <> '0' AND PLAN_CNT <> '0' THEN TO_CHAR((ROUND(GRADUATED_CNT/PLAN_CNT, 3)*100),'FM900.0') ELSE '0' END) AS SUBJ_PLAN,/*이수율*/
+	                (CASE WHEN GRADUATED_CNT <> '0' AND PLAN_CNT <> '0' THEN (ROUND(GRADUATED_CNT/PLAN_CNT, 3)*100) ELSE '0' END) AS SUBJ_PLAN,/*이수율*/  
+				    A.EDUCATION_INSTI, 				/*교육청수입*/
+				    SUM(EDUCATION_INSTI) OVER(PARTITION BY UPPERCLASS)    AS EDUCATION_INSTI_TOTAL,
+				    A.INCOME_AMOUNT, 				/*수입액*/
+				    SUM(INCOME_AMOUNT) OVER(PARTITION BY UPPERCLASS)     AS INCOME_AMOUNT_TOTAL,
+				    A.CONTENT_DO, 						/*만족도*/
+				    A.PROFESSOR_CONTENT_DO, 	/*교수학습지도 향상도*/
+				    A.PROP_DATE, 						/*등록기간(수강신청기간)*/
+				    A.EDU_DATE, 							/*연수시기(교육기간)*/
+				    A.EDUTIMES, 							/*시간*/
+				    A.EDUMANS, 							/*연수대상*/
+				    A.PROPO_CNT, 						/*신청인원*/
+				    SUM(PROPO_CNT) OVER(PARTITION BY UPPERCLASS)         	AS PROPO_TOTAL,
+				    A.GROUP_TOTAL, 					/*단체신청인원(특별과정)*/
+				    SUM(GROUP_TOTAL) OVER(PARTITION BY UPPERCLASS)         	AS GROUP_TOTAL_CNT,
+				    A.GROUP_CNT, 						/*단체신청내역(특별과정)*/
+				    A.PRESENT_CNT,  					/*제출인원*/
+				    SUM(PRESENT_CNT) OVER(PARTITION BY UPPERCLASS)         	AS PRESENT_TOTAL,
+				    A.NORMAL_PRO_CNT,  				/*일반수강인원*/
+				    SUM(NORMAL_PRO_CNT) OVER(PARTITION BY UPPERCLASS)    AS NORMAL_PRO_TOTAL,
+				    A.GROUP_PRO_CNT,    				/*단체신청내역*/
+				    A.GROUP_PRO_TOTAL,  				/*단체신청인원*/
+				    SUM(GROUP_PRO_TOTAL) OVER(PARTITION BY UPPERCLASS)   AS GROUP_PRO_TOTAL_CNT,
+				    COUNT(1) OVER(PARTITION BY A.UPPERCLASS)                     AS UPPERCLASS_CNT,
+	                COUNT(1) OVER(PARTITION BY ISCHARGE)							AS ISCHARGE_CNT,
+	                COUNT(1) OVER() ALL_TOTAL_CNT,
+	                DECODE(UPPERCLASS,'PRF', 1, 'EXT', 2, 'PAR', 3, 4) AS UPPERCLASS_ORDER
+			FROM TZ_YEAR_TOTALIZATION A
+			WHERE A.[year] 		= #ses_search_gyear# 
+			AND A.UPPERCLASS LIKE '%'||#ses_search_att#||'%'
+			ORDER BY UPPERCLASS_ORDER, TO_NUMBER(SUBJ_SEQ), TO_NUMBER(GRSEQ)
+		 ) Z
+        ORDER BY UPPERCLASS_ORDER, TO_NUMBER(SUBJ_SEQ), TO_NUMBER(GRSEQ)
+     ]]>	         
+	</select>
+	
+	<!-- 
+	ID   : MainManageDAO.admYearEduStatusInsert
+	설명 : 당해 연도 운영 현황 등록
+	수정일			수정자				수정내용
+	==========================
+	유상도			2015.01.30		최초생성
+	-->
+	<insert id="MainManageDAO.admYearEduStatusInsert">
+			INSERT INTO TZ_YEAR_TOTALIZATION	
+				(
+					[year],
+					UPPERCLASS,
+					ISCHARGE,
+					SUBJ_NM,
+					GRSEQ,
+					SUBJ_SEQ,
+					PLAN_CNT,
+					CHKFINAL_CNT,
+					GRADUATED_CNT,
+					EDUCATION_INSTI,
+					INCOME_AMOUNT,
+					CONTENT_DO,
+					PROFESSOR_CONTENT_DO,
+					PROP_DATE,
+					EDU_DATE,
+					EDUTIMES,
+					EDUMANS,
+					PROPO_CNT,
+					GROUP_TOTAL,
+					GROUP_CNT,
+					PRESENT_CNT,
+					NORMAL_PRO_CNT,
+					GROUP_PRO_CNT,
+					GROUP_PRO_TOTAL,
+					FUSERID,
+					FDATE,
+					LUSERID,
+					LDATE				
+				)VALUES(
+							#year#,
+							#upperclass#,
+							#ischarge#,
+							#subjNm#,
+							#grseq#,
+							#subjseq#,
+							nvl(#planCnt#,0),
+							nvl(#chkfinalCnt#,0),
+							nvl(#graduatedCnt#,0),
+							nvl(#educationInsti#,0),
+							nvl(#incomeAmount#,0),
+							nvl(#contentDo#,0),
+							nvl(#professorContentDo#,0),
+							#propstart#||'('||#propstartDy#||')~'||#propend#||'('||#propendDy#||')',
+							#edustart#||'('||#edustartDy#||')~'||#eduend#||'('||#eduendDy#||')',
+							#edutimes#,
+							#edumans#,
+							nvl(#propoCnt#,0),
+							nvl(#groupTotal#,0),
+							#groupCnt#,
+							nvl(#presentCnt#, 0),
+							nvl(#normalProCnt#,0),
+							#groupProCnt#,
+							nvl(#groupProTottal#,0),
+							#userid#,
+		       				to_char(sysdatetime, 'yyyyMMddhh24miss'),
+							#userid#,
+		       				to_char(sysdatetime, 'yyyyMMddhh24miss')				
+				)
+	</insert>
+	
+	<!-- 
+	ID   : MainManageDAO.admYearEduStatusUpdate
+	설명 : 당해 연도 운영 현황 수정
+	수정일			수정자				수정내용
+	==========================
+	유상도			2015.01.30		최초생성
+	-->
+	<update id="MainManageDAO.admYearEduStatusUpdate" parameterClass="map" >
+	<![CDATA[
+			UPDATE TZ_YEAR_TOTALIZATION /*MainManageDAO.admYearEduStatusUpdate*//*당해 연도 운영 현황 수정*/
+				SET 
+					PLAN_CNT 						= nvl(#planCnt#, 0), 				/*계획*/
+					EDUCATION_INSTI 				= nvl(#educationInsti#, 0), 		/*교육청수입*/
+					INCOME_AMOUNT 					= nvl(#incomeAmount#, 0), 		/*수입액*/
+					PROPO_CNT 						= nvl(#propoCnt#, 0), 				/*신청인원*/
+					GROUP_TOTAL 					= nvl(#groupTotal#, 0), 			/*단체신청인원(특별과정)*/
+					GROUP_CNT 						= nvl(#groupCnt#, '0'), 				/*단체신청내역(특별과정)*/
+					PRESENT_CNT 					= nvl(#presentCnt#, 0), 			/*제출인원*/
+					LUSERID 						= #userid#,
+					LDATE 							= to_char(sysdatetime, 'yyyyMMddhh24miss'),
+					chkfinal_cnt 					= nvl(#chkfinalCnt#, 0), 				/*승인(명)*/
+					graduated_cnt 					= nvl(#graduatedCnt#, 0), 				/*실적*/
+					normal_pro_cnt					= nvl(#normalProCnt#, 0), 				/*일반수강인원*/
+					group_pro_cnt 					= nvl(#groupProCnt#, 0) 				/*단체신청인원*/
+			 WHERE [year] 		= #year#
+			 AND GRSEQ 		= #grseq#
+			 AND SUBJ_SEQ 	= #subjseq#
+     ]]>	         
+	</update>
+	
+	<!-- 
+	ID   : MainManageDAO.admYearEduStatusDelete
+	설명 : 당해 연도 운영 현황 삭제
+	수정일			수정자				수정내용
+	==========================
+	유상도			2015.01.30		최초생성
+	-->
+	<delete id="MainManageDAO.admYearEduStatusDelete" parameterClass="map" >
+	<![CDATA[
+			DELETE FROM TZ_YEAR_TOTALIZATION /*MainManageDAO.admYearEduStatusDelete*//*당해 연도 운영 현황 삭제*/				
+			 WHERE [year] 		= #ses_search_gyear#
+     ]]>	         
+	</delete>
+	
+</sqlMap>
+

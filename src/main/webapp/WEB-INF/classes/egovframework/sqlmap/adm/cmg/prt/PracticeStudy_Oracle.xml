@@ -1,0 +1,69 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE sqlMap PUBLIC "-//iBATIS.com//DTD SQL Map 2.0//EN" "http://ibatis.apache.org/dtd/sql-map-2.dtd">
+
+<sqlMap namespace="PracticeStudy">
+<typeAlias  alias="egovMap" type="egovframework.rte.psl.dataaccess.util.EgovMap"/>
+
+	<select id="practiceStudyDAO.practiceStudyList" parameterClass="map" resultClass="egovMap">
+		select b.upperclass, b.classname, a.subj, a.subjnm, a.contenttype, a.isonoff
+		  from tz_subj a, tz_subjatt b
+		 where a.upperclass  = b.upperclass
+		   and b.middleclass = '000'
+		   and b.lowerclass  = '000'
+		<isNotEmpty property="ses_search_att">
+		   and a.upperclass = #ses_search_att#
+		</isNotEmpty>
+		<isNotEmpty property="ses_search_subj">
+		   and a.subj = #ses_search_subj#
+		</isNotEmpty>
+		<isEqual property="p_gadmin" compareValue="P1">
+      	   and a.subj in (select subj from tz_subjman where userid = #userid# and  gadmin like 'P%')
+     	</isEqual>
+         order by a.ldate desc, b.subjclass asc, a.subj asc
+	</select>
+
+	<select id="practiceStudyDAO.practiceStudySubList" parameterClass="map" resultClass="egovMap">
+	<![CDATA[
+		select b.subj, b.[year], b.subjseq, b.grcode, b.gyear, b.grseq, b.isbelongcourse, b.course, b.cyear, b.courseseq,
+		       b.propstart, b.propend, b.isclosed, b.subjnm, a.isoutsourcing, a.cp, a.cpsubj, a.eduurl,
+		       to_char(to_date(substr(b.edustart, 1, 8), 'yyyyMMdd'), 'yyyy.MM.dd') as edustart,
+		       to_char(to_date(substr(b.eduend, 1, 8), 'yyyyMMdd'), 'yyyy.MM.dd') as eduend,
+               case when b.propstart is null and b.edustart is null then ''
+                    when to_char(sysdatetime, 'yyyyMMddhh24miss') > b.eduend then '교육완료'
+                    when to_char(sysdatetime, 'yyyyMMddhh24miss') > b.edustart and to_char(sysdatetime, 'yyyyMMddhh24miss') < b.eduend then '교육중'
+                    when to_char(sysdatetime, 'yyyyMMddhh24miss') < b.edustart and to_char(sysdatetime, 'yyyyMMddhh24miss') > b.propstart then '교육전'
+                    when to_char(sysdatetime, 'yyyyMMddhh24miss') between b.propstart and b.propend then '수강신청중'
+                    else '수강대기중'
+                end as status,
+	]]>
+               case when substr(a.indate, 0, 8) >= '20120501' then 'NEW' else 'OLD' end study_type
+		  from tz_subj a, tz_subjseq b
+		 where a.subj = #p_subj#
+		   and a.subj = b.subj
+		 order by b.[year] desc, b.edustart desc, b.subj desc, subjseq desc
+	</select>
+	
+	<select id="practiceStudyDAO.subjmanPracticeStudyList" parameterClass="map" resultClass="egovMap">
+		select b.upperclass, b.classname, a.subj, a.subjnm, a.contenttype, a.isonoff
+		  from tz_subj a
+		     , tz_subjatt b
+			 ,(select subj
+			 from tz_manager a, 
+			     tz_gadmin b,
+			     tz_subjman c
+			where a.gadmin = b.gadmin 
+			  and a.gadmin = c.gadmin
+			  and a.userid = c.userid  
+			  and a.isdeleted = 'N' 
+			  and c.userid = #userid#
+			  and to_char(sysdate, 'yyyyMMdd') between a.fmon and a.tmon
+  		   	) c
+		 where a.upperclass  = b.upperclass
+		   and b.middleclass = '000'
+		   and b.lowerclass  = '000'
+		   and a.subj = c.subj
+         order by a.ldate desc, b.subjclass asc, a.subj asc
+	</select>
+	
+</sqlMap>
+

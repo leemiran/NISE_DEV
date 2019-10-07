@@ -1,0 +1,48 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans 	xmlns="http://www.springframework.org/schema/beans"
+		xmlns:p="http://www.springframework.org/schema/p"
+		xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" 
+		xmlns:aop="http://www.springframework.org/schema/aop"
+		xsi:schemaLocation="
+			http://www.springframework.org/schema/beans 
+			http://www.springframework.org/schema/beans/spring-beans-2.5.xsd
+			http://www.springframework.org/schema/aop 
+			http://www.springframework.org/schema/aop/spring-aop-2.5.xsd">
+	<!-- 
+	<bean id="comMenuManage" class="egovframework.com.meu.ComMenuManageAspect" />
+	<aop:config>
+		<aop:aspect id="comMenuManageAspect" ref="comMenuManage">
+	      	<aop:around pointcut="execution(public * egovframework.adm.**..*Controller.*(..))" method="aroundMenuController" />
+		</aop:aspect>
+	</aop:config>	
+	 -->
+	<!--
+	<aop:aspectj-autoproxy />
+	
+	<bean class="egovframework.com.meu.ComMenuManageAspect" />
+	  -->
+	<!-- 
+	<bean id="comMenuManageAspect"      class="egovframework.com.meu.ComMenuManageAspect" />
+	<aop:config>
+		<aop:aspect id="controllerAspect" ref="comMenuManageAspect">
+			
+			<aop:around pointcut="execution(public * egovframework.adm.**..controller.*Controller.*.*(..))" method="aroundController" /> 			
+  			<aop:around pointcut="execution(* * ..Controller.handleRequest(..))" method="aroundController" /> 
+  			<aop:around pointcut="execution(public * egovframework.adm.meu.controller.MainMenuManageController.*.*(..))" method="aroundController" />
+  			<aop:around pointcut="execution(public * egovframework.adm.**..controller.*Controller.*.*(..))" method="aroundController" />
+  			<aop:around pointcut="execution(public * egovframework.adm.**.controller.*Controller.*.*(..))" method="aroundController" />
+  			<aop:around pointcut="execution(public * egovframework.adm.**.service.*Service.*.*(..))" method="aroundController" />
+  			<aop:around pointcut="execution(public * egovframework.adm.**..service.*Service.*.*(..))" method="aroundController" />  		
+  			<aop:around pointcut="execution(public * egovframework.**..impl.*Impl.select*(..))" method="aroundController" />
+  			<aop:around pointcut="execution(public * *..*Controller.*(..))" method="aroundController" />
+  			<aop:around pointcut="@annotation(org.springframework.web.bind.annotation.RequestMapping)" method="aroundController" />
+  		
+  			<aop:around pointcut="execution(* * ..Controller.handleRequest(..))" method="aroundMenuController" />
+  			
+  			 
+  			
+		</aop:aspect>
+	</aop:config>
+	-->
+	
+</beans>

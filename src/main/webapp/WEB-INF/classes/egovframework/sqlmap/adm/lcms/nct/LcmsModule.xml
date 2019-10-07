@@ -1,0 +1,175 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE sqlMap PUBLIC "-//iBATIS.com//DTD SQL Map 2.0//EN" "http://ibatis.apache.org/dtd/sql-map-2.dtd">
+
+<sqlMap namespace="LcmsModule">
+
+
+<typeAlias  alias="egovMap" type="egovframework.rte.psl.dataaccess.util.EgovMap"/>
+
+    <select id="lcmsModuleDAO.selectLcmsModulePageList" parameterClass="map" resultClass="egovMap">
+        SELECT * 
+        FROM
+               (
+                SELECT TEMP.*, 
+                <isNotEmpty property="rowsPerPage">
+                       CEIL(ROWNUM / #rowsPerPage#) AS PAGE 
+                </isNotEmpty>
+                <isEmpty property="rowsPerPage">
+                       CEIL(ROWNUM / 10) AS PAGE 
+                </isEmpty>
+                FROM
+                      (
+                       SELECT 
+	        	              SUBJ,
+	        	              [MODULE],
+	        	              MODULE_NAME,
+	        	              INUSERID,
+	        	              INDATE,
+	        	              LUSERID,
+	        	               LDATE
+        		       FROM   TB_LCMS_MODULE
+        		       <!--  APPEND WHERE CONDITION START  -->
+
+        		       <!--  APPEND WHERE CONDITION END    -->
+        		       <isNotEmpty property="orderBy">
+        			       $orderBy$
+        		       </isNotEmpty>
+        	          ) TEMP 
+               )
+        <isNotEmpty property="page">
+        WHERE PAGE = #page#
+        </isNotEmpty>
+        <isEmpty property="page">
+        WHERE PAGE = 1
+        </isEmpty>
+    </select>
+
+    <select id="lcmsModuleDAO.selectLcmsModuleList" parameterClass="map" resultClass="egovMap">
+        SELECT SUBJ,
+               [MODULE],
+               MODULE_NAME,
+               INUSERID,
+               INDATE,
+               LUSERID,
+               LDATE
+        FROM   TB_LCMS_MODULE
+    </select>
+
+    <select id="lcmsModuleDAO.selectLcmsModulePageListTotCnt" parameterClass="map" resultClass="int">
+        SELECT COUNT(ROWNUM) AS [COUNT]
+        FROM   TB_LCMS_MODULE
+    </select>
+
+    <select id="lcmsModuleDAO.selectLcmsModule" parameterClass="map" resultClass="egovMap">
+        SELECT SUBJ,
+               [MODULE],
+               MODULE_NAME,
+               INUSERID,
+               INDATE,
+               LUSERID,
+               LDATE
+        FROM   TB_LCMS_MODULE
+        WHERE  SUBJ = #subj#
+        AND    [MODULE] = #module#
+    </select>
+    
+    <select id="lcmsModuleDAO.selectModuleNum" parameterClass="map" resultClass="String">
+    	select trim(to_char(nvl(max(module),0)+1, '00')) as [MODULE]
+    	  from tb_lcms_module
+    	 where SUBJ = #subj#
+    </select>
+
+    <insert id="lcmsModuleDAO.insertLcmsModule">
+        INSERT INTO TB_LCMS_MODULE
+        (
+            SUBJ,
+            [MODULE],
+            MODULE_NAME,
+            INUSERID,
+            INDATE,
+            LUSERID,
+            LDATE
+        )
+        VALUES
+        (
+            #subj#,
+            #module#,
+            #orgTitle#,
+            #userId#,
+            sysdate,
+            #userId#,
+            sysdate
+        )
+    </insert>
+
+	<!-- module update (nonscorm) -->
+    <update id="lcmsModuleDAO.updateLcmsModule">
+        UPDATE TB_LCMS_MODULE
+        SET    MODULE_NAME = #moduleName#,
+               LUSERID = #userid#,
+               LDATE = sysdate
+        WHERE  SUBJ = #subj#
+        AND    [MODULE] = #module#
+    </update>
+
+	<!-- module delete : content upload fail -->
+    <delete id="lcmsModuleDAO.deleteLcmsModule">
+        DELETE FROM TB_LCMS_MODULE
+        WHERE  SUBJ = #subj#
+        AND    [MODULE] in <iterate property="module" conjunction="," open="(" close=")">#module[]#</iterate>
+    </delete>
+
+    <delete id="lcmsModuleDAO.deleteLcmsModuleAll">
+        DELETE FROM TB_LCMS_MODULE
+        WHERE  SUBJ = #subj#
+        <dynamic prepend="WHERE MODULE IN ">
+            <isNotEmpty property="module">
+                <iterate property="module" open="(" close=")" conjunction=",">
+                    #module[]#
+                </iterate>
+            </isNotEmpty>
+            <isEmpty property="module">
+                ('')
+            </isEmpty>
+        </dynamic>
+    </delete>
+
+    <select id="lcmsModuleDAO.existLcmsModule" resultClass="long">
+        SELECT COUNT(ROWNUM) 
+        FROM   TB_LCMS_MODULE
+        WHERE  SUBJ = #subj#
+        AND    [MODULE] = #module#
+    </select>
+    
+    <select id="lcmsModuleDAO.selectModulePath" parameterClass="map" resultClass="egovMap">
+		select module_path
+		  from (
+				select substr(starting, 0, instr(starting, '/', -1)-1) as module_path
+				  from tb_lcms_lesson
+				 where SUBJ = #subj#
+				   and [MODULE] in <iterate property="module" conjunction="," open="(" close=")">#module[]#</iterate>
+		       )
+		 group by module_path
+    </select>
+    
+    <select id="lcmsModuleDAO.selectLcmsModuleData" parameterClass="map" resultClass="egovMap">
+    	select [MODULE], module_name
+    	  from tb_lcms_module
+    	 where SUBJ = #subj#
+    	   and [MODULE]   = #module#
+    </select>
+    
+    <select id="lcmsModuleDAO.selectSaveInfoData" parameterClass="map" resultClass="egovMap">
+		select b.name, to_char(a.indate, 'yyyy.MM.dd') as indate
+		  from tb_lcms_module a, tz_member b
+		 where a.SUBJ = #subj#
+		   and a.inuserid = b.userid
+		   and rownum = 1
+    </select>
+    
+    <delete id="lcmsModuleDAO.deleteModuleAll">
+    	delete tb_lcms_module where SUBJ = #subj#
+    </delete>
+    
+</sqlMap>
+

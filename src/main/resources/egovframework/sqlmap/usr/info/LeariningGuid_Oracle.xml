@@ -1,0 +1,63 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE sqlMap PUBLIC "-//iBATIS.com//DTD SQL Map 2.0//EN" "http://ibatis.apache.org/dtd/sql-map-2.dtd">
+
+<sqlMap namespace="LeariningGuid">
+<typeAlias  alias="egovMap" type="egovframework.rte.psl.dataaccess.util.EgovMap"/>
+
+	<select id="leariningGuidDAO.selectEduTrainingScheduleList" parameterClass="map" resultClass="egovMap">
+			SELECT b.iseq,
+				    b.training_iseq,
+				    b.mon,
+				    course,
+				    b.reg_term,
+				    b.training_term
+			FROM tz_training a
+			         ,tz_training_schedule b
+			WHERE a.iseq =  b.training_iseq
+			AND a.use_yn = 'Y'
+			AND b.use_yn = 'Y'
+			ORDER BY order_num
+	</select>
+	
+	<select id="leariningGuidDAO.selectEduTrainingFileList" parameterClass="map" resultClass="egovMap">
+		select b.realfile,                  
+		       b.savefile,                  
+		       b.iseq                    
+		 FROM tz_training A
+  		     ,tz_trainingfile B
+		  WHERE a.use_yn = 'Y'
+		    AND a.iseq = b.training_iseq
+	</select>
+	
+			
+	<select id="leariningGuidDAO.selectEduTrainingCourseList" parameterClass="map" resultClass="egovMap">
+			SELECT b.iseq,
+				    b.training_iseq,
+				    b.gubun,
+				    b.coursenm,
+				    b.edu_time,
+					b.edu_target,
+					b.total_edu,
+					b.assist
+			FROM tz_training a
+			    ,tz_training_course b
+			WHERE a.iseq =  b.training_iseq
+			AND a.use_yn = 'Y'
+			AND b.use_yn = 'Y'
+			ORDER BY order_num
+	</select>
+	
+	
+	<select id="leariningGuidDAO.selectEduTrainingView" parameterClass="map" resultClass="egovMap">
+		SELECT a.[year], 
+            a.subject,
+            a.contents,
+            a.use_yn,
+            to_char(TO_DATETIME(a.ldate, 'yyyyMMdd hh24miss'), 'yyyy.MM.dd hh24:mi:ss') AS ldate,
+            (select name from tz_member where userid = a.luserid) as name
+		FROM tz_training a
+		where a.use_yn = 'Y'
+	</select>
+	
+</sqlMap>
+

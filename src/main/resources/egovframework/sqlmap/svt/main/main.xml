@@ -1,0 +1,39 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE sqlMap PUBLIC "-//iBATIS.com//DTD SQL Map 2.0//EN" "http://ibatis.apache.org/dtd/sql-map-2.dtd">
+
+<sqlMap namespace="main">
+	<typeAlias alias="egovMap" type="egovframework.rte.psl.dataaccess.util.EgovMap"/>
+	
+	<select id="getTrainSubjList" resultClass="egovMap">
+		select 
+			ts.train_subj_seq
+			, t.train_seq
+			, t.category_nm
+			, ts.subj_nm
+			, ts.lesson_num
+			, ts.img_id
+			, ts.link_url
+		 from tz_train_subj ts, tz_train t
+		where 
+			ts.train_seq = t.train_seq
+			and ts.use_yn = 'Y'
+		order by
+			t.train_seq, ts.train_subj_seq
+	</select>
+	
+	<select id="getCalendarPeriodList" resultClass="egovMap">
+		select 
+			cp.calendar_period_seq
+			, c.calendar_seq
+			, c.category_nm
+			, cp.request_period
+			, cp.train_period
+		 from tz_calendar_period cp, tz_calendar c
+		where 
+			cp.calendar_seq = c.calendar_seq
+		order by
+			c.calendar_seq, cp.calendar_period_seq
+	</select>
+	
+</sqlMap>
+

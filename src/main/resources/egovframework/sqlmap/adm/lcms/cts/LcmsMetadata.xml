@@ -1,0 +1,129 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE sqlMap PUBLIC "-//iBATIS.com//DTD SQL Map 2.0//EN" "http://ibatis.apache.org/dtd/sql-map-2.dtd">
+
+<sqlMap namespace="LcmsMetadata">
+	<typeAlias  alias="egovMap" type="egovframework.rte.psl.dataaccess.util.EgovMap"/>
+
+
+<!-- 메타데이터 시퀀싱 키 조회 -->
+    <select id="lcmsMetadataDAO.selectLcmsMetadataSeq" parameterClass="map" remapResults="true" resultClass="int">
+        select SEQ_LCMS_METADATA_SEQ.nextval as seq from DB_ROOT
+    </select>
+
+<!-- 메타데이터 등록 -->
+	<insert id="lcmsMetadataDAO.insertLcmsMetadata">
+		insert into tb_lcms_metadata(
+			metadata_seq, 
+			metatype , 
+			obj_seq, 
+			obj_type, 
+			comments, 
+			userid
+		)
+		values(
+			#metadataSeq#, 
+			#metaType# , 
+			#objSeq#, 
+			#objType#, 
+			#comments#, 
+			#userid#
+		)
+	</insert>
+	
+	<!-- 메타데이터객체 시퀀싱 조회 -->
+	<select id="lcmsMetadataDAO.selectElementSeq" parameterClass="map" remapResults="true" resultClass="int">
+		select nvl(max(element_seq), 0) + 1 from tb_lcms_metadata_element
+	</select>
+	
+	<!-- 메타데이터객체 등록 -->
+	<insert id="lcmsMetadataDAO.insertMetadataElement">
+		insert into tb_lcms_metadata_element(
+			element_seq, 
+			metadata_seq, 
+			element_name, 
+			element_val, 
+			element_path, 
+			lang_value, 
+			pre_group, 
+			self_group
+		)
+		values(
+			#elementSeq#,
+			#metadataSeq#,
+			#elementName#,
+			#elementVal#,
+			#elementPath#,
+			#langValue#,
+			#preGroup#,
+			#selfGroup#
+		)
+	</insert>
+	
+	<!-- 메타데이터 객제정보 삭제 -->
+	<delete id="lcmsMetadataDAO.deleteLcmsMetadataElement">
+		delete tb_lcms_metadata_element
+		 where metadata_seq in (
+		         select metadata_seq from tb_lcms_metadata
+		          where obj_seq in <iterate property="orgSeq" conjunction="," open="(" close=")">$orgSeq[]$</iterate>
+		       )
+	</delete>
+	
+	<!-- 메타데이터 정보 삭제 -->
+	<delete id="lcmsMetadataDAO.deleteLcmsMetadata">
+		delete tb_lcms_metadata where obj_seq in <iterate property="orgSeq" conjunction="," open="(" close=")">$orgSeq[]$</iterate>
+	</delete>
+	
+	<!-- 메타데이터 정보 조회  -->
+	<select id="lcmsMetadataDAO.selectLcmsMetadataElementList" parameterClass="map" resultClass="egovMap">
+		<![CDATA[
+		select  b.element_val, nvl(b.element_path, a.element_path) as element_path, a.readonly, b.element_seq,
+		        nvl(b.element_name, a.element_name) as element_name, a.element_title, b.metadata_seq
+		  from tb_lcms_metadata_map a,
+		        (
+		            select a.metadata_seq, a.metatype, a.obj_type, b.element_name, b.element_path, element_val, b.element_seq
+		              from tb_lcms_metadata a, tb_lcms_metadata_element b
+		             where a.obj_type = #objType#
+		               and a.obj_seq = #objSeq#
+		               and a.metadata_seq = b.metadata_seq
+		        ) b
+		 where a.obj_type = #objType#
+		   and substr(a.element_path, instr(a.element_path,'/'), length(a.element_path)) = 
+		        substr(b.element_path(+), instr(b.element_path(+),'/'), length(b.element_path(+)))
+		   and a.element_name = b.element_name(+)
+		   and a.metatype = 'LOM'
+		 order by a.element_path
+		]]>
+    </select>
+    
+    <!-- 메타데이터정보 유무 확인 -->
+    <select id="lcmsMetadataDAO.selectLcmsMetadataCount" parameterClass="map" remapResults="true" resultClass="int">
+    	select nvl(sum(metadata_seq),0)
+    	  from tb_lcms_metadata
+    	 where obj_type = #objType#
+    	<isNotEmpty property="objSeq">
+		   and obj_seq = #objSeq#
+    	</isNotEmpty>
+    </select>
+    
+    <!-- 메타데이터객체정보 유무 확인 -->
+    <select id="lcmsMetadataDAO.selectLcmsMetadataElementCount" parameterClass="map" remapResults="true" resultClass="int">
+    	select count(0) as cnt
+    	  from tb_lcms_metadata_element
+    	 where metadata_seq in (
+		    	select metadata_seq
+		    	  from tb_lcms_metadata
+		    	 where obj_type = #objType#
+				   and obj_seq = #objSeq#
+    	       )
+    </select>
+    
+    <!-- 메타데이터 정보 수정 -->
+    <update id="lcmsMetadataDAO.updateLcmsMetadataElement">
+    	update tb_lcms_metadata_element
+    	   set element_val  = #elementVal#
+    	 where metadata_seq = #metadataSeq#
+    	   and element_seq  = #elementSeq#
+    </update>
+
+</sqlMap>
+

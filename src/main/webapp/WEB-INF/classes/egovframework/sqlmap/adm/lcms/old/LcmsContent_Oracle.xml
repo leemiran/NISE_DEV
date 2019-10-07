@@ -1,0 +1,762 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE sqlMap PUBLIC "-//iBATIS.com//DTD SQL Map 2.0//EN" "http://ibatis.apache.org/dtd/sql-map-2.dtd">
+<sqlMap namespace="LcmsContent">
+<typeAlias  alias="egovMap" type="egovframework.rte.psl.dataaccess.util.EgovMap"/>
+
+	<select id="lcmsContentDAO.selectContentsListTotCnt" parameterClass="map" resultClass="int">
+		select count(0)
+		<isNotEmpty property="type">
+		  from tz_subj a, tz_cpinfo b
+		  <isEqual property="gadmin" compareValue="Q1">
+	      	,tz_subjman sm
+	      </isEqual>
+		 where isonoff in ('ON', 'ML')
+		   and b.userid = #userid#
+		   and a.producer = b.cpseq
+		</isNotEmpty>
+		<isEmpty property="type">
+		  from tz_subj a
+		  <isEqual property="gadmin" compareValue="Q1">
+	      	,tz_subjman sm
+	      </isEqual>
+		 where isonoff in ('ON', 'ML')
+		
+		</isEmpty>
+		   and substr(a.indate, 0, 8) <![CDATA[<]]> '20120501'
+		<isNotEmpty property="search_cour">
+		   and a.upperclass = #search_cour#
+		</isNotEmpty>
+		<isNotEmpty property="search_subjnm">
+		   and upper(a.subjnm) like '%' || upper(#search_subjnm#) || '%'
+		</isNotEmpty>
+		<isNotEmpty property="search_subj">
+		   and upper(a.subj) like upper(#search_subj#)
+		</isNotEmpty>
+		<!-- 2017 추가 -->
+		<isNotEmpty property="searchFinalContentYn">
+		   and a.final_content_yn = #searchFinalContentYn#
+		</isNotEmpty>
+		<!-- 2017 추가 끝 -->
+		<isEqual property="gadmin" compareValue="Q1">
+	    	and a.subj = sm.subj
+			and sm.userid = #userid#
+			and sm.gadmin = #gadmin#
+	    </isEqual>
+		and a.iscontentsuse = 'Y'
+	</select>
+
+	<select id="lcmsContentDAO.selectContentsList" parameterClass="map" resultClass="egovMap">
+	
+ 		select * from (
+ 		
+		select rownum as num, subj, subjnm, contenttype, iscentered, dir, isuse, mftype,  isvisible,
+		       contenttypenm, cont_lesson, 
+		       (TRUNC(subj_total_time DIV (60*60)))||':'||
+                LPad(TRUNC(Mod((subj_total_time DIV 60),60)),2,0)||':' ||
+                LPad(TRUNC(Mod(subj_total_time,60)),2,0) AS subj_total_time,
+		        count_sco, height, width, mobile
+		       ,classname
+		       ,conyear
+		       ,fyear
+		       ,conrenum
+		       -- 2017 추가
+	           ,porting_date
+	           ,content_modify_date
+	           ,mp3_possess_yn	
+	           ,renewal_year
+	           ,final_content_yn
+	           -- 2017 추가 끝
+		  from (
+		  
+		  
+					select a.subj, subjnm, contenttype, iscentered, dir, isuse, mftype, a.mobile,
+					       isvisible, get_codenm('0007', contenttype) as contenttypenm,
+					       (select count(0) from tz_subjlesson where subj = a.subj) as cont_lesson,
+					       (SELECT   sum(lesson_time) FROM   tz_subjlesson WHERE   subj = a.subj) AS subj_total_time,
+					       case when contenttype = 'O' or contenttype = 'OA'
+					            then (select count(oid) as countsco from tz_subjobj where subj = a.subj)
+					            when contenttype = 'S'
+					            then (
+					                   select count(0) as countsco 
+					                     from tys_item aa, tys_resource bb, tz_subj_contents cc
+					                    where aa.course_code = bb.course_code
+					                      and bb.course_code = cc.course_code
+					                      and aa.org_id = bb.org_id
+					                      and bb.org_id = cc.org_id
+					                      and aa.item_id = bb.item_id
+					                      and bb.res_scorm_type = 'sco'
+					                      and cc.subj = a.subj
+					                  )
+					       end as count_sco, a.height, a.width
+					       ,c.classname
+				           ,a.conyear 	
+				           ,(select min([year]) from tz_subjseq where subj=a.subj) as fyear
+				           ,conrenum			       
+				           -- 2017 추가
+				           ,decode(porting_date,null, '', porting_date, '', '', to_char(to_date(porting_date, 'yyyymmdd'), 'yyyy-mm-dd')) porting_date
+				           ,decode(content_modify_date, null, '', content_modify_date, '', '', to_char(to_date(content_modify_date, 'yyyymmdd'), 'yyyy-mm-dd')) content_modify_date
+				           ,mp3_possess_yn			       
+				           ,renewal_year
+				           ,final_content_yn
+				           -- 2017 추가 끝
+					<isNotEmpty property="type">
+					  from tz_subj a, tz_cpinfo b
+					      ,tz_subjatt c
+					      <isEqual property="gadmin" compareValue="Q1">
+					      	,tz_subjman sm
+					      </isEqual>
+					 where isonoff in ('ON', 'ML')
+					   and b.userid = #userid#
+					   and a.producer = b.cpseq
+					   and a.upperclass = c.upperclass					   
+					</isNotEmpty>
+					
+					<isEmpty property="type">
+					  from tz_subj a
+					      ,tz_subjatt c
+					      <isEqual property="gadmin" compareValue="Q1">
+					      	,tz_subjman sm
+					      </isEqual>
+					 where isonoff in ('ON', 'ML')
+					  and a.upperclass = c.upperclass
+					</isEmpty>
+					   and substr(a.indate, 0, 8) <![CDATA[<]]> '20120501'
+					<isNotEmpty property="search_cour">
+					   and a.upperclass = #search_cour#
+					</isNotEmpty>
+					<isNotEmpty property="search_subjnm">
+					   and upper(a.subjnm) like '%' || upper(#search_subjnm#) || '%'
+					</isNotEmpty>
+					<isNotEmpty property="search_subj">
+					   and upper(a.subj) like upper(#search_subj#)
+					</isNotEmpty>
+					<!-- 2017 추가 -->
+					<isNotEmpty property="searchFinalContentYn">
+					   and a.final_content_yn = #searchFinalContentYn#
+					</isNotEmpty>
+					<!-- 2017 추가 끝 -->
+					<isEqual property="gadmin" compareValue="Q1">
+				    	and a.subj = sm.subj
+						and sm.userid = #userid#
+						and sm.gadmin = #gadmin#
+				    </isEqual>
+				    
+					and a.iscontentsuse = 'Y'
+					order by nvl(conyear,0) desc, decode(a.upperclass,'PRF','1','EXT','2','PAR','3','COUR','4','OTH','5'), subjnm, conrenum, indate desc
+
+		        )
+		        
+		        
+		)
+		where num BETWEEN #firstIndex# + 1 AND #firstIndex# + #recordCountPerPage#
+	</select>
+	
+	<select id="lcmsContentDAO.selectSubjectData" parameterClass="map" resultClass="egovMap">
+		select get_subjclassnm(a.upperclass, '000', '000') as upperclassnm, get_subjclassnm(a.upperclass, a.middleclass, '000') as middleclassnm,
+		       get_subjclassnm(a.upperclass, a.middleclass, a.lowerclass) as lowerclassnm, a.subj, a.subjnm, a.isonoff, a.subjclass, a.luserid, a.ldate,
+		       a.upperclass, a.middleclass, a.lowerclass, a.specials, a.contenttype, a.muserid, a.musertel, a.cuserid, a.isuse, a.ispropose, a.biyong, a.edudays,
+		       a.studentlimit, a.usebook, a.bookprice, a.owner, a.producer, to_char(crdate, 'yyyy.MM.dd') as crdate, a.[LANGUAGE], a.server, a.dir, a.eduurl, a.vodurl, a.preurl, a.indate,
+		       a.ratewbt, a.ratevod, a.env, a.tutor, a.bookname, a.sdesc, a.warndays, a.stopdays, a.point, a.edulimit, a.gradscore, a.gradstep, a.inuserid,
+		       a.wstep, a.wmtest, a.wftest, a.wreport, a.wact, a.wetc1, a.wetc2, a.place, a.placejh, a.ispromotion, a.isessential, a.score, a.edumans subjtarget,
+		       get_name(cuserid) as cuseridnm, get_name(a.tutor) as tutornm, get_name(a.muserid) as museridnm,
+		       nvl((select cpnm from tz_cpinfo where cpseq = a.producer), (select compnm from tz_compclass where comp = a.producer)) as producernm,
+		       nvl((select cpnm from tz_cpinfo where cpseq = a.owner), (select compnm from tz_compclass where comp = a.owner)) as ownernm,
+		       a.proposetype, a.edumans, a.edutimes, a.edutype, a.intro, a.explain, a.whtest, a.gradreport, a.gradexam, a.gradftest, a.gradhtest, '' usesubjseqapproval,
+		       '' useproposeapproval, '' usemanagerapproval, 0 rndcreditreq, 0 rndcreditchoice, a.firstdate, a.judgedate, a.getdate, a.contentgrade, nvl(a.subj_gu,'') as subj_gu
+		  from tz_subj a
+		 where subj = #subj#
+	</select>
+	
+	
+	<select id="lcmsContentDAO.selectItemList" parameterClass="map" resultClass="egovMap">
+		 select 
+		    subj,
+		    [MODULE],
+		    modulenm,
+		    moduletypes,
+		    edu_time,
+		    m_start,
+		    m_end,
+		    mobile_url,
+		    lesson,
+		    lessonnm,
+		    lessontypes,
+		    starting,
+		    edu_time_yn,
+		    lesson_cnt,
+		    (TRUNC(end_time DIV (60*60)))||'시간 '||
+		    LPad(TRUNC(Mod((end_time DIV 60),60)),2,0)||'분 ' ||
+		    LPad(TRUNC(Mod(end_time,60)),2,0) || '초' AS web_time,
+		    (TRUNC(m_time DIV (60*60)))||'시간 '||
+            LPad(TRUNC(Mod((m_time DIV 60),60)),2,0)||'분 ' ||
+            LPad(TRUNC(Mod(m_time,60)),2,0) || '초' AS m_time,
+            lesson_time
+		from (
+		    select 
+		        a.subj, 
+		        a.[MODULE], 
+		        a.sdesc as modulenm, 
+		        a.types as moduletypes, 
+		        b.edu_time, 
+		        b.m_start, 
+		        b.m_end, 
+		        a.mobile_url,
+		        b.lesson, 
+		        b.sdesc as lessonnm, 
+		        b.types as lessontypes,  
+		        b.starting, 
+		        b.edu_time_yn,
+		        (select count(0) 
+		         from tz_subjlesson 
+		         where subj = a.subj 
+		         and [MODULE] = a.[MODULE]
+		        ) as lesson_cnt,
+		        (select sum(lesson_time) 
+		         from tz_subjlesson 
+		         where subj = a.subj 
+		         and [MODULE] = a.[MODULE]
+		        ) as end_time,
+		        (select sum((m_end - m_start)) 
+                 from tz_subjlesson 
+                 where subj = a.subj 
+                 and [MODULE] = a.[MODULE]
+                ) as m_time,
+                lesson_time
+		    from tz_subjmodule a, tz_subjlesson b
+		    where a.subj    = #subj#
+		    and a.subj    = b.subj(+)
+		    and a.[MODULE]  = b.[MODULE](+)
+		    order by a.[MODULE], lesson
+		)
+	</select>
+	
+	<delete id="lcmsContentDAO.deleteModule">
+		delete tz_subjmodule where subj = #subj#
+	</delete>
+	<delete id="lcmsContentDAO.deleteLesson">
+		delete tz_subjlesson where subj = #subj#
+	</delete>
+	
+	<select id="lcmsContentDAO.selectModuleInfo" parameterClass="map" resultClass="egovMap">
+		select [MODULE], sdesc, mobile_url
+		  from tz_subjmodule
+		 where subj = #subj#
+		   and [MODULE] = #module#
+	</select>
+	
+	<select id="lcmsContentDAO.selectModuleKey" parameterClass="map" remapResults="true" resultClass="string">
+		select to_char(count(0) + 1, '00') as modulekey
+		  from tz_subjmodule
+		 where subj = #subj#
+	</select>
+	
+	<insert id="lcmsContentDAO.insertModule">
+		insert into tz_subjmodule(
+		    subj, [MODULE], mobile_url, sdesc, types, luserid, ldate
+		)
+		values(
+			#subj#, trim(#module#), #mobile_url#, #moduleName#, '1001', #userid#, to_char(sysdatetime, 'yyyyMMddhh24miss')
+		)
+	</insert>
+	
+	<update id="lcmsContentDAO.updateModule">
+		update tz_subjmodule
+		   set sdesc   = #moduleName#
+		     , mobile_url = #mobile_url#
+		     , luserid = #userid#
+		     , ldate   = to_char(sysdatetime, 'yyyyMMddhh24miss')
+		 where subj    = #subj#
+		   and [MODULE]  = trim(#module#)
+	</update>
+	
+	<!-- 레슨정보 -->
+	<select id="lcmsContentDAO.selectLessonInfo" parameterClass="map" resultClass="egovMap">
+		select a.[MODULE], a.sdesc as modulenm, b.lesson,
+		        b.sdesc as lessonnm, b.starting, nvl(b.m_start, 0) m_start, nvl(b.m_end, 0) m_end,
+		        nvl(b.lesson_time, 0) as lesson_time
+		  from tz_subjmodule a, tz_subjlesson b
+		 where a.subj   = b.subj(+)
+		   and a.[MODULE] = b.[MODULE](+)
+		   and a.subj   = #subj#
+		   and a.[MODULE] = #module#
+		   and b.lesson = #lesson#
+	</select>
+	
+	
+	<!-- 신규레슨정보 -->
+	<select id="lcmsContentDAO.selectNewLessonInfo" parameterClass="map" resultClass="egovMap">
+		select lesson, [MODULE], starting, m_start, m_end,
+		       (select sdesc from tz_subjmodule where subj = #subj# and [MODULE] = #module#) as modulenm
+		  from (
+					select lpad(Nvl(Max(lesson), 0)+1, 4,'0') as lesson, #module# as [MODULE], '' as starting
+					, '0' m_start, '0' m_end
+					  from tz_subjlesson
+					 where subj = #subj#
+		       )
+	</select>
+	
+	
+	<!-- Lesson추가 -->
+	<insert id="lcmsContentDAO.insertLesson">
+		insert into tz_subjlesson(
+		    subj, [MODULE], lesson, sdesc, types, owner, starting, luserid, ldate, edu_time, edu_time_yn, m_start, m_end, lesson_time
+		)
+		values(
+			#subj#,
+			#module#,
+			#lesson#,
+			#lessonName#,
+			'1001',
+			#subj#,
+			#starting#,
+			#userid#,
+			to_char(sysdatetime,'yyyyMMddhh24miss'),
+			1,
+			'Y',
+			#m_start#,
+			#m_end#,
+			#lesson_time#
+		)
+	</insert>
+	
+	<!-- Lesson수정 -->
+	<update id="lcmsContentDAO.updateLesson">
+		update tz_subjlesson
+		   set lesson = #lesson#
+		     , sdesc  = #lessonName#
+		     , starting = #starting#
+		     , m_start = #m_start#
+		     , m_end = #m_end#
+		     , lesson_time = #lesson_time#
+		     , luserid = #userid#
+		     , ldate = to_char(sysdatetime, 'yyyyMMddhhmiss')
+		 where subj = #subj#
+		   and [MODULE] = #module#
+		   and lesson = #lesson#
+	</update>
+	
+	<!-- CA 모듈정보 등록 -->
+	<insert id="lcmsContentDAO.insertModuleExcel">
+		<![CDATA[
+			insert into tz_subjmodule(
+				subj, [MODULE], sdesc, types, luserid, ldate
+			)
+			
+			select #subj#,
+			       trim(to_char(substr([MODULE], 0, instr([MODULE],'!')-1),'00')) as [MODULE], 
+				   trim(substr([MODULE], instr([MODULE],'!')+1, length([MODULE]))) as modulenm,
+				   '1001' as types,
+				   #userid# as luserid,
+				   to_char(sysdatetime, 'yyyyMMddhh24miss') as ldate
+			  from (
+		]]>
+					<dynamic prepend=" select ">
+						<iterate property="tempModule" conjunction=" from DB_ROOT union all select ">
+							#tempModule[]# as [MODULE]
+						</iterate>
+					</dynamic>
+		<![CDATA[
+					from DB_ROOT
+				   )
+		]]>
+	</insert>
+	
+	<!-- <insert id="lcmsContentDAO.insertModuleExcel">
+		<![CDATA[
+			insert into tz_subjmodule(
+				subj, [MODULE], sdesc, types, luserid, ldate, md_start_time, md_end_time
+			)values
+			(#subj#,#module#,#modulenm#,'1001',#userid#,to_char(sysdatetime, 'yyyyMMddhh24miss'),#startTime#,#endTime#)
+		]]>
+	</insert>-->
+	
+	
+<!--	모바일엑셀업로드 - 모듈 -->
+	<update id="lcmsContentDAO.updateModuleExcel">
+		update tz_subjmodule
+		   set mobile_url = #mobile_url#
+		     , luserid = #userid#
+		     , ldate = to_char(sysdatetime, 'yyyyMMddhhmiss')
+		 where subj = #subj#
+		   and [MODULE] = #module#
+	</update>
+	
+<!--	모바일엑셀업로드 - 챕터 시간 (초) -->
+	<update id="lcmsContentDAO.updateLessonExcel">
+		update tz_subjlesson
+		   set m_start = #m_start#
+		     , m_end = #m_end#
+		     , luserid = #userid#
+		     , ldate = to_char(sysdatetime, 'yyyyMMddhhmiss')
+		 where subj = #subj#
+		   and [MODULE] = #module#
+		   and lesson = #lesson#
+	</update>
+	
+	
+	<!-- CA 레슨정보 등록 -->
+	<insert id="lcmsContentDAO.insertLessonExcel">
+		<![CDATA[
+			insert into tz_subjlesson(
+			    subj, [MODULE], lesson, sdesc, starting, types, owner, lesson_time, luserid, ldate
+			)
+			
+			select #subj# as subj,
+			       trim(to_char(substr(lesson, 0, idx1-1),'00')) as [MODULE],
+			       trim(to_char(substr(lesson, idx1+1, idx2-idx1-1), '0000')) as lesson,
+			       trim(substr(lesson, idx2+1, idx3-idx2-1)) as sdesc,
+			       trim(substr(lesson, idx3+1, idx4-idx3-1)) as starting,
+			       '1001' as types,
+			       #subj# as owner,
+			       trim(substr(lesson, idx4+1, length(lesson))) as lesson_time,
+			       #userid# as luserid,
+				   to_char(sysdatetime, 'yyyyMMddhhmiss') as ldate
+			  from (
+		]]>
+					<dynamic prepend=" select ">
+						<iterate property="tempLesson" conjunction=" from DB_ROOT union all select ">
+							#tempLesson[]# as lesson,
+							instr(#tempLesson[]#,'!',1,1) as idx1,
+							instr(#tempLesson[]#,'!',1,2) as idx2,
+							instr(#tempLesson[]#,'!',1,3) as idx3,
+							instr(#tempLesson[]#,'!',1,4) as idx4,
+							instr(#tempLesson[]#,'!',1,5) as idx5
+						</iterate>
+					</dynamic>
+		<![CDATA[
+					from DB_ROOT
+				   )
+		]]>
+	</insert>
+	
+	<delete id="lcmsContentDAO.delBetaProgress">
+		delete tz_beta_progress where subj = #subj# and userid = #userid#
+	</delete>
+	
+	
+	<insert id="lcmsContentDAO.insertModuleBackup" parameterClass="map">
+		<selectKey keyProperty="groupSeq" resultClass="int">
+			select nvl(max(group_seq), 0) + 1 group_seq from tz_subjmodule_backup
+		</selectKey>
+		insert into tz_subjmodule_backup
+			(group_seq, subj, [MODULE], sdesc, types, luserid, ldate, mobile_url, md_start_time, md_end_time, backup_date)
+		select 
+			#groupSeq#, subj, [MODULE], sdesc, types, luserid, ldate, mobile_url, md_start_time, md_end_time, sysdatetime
+		from
+			tz_subjmodule
+		where
+			subj = #subj#
+	</insert>
+	
+	<insert id="lcmsContentDAO.insertModuleExcelMultiple">
+		insert into tz_subjmodule
+			(subj, [MODULE], sdesc, types, luserid, ldate, mobile_url)
+		<iterate property="list" conjunction="union all">
+			select 
+				#subj#
+				, #list[].module#
+				<isNotEmpty property="list[].sdesc">, #list[].sdesc#</isNotEmpty><isEmpty property="list[].sdesc">, null</isEmpty>
+				, '1001'
+				, #userid#
+				, to_char(sysdatetime, 'yyyymmddhhmiss')
+				<isNotEmpty property="list[].mobile_url">, #list[].mobile_url#</isNotEmpty><isEmpty property="list[].mobile_url">, null</isEmpty>
+			from DB_ROOT
+		</iterate>
+	</insert>
+	
+	<insert id="lcmsContentDAO.insertLessonBackup" parameterClass="map">
+		<selectKey keyProperty="groupSeq" resultClass="int">
+			select nvl(max(group_seq), 0) + 1 group_seq from tz_subjlesson_backup
+		</selectKey>
+		insert into tz_subjlesson_backup
+			(group_seq, subj, [MODULE], lesson, sdesc, types, owner, starting, isbranch, luserid, ldate, edu_time, edu_time_yn, m_start, m_end, lesson_time, backup_date)
+		select 
+			#groupSeq#, subj, [MODULE], lesson, sdesc, types, owner, starting, isbranch, luserid, ldate, edu_time, edu_time_yn, m_start, m_end, lesson_time, sysdatetime
+		from
+			tz_subjlesson
+		where
+			subj = #subj#
+	</insert>
+	
+	<insert id="lcmsContentDAO.insertLessonExcelMultiple">
+		insert into tz_subjlesson
+			(subj, [MODULE], lesson, sdesc, types, owner, starting, luserid, ldate, m_start, m_end, lesson_time)
+		<iterate property="list" conjunction="union all">
+			select 
+				#subj#
+				, #list[].module#
+				, #list[].lesson#
+				<isNotEmpty property="list[].sdesc">, #list[].sdesc#</isNotEmpty><isEmpty property="list[].sdesc">, null</isEmpty>
+				, '1001'
+				, #subj#
+				<isNotEmpty property="list[].starting">, #list[].starting#</isNotEmpty><isEmpty property="list[].starting">, null</isEmpty>
+				, #userid#
+				, to_char(sysdatetime, 'yyyymmddhhmiss')
+				<isNotEmpty property="list[].m_start">, #list[].m_start#</isNotEmpty><isEmpty property="list[].m_start">, 0</isEmpty>
+				<isNotEmpty property="list[].m_end">, #list[].m_end#</isNotEmpty><isEmpty property="list[].m_end">, 0</isEmpty>
+				<isNotEmpty property="list[].lesson_time">, #list[].lesson_time#</isNotEmpty><isEmpty property="list[].lesson_time">, 0</isEmpty>
+			from DB_ROOT
+		</iterate>
+	</insert>
+	
+	<select id="lcmsContentDAO.getModuleBackupGroupList" parameterClass="map" resultClass="egovMap">
+		select *
+		from (
+			select
+				group_seq
+				, backup_date
+				, rownum rnum
+				, count(*) over() total_cnt
+			from (
+				select 
+					group_seq
+					, to_char(max(backup_date), 'yyyy.mm.dd hh24:mi:ss') backup_date
+				from 
+					tz_subjmodule_backup
+				where
+					subj = #subj#
+				group by group_seq
+				order by group_seq desc
+			)
+		) where rnum between (to_number(#pageIndex#) - 1) * to_number(#pageUnit#) + 1 AND to_number(#pageIndex#) * to_number(#pageUnit#)
+	</select>
+	
+	<select id="lcmsContentDAO.getLessonBackupGroupList" parameterClass="map" resultClass="egovMap">
+		select *
+		from (
+			select
+				group_seq
+				, backup_date
+				, rownum rnum
+				, count(*) over() total_cnt
+			from (
+				select 
+					group_seq
+					, to_char(max(backup_date), 'yyyy.mm.dd hh24:mi:ss') backup_date
+				from 
+					tz_subjlesson_backup
+				where
+					subj = #subj#
+				group by group_seq
+				order by group_seq desc
+			)
+		) where rnum between (to_number(#pageIndex#) - 1) * to_number(#recordCountPerPage#) + 1 AND to_number(#pageIndex#) * to_number(#recordCountPerPage#)
+	</select>
+	
+	<insert id="lcmsContentDAO.insertModuleRecovery">
+		insert into tz_subjmodule
+			(subj, [MODULE], sdesc, types, luserid, ldate, mobile_url)
+		select
+			subj, [MODULE], sdesc, types, luserid, ldate, mobile_url
+		from
+			tz_subjmodule_backup
+		where group_seq = #groupSeq# and subj = #subj#
+	</insert>
+	
+	<insert id="lcmsContentDAO.insertLessonRecovery">
+		insert into tz_subjlesson
+			(subj, [MODULE], lesson, sdesc, types, owner, starting, luserid, ldate, m_start, m_end, lesson_time)
+		select
+			subj, [MODULE], lesson, sdesc, types, owner, starting, luserid, ldate, m_start, m_end, lesson_time
+		from
+			tz_subjlesson_backup
+		where group_seq = #groupSeq# and subj = #subj#
+	</insert>
+	
+	<delete id="lcmsContentDAO.deleteModuleBackup">
+		delete from tz_subjmodule_backup where group_seq = #groupSeq# and subj = #subj#
+	</delete>
+	
+	<delete id="lcmsContentDAO.deleteLessonBackup">
+		delete from tz_subjlesson_backup where group_seq = #groupSeq# and subj = #subj#
+	</delete>
+	
+	<select id="lcmsContentDAO.getSubjModuleList" parameterClass="map" resultClass="egovMap">
+		select 
+			[MODULE]
+			, sdesc
+			, mobile_url 
+		from 
+			tz_subjmodule
+		where subj = #subj#
+	</select>
+	
+	<select id="lcmsContentDAO.getSubjLessonList" parameterClass="map" resultClass="egovMap">
+		select 
+			[MODULE]
+			, lesson
+			, sdesc
+			, starting
+			, m_start
+			, m_end
+			, lesson_time 
+		from 
+			tz_subjlesson
+		where subj = #subj#
+	</select>
+	
+	<select id="lcmsContentDAO.getSubjModuleBackupList" parameterClass="map" resultClass="egovMap">
+		select
+			subj, [MODULE], sdesc, types, luserid, ldate, mobile_url
+		from
+			tz_subjmodule_backup
+		where group_seq = #groupSeq# and subj = #subj#
+		order by [MODULE]
+	</select>
+	
+	<select id="lcmsContentDAO.getSubjLessonBackupList" parameterClass="map" resultClass="egovMap">
+		select
+			subj, [MODULE], lesson, sdesc, types, owner, starting, luserid, ldate, m_start, m_end, lesson_time
+		from
+			tz_subjlesson_backup
+		where group_seq = #groupSeq# and subj = #subj#
+		order by [MODULE], lesson
+	</select>
+	
+	<insert id="lcmsContentDAO.insertLessonExcelOne">
+		insert into tz_subjlesson
+			(subj, [MODULE], lesson, sdesc, types, owner, starting, luserid, ldate, m_start, m_end, lesson_time)
+			values(	 
+				#subj#
+				,#module#
+				,#lesson#
+				,#sdesc#
+				,'1001'
+				,#subj#
+				,#starting#
+				,#userid#
+				,to_char(sysdatetime, 'yyyymmddhhmiss')
+				,#m_start#
+				,#m_end#
+				,#lesson_time#
+			)
+	
+	</insert>
+	
+	
+	<select id="lcmsContentDAO.selectExamSubjList" parameterClass="map" resultClass="egovMap">
+	    SELECT ROWNUM AS rn
+          ,exam_subj
+          ,exam_subjnm
+		FROM ( 
+			     SELECT 
+			                 exam_subj
+					         ,exam_subjnm
+					FROM tz_exam_subj
+					<isNotEmpty property="p_searchtext">  
+						WHERE exam_subjnm LIKE '%'||#p_searchtext#||'%'
+		            </isNotEmpty>
+					ORDER BY exam_subjnm desc
+		)			
+		ORDER BY rn desc
+			
+     </select>  
+     
+     <select id="lcmsContentDAO.selectOriContents" parameterClass="map" resultClass="egovMap">
+	    SELECT exam_subj
+	                 ,subject
+                    ,contents
+                    ,luserid
+                    ,ldate 
+                    ,(SELECT NAME FROM tz_member WHERE userid=a.luserid) AS lname
+	    from tz_ori_contents a
+	    where exam_subj = #p_exam_subj#			
+     </select>  
+     
+     <select id="lcmsContentDAO.selectContentsFileList" parameterClass="map" resultClass="egovMap">
+		     select rownum rn
+		                  ,exam_subj
+				          ,seq
+				          ,realfile
+				          ,savefile
+				          ,savepath
+				          ,filesize
+				          ,inuserid
+				          ,inname
+				          ,indate
+				          ,luserid
+				          ,lname
+				          ,ldate
+			from (	          
+					   SELECT exam_subj
+				          ,seq
+				          ,realfile
+				          ,savefile
+				          ,savepath
+				          ,filesize
+				          ,inuserid
+				          ,(SELECT NAME FROM tz_member WHERE userid=a.inuserid) AS inname
+				          ,TO_CHAR(TO_DATETIME(ldate,'YYYYMMDDHH24MISS'),'YYYY-MM-DD') AS indate
+				          ,luserid
+		   		          ,(SELECT NAME FROM tz_member WHERE userid=a.luserid) AS lname
+				          ,TO_CHAR(TO_DATETIME(ldate,'YYYYMMDDHH24MISS'),'YYYY-MM-DD') AS ldate
+				FROM tz_ori_contents_file a
+				WHERE exam_subj =   #p_exam_subj#	
+					<isNotEmpty property="p_seq">
+						and seq = #p_seq#
+					</isNotEmpty>
+				    order BY seq
+			) 
+			order by rn desc
+     </select>  
+     
+     <insert id="lcmsContentDAO.insertOriContentsFileInsert">
+     	insert into tz_ori_contents_file ( exam_subj
+		          ,seq
+		          ,realfile
+		          ,savefile
+		          ,savepath
+		          ,filesize
+		          ,inuserid
+		          ,indate
+		          ,luserid
+		          ,ldate)
+		          values(
+		          #p_exam_subj#
+		          ,(select nvl(max(seq),0)+1 from tz_ori_contents_file where exam_subj = #p_exam_subj# )
+		          ,#p_origfilename#
+		          ,#p_savefilename#
+		          ,#p_savepath#
+		          ,#p_filesize#
+		          ,#userid#
+		          ,to_char(sysdatetime, 'yyyymmddhh24miss')
+		          ,#userid#
+		          ,to_char(sysdatetime, 'yyyymmddhh24miss')
+		          )
+     </insert>
+     
+     <insert id="lcmsContentDAO.insertOriContents">
+     	insert into tz_ori_contents 
+     			( exam_subj
+		            , subject
+                    ,contents
+                    ,luserid
+                    ,ldate 
+                )
+		         values(
+		           #p_exam_subj#
+		          ,#p_subject#
+		          ,#p_contents#		          
+		          ,#userid#
+		          ,to_char(sysdatetime, 'yyyymmddhh24miss')
+		         )
+     </insert>
+     
+     <insert id="lcmsContentDAO.updateOriContents">
+     	update tz_ori_contents 
+     	  set	 subject = #p_subject#
+                ,contents = #p_contents#
+                ,luserid = #userid#
+                ,ldate = to_char(sysdatetime, 'yyyymmddhh24miss')
+		  WHERE exam_subj =   #p_exam_subj#      
+     </insert>
+     
+     <delete id="lcmsContentDAO.deleteOriContentsFile">
+		delete tz_ori_contents_file 
+		where exam_subj =   #p_exam_subj#      
+		and seq = #p_seq#
+		
+	</delete>
+	
+</sqlMap>
+

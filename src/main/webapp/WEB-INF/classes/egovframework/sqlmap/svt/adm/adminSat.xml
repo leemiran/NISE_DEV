@@ -1,0 +1,700 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE sqlMap PUBLIC "-//iBATIS.com//DTD SQL Map 2.0//EN" "http://ibatis.apache.org/dtd/sql-map-2.dtd">
+
+<sqlMap namespace="adminSat">
+	<typeAlias alias="egovMap" type="egovframework.rte.psl.dataaccess.util.EgovMap"/>
+	
+	<select id="getYearContentsList" resultClass="egovMap">
+		select 
+			s.subj
+			--, regexp_replace(s.subjnm, '^[[0-9년_-]|[:blank:]]+') subjnm
+			, RegexReplaceAll(subjnm, '^[[0-9년_-]|[ ]]+', '') as subjnm
+			--,TRIM(REPLACE(REPLACE(replace(REPLACE(s.subjnm, '2017_', ''),'2014-', ''), '2015', ''), '2016', '')) AS subjnm
+			, cnt.[year]
+			, cnt.student_cnt
+		from (
+			select 
+				ss.subj
+				, ss.[year]
+		        , count(stu.userid) student_cnt
+			from 
+				tz_subjseq ss
+		        , tz_student stu
+			where 
+				exists (select selyear.subj from tz_subjseq selyear where [year] = #year# and selyear.subj = ss.subj)
+				and ss.[year] between to_char(to_number(#year#) - 2) and #year#
+				and ss.subj = stu.subj (+)
+				and ss.[year] = stu.[year] (+)
+				and ss.subjseq = stu.subjseq (+)
+			group by ss.subj, ss.[year]
+			) cnt
+			, tz_subj s
+		where 
+			cnt.subj = s.subj
+			and s.isonoff in('ON', 'ML')
+			and s.upperclass != 'OTH'
+			<isNotEmpty property="subjnm">						                       
+				and s.subjnm like '%'||#subjnm#||'%' 
+			</isNotEmpty>
+	</select>
+	
+	<select id="getTotalMemberCnt" resultClass="string">
+		select count(*) from tz_member where isretire = 'N'
+	</select>
+	
+	<select id="getYearMemberListByAddr" parameterClass="map" resultClass="egovMap">
+		select
+			sum(decode(address, '서울', 1, 0)) seoul
+			, sum(decode(address, '부산', 1, 0)) busan
+			, sum(decode(address, '대구', 1, 0)) daegu
+			, sum(decode(address, '인천', 1, 0)) incheon
+			, sum(decode(address, '광주', 1, 0)) gwangju
+			, sum(decode(address, '대전', 1, 0)) daejeon
+			, sum(decode(address, '울산', 1, 0)) ulsan
+			, sum(decode(address, '경기', 1, 0)) gyeonggi
+			, sum(decode(address, '강원', 1, 0)) gangwon
+			, sum(decode(address, '세종', 1, 0)) sejong
+			, sum(decode(address, '제주', 1, 0)) jeju
+			, sum(decode(address, '충북', 1, 0)) chungbuk
+			, sum(decode(address, '충남', 1, 0)) chungnam
+			, sum(decode(address, '전북', 1, 0)) jeonbuk
+			, sum(decode(address, '전남', 1, 0)) jeonnam
+			, sum(decode(address, '경북', 1, 0)) gyeongbuk
+			, sum(decode(address, '경남', 1, 0)) gyeongnam
+			, sum(decode(address, '국립학교', 1, 0)) school
+			, sum(decode(address, '복지관외', 1, 0)) etc
+		from (
+			select 
+				case
+					when address is not null then
+						case 
+							when address like '서울%' then '서울'
+							when address like '부산%' then '부산'
+							when address like '대구%' then '대구'
+							when address like '인천%' then '인천'
+							when address like '광주%' then '광주'
+							when address like '대전%' then '대전'
+							when address like '울산%' then '울산'
+							when address like '경기%' then '경기'
+							when address like '강원%' then '강원'
+							when address like '세종%' then '세종'
+							when address like '제주%' then '제주'
+							when address like '충북%' or address like '충청북도%' then '충북'
+							when address like '충남%' or address like '충청남도%' then '충남'
+							when address like '전북%' or address like '전라북도%' then '전북'
+							when address like '전남%' or address like '전라남도%' then '전남'
+							when address like '경북%' or address like '경상북도%' then '경북'
+							when address like '경남%' or address like '경상남도%' then '경남'
+							when address like '%국립학교%' then '국립학교'
+							else
+								case 
+									when address1 like '서울%' then '서울'
+									when address1 like '부산%' then '부산'
+									when address1 like '대구%' then '대구'
+									when address1 like '인천%' then '인천'
+									when address1 like '광주%' then '광주'
+									when address1 like '대전%' then '대전'
+									when address1 like '울산%' then '울산'
+									when address1 like '경기%' then '경기'
+									when address1 like '강원%' then '강원'
+									when address1 like '세종%' then '세종'
+									when address1 like '제주%' then '제주'
+									when address1 like '충북%' or address1 like '충청북도%' then '충북'
+									when address1 like '충남%' or address1 like '충청남도%' then '충남'
+									when address1 like '전북%' or address1 like '전라북도%' then '전북'
+									when address1 like '전남%' or address1 like '전라남도%' then '전남'
+									when address1 like '경북%' or address1 like '경상북도%' then '경북'
+									when address1 like '경남%' or address1 like '경상남도%' then '경남'
+									when address1 like '%국립학교%' then '국립학교'
+									else '복지관외'
+								end
+						end
+					else
+						case 
+							when address1 like '서울%' then '서울'
+							when address1 like '부산%' then '부산'
+							when address1 like '대구%' then '대구'
+							when address1 like '인천%' then '인천'
+							when address1 like '광주%' then '광주'
+							when address1 like '대전%' then '대전'
+							when address1 like '울산%' then '울산'
+							when address1 like '경기%' then '경기'
+							when address1 like '강원%' then '강원'
+							when address1 like '세종%' then '세종'
+							when address1 like '제주%' then '제주'
+							when address1 like '충북%' or address1 like '충청북도%' then '충북'
+							when address1 like '충남%' or address1 like '충청남도%' then '충남'
+							when address1 like '전북%' or address1 like '전라북도%' then '전북'
+							when address1 like '전남%' or address1 like '전라남도%' then '전남'
+							when address1 like '경북%' or address1 like '경상북도%' then '경북'
+							when address1 like '경남%' or address1 like '경상남도%' then '경남'
+							when address1 like '%국립학교%' then '국립학교'
+							else '복지관외'
+						end
+				end address
+			from
+				tz_member m
+				, tz_propose p
+			where 
+				m.userid = p.userid
+				and p.chkfinal = 'Y'
+				and m.comp = '1001'
+				and p.[year] = #ses_search_gyear#
+		)
+	</select>
+	
+	<select id="getYearMemberListByUpper" parameterClass="map" resultClass="egovMap">
+		select 
+			sum(decode('T', emp_gubun, 1, 0)) t
+			, sum(decode('E', emp_gubun, 1, 0)) e
+			, sum(decode('R', emp_gubun, 1, 0)) r
+			, sum(decode('P', emp_gubun, 1, 0)) p
+			, sum(decode('O', emp_gubun, 1, 0)) o
+			, sum(case when instr('TERPO', emp_gubun) = 0 then 1 else 0 end) etc
+		from
+			tz_member m
+			, tz_propose p
+		where m.userid = p.userid
+			and p.chkfinal = 'Y'
+			and m.comp = '1001'
+			and p.[year] = #ses_search_gyear#
+	</select>
+	
+	<select id="getYearMemberListByHistory" parameterClass="map" resultClass="egovMap">
+		select 
+			sum(decode('00001', m.career, 1, 0)) code1
+			, sum(decode('00002', m.career, 1, 0)) code2
+			, sum(decode('00003', m.career, 1, 0)) code3
+			, sum(decode('00004', m.career, 1, 0)) code4
+			, sum(decode('00005', m.career, 1, 0)) code5
+		from
+			tz_member m
+			, tz_propose p
+		where m.userid = p.userid
+			and p.chkfinal = 'Y'
+			and m.comp = '1001'
+			and p.[year] = #ses_search_gyear#
+			and m.emp_gubun = 'T'
+	</select>
+	
+	<select id="getYearMemberListByJob" parameterClass="map" resultClass="egovMap">
+		select 
+			sum(decode('00030', m.job_cd, 1, '00039', 1, 0)) code1
+			, sum(decode('00031', m.job_cd, 1, 0)) code2
+			, sum(decode('00032', m.job_cd, 1, 0)) code3
+			, sum(decode('00033', m.job_cd, 1, 0)) code4
+			, sum(decode('00034', m.job_cd, 1, 0)) code5
+			, sum(decode('00035', m.job_cd, 1, 0)) code6
+			, sum(decode('00036', m.job_cd, 1, 0)) code7
+			, sum(decode('00037', m.job_cd, 1, 0)) code8
+		from
+			tz_member m
+			, tz_propose p
+		where m.userid = p.userid
+			and p.chkfinal = 'Y'
+			and m.comp = '1001'
+			and p.[year] = #ses_search_gyear#
+			and m.emp_gubun = 'T'
+	</select>
+	
+	<select id="getYearMemberList" parameterClass="map" resultClass="egovMap">
+		
+		select 
+			nvl(a.comp,'-') as comp			
+			, Decode(a.emp_gubun, 'T', '교원', 'E', '보조인력', 'R', '교육전문직', 'P', '일반', 'O', '공무원', '기타')  emp_gubun
+			--, nvl(get_compnm(a.comp),'-') as compnm
+			, count(a.userid) * 1.00 cnt
+		from 
+			tz_member a 
+			, tz_grcomp b
+		where 
+			a.comp = b.comp
+			and a.comp = '1001'
+		group by a.comp, a.emp_gubun
+		order by cnt desc
+	</select>
+	
+	<select id="getYearMemberListByStat" parameterClass="map" resultClass="egovMap">
+		select
+			emp_gubun
+			, sum(decode(#ses_search_gyear#, substr(indate, 1, 4), 1, 0)) join_this_year
+			, sum(decode(to_char(to_number(#ses_search_gyear#) - 1), substr(indate, 1, 4), 1, 0)) join_year_ago
+			, sum(decode(to_char(to_number(#ses_search_gyear#) - 2), substr(indate, 1, 4), 1, 0)) join_years_ago
+			, sum(case when #ses_search_gyear# = substr(dormant_date, 1, 4) and 'Y' = dormant_yn then 1 else 0 end) dormant_y_this_year
+			, sum(case when #ses_search_gyear# = substr(dormant_date, 1, 4) and 'N' = dormant_yn then 1 else 0 end) dormant_n_this_year
+			, sum(case when to_char(to_number(#ses_search_gyear#) - 1) = substr(dormant_date, 1, 4) and 'Y' = dormant_yn then 1 else 0 end) dormant_y_year_ago
+			, sum(case when to_char(to_number(#ses_search_gyear#) - 1) = substr(dormant_date, 1, 4) and 'N' = dormant_yn then 1 else 0 end) dormant_n_year_ago
+			, sum(case when to_char(to_number(#ses_search_gyear#) - 2) = substr(dormant_date, 1, 4) and 'Y' = dormant_yn then 1 else 0 end) dormant_y_years_ago
+			, sum(case when to_char(to_number(#ses_search_gyear#) - 2) = substr(dormant_date, 1, 4) and 'N' = dormant_yn then 1 else 0 end) dormant_n_years_ago
+			, sum(case when #ses_search_gyear# = substr(retire_date, 1, 4) and 'Y' = isretire then 1 else 0 end) retire_y_this_year
+			, sum(case when #ses_search_gyear# = substr(retire_date, 1, 4) and 'N' = isretire then 1 else 0 end) retire_n_this_year
+			, sum(case when to_char(to_number(#ses_search_gyear#) - 1) = substr(retire_date, 1, 4) and 'Y' = isretire then 1 else 0 end) retire_y_year_ago
+			, sum(case when to_char(to_number(#ses_search_gyear#) - 1) = substr(retire_date, 1, 4) and 'N' = isretire then 1 else 0 end) retire_n_year_ago
+			, sum(case when to_char(to_number(#ses_search_gyear#) - 2) = substr(retire_date, 1, 4) and 'Y' = isretire then 1 else 0 end) retire_y_years_ago
+			, sum(case when to_char(to_number(#ses_search_gyear#) - 2) = substr(retire_date, 1, 4) and 'N' = isretire then 1 else 0 end) retire_n_years_ago
+			--, grouping(emp_gubun) grouping
+			, nvl2(emp_gubun,0,1) grouping
+		from
+			tz_member
+		where 
+			indate between to_char(to_number(#ses_search_gyear#) - 2) || '0101000000' and #ses_search_gyear# || '1231235959'
+			or dormant_date between TO_DATETIME(to_char(to_number(#ses_search_gyear#) - 2) || '0101000000', 'yyyymmddhh24miss') and TO_DATETIME(#ses_search_gyear# || '1231235959', 'yyyymmddhh24miss')
+			or retire_date between to_char(to_number(#ses_search_gyear#) - 2) || '0101000000' and #ses_search_gyear# || '1231235959'
+		group by emp_gubun with rollup
+		ORDER BY emp_gubun nulls LAST
+	</select>
+	
+	<select id="getEduOffice" parameterClass="map" resultClass="egovMap">
+	select	subj.upperclass
+			, max(sa.classname) classname
+			, max(subj.subjnm) subjnm
+			, cnt.subj
+			, decode(max(cnt.auto_cnt), 0, '일반', '특별') auto_type
+			, sum(student_cnt) student_cnt
+			, sum(student_cnt_isu_y) student_cnt_isu_y
+			, sum(student_cnt_isu_n) student_cnt_isu_n
+			, max(subj.edutimes) edutimes
+			, sum(cnt.seoul) seoul
+			, sum(cnt.seoul_isu_y) seoul_isu_y
+			, sum(cnt.seoul_isu_n) seoul_isu_n
+			, sum(cnt.busan) busan
+			, sum(cnt.busan_isu_y) busan_isu_y
+			, sum(cnt.busan_isu_n) busan_isu_n
+			, sum(cnt.daegu) daegu
+			, sum(cnt.daegu_isu_y) daegu_isu_y
+			, sum(cnt.daegu_isu_n) daegu_isu_n
+			, sum(cnt.incheon) incheon
+			, sum(cnt.incheon_isu_y) incheon_isu_y
+			, sum(cnt.incheon_isu_n) incheon_isu_n
+			, sum(cnt.gwangju) gwangju
+			, sum(cnt.gwangju_isu_y) gwangju_isu_y
+			, sum(cnt.gwangju_isu_n) gwangju_isu_n
+			, sum(cnt.daejeon) daejeon
+			, sum(cnt.daejeon_isu_y) daejeon_isu_y
+			, sum(cnt.daejeon_isu_n) daejeon_isu_n
+			, sum(cnt.ulsan) ulsan
+			, sum(cnt.ulsan_isu_y) ulsan_isu_y
+			, sum(cnt.ulsan_isu_n) ulsan_isu_n
+			, sum(cnt.sejong) sejong
+			, sum(cnt.sejong_isu_y) sejong_isu_y
+			, sum(cnt.sejong_isu_n) sejong_isu_n
+			, sum(cnt.gyeonggi) gyeonggi
+			, sum(cnt.gyeonggi_isu_y) gyeonggi_isu_y
+			, sum(cnt.gyeonggi_isu_n) gyeonggi_isu_n
+			, sum(cnt.gangwon) gangwon
+			, sum(cnt.gangwon_isu_y) gangwon_isu_y
+			, sum(cnt.gangwon_isu_n) gangwon_isu_n
+			, sum(cnt.chungbuk) chungbuk
+			, sum(cnt.chungbuk_isu_y) chungbuk_isu_y
+			, sum(cnt.chungbuk_isu_n) chungbuk_isu_n
+			, sum(cnt.chungnam) chungnam
+			, sum(cnt.chungnam_isu_y) chungnam_isu_y
+			, sum(cnt.chungnam_isu_n) chungnam_isu_n
+			, sum(cnt.jeonbuk) jeonbuk
+			, sum(cnt.jeonbuk_isu_y) jeonbuk_isu_y
+			, sum(cnt.jeonbuk_isu_n) jeonbuk_isu_n
+			, sum(cnt.jeonnam) jeonnam
+			, sum(cnt.jeonnam_isu_y) jeonnam_isu_y
+			, sum(cnt.jeonnam_isu_n) jeonnam_isu_n
+			, sum(cnt.gyeongbuk) gyeongbuk
+			, sum(cnt.gyeongbuk_isu_y) gyeongbuk_isu_y
+			, sum(cnt.gyeongbuk_isu_n) gyeongbuk_isu_n
+			, sum(cnt.gyeongnam) gyeongnam
+			, sum(cnt.gyeongnam_isu_y) gyeongnam_isu_y
+			, sum(cnt.gyeongnam_isu_n) gyeongnam_isu_n
+			, sum(cnt.jeju) jeju
+			, sum(cnt.jeju_isu_y) jeju_isu_y
+			, sum(cnt.jeju_isu_n) jeju_isu_n
+			, sum(cnt.edu) edu
+			, sum(cnt.edu_isu_y) edu_isu_y
+			, sum(cnt.edu_isu_n) edu_isu_n
+			--, grouping(subj.upperclass) grouping_upperclass
+			, NVL2(subj.upperclass,0,1) AS grouping_upperclass
+			--, grouping(cnt.subj) grouping_subj
+			, NVL2(cnt.subj,0,1) AS grouping_subj		
+		from (
+		        select
+				subj
+				, max(subjseq) as subjseq
+				, count(name) auto_cnt
+				, count(userid) student_cnt
+				, sum(decode(isgraduated, 'Y', 1, 0)) student_cnt_isu_y
+				, sum(decode(isgraduated, 'N', 1, 0)) student_cnt_isu_n
+				, sum(decode('00001', ADD_CODE, 1, 0)) seoul
+				, sum(case when '00001' = ADD_CODE and isgraduated = 'Y' then 1 else 0 end) seoul_isu_y
+				, sum(case when '00001' = ADD_CODE and isgraduated = 'N' then 1 else 0 end) seoul_isu_n
+				, sum(decode('00002', ADD_CODE, 1, 0)) busan
+				, sum(case when '00002' = ADD_CODE and isgraduated = 'Y' then 1 else 0 end) busan_isu_y
+				, sum(case when '00002' = ADD_CODE and isgraduated = 'N' then 1 else 0 end) busan_isu_n
+				, sum(decode('00003', ADD_CODE, 1, 0)) daegu
+				, sum(case when '00003' = ADD_CODE and isgraduated = 'Y' then 1 else 0 end) daegu_isu_y
+				, sum(case when '00003' = ADD_CODE and isgraduated = 'N' then 1 else 0 end) daegu_isu_n
+				, sum(decode('00004', ADD_CODE, 1, 0)) incheon
+				, sum(case when '00004' = ADD_CODE and isgraduated = 'Y' then 1 else 0 end) incheon_isu_y
+				, sum(case when '00004' = ADD_CODE and isgraduated = 'N' then 1 else 0 end) incheon_isu_n
+				, sum(decode('00005', ADD_CODE, 1, 0)) gwangju
+				, sum(case when '00005' = ADD_CODE and isgraduated = 'Y' then 1 else 0 end) gwangju_isu_y
+				, sum(case when '00005' = ADD_CODE and isgraduated = 'N' then 1 else 0 end) gwangju_isu_n
+				, sum(decode('00006', ADD_CODE, 1, 0)) daejeon
+				, sum(case when '00006' = ADD_CODE and isgraduated = 'Y' then 1 else 0 end) daejeon_isu_y
+				, sum(case when '00006' = ADD_CODE and isgraduated = 'N' then 1 else 0 end) daejeon_isu_n
+				, sum(decode('00007', ADD_CODE, 1, 0)) ulsan
+				, sum(case when '00007' = ADD_CODE and isgraduated = 'Y' then 1 else 0 end) ulsan_isu_y
+				, sum(case when '00007' = ADD_CODE and isgraduated = 'N' then 1 else 0 end) ulsan_isu_n
+				, sum(decode('00011', ADD_CODE, 1, 0)) sejong
+				, sum(case when '00011' = ADD_CODE and isgraduated = 'Y' then 1 else 0 end) sejong_isu_y
+				, sum(case when '00011' = ADD_CODE and isgraduated = 'N' then 1 else 0 end) sejong_isu_n
+				, sum(decode('00008', ADD_CODE, 1, 0)) gyeonggi
+				, sum(case when '00008' = ADD_CODE and isgraduated = 'Y' then 1 else 0 end) gyeonggi_isu_y
+				, sum(case when '00008' = ADD_CODE and isgraduated = 'N' then 1 else 0 end) gyeonggi_isu_n
+				, sum(decode('00009', ADD_CODE, 1, 0)) gangwon
+				, sum(case when '00009' = ADD_CODE and isgraduated = 'Y' then 1 else 0 end) gangwon_isu_y
+				, sum(case when '00009' = ADD_CODE and isgraduated = 'N' then 1 else 0 end) gangwon_isu_n
+				, sum(decode('00010', ADD_CODE, 1, 0)) chungbuk
+				, sum(case when '00010' = ADD_CODE and isgraduated = 'Y' then 1 else 0 end) chungbuk_isu_y
+				, sum(case when '00010' = ADD_CODE and isgraduated = 'N' then 1 else 0 end) chungbuk_isu_n
+				, sum(decode('00012', ADD_CODE, 1, 0)) chungnam
+				, sum(case when '00012' = ADD_CODE and isgraduated = 'Y' then 1 else 0 end) chungnam_isu_y
+				, sum(case when '00012' = ADD_CODE and isgraduated = 'N' then 1 else 0 end) chungnam_isu_n
+				, sum(decode('00013', ADD_CODE, 1, 0)) jeonbuk
+				, sum(case when '00013' = ADD_CODE and isgraduated = 'Y' then 1 else 0 end) jeonbuk_isu_y
+				, sum(case when '00013' = ADD_CODE and isgraduated = 'N' then 1 else 0 end) jeonbuk_isu_n
+				, sum(decode('00014', ADD_CODE, 1, 0)) jeonnam
+				, sum(case when '00014' = ADD_CODE and isgraduated = 'Y' then 1 else 0 end) jeonnam_isu_y
+				, sum(case when '00014' = ADD_CODE and isgraduated = 'N' then 1 else 0 end) jeonnam_isu_n
+				, sum(decode('00015', ADD_CODE, 1, 0)) gyeongbuk
+				, sum(case when '00015' = ADD_CODE and isgraduated = 'Y' then 1 else 0 end) gyeongbuk_isu_y
+				, sum(case when '00015' = ADD_CODE and isgraduated = 'N' then 1 else 0 end) gyeongbuk_isu_n
+				, sum(decode('00016', ADD_CODE, 1, 0)) gyeongnam
+				, sum(case when '00016' = ADD_CODE and isgraduated = 'Y' then 1 else 0 end) gyeongnam_isu_y
+				, sum(case when '00016' = ADD_CODE and isgraduated = 'N' then 1 else 0 end) gyeongnam_isu_n
+				, sum(decode('00017', ADD_CODE, 1, 0)) jeju
+				, sum(case when '00017' = ADD_CODE and isgraduated = 'Y' then 1 else 0 end) jeju_isu_y
+				, sum(case when '00017' = ADD_CODE and isgraduated = 'N' then 1 else 0 end) jeju_isu_n				
+				, sum(decode('00020', ADD_CODE, 1, 0)) edu
+				, sum(case when '00020' = ADD_CODE and isgraduated = 'Y' then 1 else 0 end) edu_isu_y
+				, sum(case when '00020' = ADD_CODE and isgraduated = 'N' then 1 else 0 end) edu_isu_n
+			from (			
+				select p.subj
+				,s.subjseq
+				,am.name
+				,p.userid
+				,s.isgraduated
+				,(CASE WHEN p.area_code = 'B10' and m.dept_cd is not null  THEN '00001'
+	                                                              WHEN p.area_code = 'C10' and m.dept_cd is not null   THEN '00002' 
+	                                                              WHEN p.area_code = 'D10' and m.dept_cd is not null   THEN '00003'
+	                                                              WHEN p.area_code = 'E10' and m.dept_cd is not null   THEN '00004'
+	                                                              WHEN p.area_code = 'F10' and m.dept_cd is not null   THEN '00005'
+	                                                              WHEN p.area_code = 'G10' and m.dept_cd is not null   THEN '00006'
+	                                                              WHEN p.area_code = 'H10' and m.dept_cd is not null   THEN '00007'
+	                                                              WHEN p.area_code = 'J10' and m.dept_cd is not null   THEN '00008'
+	                                                              WHEN p.area_code = 'K10' and m.dept_cd is not null   THEN '00009'
+	                                                              WHEN p.area_code = 'I10' and m.dept_cd is not null   THEN '00011'
+	                                                              WHEN p.area_code = 'T10' and m.dept_cd is not null   THEN '00017'
+	                                                              WHEN p.area_code = 'M10' and m.dept_cd is not null   THEN '00010'
+	                                                              WHEN p.area_code = 'N10' and m.dept_cd is not null   THEN '00012'
+	                                                              WHEN p.area_code = 'P10' and m.dept_cd is not null   THEN '00013'  
+	                                                              WHEN p.area_code = 'Q10' and m.dept_cd is not null   THEN '00014'  
+	                                                              WHEN p.area_code = 'R10' and m.dept_cd is not null   THEN '00015'  
+	                                                              WHEN p.area_code = 'S10' and m.dept_cd is not null   THEN '00016' 
+	                                                              ELSE '00020'
+	                                                              END) AS ADD_CODE
+				from tz_propose p
+					, tz_student s
+					, tz_auto_member am
+					, tz_subjseq ss
+					, tz_member m
+					<isNotEmpty property="ses_search_gmonth">
+						, tz_grseq g
+					</isNotEmpty>
+				where
+					p.subj = s.subj
+					and p.[year] = s.[year]
+					and p.subjseq = s.subjseq
+					and p.userid = s.userid
+					and p.area_code is not null
+					and p.chkfinal = 'Y'
+					and p.subj = am.subj(+)
+					and p.[year] = am.[year](+)
+					and p.subjseq = am.subjseq(+)
+					and s.subj = ss.subj
+					and s.[year] = ss.[year]
+					and s.subjseq = ss.subjseq
+					and p.userid = m.userid
+					
+					<isNotEmpty property="ses_search_gmonth">
+						
+						AND g.gyear = ss.[year]
+						AND g.grseq = ss.grseq
+						AND g.gmonth = TO_NUMBER(#ses_search_gmonth#)
+						and ss.[year] = #ses_search_gyear#
+					</isNotEmpty>
+					
+					<isEmpty property="ses_search_gmonth">
+						and ss.[year] = #ses_search_gyear#
+					</isEmpty>					
+					
+					<isEqual property="p_cursBunryu" compareValue="JOB">					
+						AND s.emp_gubun IN ('T', 'R')						
+					</isEqual>
+					
+					
+				)	
+				group by subj	
+		)cnt
+			, tz_subj subj
+			, tz_subjatt sa
+		where 
+			subj.subj = cnt.subj
+			and subj.upperclass = sa.upperclass
+			and sa.use_yn = 'Y'
+											
+            <isNotEmpty property="p_cursBunryu">            		
+				<isNotEqual property="p_cursBunryu" compareValue="JOB">
+					and subj.upperclass = #p_cursBunryu#
+				</isNotEqual>				
+				<isEqual property="p_cursBunryu" compareValue="JOB">						
+					and subj.upperclass in ('PRF', 'PAR', 'SCP')
+				</isEqual>				
+			</isNotEmpty>
+			
+			
+					
+			
+		group by subj.upperclass, cnt.subj with rollup
+	</select>	 
+	
+	<select id="getEduOfficeDetail" parameterClass="map" resultClass="egovMap">
+		select 
+			s.upperclass
+			, max(sa.classname) classname
+			, cnt.subj
+			, to_number(cnt.subjseq) subjseq
+			, decode(max(cnt.auto_cnt), 0, '일반', '특별') auto_type
+			, max(s.subjnm) subjnm
+			, max(s.edutimes) edutimes
+			, max(to_char(TO_DATETIME(ss.propstart, 'yyyymmddhh24'), 'yy.mm.dd')) propstart
+			, max(to_char(TO_DATETIME(ss.propend, 'yyyymmddhh24'), 'yy.mm.dd')) propend
+			, max(to_char(TO_DATETIME(ss.edustart, 'yyyymmddhh24'), 'yy.mm.dd')) edustart
+			, max(to_char(TO_DATETIME(ss.eduend, 'yyyymmddhh24'), 'yy.mm.dd')) eduend
+			, sum(cnt.auto_cnt) auto_cnt
+			, sum(cnt.student_cnt) student_cnt
+			, sum(cnt.isu_y) isu_y
+			, sum(cnt.isu_n) isu_n
+			, sum(cnt.job1) job1
+			, sum(cnt.job2) job2
+			, sum(cnt.job3) job3
+			, sum(cnt.job4) job4
+			, sum(cnt.job5) job5
+			, sum(cnt.job6) job6
+			, sum(cnt.job7) job7
+			, sum(cnt.job8) job8
+			, sum(cnt.job9) job9
+			, sum(cnt.job10) job10
+			, sum(cnt.etc) etc
+			, count(cnt.subj) subj_cnt
+			--, grouping(s.upperclass) grouping_upperclass
+			, nvl2(s.upperclass,0,1) grouping_upperclass
+			--, grouping(cnt.subj) grouping_subj
+			, nvl2(cnt.subj,0,1) grouping_subj
+			--, grouping(cnt.subjseq) grouping_subjseq
+			, nvl2(cnt.subjseq,0,1) grouping_subjseq
+		from (
+			select
+				p.subj
+				, p.[year]
+				, p.subjseq
+				, count(am.name) auto_cnt
+				, sum(decode(p.userid, null, 0, 1)) student_cnt
+				, sum(decode(s.isgraduated, 'Y', 1, 0)) isu_y
+				, sum(decode(s.isgraduated, 'N', 1, 0)) isu_n
+				, sum(case when 'T' = s.emp_gubun and '00030' = st.job_cd then 1 else 0 end) job1
+				, sum(case when 'T' = s.emp_gubun and '00031' = st.job_cd then 1 else 0 end) job2
+				, sum(case when 'T' = s.emp_gubun and '00032' = st.job_cd then 1 else 0 end) job3
+				, sum(case when 'T' = s.emp_gubun and '00033' = st.job_cd then 1 else 0 end) job4
+				, sum(case when 'T' = s.emp_gubun and '00034' = st.job_cd then 1 else 0 end) job5
+				, sum(case when 'T' = s.emp_gubun and '00035' = st.job_cd then 1 else 0 end) job6
+				, sum(case when 'T' = s.emp_gubun and '00036' = st.job_cd then 1 else 0 end) job7
+				, sum(case when 'T' = s.emp_gubun and '00037' = st.job_cd then 1 else 0 end) job8
+				, sum(case when 'T' = s.emp_gubun and '00039' = st.job_cd then 1 else 0 end) job9
+				, sum(decode(s.emp_gubun, 'R', 1, 0)) job10
+				, sum(case when 'T' != s.emp_gubun and 'R' != s.emp_gubun then 1 else 0 end) etc
+			from 
+				tz_propose p
+				, tz_student s
+				, tz_member m
+				, tz_auto_member am
+				, tz_stold st
+			where
+				p.subj = s.subj
+				and p.[year] = s.[year]
+				and p.subjseq = s.subjseq
+				and p.userid = s.userid
+				and p.userid = m.userid
+				and p.chkfinal = 'Y'
+				<isNotEmpty property="search_area">
+					and p.area_code = #search_area#
+				</isNotEmpty>
+				<isEmpty property="search_area">
+					and p.area_code in (select code
+					  					from tz_code
+					 						where gubun = '0118'
+					   						  and levels = '1'
+					                          AND code != 'A00'
+					  					)
+				</isEmpty>	
+				
+		   
+				and p.[year] = #ses_search_gyear#
+				and p.subj = am.subj(+)
+				and p.[year] = am.[year](+)
+				and p.subjseq = am.subjseq(+)
+				and m.dept_cd is not null
+				
+				and p.subj =st.subj(+)				
+				and p.subjseq = st.subjseq(+)
+				AND p.userid = st.userid(+)
+				
+			group by p.subj, p.[year], p.subjseq
+			) cnt
+			, tz_subjseq ss
+			, tz_subj s
+			, tz_subjatt sa
+		where 
+			cnt.subj = ss.subj
+			and cnt.[year] = ss.[year]
+			and cnt.subjseq = ss.subjseq
+			and cnt.subj = s.subj
+			and s.upperclass = sa.upperclass
+			and sa.use_yn = 'Y'
+		group by s.upperclass, cnt.subj, cnt.subjseq with rollup		
+	</select>
+	
+	<select id="getEduOfficeIsu" parameterClass="map" resultClass="egovMap">
+		select 
+			s.[year]
+			, sum(case when m.emp_gubun = 'T' and s.isgraduated = 'Y' then 1 else 0 end) emp_t
+			, sum(case when m.emp_gubun = 'E' and s.isgraduated = 'Y' then 1 else 0 end) emp_e
+			, sum(case when m.emp_gubun = 'R' and s.isgraduated = 'Y' then 1 else 0 end) emp_r
+		from 
+			tz_propose p
+			, tz_student s
+			, tz_member m
+		where p.subj = s.subj
+			and p.[year] = s.[year]
+			and p.subjseq = s.subjseq
+			and p.userid = s.userid
+			and p.userid = m.userid
+			and p.chkfinal = 'Y'
+			and p.[year] between #year# - 2 and #year#
+			and p.area_code = #areaCode#
+		group by s.[year]
+		order by s.[year]
+	</select>
+	
+	<select id="getAreaCodeName" parameterClass="map" resultClass="String">
+		select 
+			codenm
+		from 
+			tz_code
+		where gubun = '0119'
+			and code = #areaCode#
+	</select>
+	
+	<select id="getScore" parameterClass="map" resultClass="egovMap">
+	SELECT point
+			, score_gubun
+			--, student_cnt
+			,sum(student_cnt) as student_cnt
+			, rtrim(ROUND(sum(ratio),2), '.') ratio
+			,nvl2(point,0,1) AS grouping_point
+			,nvl2(score_gubun,0,1) AS grouping_score_gubun		
+	FROM (		
+		select
+			point
+			, score_gubun
+			, count(score_gubun) student_cnt
+			, rtrim(ROUND(count(score_gubun) * 100.0 / max(student_by_point), 2), '.')  ratio
+			--, grouping(point) grouping_point			
+			--, grouping(score_gubun) grouping_score_gubun
+		from (
+			select 
+				case 
+					when DECODE(s.point,'4',stdt.editscore,stdt.score) > 94 then '95점 이상'
+					when DECODE(s.point,'4',stdt.editscore,stdt.score) > 89 then '90점 이상 ~ 95점 미만'
+					when DECODE(s.point,'4',stdt.editscore,stdt.score) > 84 then '85점 이상 ~ 90점 미만'
+					when DECODE(s.point,'4',stdt.editscore,stdt.score) > 79 then '80점 이상 ~ 85점 미만'
+					when DECODE(s.point,'4',stdt.editscore,stdt.score) > 74 then '75점 이상 ~ 80점 미만'
+					when DECODE(s.point,'4',stdt.editscore,stdt.score) > 69 then '70점 이상 ~ 75점 미만'
+					when DECODE(s.point,'4',stdt.editscore,stdt.score) > 64 then '65점 이상 ~ 70점 미만'
+					when DECODE(s.point,'4',stdt.editscore,stdt.score) > 59 then '60점 이상 ~ 65점 미만'
+					else '60점 미만'
+				end score_gubun
+				, s.point
+				, count(*) over(PARTITION BY s.point) student_by_point
+			from 
+				tz_subjseq ss
+				, tz_subj s
+				, tz_student stdt
+			where
+				ss.subj = s.subj
+				and ss.subj = stdt.subj
+				and ss.[year] = stdt.[year]
+				and ss.subjseq = stdt.subjseq
+				and s.point > 0
+				and (ss.edustart between replace(#p_search_from#, '.', '') || '00' and replace(#p_search_to#, '.', '') || '23'
+				or ss.eduend between replace(#p_search_from#, '.', '') || '00' and replace(#p_search_to#, '.', '') || '23')
+			--order by score_gubun desc
+			)
+			group by point, score_gubun 
+		)
+		group by point, score_gubun with rollup		
+		order by point nulls last, decode(score_gubun, null, '0', score_gubun) DESC, score_gubun nulls last
+	</select>
+	
+	<select id="getPoint" parameterClass="map" resultClass="egovMap">
+	SELECT [year]
+          , point
+          , SUM(subj_cnt) subj_cnt
+          , SUM(isu_cnt) isu_cnt
+			--, grouping(stdt.[year]) grouping_year
+			, NVL2([year],0,1) grouping_year
+			--, grouping(s.point) grouping_point
+			, NVL2(point,0,1) grouping_point
+		FROM (
+			select
+				to_char(to_date(stdt.[year], 'yyyy'), 'yy') [year]
+				, s.point
+				, count(distinct(stdt.[year] || stdt.subj)) subj_cnt
+				, sum(decode(stdt.isgraduated, 'Y', 1, 0)) isu_cnt				
+			from
+				tz_subj s
+				, tz_student stdt
+			where
+				s.subj = stdt.subj
+				and s.point > 0
+				and stdt.[year] between #ses_search_gyear# - 2 and #ses_search_gyear#
+				group by stdt.[year], s.point 
+		)			
+		group BY [year], point with rollup
+		order BY [year] nulls last , point nulls last
+	</select>
+	
+	<select id="cursBunryuJob" parameterClass="map" resultClass="egovMap">
+		SELECT code, codenm
+			FROM (
+				(SELECT '' AS code, 'ALL' as  codenm FROM db_root)
+				UNION ALL
+				(SELECT 'JOB' AS code, 'ALL(직무)' as  codenm FROM db_root)
+				UNION ALL
+				(SELECT upperclass as code, classname as codenm 
+						from tz_subjatt
+						where middleclass = '000'
+						and lowerclass = '000'
+						and use_yn = 'Y'
+						order by classname 
+				)
+			)
+	</select>
+</sqlMap>
+

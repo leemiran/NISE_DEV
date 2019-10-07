@@ -1,0 +1,323 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE sqlMap PUBLIC "-//iBATIS.com//DTD SQL Map 2.0//EN" "http://ibatis.apache.org/dtd/sql-map-2.dtd">
+
+<sqlMap namespace="LcmsItem">
+	<typeAlias  alias="egovMap" type="egovframework.rte.psl.dataaccess.util.EgovMap"/>
+	
+	
+	
+<resultMap id="LcmsItemResult" class="egovframework.adm.lcms.cts.domain.LcmsItem">
+	<result property="itemSeq" column="ITEM_SEQ" columnIndex="1"/>
+	<result property="rsrcSeq" column="RSRC_SEQ" columnIndex="2"/>
+	<result property="orgSeq" column="ORG_SEQ" columnIndex="3"/>
+	<result property="highItemSeq" column="HIGH_ITEM_SEQ" columnIndex="4"/>
+	<result property="orgItemNo" column="ORG_ITEM_NO" columnIndex="5"/>
+	<result property="itemId" column="ITEM_ID" columnIndex="6"/>
+	<result property="itemIdRef" column="ITEM_ID_REF" columnIndex="7"/>
+	<result property="itemTitle" column="ITEM_TITLE" columnIndex="8"/>
+	<result property="itemType" column="ITEM_TYPE" columnIndex="9"/>
+	<result property="itemOpen" column="ITEM_OPEN" columnIndex="10"/>
+	<result property="itemTlAction" column="ITEM_TL_ACTION" columnIndex="11"/>
+	<result property="itemMaxTime" column="ITEM_MAX_TIME" columnIndex="12"/>
+	<result property="itemStartFile" column="ITEM_START_FILE" columnIndex="13"/>
+	<result property="itemLomFile" column="ITEM_LOM_FILE" columnIndex="14"/>
+	<result property="itemParameters" column="ITEM_PARAMETERS" columnIndex="15"/>
+	<result property="dataFromLms" column="DATA_FROM_LMS" columnIndex="16"/>
+	<result property="itemThreshold" column="ITEM_THRESHOLD" columnIndex="17"/>
+	<result property="metaLocation" column="META_LOCATION" columnIndex="18"/>
+	<result property="userId" column="USERID" columnIndex="19"/>
+	<result property="updateDt" column="UPDATE_DT" columnIndex="20"/>
+	<result property="courseCd" column="COURSE_CD" columnIndex="21"/>
+	<result property="itemProgressTime" column="ITEM_PROGRESS_TIME" columnIndex="22"/>
+	<result property="beforeItemSeq" column="BEFORE_ITEM_SEQ" columnIndex="23"/>
+</resultMap>
+
+    <select id="lcmsItemDAO.selectLcmsItemPageList" parameterClass="map" resultClass="egovMap">
+        SELECT * 
+        FROM
+               (
+                SELECT TEMP.*, 
+                <isNotEmpty property="rowsPerPage">
+                       CEIL(ROWNUM / #rowsPerPage#) AS PAGE 
+                </isNotEmpty>
+                <isEmpty property="rowsPerPage">
+                       CEIL(ROWNUM / 10) AS PAGE 
+                </isEmpty>
+                FROM
+                      (
+                       SELECT 
+	        	              ITEM_SEQ,
+	        	              RSRC_SEQ,
+	        	              ORG_SEQ,
+	        	              HIGH_ITEM_SEQ,
+	        	              ORG_ITEM_NO,
+	        	              ITEM_ID,
+	        	              ITEM_ID_REF,
+	        	              ITEM_TITLE,
+	        	              ITEM_TYPE,
+	        	              ITEM_OPEN,
+	        	              ITEM_TL_ACTION,
+	        	              ITEM_MAX_TIME,
+	        	              ITEM_START_FILE,
+	        	              ITEM_LOM_FILE,
+	        	              ITEM_PARAMETERS,
+	        	              DATA_FROM_LMS,
+	        	              ITEM_THRESHOLD,
+	        	              META_LOCATION,
+	        	              USERID,
+	        	              UPDATE_DT,
+	        	              COURSE_CD,
+	        	              ITEM_PROGRESS_TIME,
+	        	               BEFORE_ITEM_SEQ
+        		       FROM   TB_LCMS_ITEM
+        		       <!--  APPEND WHERE CONDITION START  -->
+
+        		       <!--  APPEND WHERE CONDITION END    -->
+        		       <isNotEmpty property="orderBy">
+        			       $orderBy$
+        		       </isNotEmpty>
+        	          ) TEMP 
+               )
+        <isNotEmpty property="page">
+        WHERE PAGE = #page#
+        </isNotEmpty>
+        <isEmpty property="page">
+        WHERE PAGE = 1
+        </isEmpty>
+    </select>
+
+    <!-- 학습창  -->
+    <select id="lcmsItemDAO.selectLcmsItemList" parameterClass="map" resultClass="egovMap">
+        SELECT ITEM_SEQ,
+               RSRC_SEQ,
+               ORG_SEQ,
+               HIGH_ITEM_SEQ,
+               ORG_ITEM_NO,
+               ITEM_ID,
+               ITEM_ID_REF,
+               ITEM_TITLE,
+               ITEM_TYPE,
+               ITEM_OPEN,
+               ITEM_TL_ACTION,
+               ITEM_MAX_TIME,
+               ITEM_START_FILE,
+               ITEM_LOM_FILE,
+               ITEM_PARAMETERS,
+               DATA_FROM_LMS,
+               ITEM_THRESHOLD,
+               META_LOCATION,
+               USERID,
+               UPDATE_DT,
+               COURSE_CD,
+               ITEM_PROGRESS_TIME,
+               BEFORE_ITEM_SEQ
+        FROM   TB_LCMS_ITEM
+        WHERE  ORG_SEQ = #orgSeq#
+    </select>
+
+    <select id="lcmsItemDAO.selectLcmsItemPageListTotCnt" parameterClass="map" remapResults="true" resultClass="int">
+        SELECT COUNT(ROWNUM) AS [COUNT]
+        FROM   TB_LCMS_ITEM
+    </select>
+	
+
+    <select id="lcmsItemDAO.selectLcmsItem" parameterClass="map" resultClass="egovMap">
+        SELECT ITEM_SEQ,
+               RSRC_SEQ,
+               ORG_SEQ,
+               HIGH_ITEM_SEQ,
+               ORG_ITEM_NO,
+               ITEM_ID,
+               ITEM_ID_REF,
+               ITEM_TITLE,
+               ITEM_TYPE,
+               ITEM_OPEN,
+               ITEM_TL_ACTION,
+               ITEM_MAX_TIME,
+               ITEM_START_FILE,
+               ITEM_LOM_FILE,
+               ITEM_PARAMETERS,
+               DATA_FROM_LMS,
+               ITEM_THRESHOLD,
+               META_LOCATION,
+               USERID,
+               UPDATE_DT,
+               COURSE_CD,
+               ITEM_PROGRESS_TIME,
+               BEFORE_ITEM_SEQ
+        FROM   TB_LCMS_ITEM
+        WHERE  ITEM_SEQ = #itemSeq#
+        AND    RSRC_SEQ = #rsrcSeq#
+        AND    ORG_SEQ = #orgSeq#
+    </select>
+    
+    <!-- item 등록 seq 조회 -->
+    <select id="lcmsItemDAO.selectLcmsItemMaxSeq" parameterClass="map" remapResults="true" resultClass="int">
+        SELECT nvl(MAX(ITEM_SEQ),0)+1 FROM tb_lcms_ITEM
+    </select>
+    
+    <!-- item 등록 seq 조회 -->
+    <select id="lcmsItemDAO.selectLcmsItemIdCnt" parameterClass="map" remapResults="true" resultClass="int">
+        select count(0) as cnt from tb_lcms_organization a, tb_lcms_item b
+         where a.org_seq   = b.org_seq
+           and a.course_cd = #courseCd#
+           and b.item_id   = #itemId#
+    </select>
+    
+    <!-- 상위 레벨 아이템 시퀀스값 -->
+    <select id="lcmsItemDAO.selectLcmsItemHighItem" parameterClass="map" remapResults="true" resultClass="int">
+        select nvl(max(item_seq),0) as item_seq from tb_lcms_item where item_id = #parekey#
+    </select>
+
+    <insert id="lcmsItemDAO.insertLcmsItem">
+        INSERT INTO TB_LCMS_ITEM
+        (
+            ITEM_SEQ,
+            RSRC_SEQ,
+            ORG_SEQ,
+            HIGH_ITEM_SEQ,
+            ORG_ITEM_NO,
+            ITEM_ID,
+            ITEM_ID_REF,
+            ITEM_TITLE,
+            ITEM_TYPE,
+            ITEM_OPEN,
+            ITEM_TL_ACTION,
+            ITEM_MAX_TIME,
+            ITEM_START_FILE,
+            ITEM_LOM_FILE,
+            ITEM_PARAMETERS,
+            DATA_FROM_LMS,
+            ITEM_THRESHOLD,
+            META_LOCATION,
+            USERID,
+            UPDATE_DT,
+            COURSE_CD
+        )
+        VALUES
+        (
+            #itemSeq#,
+            #rsrcSeq#,
+            #orgSeq#,
+            #highItemSeq#,
+            #orgItemNo#,
+            #itemId#,
+            #itemIdRef#,
+            #itemTitle#,
+            '00001',
+            #itemOpen#,
+            #itemTlAction#,
+            #itemMaxTime#,
+            #itemStartFile#,
+            #itemLomFile#,
+            #itemParameters#,
+            #dataFromLms#,
+            #itemThreshold#,
+            #metaLocation#,
+            #userid#,
+            sysdate,
+            #courseCd#
+        )
+    </insert>
+
+    <update id="lcmsItemDAO.updateLcmsItem">
+        UPDATE TB_LCMS_ITEM
+        SET    HIGH_ITEM_SEQ = #highItemSeq#,
+               ORG_ITEM_NO = #orgItemNo#,
+               ITEM_ID = #itemId#,
+               ITEM_ID_REF = #itemIdRef#,
+               ITEM_TITLE = #itemTitle#,
+               ITEM_TYPE = #itemType#,
+               ITEM_OPEN = #itemOpen#,
+               ITEM_TL_ACTION = #itemTlAction#,
+               ITEM_MAX_TIME = #itemMaxTime#,
+               ITEM_START_FILE = #itemStartFile#,
+               ITEM_LOM_FILE = #itemLomFile#,
+               ITEM_PARAMETERS = #itemParameters#,
+               DATA_FROM_LMS = #dataFromLms#,
+               ITEM_THRESHOLD = #itemThreshold#,
+               META_LOCATION = #metaLocation#,
+               USERID = #userId#,
+               UPDATE_DT = #updateDt#,
+               COURSE_CD = #courseCd#,
+               ITEM_PROGRESS_TIME = #itemProgressTime#,
+               BEFORE_ITEM_SEQ = #beforeItemSeq#
+        WHERE  ITEM_SEQ = #itemSeq#
+        AND    RSRC_SEQ = #rsrcSeq#
+        AND    ORG_SEQ = #orgSeq#
+    </update>
+    
+    <update id="lcmsItemDAO.updateLcmsItemRsrcId">
+    	update tb_lcms_item
+    	   set rsrc_seq = #rsrcId#
+    	 where item_seq = #itemSeq#
+    </update>
+
+    <delete id="lcmsItemDAO.deleteLcmsItem">
+        delete tb_lcms_item where org_seq in <iterate property="orgSeq" conjunction="," open="(" close=")">$orgSeq[]$</iterate>
+    </delete>
+
+    <delete id="lcmsItemDAO.deleteLcmsItemAll">
+        DELETE FROM TB_LCMS_ITEM
+        WHERE  ITEM_SEQ = #itemSeq#
+        AND    RSRC_SEQ = #rsrcSeq#
+        <dynamic prepend="WHERE ORG_SEQ IN ">
+            <isNotEmpty property="orgSeq">
+                <iterate property="orgSeq" open="(" close=")" conjunction=",">
+                    #orgSeq[]#
+                </iterate>
+            </isNotEmpty>
+            <isEmpty property="orgSeq">
+                ('')
+            </isEmpty>
+        </dynamic>
+    </delete>
+    
+    <select id="lcmsItemDAO.selectComLenLcmsItem" parameterClass="map" resultClass="egovMap">  
+		SELECT ITEM_ID, RN
+		FROM (SELECT item_id,ROW_NUMBER () OVER (ORDER BY ORG_ITEM_NO ASC) AS RN 
+			  FROM tb_lcms_item 
+			  WHERE ORG_SEQ = #orgSeq#) 
+		WHERE RN = 1 
+    </select>
+    
+    <select id="lcmsItemDAO.selectComLenRsrcSeqLcmsItem" parameterClass="map" resultClass="egovMap">  
+    	SELECT RSRC_SEQ 
+    	FROM   TB_LCMS_ITEM
+    	WHERE  ORG_SEQ = #orgSeq#
+    	AND    ITEM_ID = #itemId#
+    </select>
+    
+    
+    <!--학습창  -->
+    <select id="lcmsItemDAO.selectLcmsItem01" parameterClass="map" resultClass="egovMap">
+        SELECT ITEM_SEQ,
+               RSRC_SEQ,
+               ORG_SEQ,
+               HIGH_ITEM_SEQ,
+               ORG_ITEM_NO,
+               ITEM_ID,
+               ITEM_ID_REF,
+               ITEM_TITLE,
+               ITEM_TYPE,
+               ITEM_OPEN,
+               ITEM_TL_ACTION,
+               ITEM_MAX_TIME,
+               ITEM_START_FILE,
+               ITEM_LOM_FILE,
+               ITEM_PARAMETERS,
+               DATA_FROM_LMS,
+               ITEM_THRESHOLD,
+               META_LOCATION,
+               USERID,
+               UPDATE_DT,
+               COURSE_CD,
+               ITEM_PROGRESS_TIME,
+               BEFORE_ITEM_SEQ
+        FROM   TB_LCMS_ITEM
+        WHERE  ORG_SEQ  = #orgSeq#
+        AND    ITEM_ID  = #itemId#    
+    </select>
+
+</sqlMap>
+

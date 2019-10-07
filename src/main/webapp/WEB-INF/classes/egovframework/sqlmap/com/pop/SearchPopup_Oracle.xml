@@ -1,0 +1,577 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE sqlMap PUBLIC "-//iBATIS.com//DTD SQL Map 2.0//EN" "http://ibatis.apache.org/dtd/sql-map-2.dtd">
+
+<sqlMap namespace="SearchPopup">
+<typeAlias  alias="egovMap" type="egovframework.rte.psl.dataaccess.util.EgovMap"/>
+
+	<select id="searchPopupDAO.searchGrcodeListTotCnt" parameterClass="map" resultClass="int">
+		select count(0)
+		  from tz_grcode
+		 where 1 = 1
+		<isNotEmpty property="p_searchtext">
+		<isEqual property="p_search" compareValue="grcode">
+		   and grcode like '%' || #p_searchtext# || '%'
+		</isEqual>
+		<isEqual property="p_search" compareValue="grcodenm">
+		   and grcodenm like '%' || #p_searchtext# || '%'
+		</isEqual>
+		</isNotEmpty>
+	</select>
+	<select id="searchPopupDAO.searchGrcodeList" parameterClass="map" resultClass="egovMap">
+		select rn, grcode, grcodenm
+		  from (
+				select rownum as rn, grcode, grcodenm
+				  from (
+				        select grcode, grcodenm
+						  from tz_grcode
+						 where 1 = 1
+						<isNotEmpty property="p_searchtext">
+						<isEqual property="p_search" compareValue="grcode">
+						   and grcode like '%' || #p_searchtext# || '%'
+						</isEqual>
+						<isEqual property="p_search" compareValue="grcodenm">
+						   and grcodenm like '%' || #p_searchtext# || '%'
+						</isEqual>
+						</isNotEmpty>
+						 order by grcode asc
+				       ) x
+		       )
+		 where rn between #firstIndex# + 1 and #firstIndex# + #recordCountPerPage#
+	</select>
+
+	<select id="searchPopupDAO.searchSubjListTotCnt" parameterClass="map" resultClass="int">
+		select count(0)
+		  from tz_subj a, tz_subjseq b
+		 where a.subj = b.subj
+		<isNotEmpty property="p_searchtext">
+		   and (lower(a.subj) like '%' || #p_searchtext# || '%' or a.subjnm like '%' || #p_searchtext# || '%')
+		</isNotEmpty>
+	</select>
+	<select id="searchPopupDAO.searchSubjList" parameterClass="map" resultClass="egovMap">
+		select rn, subj, [year], subjseq, subjnm, isonoff, isonoff_value
+		  from (
+				select rownum as rn, subj, [year], subjseq, subjnm, isonoff, isonoff_value
+				  from (
+						select a.subj, b.[year], b.subjseq, a.subjnm, a.isonoff, get_codenm('0004', a.isonoff) as isonoff_value
+						  from tz_subj a, tz_subjseq b
+						 where a.subj = b.subj
+						<isNotEmpty property="p_searchtext">
+						   and (lower(a.subj) like '%' || #p_searchtext# || '%' or a.subjnm like '%' || #p_searchtext# || '%')
+						</isNotEmpty>
+						 order by b.[year] desc, a.subj asc
+				       ) x
+		       )
+		 where rn between #firstIndex# + 1 and #firstIndex# + #recordCountPerPage#
+	</select>
+
+	<select id="searchPopupDAO.searchCompListTotCnt" parameterClass="map" resultClass="int">
+
+		<isNotEmpty property="p_key2">
+			<isEqual property="p_key2" compareValue="p_producer">
+				select count(0)
+				  from tz_cpinfo
+				 where 1 = 1
+				   and compgubun in ( 'T', 'M' )
+				<isNotEmpty property="p_searchtext">
+				<isEqual property="p_search" compareValue="">
+				   and cpbirth_date like '%'||#p_searchtext#||'%'
+				</isEqual>
+				<isEqual property="p_search" compareValue="companynm">
+				   and upper(cpnm) like '%'|| upper(#p_searchtext#) ||'%'
+				</isEqual>
+				</isNotEmpty>
+			</isEqual>
+			
+			
+			<isEqual property="p_key2" compareValue="p_owner">
+				select count(0)
+				  from (
+						select cpseq as comp, cpnm as compnm, '2' as comptype, '' as groupsnm, cpnm as companynm,
+						       '' as gpmnm, '' as deptnm, '' as partnm, '1' as seq
+						  from tz_cpinfo
+						 where 1 = 1
+						   and compgubun in ( 'S', 'M' )
+						<isNotEmpty property="p_searchtext">
+						<isEqual property="p_search" compareValue="">
+						   and cpbirth_date like '%'||#p_searchtext#||'%'
+						</isEqual>
+						<isEqual property="p_search" compareValue="companynm">
+						   and upper(cpnm) like '%'|| upper(#p_searchtext#) ||'%'
+						</isEqual>
+						</isNotEmpty>
+						union all
+						select comp, compnm, '' as comptype, '' as groupsnm, '' as companynm, '' as gpmnm, '' as deptnm, '' as partnm, '0' as seq
+						  from tz_compclass
+						 where isdeleted = 'N'
+						   and comp = '1001'
+						<isNotEmpty property="p_searchtext">
+						<isEqual property="p_search" compareValue="companynm">
+						   and upper(compnm) like '%'|| upper(#p_searchtext#) ||'%'
+						</isEqual>
+						</isNotEmpty>
+				       )
+			</isEqual>
+			
+			<isEqual property="p_key2" compareValue="p_cpinfo">
+				select count(0)
+				  from tz_cpinfo
+				 where 1 = 1
+				   and compgubun in ( 'S', 'M' )
+				<isNotEmpty property="p_searchtext">
+				<isEqual property="p_search" compareValue="">
+				   and cpbirth_date like '%'||#p_searchtext#||'%'
+				</isEqual>
+				<isEqual property="p_search" compareValue="companynm">
+				   and upper(cpnm) like '%'|| upper(#p_searchtext#) ||'%'
+				</isEqual>
+				</isNotEmpty>
+			</isEqual>
+			<isEqual property="p_key2" compareValue="p_cp">
+				select count(0)
+				  from tz_cpinfo
+				 where 1 = 1
+				   and compgubun in ( 'S', 'M' )
+				<isNotEmpty property="p_searchtext">
+				<isEqual property="p_search" compareValue="">
+				   and cpbirth_date like '%'||#p_searchtext#||'%'
+				</isEqual>
+				<isEqual property="p_search" compareValue="companynm">
+				   and upper(cpnm) like '%'|| upper(#p_searchtext#) ||'%'
+				</isEqual>
+				</isNotEmpty>
+			</isEqual>
+			
+			<isEqual property="p_key2" compareValue="p_bpinfo">
+				select count(0)
+				  from tz_cpinfo
+				 where 1 = 1
+				   and compgubun in ( 'T', 'M' )
+				<isNotEmpty property="p_searchtext">
+				<isEqual property="p_search" compareValue="">
+				   and cpbirth_date like '%'||#p_searchtext#||'%'
+				</isEqual>
+				<isEqual property="p_search" compareValue="companynm">
+				   and upper(cpnm) like '%'|| upper(#p_searchtext#) ||'%'
+				</isEqual>
+				</isNotEmpty>
+			</isEqual>
+			
+			<isEqual property="p_key2" compareValue="p_cpbpinfo">
+				select count(0)
+				  from tz_cpinfo
+				 where 1 = 1
+				   and compgubun in ( 'M' )
+				<isNotEmpty property="p_searchtext">
+				<isEqual property="p_search" compareValue="">
+				   and cpbirth_date like '%'||#p_searchtext#||'%'
+				</isEqual>
+				<isEqual property="p_search" compareValue="companynm">
+				   and upper(cpnm) like '%'|| upper(#p_searchtext#) ||'%'
+				</isEqual>
+				</isNotEmpty>
+			</isEqual>
+			
+			<isEqual property="p_key2" compareValue="p_cpasinfo">
+				select count(0)
+				  from tz_cpinfo
+				 where 1 = 1
+				<isNotEmpty property="p_searchtext">
+				<isEqual property="p_search" compareValue="">
+				   and cpbirth_date like '%'||#p_searchtext#||'%'
+				</isEqual>
+				<isEqual property="p_search" compareValue="companynm">
+				   and upper(cpnm) like '%'|| upper(#p_searchtext#) ||'%'
+				</isEqual>
+				</isNotEmpty>
+			</isEqual>
+		</isNotEmpty>
+		<isEmpty property="p_key2">
+   			select count(0)
+   			  from tz_compclass
+   			 where isdeleted = 'N'
+			<isNotEmpty property="p_searchtext">
+			<isEqual property="p_search" compareValue="comp">
+			   and comp like '%'||#p_searchtext#||'%'
+			</isEqual>
+			<isEqual property="p_search" compareValue="companynm">
+			   and upper(compnm) like '%'|| upper(#p_searchtext#) ||'%'
+			</isEqual>
+			</isNotEmpty>
+			<isNotEmpty property="p_compgubun">
+				<isNotEqual property="p_compgubun" compareValue="ALL">
+				    and gubun = #p_compgubun#
+				</isNotEqual>
+			</isNotEmpty>
+		</isEmpty>
+	</select>
+	<select id="searchPopupDAO.searchCompList" parameterClass="map" resultClass="egovMap">
+		select rn, comp, compnm, comptype, groupsnm, companynm, gpmnm, deptnm, partnm
+		  from (
+				select rownum as rn, comp, compnm, comptype, groupsnm, companynm, gpmnm, deptnm, partnm
+				  from (
+						<isNotEmpty property="p_key2">
+						
+						
+							<isEqual property="p_key2" compareValue="p_producer">
+								select cpseq as comp, cpnm as compnm, '2' as comptype, '' as groupsnm, cpnm as companynm,
+								       '' as gpmnm, '' as deptnm, '' as partnm, '1' as seq
+								  from tz_cpinfo
+								 where 1 = 1
+								   and compgubun in ( 'T', 'M' )
+								<isNotEmpty property="p_searchtext">
+								<isEqual property="p_search" compareValue="">
+								   and cpbirth_date like '%'||#p_searchtext#||'%'
+								</isEqual>
+								<isEqual property="p_search" compareValue="companynm">
+								   and upper(cpnm) like '%'|| upper(#p_searchtext#) ||'%'
+								</isEqual>
+								</isNotEmpty>
+								 order by seq, compnm asc
+							</isEqual>
+							
+							
+							<isEqual property="p_key2" compareValue="p_owner">
+								select cpseq as comp, cpnm as compnm, '2' as comptype, '' as groupsnm, cpnm as companynm,
+								       '' as gpmnm, '' as deptnm, '' as partnm, '1' as seq
+								  from tz_cpinfo
+								 where 1 = 1
+								   and compgubun in ( 'S', 'M' )
+								<isNotEmpty property="p_searchtext">
+								<isEqual property="p_search" compareValue="">
+								   and cpbirth_date like '%'||#p_searchtext#||'%'
+								</isEqual>
+								<isEqual property="p_search" compareValue="companynm">
+								   and upper(cpnm) like '%'|| upper(#p_searchtext#) ||'%'
+								</isEqual>
+								</isNotEmpty>
+								union all
+								select comp, compnm, '' as comptype, '' as groupsnm, '' as companynm, '' as gpmnm, '' as deptnm, '' as partnm, '0' as seq
+								  from tz_compclass
+								 where isdeleted = 'N'
+								   and comp = '1001'
+								<isNotEmpty property="p_searchtext">
+								<isEqual property="p_search" compareValue="companynm">
+								   and upper(compnm) like '%'|| upper(#p_searchtext#) ||'%'
+								</isEqual>
+								</isNotEmpty>
+								 order  by seq, compnm asc
+							</isEqual>
+							
+							<isEqual property="p_key2" compareValue="p_cpinfo">
+								select cpseq as comp, cpnm as compnm, 2 as comptype, '' as groupsnm, cpnm as companynm, '' as gpmnm, '' as deptnm, '' as partnm
+								  from tz_cpinfo
+								 where 1 = 1
+								   and compgubun in ( 'S', 'M' )
+								<isNotEmpty property="p_searchtext">
+								<isEqual property="p_search" compareValue="">
+								   and cpbirth_date like '%'||#p_searchtext#||'%'
+								</isEqual>
+								<isEqual property="p_search" compareValue="companynm">
+								   and upper(cpnm) like '%'|| upper(#p_searchtext#) ||'%'
+								</isEqual>
+								</isNotEmpty>
+								 order  by cpnm asc
+							</isEqual>
+							<isEqual property="p_key2" compareValue="p_cp">
+								select cpseq as comp, cpnm as compnm, 2 as comptype, '' as groupsnm, cpnm as companynm, '' as gpmnm, '' as deptnm, '' as partnm
+								  from tz_cpinfo
+								 where 1 = 1
+								   and compgubun in ( 'S', 'M' )
+								<isNotEmpty property="p_searchtext">
+								<isEqual property="p_search" compareValue="">
+								   and cpbirth_date like '%'||#p_searchtext#||'%'
+								</isEqual>
+								<isEqual property="p_search" compareValue="companynm">
+								   and upper(cpnm) like '%'|| upper(#p_searchtext#) ||'%'
+								</isEqual>
+								</isNotEmpty>
+								 order  by cpnm asc
+							</isEqual>
+							
+							<isEqual property="p_key2" compareValue="p_bpinfo">
+								select cpseq as comp, cpnm as compnm, 2 as comptype, '' as groupsnm, cpnm as companynm, '' as gpmnm, '' as deptnm, '' as partnm
+								  from tz_cpinfo
+								 where 1 = 1
+								   and compgubun in ( 'T', 'M' )
+								<isNotEmpty property="p_searchtext">
+								<isEqual property="p_search" compareValue="">
+								   and cpbirth_date like '%'||#p_searchtext#||'%'
+								</isEqual>
+								<isEqual property="p_search" compareValue="companynm">
+								   and upper(cpnm) like '%'|| upper(#p_searchtext#) ||'%'
+								</isEqual>
+								</isNotEmpty>
+								 order  by cpnm asc
+							</isEqual>
+							
+							<isEqual property="p_key2" compareValue="p_cpbpinfo">
+								select cpseq as comp, cpnm as compnm, 2 as comptype, '' as groupsnm, cpnm as companynm, '' as gpmnm, '' as deptnm, '' as partnm
+								  from tz_cpinfo
+								 where 1 = 1
+								   and compgubun in ( 'M' )
+								<isNotEmpty property="p_searchtext">
+								<isEqual property="p_search" compareValue="">
+								   and cpbirth_date like '%'||#p_searchtext#||'%'
+								</isEqual>
+								<isEqual property="p_search" compareValue="companynm">
+								   and upper(cpnm) like '%'|| upper(#p_searchtext#) ||'%'
+								</isEqual>
+								</isNotEmpty>
+								 order  by cpnm asc
+							</isEqual>
+							
+							<isEqual property="p_key2" compareValue="p_cpasinfo">
+								select cpseq as comp, cpnm as compnm, '' as comptype, '' as groupsnm, cpnm as companynm, '' as gpmnm, '' as deptnm, '' as partnm
+								  from tz_cpinfo
+								 where 1 = 1
+								<isNotEmpty property="p_searchtext">
+								<isEqual property="p_search" compareValue="">
+								   and cpbirth_date like '%'||#p_searchtext#||'%'
+								</isEqual>
+								<isEqual property="p_search" compareValue="companynm">
+								   and upper(cpnm) like '%'|| upper(#p_searchtext#) ||'%'
+								</isEqual>
+								</isNotEmpty>
+								 order  by cpnm asc
+							</isEqual>
+						</isNotEmpty>
+						<isEmpty property="p_key2">
+                			select comp, compnm, '' as comptype, '' as groupsnm, '' as companynm, '' as gpmnm, '' as deptnm, '' as partnm
+                			  from tz_compclass
+                			 where isdeleted = 'N'
+							<isNotEmpty property="p_searchtext">
+							<isEqual property="p_search" compareValue="comp">
+							   and comp like '%'||#p_searchtext#||'%'
+							</isEqual>
+							<isEqual property="p_search" compareValue="companynm">
+							   and upper(compnm) like '%'|| upper(#p_searchtext#) ||'%'
+							</isEqual>
+							</isNotEmpty>
+							<isNotEmpty property="p_compgubun">
+								<isNotEqual property="p_compgubun" compareValue="ALL">
+								    and gubun = #p_compgubun#
+								</isNotEqual>
+							</isNotEmpty>
+							 order  by comp asc
+						</isEmpty>
+				       ) x
+		       )
+		 where rn between #firstIndex# + 1 and #firstIndex# + #recordCountPerPage#
+	</select>
+	
+	
+	
+	
+	<select id="searchPopupDAO.searchMemberListTotCnt" parameterClass="map" resultClass="int">
+		select count(0)
+		  from tz_member a, tz_compclass b
+		 where a.comp = b.comp(+)
+		<isNotEmpty property="p_searchtext">
+			<isEqual property="p_search" compareValue="userid">
+			and a.userid like '%' || #p_searchtext# || '%'
+			</isEqual>
+			<isEqual property="p_search" compareValue="name">
+			and a.name like '%' || #p_searchtext# || '%'
+			</isEqual>
+		</isNotEmpty>
+		<isEmpty property="p_searchtext">
+			and a.userid = 'notselect'
+		</isEmpty>
+	</select>
+	<select id="searchPopupDAO.searchMemberList" parameterClass="map" resultClass="egovMap">
+		select rn, userid, birth_date, name, email, compnm, telno, hometel, comptel, position_nm, lvl_nm
+		  from (
+				select rownum as rn, userid, birth_date, name, email, compnm, telno, hometel, comptel, position_nm, lvl_nm
+				  from (
+            
+            			select a.userid,
+            			       a.birth_date,
+            			       a.name,
+            			       a.email,
+            			       b.compnm,
+            			       b.telno,
+            			       a.hometel,
+            			       a.handphone as comptel,
+            			       a.position_nm,
+            			       a.lvl_nm
+            			  from tz_member a, tz_compclass b
+            			 where a.comp = b.comp(+)
+            			<isNotEmpty property="p_searchtext">
+            				<isEqual property="p_search" compareValue="userid">
+            				and a.userid like '%' || #p_searchtext# || '%'
+            				</isEqual>
+            				<isEqual property="p_search" compareValue="name">
+            				and a.name like '%' || #p_searchtext# || '%'
+            				</isEqual>
+            			</isNotEmpty>
+            			<isEmpty property="p_searchtext">
+            				and a.userid = 'notselect'
+            			</isEmpty>
+						 order  by a.comp asc
+				       ) x
+		       )
+		 where rn between #firstIndex# + 1 and #firstIndex# + #recordCountPerPage#
+	</select>
+
+	<select id="searchPopupDAO.searchMemberInfoPopup" parameterClass="map" resultClass="egovMap">
+		select name 
+		--, fn_crypt('2', pwd, 'knise') pwd
+		, pwd
+		, (SELECT CODENM FROM TZ_CODE WHERE GUBUN = '0115' AND CODE = A.JOB_CD) AS LIC
+		, DECODE(EMP_GUBUN,'T','교원','E','보조인력', 'R', '교육전문직', '일반회원/학부모') AS GB, DECODE(EMP_GUBUN,'T',USER_PATH,'E',USER_PATH, 'R', USER_PATH, '일반회원/학부모') AS SNM                                                 
+		, email , zip_cd, address, zip_cd1, address1, DECODE(hrdc,'C','직장(학교)','자택') AS RV                                                
+		, hometel                                               
+		, handphone                                             
+		, get_postnm(post) as jikupnm                           
+		, get_compnm(comp) as compnm	                         
+		, position_nm as deptnm
+		, birth_date	 		                 
+		from   tz_member  A                                           
+		where  userid = #p_userid#
+	</select>
+	
+	
+	<select id="searchPopupDAO.searchTutorListTotCnt" parameterClass="map" resultClass="int">
+			select count(0)
+			from    tz_tutor    a                                                                   
+			  , tz_member   c                                                                   
+			  , tz_manager  d                                                                   
+			  , tz_code     e                                                                   
+			where   A.userid        = C.userid                                                     
+			and     A.userid        = D.userid(+)                                                 
+			and     A.tutorgubun    = E.code                                                       
+			and     D.GADMIN(+)     = 'P1'                                                          
+			and     E.gubun         = '0060' 
+         			<isNotEmpty property="p_searchtext">
+				<isEqual property="p_search" compareValue="userid">
+				and c.userid like '%' || #p_searchtext# || '%'
+				</isEqual>
+				<isEqual property="p_search" compareValue="name">
+				and c.name like '%' || #p_searchtext# || '%'
+				</isEqual>
+			</isNotEmpty>
+	</select>
+	<select id="searchPopupDAO.searchTutorList" parameterClass="map" resultClass="egovMap">
+		select rn, userid, name, email, comp, codenm, authname, phone
+		  from (
+				select rownum as rn, userid, name, email, comp, codenm, authname, phone
+				  from (
+            
+            			select  a.userid
+						,   a.name
+						,   a.email
+						,   a.comp                                                                   
+						,   e.codenm                                                                 
+						,   DECODE(a.ismanager, 'N', 'N'                                             
+						                      , 'Y '                                                 
+						                        || '('                                               
+						                        || TO_CHAR(TO_DATE(d.fmon, 'YYYYMMDD'), 'YYYY.MM.DD')
+						                        || ' - '                                             
+						                        || TO_CHAR(TO_DATE(d.tmon, 'YYYYMMDD'), 'YYYY.MM.DD')
+						                        || ')'                                               
+						          )                                 authname                         
+						,   NVL(a.handphone, a.phone)               phone                            
+						from    tz_tutor    a                                                                   
+						  , tz_member   c                                                                   
+						  , tz_manager  d                                                                   
+						  , tz_code     e                                                                   
+						where   A.userid        = C.userid                                                     
+						and     A.userid        = D.userid(+)                                                 
+						and     A.tutorgubun    = E.code                                                       
+						and     D.GADMIN(+)     = 'P1'                                                          
+						and     E.gubun         = '0060' 
+            			<isNotEmpty property="p_searchtext">
+							<isEqual property="p_search" compareValue="userid">
+							and c.userid like '%' || #p_searchtext# || '%'
+							</isEqual>
+							<isEqual property="p_search" compareValue="name">
+							and c.name like '%' || #p_searchtext# || '%'
+							</isEqual>
+						</isNotEmpty>
+						 order  by c.name
+				       ) x
+		       )
+		 where rn between #firstIndex# + 1 and #firstIndex# + #recordCountPerPage#
+	</select>
+	
+	
+
+<!--지번이름으로   검색-->
+	<select id="searchPopupDAO.searchZipcodeList" parameterClass="map" resultClass="egovMap">
+		select newzipcode as zipcode, sido, gugun, dong, bunji,
+		       newzipcode as post1
+		  from tz_zipcode
+		 where useyn = 'Y'
+		 	and dong like '%' || #search_dong# || '%'
+		 order by sido, gugun, dong, bunji
+	</select>
+
+
+<!--	도로명으로 검색-->   
+	<select id="searchPopupDAO.searchZipcodeRoadList" parameterClass="map" resultClass="egovMap">
+		select  distinct newzipcode as zip_cd, sido, gugun, upmyun, road_nm, 
+				case when build_sub_no =0 then build_mst_no
+     				 when build_sub_no >0 then build_mst_no||'-'||build_sub_no
+     				else build_sub_no
+     			end build_no,
+		        newzipcode as post1
+		  from T_CM_ZIPCD_ROAD
+		 where useyn = 'Y'
+		 	and sido = #sido#
+		 	<isNotEmpty property="gugun">
+		 	and gugun = #gugun#
+		 	</isNotEmpty>
+		 	and road_nm like '' || #search_dong# || '%'
+		 	<isNotEmpty property="build_mst_no">		 	
+		 		and build_mst_no = #build_mst_no#
+		 	</isNotEmpty>
+		 order by sido, gugun, upmyun, road_nm, build_no
+	</select>
+	
+	
+	<!-- 시도 검색-->   
+	<select id="searchPopupDAO.selectSido" parameterClass="map" resultClass="egovMap">
+		SELECT sido
+		FROM TZ_SIDO_GUGUN
+		group by sido
+		order by sido
+	</select>
+	
+	
+	<!-- 구군 검색-->   
+	<select id="searchPopupDAO.selectGugun" parameterClass="map" resultClass="egovMap">
+		SELECT gugun
+		FROM TZ_SIDO_GUGUN
+		where sido = #sido#
+		group by gugun
+		order by gugun
+	</select>
+	
+	<select id="searchPopupDAO.searchManagerSubjListTotCnt" parameterClass="map" resultClass="int">
+		select count(0)
+		  from tz_subj a
+		 where 1=1
+		<isNotEmpty property="p_searchtext">
+		   and (lower(a.subj) like '%' || #p_searchtext# || '%' or a.subjnm like '%' || #p_searchtext# || '%')
+		</isNotEmpty>
+	</select>
+	<select id="searchPopupDAO.searchManagerSubjList" parameterClass="map" resultClass="egovMap">
+		select rn, subj, [year], subjnm, isonoff, isonoff_value
+		  from (
+				select rownum as rn, subj, [year], subjnm, isonoff, isonoff_value
+				  from (
+						select a.subj, substr(a.ldate,1,4) as [year], a.subjnm, a.isonoff, get_codenm('0004', a.isonoff) as isonoff_value
+						  from tz_subj a
+						 where 1=1
+						<isNotEmpty property="p_searchtext">
+						   and (lower(a.subj) like '%' || #p_searchtext# || '%' or a.subjnm like '%' || #p_searchtext# || '%')
+						</isNotEmpty>
+						 order by [year] desc, a.subj asc
+				       ) x
+		       )
+		 where rn between #firstIndex# + 1 and #firstIndex# + #recordCountPerPage#
+	</select>
+	
+
+</sqlMap>
+

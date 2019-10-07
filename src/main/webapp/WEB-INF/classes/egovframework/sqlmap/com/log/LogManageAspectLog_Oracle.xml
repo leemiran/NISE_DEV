@@ -1,0 +1,44 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE sqlMap PUBLIC "-//iBATIS.com//DTD SQL Map 2.0//EN" "http://www.ibatis.com/dtd/sql-map-2.dtd">
+
+<sqlMap namespace="logManageAspectLog">
+
+    <typeAlias  alias="egovMap" type="egovframework.rte.psl.dataaccess.util.EgovMap"/>
+       
+    <insert id="logManageAspectLogDAO.manageAspectLogActionLog">
+        <![CDATA[
+              INSERT INTO TZ_ACTION_LOG (SEQ_EC_ACTION_LOG,				        
+				        USER_ID,
+				        ACTION_TYPE,			        
+				        CONTROLLER_INFO,
+				        METHOD_INFO,	
+				        WRITE_WEEK,
+						WRITE_YEAR,
+						WRITE_MONTH,
+						WRITE_DAY,
+						WRITE_HOUR,
+						WRITE_MINUTE,
+						WRITE_SECOND,		        
+				        WRITE_DATE_TIME,
+				        CONTENTS,
+				        url)
+				 VALUES(SEQ_TZ_ACTION_LOG.NEXTVAL,				        
+				        #userid#,		        
+				        #actionType#,
+				        #controllerInfo#,
+				        #methodInfo#,
+				        TO_CHAR(SYSDATE,'D'),
+						TO_CHAR(SYSDATE,'YYYY'),
+						TO_CHAR(SYSDATE,'MM'),
+						TO_CHAR(SYSDATE,'DD'),
+						TO_CHAR(sysdatetime,'HH24'),
+						TO_CHAR(sysdatetime,'MI'),
+						TO_CHAR(sysdatetime,'SS'),
+				        TO_CHAR(sysdatetime,'YYYYMMDDHH24MISS'),
+				        #contents#,
+				        #url# 
+				)
+        ]]>
+    </insert>
+
+</sqlMap>

@@ -1,0 +1,109 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/html4/loose.dtd">
+<html>
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=EUC-KR">
+<title>Insert title here</title>
+</head>
+ <script type="text/javascript" src="/script/jquery/jquery-1.4.2.min.js"></script>
+ <script type="text/javascript" src="/script/jquery/jquery-ui-1.8.2.custom.min.js"></script>
+ <script type="text/javascript" src="/script/jquery/jquery.dotimeout.js"></script>
+ <script>
+  $(document).ready(function(){
+
+	   
+
+
+   /*
+   jQuery로 선택된 값 읽기
+   $("#select_box option:selected").val();
+   $("select[name=name]").val();
+
+   jQuery로 선택된 내용 읽기
+   $("#select_box option:selected").text();
+
+   선택된 위치
+   var index = $("#test option").index($("#test option:selected")); 
+   */
+
+
+
+
+   // Add options to the end of a select
+   $("#myselect").append("<option value='1'>Apples</option>");
+   $("#myselect").append("<option value='2'>After Apples</option>");
+
+   // Add options to the start of a select
+   $("#myselect").prepend("<option value='0'>Before Apples</option>");
+
+   // Replace all the options with new options
+   $("#myselect").html("<option value='1'>Some oranges</option><option value='2'>More Oranges</option><option value='3'>Even more oranges</option>");
+
+   // Replace items at a certain index
+   $("#myselect option:eq(1)").replaceWith("<option value='2'>Some apples</option>");
+   $("#myselect option:eq(2)").replaceWith("<option value='3'>Some bananas</option>");
+
+   // Set the element at index 2 to be selected
+   $("#myselect option:eq(2)").attr("selected", "selected");
+
+   // Set the selected element by text
+   $("#myselect").val("Some oranges").attr("selected", "selected");
+
+   // Set the selected element by value
+   $("#myselect").val("2");
+
+   // Remove an item at a particular index
+   // $("#myselect option:eq(0)").remove();
+
+   // Remove first item
+   //  $("#myselect option:first").remove();
+
+   // Remove last item
+   //$("#myselect option:last").remove();
+
+   // Get the text of the selected item
+   alert($("#myselect option:selected").text());
+
+   // Get the value of the selected item
+   alert($("#myselect option:selected").val());
+
+   // Get the index of the selected item
+   alert($("#myselect option").index($("#myselect option:selected")));
+
+   // Alternative way to get the selected item
+   alert($("#myselect option:selected").prevAll().size());
+
+   // Insert an item in after a particular position
+   $("#myselect option:eq(0)").after("<option value='4'>Some pears</option>");
+
+   // Insert an item in before a particular position
+   $("#myselect option:eq(3)").before("<option value='5'>Some apricots</option>");
+
+   // Getting values when item is selected
+   $("#myselect").change(function() {
+   alert($(this).val());
+   alert($(this).children("option:selected").text());    
+   });
+  });   
+ </script>
+ <body>
+  <select multiple id="s1">
+   <option>aaaaaaaaaaa</option>
+   <option>bbbbbbbbbbb</option>
+   <option>ccccccccccc</option>
+   <option>ddddddddddd</option>
+  </select>
+  <input type="button" value="추가"id="add" />
+<input type="button" value="삭제" id="del" />
+  <select multiple id="s2">
+  </select>
+  <div id="tt" name="tt"></div>
+  
+  <br>
+  
+    <select multiple id="myselect">
+   <option>test</option>
+
+  </select>
+</body>
+
+</html>

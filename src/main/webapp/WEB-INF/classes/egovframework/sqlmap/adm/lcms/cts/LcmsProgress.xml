@@ -1,0 +1,1378 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE sqlMap PUBLIC "-//iBATIS.com//DTD SQL Map 2.0//EN" "http://ibatis.apache.org/dtd/sql-map-2.dtd">
+
+<sqlMap namespace="LcmsProgress">
+
+
+<typeAlias  alias="egovMap" type="egovframework.rte.psl.dataaccess.util.EgovMap"/>
+
+    <select id="lcmsProgressDAO.selectLcmsProgressPageList" parameterClass="map" resultClass="egovMap">
+        SELECT * 
+        FROM
+               (
+                SELECT TEMP.*, 
+                <isNotEmpty property="rowsPerPage">
+                       CEIL(ROWNUM / #rowsPerPage#) AS PAGE 
+                </isNotEmpty>
+                <isEmpty property="rowsPerPage">
+                       CEIL(ROWNUM / 10) AS PAGE 
+                </isEmpty>
+                FROM
+                      (
+                       SELECT 
+	        	              SUBJ,
+	        	              [year],
+	        	              SUBJSEQ,
+	        	              [MODULE],
+	        	              LESSON,
+	        	              USERID,
+	        	              LESSONSTATUS,
+	        	              SESSION_TIME,
+	        	              TOTAL_TIME,
+	        	              LESSON_COUNT,
+	        	              LOCATION,
+	        	              INDATE,
+	        	              INUSERID,
+	        	              LDATE,
+	        	               LUSERID
+        		       FROM   TB_LCMS_PROGRESS$nowYear$
+        		       <!--  APPEND WHERE CONDITION START  -->
+
+        		       <!--  APPEND WHERE CONDITION END    -->
+        		       <isNotEmpty property="orderBy">
+        			       $orderBy$
+        		       </isNotEmpty>
+        	          ) TEMP 
+               )
+        <isNotEmpty property="page">
+        WHERE PAGE = #page#
+        </isNotEmpty>
+        <isEmpty property="page">
+        WHERE PAGE = 1
+        </isEmpty>
+    </select>
+
+    <select id="lcmsProgressDAO.selectLcmsProgressList" parameterClass="map" resultClass="egovMap">
+        SELECT SUBJ,
+               [year],
+               SUBJSEQ,
+               [MODULE],
+               LESSON,
+               USERID,
+               LESSONSTATUS,
+               SESSION_TIME,
+               TOTAL_TIME,
+               LESSON_COUNT,
+               LOCATION,
+               INDATE,
+               INUSERID,
+               LDATE,
+               LUSERID
+        FROM   TB_LCMS_PROGRESS$nowYear$
+        WHERE  SUBJ    = #subj#
+        AND    [year] = #year#
+        AND    SUBJSEQ    = #subjseq#
+        AND    [MODULE]      = #module#
+        AND    USERID     = #userid#
+    </select>
+
+    <select id="lcmsProgressDAO.selectLcmsOldProgressList" parameterClass="map" resultClass="egovMap">
+        SELECT SUBJ,
+               [year],
+               SUBJSEQ,
+               '' as [MODULE],
+               LESSON,
+               USERID,
+               LESSONSTATUS,
+               SESSION_TIME,
+               TOTAL_TIME,
+               LESSON_COUNT,
+               '' as LOCATION,
+               INDATE,
+               INUSERID,
+               LDATE,
+               LUSERID
+        FROM   TB_LCMS_PROGRESS$nowYear$
+        WHERE  SUBJ       = #subj#
+        AND    [year] 	  = #year#
+        AND    SUBJSEQ    = #subjseq#
+        AND    USERID     = #userid#
+    </select>
+
+    <select id="lcmsProgressDAO.selectLcmsProgressPageListTotCnt" parameterClass="map" resultClass="int">
+        SELECT COUNT(ROWNUM) AS [COUNT]
+        FROM   TB_LCMS_PROGRESS$nowYear$
+    </select>
+    
+    <select id="lcmsProgressDAO.selectLcmsProgressStudyCnt" parameterClass="map" resultClass="int">
+        SELECT COUNT(ROWNUM) AS [COUNT]
+        FROM   TB_LCMS_PROGRESS$nowYear$
+        WHERE  SUBJ = #subj#
+        AND    [year] = #year#
+        AND    SUBJSEQ = #subjseq#
+        AND    [MODULE] = #module#
+        AND    LESSON = #lesson#
+        AND    USERID = #userid#
+    </select>
+
+    <select id="lcmsProgressDAO.selectLcmsProgress" parameterClass="map" resultClass="egovMap">
+        SELECT SUBJ,
+               [year],
+               SUBJSEQ,
+               [MODULE],
+               LESSON,
+               USERID,
+               LESSONSTATUS,
+               SESSION_TIME,
+               TOTAL_TIME,
+               LESSON_COUNT,
+               LOCATION
+        FROM   TB_LCMS_PROGRESS$nowYear$
+        WHERE  SUBJ = #subj#
+        AND    [year] = #year#
+        AND    SUBJSEQ = #subjseq#
+        AND    [MODULE] = #module#
+        AND    LESSON = #lesson#
+        AND    USERID = #userid#
+    </select>
+
+    <select id="lcmsProgressDAO.selectLcmsProgressOld" parameterClass="map" resultClass="egovMap">
+        SELECT SUBJ,
+               [year],
+               SUBJSEQ,
+               '' AS [MODULE],
+               LESSON,
+               USERID,
+               NVL(LESSONSTATUS, 'N') LESSONSTATUS,
+               SESSION_TIME,
+               TOTAL_TIME,
+               LESSON_COUNT,
+               '' AS LOCATION
+        FROM   TZ_PROGRESS
+        WHERE  SUBJ = #subj#
+        AND    [year] = #year#
+        AND    SUBJSEQ = #subjseq#
+        AND    LESSON = #lesson#
+        AND    USERID = #userid#
+    </select>
+    
+     <!--  중공교,Normal,Wmv 등록된 Progress 가져오기 -->
+    <select id="lcmsProgressDAO.selectLcmsCotiProgressList" parameterClass="map" resultClass="egovMap">
+        SELECT SUBJ,
+               [year],
+               SUBJSEQ,
+               [MODULE],
+               LESSON,
+               userid,
+               LESSONSTATUS,
+               SESSION_TIME,
+               TOTAL_TIME,
+               LESSON_COUNT,
+               LOCATION
+        FROM   TB_LCMS_PROGRESS$nowYear$
+        WHERE  SUBJ = #subj#
+        AND    [year] = #year#
+        AND    SUBJSEQ = #subjseq#
+        AND    [MODULE] = #module#
+        AND    userid = #userid#
+    </select>
+    
+     <!--  기존 Progress 가져오기 -->
+    <select id="lcmsProgressDAO.selectLcmsCotiOldProgressList" parameterClass="map" resultClass="egovMap">
+        SELECT SUBJ,
+               [year],
+               SUBJSEQ,
+               ''  as [MODULE],
+               LESSON,
+               userid,
+               LESSONSTATUS,
+               SESSION_TIME,
+               TOTAL_TIME,
+               LESSON_COUNT,
+               '' as LOCATION
+        FROM   TZ_PROGRESS
+        WHERE  SUBJ = #subj#
+        AND    [year] = #year#
+        AND    SUBJSEQ = #subjseq#
+        AND    userid = #userid#
+    </select>
+    
+    <!--  중공교 마직막으로 등록된 Lesson 가져오기 -->
+    <select id="lcmsProgressDAO.selectLcmsProgressCotiLast" parameterClass="map" resultClass="egovMap">
+      select rownum as rn, TEMP.* from (  
+      SELECT   PROGRESS.SUBJ,
+               PROGRESS.[year],
+               PROGRESS.SUBJSEQ,
+               LESSON.[MODULE],
+               LESSON.LESSON,
+               PROGRESS.userid,
+               PROGRESS.LESSONSTATUS,
+               PROGRESS.SESSION_TIME,
+               PROGRESS.TOTAL_TIME,
+               PROGRESS.LESSON_COUNT,
+               PROGRESS.LOCATION,
+               PROGRESS.LDATE,
+               ROW_NUMBER() OVER (ORDER BY LESSON.LESSON_CD )-1 AS ORDERING
+        FROM   TB_LCMS_LESSON LESSON 
+        LEFT OUTER JOIN TB_LCMS_PROGRESS$nowYear$ PROGRESS
+        ON     LESSON.SUBJ = PROGRESS.SUBJ
+        AND    LESSON.[MODULE] = PROGRESS.[MODULE]
+        AND    LESSON.LESSON = PROGRESS.LESSON
+        WHERE  PROGRESS.SUBJ    = #subj#
+        AND    PROGRESS.[year]    = #year#
+        AND    PROGRESS.SUBJSEQ = #subjseq#
+        AND    PROGRESS.userid     = #userid#
+        AND    LESSON.[MODULE]      = #module#
+        ORDER BY LESSON.LESSON_CD ASC
+        ) TEMP
+        WHERE 1=1
+        AND   LESSONSTATUS IS NULL OR LESSONSTATUS ='N'
+        ORDER BY LESSON ASC,LESSONSTATUS, LDATE DESC
+    </select>
+    
+    <!--  Normal Lesson 가져오기 -->
+    <select id="lcmsProgressDAO.selectLcmsProgressNormalLast" parameterClass="map" resultClass="egovMap">
+      select rownum as rn, TEMP.* from (  
+	      SELECT   PROGRESS.SUBJ,
+	               PROGRESS.[year],
+	               PROGRESS.SUBJSEQ,
+	               LESSON.[MODULE],
+	               LESSON.LESSON,
+	               PROGRESS.userid,
+	               PROGRESS.LESSONSTATUS,
+	               PROGRESS.SESSION_TIME,
+	               PROGRESS.TOTAL_TIME,
+	               PROGRESS.LESSON_COUNT,
+	               PROGRESS.LOCATION,
+	               PROGRESS.LDATE,
+	               ROW_NUMBER() OVER (ORDER BY LESSON.LESSON )-1 AS ORDERING
+	        FROM   TB_LCMS_LESSON LESSON 
+	        LEFT OUTER JOIN TB_LCMS_PROGRESS$nowYear$ PROGRESS
+	        ON     LESSON.SUBJ = PROGRESS.SUBJ
+	        AND    LESSON.[MODULE] = PROGRESS.[MODULE]
+	        AND    LESSON.LESSON = PROGRESS.LESSON
+	        WHERE  PROGRESS.SUBJ    = #subj#
+	        AND    PROGRESS.[year]    = #year#
+	        AND    PROGRESS.SUBJSEQ = #subjseq#
+	        AND    PROGRESS.userid     = #userid#
+	        AND    LESSON.[MODULE]       = #module#
+	        AND    ROWNUM = 1
+	        ORDER BY LESSON.LESSON ASC
+        ) TEMP
+        ORDER BY LDATE DESC
+    </select>
+    
+    <!--  Normal Lesson 이어보기 레슨 가져오기 : 전체 레슨중에 마지막으로  학습완료가 안된 항목을 가져온다. -->
+    <select id="lcmsProgressDAO.selectLcmsProgressNormalOldLast" parameterClass="map" resultClass="egovMap">
+    <![CDATA[
+		
+			SELECT 
+				ROWNUM AS rn, 
+				TB2.* 
+				FROM (
+			    SELECT * FROM ( 
+			        SELECT ROWNUM AS RN, TEMP.* FROM (  
+			          SELECT   #subj# AS SUBJ,
+			                   #year# AS [YEAR],
+			                   #subjseq# AS SUBJSEQ,
+			                   LESSON.[MODULE],
+			                   LESSON.LESSON,
+			                   #userid# AS USERID,
+			                   NVL(PROGRESS.LESSONSTATUS, 'N') AS LESSONSTATUS,
+			                   PROGRESS.SESSION_TIME,
+			                   PROGRESS.TOTAL_TIME,
+			                   PROGRESS.LESSON_COUNT,
+			                   '' AS LOCATION,
+			                   NVL(PROGRESS.LDATE,0) AS LDATE,
+			                   ROW_NUMBER() OVER (ORDER BY LESSON.LESSON )-1 AS ORDERING
+			            FROM   TZ_SUBJLESSON LESSON 
+			            LEFT OUTER JOIN (
+			            select 
+			                SUBJ, [year], SUBJSEQ, LESSON, USERID, NVL(LESSONSTATUS, 'N') LESSONSTATUS
+			                , SESSION_TIME, TOTAL_TIME, LESSON_COUNT, LDATE
+			            from 
+			            TZ_PROGRESS 
+			            where  SUBJ    = #subj#
+			            AND    [year]    = #year#
+			            AND    SUBJSEQ = #subjseq#
+			            AND    USERID     = #userid#
+			            ) PROGRESS
+			            ON     LESSON.SUBJ = PROGRESS.SUBJ
+			            AND    LESSON.LESSON = PROGRESS.LESSON
+			            WHERE  LESSON.SUBJ    = #subj#
+			            AND    LESSON.[MODULE]       = #module#
+			            AND NVL(PROGRESS.LESSONSTATUS, 'N') <> 'Y'			--진도 미완료된 레슨
+			            ORDER BY LESSONSTATUS desc, LDATE desc, LESSON.LESSON ASC, ORDERING ASC
+			        ) TEMP
+			        Where rownum = 1
+			        
+			        UNION ALL
+			        
+			        SELECT ROWNUM AS RN, TEMP1.* FROM (  
+			          SELECT   PROGRESS1.SUBJ,
+			                   PROGRESS1.[year],
+			                   PROGRESS1.SUBJSEQ,
+			                   LESSON1.[MODULE],
+			                   LESSON1.LESSON,
+			                   PROGRESS1.USERID,
+			                   PROGRESS1.LESSONSTATUS,
+			                   PROGRESS1.SESSION_TIME,
+			                   PROGRESS1.TOTAL_TIME,
+			                   PROGRESS1.LESSON_COUNT,
+			                   '' AS LOCATION,
+			                   NVL(PROGRESS1.LDATE,0) AS LDATE,
+			                   ROW_NUMBER() OVER (ORDER BY LESSON1.LESSON )-1 AS ORDERING
+			            FROM   TZ_SUBJLESSON LESSON1
+			            LEFT OUTER JOIN (
+			            select 
+			                SUBJ, [year], SUBJSEQ, LESSON, USERID, NVL(LESSONSTATUS, 'N') LESSONSTATUS
+			                , SESSION_TIME, TOTAL_TIME, LESSON_COUNT, LDATE
+			            from 
+			            TZ_PROGRESS 
+			            where  SUBJ    = #subj#
+			            AND    [year]    = #year#
+			            AND    SUBJSEQ = #subjseq#
+			            AND    USERID     = #userid#
+			            ) PROGRESS1
+			            ON     LESSON1.SUBJ = PROGRESS1.SUBJ
+			            AND    LESSON1.LESSON = PROGRESS1.LESSON
+			            WHERE  LESSON1.SUBJ    = #subj#
+			            AND    LESSON1.[MODULE]       = #module#
+			            AND PROGRESS1.LESSONSTATUS = 'Y'			--진도 완료된 레슨
+			            ORDER BY LDATE desc, LESSON1.LESSON DESC
+			        ) TEMP1
+			        Where rownum = 1 
+			        
+			    ) TB1
+			    ORDER BY LESSONSTATUS ASC, LDATE desc						-- 완료된것과 미완료된 각각하나씩의 레슨중 미완료된 항목이 위로 오게 정렬한다. 미완료항목이 없을경우 완료항목을 보여준다.
+			) TB2
+			WHERE ROWNUM = 1   
+	]]>
+    </select>
+
+    <insert id="lcmsProgressDAO.insertLcmsProgress">
+
+        INSERT INTO TB_LCMS_PROGRESS$nowYear$
+        (
+            SUBJ,
+            [year],
+            SUBJSEQ,
+            [MODULE],
+            LESSON,
+            userid,
+            LESSONSTATUS,
+            SESSION_TIME,
+            TOTAL_TIME,
+            LESSON_COUNT,
+            LOCATION,
+            INDATE,
+            INUSERID,
+            LDATE,
+            LUSERID
+        )
+        VALUES
+        (
+            #subj#,
+            #year#,
+            #subjseq#,
+            #module#,
+            #lesson#,
+            #userid#,
+            #lessonstatus#,
+            #sessionTime#,
+            #totalTime#,
+            #lessonCount#,
+            #location#,
+            <include refid="CommonSql.getSysdate"/>,
+            #userid#,
+            <include refid="CommonSql.getSysdate"/>,
+            #userid#
+        )
+    </insert>
+
+    <insert id="lcmsProgressDAO.insertLcmsOldProgress">
+        INSERT INTO TZ_PROGRESS(
+		    SUBJ,
+		    [year],
+		    SUBJSEQ,
+		    LESSON,
+		    OID,
+		    USERID,
+		    LESSONSTATUS,
+		    SESSION_TIME,
+		    TOTAL_TIME,
+		    LESSON_COUNT,
+		    FIRST_EDU,
+		    FIRST_END,
+		    <isNotEmpty property="CONTENT_ID">
+		    TYPE,
+		    </isNotEmpty>
+		    LDATE,
+		    FINAL_STATUS
+		)
+        VALUES
+        (
+            #subj#,
+            #year#,
+            #subjseq#,
+            #lesson#,
+            '1',
+            #userid#,
+            
+        <isNotEmpty property="p_end">
+        	#p_end#,
+        </isNotEmpty>
+        <isEmpty property="p_end">
+        	'N',
+        </isEmpty>
+            
+        <isNotEmpty property="PLAYING_TIME">
+        	 '0',
+             '0',
+        </isNotEmpty>
+        
+        <isEmpty property="PLAYING_TIME">
+        	'0',
+            '0',
+        </isEmpty>
+            
+            #lessonCount#,
+            to_char(sysdatetime, 'yyyyMMddhh24miss'),
+            to_char(sysdatetime, 'yyyyMMddhh24miss'),
+            <isNotEmpty property="CONTENT_ID">
+            'M',
+            </isNotEmpty>
+            to_char(sysdatetime, 'yyyyMMddhh24miss'),
+            <isNotEmpty property="p_end">
+	        	#p_end#
+	        </isNotEmpty>
+	        <isEmpty property="p_end">
+	        	'N'
+	        </isEmpty>
+        )
+    </insert>
+
+    <update id="lcmsProgressDAO.updateLcmsProgress">
+        UPDATE TB_LCMS_PROGRESS$nowYear$
+        SET    LESSONSTATUS = #lessonstatus#,
+               SESSION_TIME = #sessionTime#,
+               TOTAL_TIME = #totalTime#,
+               LESSON_COUNT = to_number(LESSON_COUNT + 1),
+               LOCATION = #location#,
+               LDATE = <include refid="CommonSql.getSysdate"/>,
+               LUSERID = #userid#
+        WHERE  SUBJ = #subj#
+        AND    [year] = #year#
+        AND    SUBJSEQ = #subjseq#
+        AND    [MODULE]   = #module#
+        AND    LESSON   = #lesson#
+        AND    userid   = #userid#
+    </update>
+    
+    
+<!--    모바일 북마크 정보-->
+    <select id="lcmsProgressDAO.selectLcmsMobileBookMarkCount" parameterClass="map" resultClass="int">
+    <![CDATA[
+    	
+    	select count(0) from TZ_SUBJMODULE_BOOKMARK
+    	WHERE  SUBJ = #subj#
+        AND    [year] = #year#
+        AND    SUBJSEQ = #subjseq#
+        AND    [MODULE]   = #module#
+        AND    userid   = #userid#
+    	 
+    ]]>
+    </select>
+    
+    <insert id="lcmsProgressDAO.insertLcmsMobileBookMark">
+    	INSERT INTO TZ_SUBJMODULE_BOOKMARK (
+		   SUBJ, 
+		   [year], 
+		   SUBJSEQ, 
+		   [MODULE], 
+		   USERID, 
+		   BOOK_MARK, 
+		   LDATE
+		) 
+		VALUES (
+			#subj#,
+			#year#,
+			#subjseq#,
+			#module#,
+			#userid#,
+			#BOOK_MARK#,
+			to_char(sysdatetime, 'yyyyMMddhh24miss')		
+		)
+    </insert>
+    
+    <update id="lcmsProgressDAO.updateLcmsMobileBookMark">
+    		update TZ_SUBJMODULE_BOOKMARK set
+	    		book_mark = #BOOK_MARK#,
+	    		ldate = to_char(sysdatetime, 'yyyyMMddhh24miss')
+    		WHERE  SUBJ = #subj#
+	        AND    [year] = #year#
+	        AND    SUBJSEQ = #subjseq#
+	        AND    [MODULE]   = #module#
+	        AND    userid   = #userid#
+    </update>
+    
+    
+    
+<!--    모바일 / 웹콘텐츠 진도 저장 쿼리-->
+    <update id="lcmsProgressDAO.updateLcmsProgressOld">
+        UPDATE TZ_PROGRESS  SET  
+        
+        <isNotEmpty property="PLAYING_TIME">
+        	 SESSION_TIME = #CONTINUE_TIME#,
+             TOTAL_TIME = to_number(TOTAL_TIME) + to_number(#PLAYING_TIME#),
+        </isNotEmpty>
+        
+        <isEmpty property="PLAYING_TIME">
+        	 SESSION_TIME = nvl(#sessionTime#, 0),
+             TOTAL_TIME = to_number(TOTAL_TIME) + to_number(nvl(#totalTime#,0)),
+        </isEmpty>
+        
+                                               
+         <isEqual property="p_end" compareValue="Y">
+          	<isEqual property="subj" compareValue="PAR130001">
+
+								LESSON_COUNT = 
+				               		CASE WHEN ((sysdatetime  - TO_DATETIME(first_end, 'YYYYMMDDHH24MISS')) * 24 * 60 * 60) > 30 THEN 
+				               			to_number(LESSON_COUNT + 1)
+				               		ELSE
+				               			LESSON_COUNT
+				               		END , 
+				               LESSONSTATUS = 
+					               CASE 
+					               WHEN LESSONSTATUS = 'Y' THEN 
+					               	LESSONSTATUS 
+					               ELSE 
+					               	 CASE WHEN ((sysdatetime  - TO_DATETIME(first_end, 'YYYYMMDDHH24MISS')) * 24 * 60 * 60) > 30 THEN 'Y'
+					               	 ELSE 'N'
+					               	 END
+					               END,
+          	</isEqual>
+          	<isEqual property="subj" compareValue="PAR130002">
+								LESSON_COUNT = 
+				               		CASE WHEN ((sysdatetime  - TO_DATETIME(first_end, 'YYYYMMDDHH24MISS')) * 24 * 60 * 60) > 30 THEN 
+				               			to_number(LESSON_COUNT + 1)
+				               		ELSE
+				               			LESSON_COUNT
+				               		END , 
+				               LESSONSTATUS = 
+					               CASE 
+					               WHEN LESSONSTATUS = 'Y' THEN 
+					               	LESSONSTATUS 
+					               ELSE 
+					               	 CASE WHEN ((sysdatetime  - TO_DATETIME(first_end, 'YYYYMMDDHH24MISS')) * 24 * 60 * 60) > 30 THEN 'Y'
+					               	 ELSE 'N'
+					               	 END
+					               END,
+          	</isEqual>
+          	<isEqual property="subj" compareValue="PAR130003">
+								LESSON_COUNT = 
+				               		CASE WHEN ((sysdatetime  - TO_DATETIME(first_end, 'YYYYMMDDHH24MISS')) * 24 * 60 * 60) > 30 THEN 
+				               			to_number(LESSON_COUNT + 1)
+				               		ELSE
+				               			LESSON_COUNT
+				               		END , 
+				               LESSONSTATUS = 
+					               CASE 
+					               WHEN LESSONSTATUS = 'Y' THEN 
+					               	LESSONSTATUS 
+					               ELSE 
+					               	 CASE WHEN ((sysdatetime  - TO_DATETIME(first_end, 'YYYYMMDDHH24MISS')) * 24 * 60 * 60) > 30 THEN 'Y'
+					               	 ELSE 'N'
+					               	 END
+					               END,
+          	</isEqual>
+          	
+          	<isNotEqual property="subj" compareValue="PAR130001">
+          	<isNotEqual property="subj" compareValue="PAR130002">
+          	<isNotEqual property="subj" compareValue="PAR130003">
+				LESSON_COUNT = to_number(LESSON_COUNT + 1) , 
+	            LESSONSTATUS = 'Y',
+	            final_status = 'Y',
+            </isNotEqual>
+            </isNotEqual>
+            </isNotEqual>
+            
+            
+            
+            
+		</isEqual>
+	
+       <isNotEqual property="p_end" compareValue="Y">
+       		FIRST_END = <include refid="CommonSql.getSysdate"/> ,  </isNotEqual>
+       
+       <isNotEmpty property="CONTENT_ID">
+       		TYPE = 'M',
+       </isNotEmpty>
+       
+           
+            	
+<!--					<isEqual property="p_end" compareValue="Y">-->
+					
+<!--							<isNotEqual property="subj" compareValue="PRF012009">-->
+							
+<!--									LESSON_COUNT = -->
+<!--				               		CASE WHEN ((sysdatetime  - TO_DATETIME(first_end, 'YYYYMMDDHH24MISS')) * 24 * 60 * 60) > 30 THEN -->
+<!--				               			LESSON_COUNT + 1-->
+<!--				               		ELSE-->
+<!--				               			LESSON_COUNT-->
+<!--				               		END , -->
+<!--				               LESSONSTATUS = -->
+<!--					               CASE -->
+<!--					               WHEN LESSONSTATUS = 'Y' THEN -->
+<!--					               	LESSONSTATUS -->
+<!--					               ELSE -->
+<!--					               	 CASE WHEN ((sysdatetime  - TO_DATETIME(first_end, 'YYYYMMDDHH24MISS')) * 24 * 60 * 60) > 30 THEN 'Y'-->
+<!--					               	 ELSE 'N'-->
+<!--					               	 END-->
+<!--					               END,-->
+								
+<!--			               </isNotEqual>-->
+		               
+		               
+<!--			               <isEqual property="subj" compareValue="PRF012009">-->
+<!--							LESSON_COUNT = -->
+<!--			               		CASE WHEN ((sysdatetime  - TO_DATETIME(first_end, 'YYYYMMDDHH24MISS')) * 24 * 60 * 60) > 9 THEN -->
+<!--			               			LESSON_COUNT + 1-->
+<!--			               		ELSE-->
+<!--			               			LESSON_COUNT-->
+<!--			               		END , -->
+<!--			               LESSONSTATUS = -->
+<!--				               CASE -->
+<!--				               WHEN LESSONSTATUS = 'Y' THEN -->
+<!--				               	LESSONSTATUS -->
+<!--				               ELSE -->
+<!--				               	 CASE WHEN ((sysdatetime  - TO_DATETIME(first_end, 'YYYYMMDDHH24MISS')) * 24 * 60 * 60) > 9 THEN 'Y'-->
+<!--				               	 ELSE 'N'-->
+<!--				               	 END-->
+<!--				               END,-->
+<!--			               </isEqual>-->
+	               
+<!--					</isEqual>-->
+							
+									
+			
+			
+        LDATE = <include refid="CommonSql.getSysdate"/>
+               
+               
+        WHERE  SUBJ = #subj#
+        AND    [year] = #year#
+        AND    SUBJSEQ = #subjseq#
+        AND    LESSON   = #lesson#
+        AND    userid   = #userid#
+    </update>
+
+
+
+
+    <delete id="lcmsProgressDAO.deleteLcmsProgress">
+        DELETE FROM TB_LCMS_PROGRESS$nowYear$
+        WHERE  SUBJ = #subj#
+        AND    [year] = #year#
+        AND    SUBJSEQ = #subjseq#
+        AND    [MODULE] = #module#
+        AND    LESSON = #lesson#
+        AND    userid = #userid#
+    </delete>
+
+    <delete id="lcmsProgressDAO.deleteLcmsProgressAll">
+        DELETE FROM TB_LCMS_PROGRESS$nowYear$
+        WHERE  SUBJ = #subj#
+        AND    [year] = #year#
+        AND    SUBJSEQ = #subjseq#
+        AND    [MODULE] = #module#
+        AND    LESSON = #lesson#
+        <dynamic prepend="WHERE USERID IN ">
+            <isNotEmpty property="userid">
+                <iterate property="userid" open="(" close=")" conjunction=",">
+                    #userid[]#
+                </iterate>
+            </isNotEmpty>
+            <isEmpty property="userid">
+                ('')
+            </isEmpty>
+        </dynamic>
+    </delete>
+
+    <select id="lcmsProgressDAO.existLcmsProgress" resultClass="long">
+        SELECT COUNT(ROWNUM) 
+        FROM   TB_LCMS_PROGRESS$nowYear$
+        WHERE  SUBJ    = #subj#
+        AND    [year] = #year#
+        AND    SUBJSEQ    = #subjseq#
+        AND    [MODULE]      = #module#
+        AND    LESSON      = #lesson#
+        AND    userid     = #userid#
+    </select>
+    
+    
+    <procedure id="lcmsProgressDAO.insertScormProgress" parameterClass="map" >
+	  <![CDATA[
+	   {call CONTENTS_PACKAGE.PROC_SCORM_PROGRESS(#crsSqCode#,#userid#,#nowYear#);}
+	  ]]>
+	</procedure>
+	
+	<procedure id="lcmsProgressDAO.insertXiniceProgress" parameterClass="map" >
+	  <![CDATA[
+	   {call CONTENTS_PACKAGE.PROC_XINICE_PROGRESS(#crsSqCode#,#userid#,#totalTime#,#oldTime#,#sessionTime#,#lessonCnt#,#nowYear#);} 	       
+	  ]]>
+	</procedure>
+	
+	<procedure id="lcmsProgressDAO.insertCotiProgress" parameterClass="map" >
+	  <![CDATA[
+	   {call CONTENTS_PACKAGE.PROC_COTI_PROGRESS(#crsSqCode#,#crsCode#,#userid#,#nowYear#);} 	       
+	  ]]>
+	</procedure>
+	
+	<procedure id="lcmsProgressDAO.insertNormalProgress" parameterClass="map" >
+	  <![CDATA[
+	   {call CONTENTS_PACKAGE.PROC_NORMAL_PROGRESS(#crsSqCode#,#crsCode#,#userid#,#nowYear#);} 	       
+	  ]]>
+	</procedure>
+	
+	<update id="lcmsProgressDAO.updateScormProgress">
+	    UPDATE /*+bypass_ujvc*/
+	(
+		SELECT  	
+				st.tstep,
+				jindotb.RATE_OF_PROGRESS
+		FROM(
+				select 
+				    a.subj, a.[year], a.subjseq, b.learner_id,
+					ROUND((b.COMPLETED_EDUCHECK_CNT * 100 / c.TOTAL_CNT) , 0) AS RATE_OF_PROGRESS 
+				from
+					course_map_seq a,
+					(
+						select a.course_map_seq, b.learner_id, count(0) as completed_educheck_cnt
+						  from tb_lcms_course_map a, tb_lcms_cmi_objectinfo b
+						 where a.subj 				= #subj#
+						   and a.[year] 				= #year#
+						   and a.subjseq 			= #subjseq#
+						   and a.course_map_seq 	= b.course_map_seq
+						   and b.learner_id 		= #userid#
+						   and b.completion_status 	= 'completed'
+						 group by a.course_map_seq, b.learner_id
+					) b
+					,				
+					(				
+						select a.subj, count(0) as total_cnt
+						  from tb_lcms_course_org a, tb_lcms_organization b, tb_lcms_item c
+						 where a.subj = #subj#
+						   and a.org_seq = b.org_seq
+						   and b.org_seq = c.org_seq
+						   and c.rsrc_seq != 0
+						 group by a.subj
+					) c
+				WHERE a.subj 		   = #subj#
+			      and a.[year] 		   = #year#
+			      and a.subjseq 	   = #subjseq# 
+			      and a.course_map_seq = b.course_map_seq
+			      and a.subj           = c.subj
+		)jindotb INNER JOIN tz_student st
+		ON jindotb.subj = st.subj
+		and jindotb.[year] = st.[year]
+		and jindotb.subjseq = st.subjseq
+		and jindotb.learner_id = st.userid
+	
+		)SET tstep = RATE_OF_PROGRESS
+	</update>
+	
+	<update id="lcmsProgressDAO.updateXiniceProgress">
+		update tz_student
+		   set tstep = ((progress_rate - round((#oldTime# /#totalTime#) * (100/#lessonCnt#), 0))
+							 + round((#sessionTime# / #totalTime#) * (100/#lessonCnt#), 0))
+		 where subj     = #p_subj#
+		   and [year]     = #p_year#
+		   and subjseq  = #p_subjseq#
+		   and userid   = #userid#
+	</update>
+	
+	<update id="lcmsProgressDAO.updateCotiProgress">
+	    UPDATE /*+bypass_ujvc*/
+			(
+				
+				 SELECT  	
+						APP.RATE_OF_PROGRESS,
+						APP.TSTEP
+				FROM(
+					
+					
+						SELECT
+						        PROGRESS.SUBJ,
+								PROGRESS.[year],
+						        PROGRESS.SUBJSEQ,
+						        PROGRESS.userid, 
+								ROUND((PROGRESS.COMPLETED_EDUCHECK_CNT * 100 / LESSON.TOTAL_CNT) , 0) AS RATE_OF_PROGRESS 
+						
+						FROM  (
+						
+									SELECT SUBJ,
+									       [year],
+									       SUBJSEQ,
+									       userid, 
+									       COUNT (0) COMPLETED_EDUCHECK_CNT
+									FROM TB_LCMS_PROGRESS$nowYear$ 
+									WHERE  SUBJ       = #subj#
+									AND    [year]    	  = #year#
+									AND    SUBJSEQ    = #subjseq#
+									AND    userid     = #userid#
+									AND    LESSONSTATUS= 'Y'
+								   GROUP BY SUBJ, [year], SUBJSEQ, USERID 
+					   			) PROGRESS,
+					   
+							   (
+									SELECT SUBJ,COUNT (0) TOTAL_CNT 
+									FROM  TB_LCMS_LESSON
+									WHERE SUBJ = #subj#
+									AND   PROGRESS_YN = 'Y'
+									GROUP BY SUBJ
+								) LESSON
+						WHERE PROGRESS.SUBJ    = LESSON.SUBJ	
+			    ) JINDOTB INNER JOIN TZ_STUDENT APP
+				 ON JINDOTB.SUBJ    = APP.SUBJ
+				AND JINDOTB.[year]    = APP.[year]
+				AND JINDOTB.SUBJSEQ = APP.SUBJSEQ
+				AND JINDOTB.userid  = APP.userid
+			)
+	
+	SET TSTEP = RATE_OF_PROGRESS
+	</update>
+
+
+	<update id="lcmsProgressDAO.updateNormalProgress">
+	    UPDATE /*+bypass_ujvc*/
+			(
+				
+				 SELECT  	
+						JINDOTB.RATE_OF_PROGRESS,
+						APP.TSTEP
+				FROM(
+					
+					
+						SELECT
+						        PROGRESS.SUBJ,
+								PROGRESS.[year],
+						        PROGRESS.SUBJSEQ,
+						        PROGRESS.userid, 
+								ROUND((PROGRESS.COMPLETED_EDUCHECK_CNT * 100 / LESSON.TOTAL_CNT) , 0) AS RATE_OF_PROGRESS 
+						
+						FROM  (
+						
+									SELECT SUBJ,
+									       [year],
+									       SUBJSEQ,
+									       userid, 
+									       COUNT (0) COMPLETED_EDUCHECK_CNT
+									FROM TB_LCMS_PROGRESS$nowYear$ 
+									WHERE  SUBJ       = #subj#
+									AND    [year]    	  = #year#
+									AND    SUBJSEQ    = #subjseq#
+									AND    userid     = #userid#
+									AND    LESSONSTATUS= 'Y'
+								   GROUP BY SUBJ, [year], SUBJSEQ, USERID 
+					   			) PROGRESS,
+					   
+							   (
+									SELECT SUBJ,COUNT (0) TOTAL_CNT 
+									FROM  TB_LCMS_LESSON
+									WHERE SUBJ = #subj#
+									AND   PROGRESS_YN = 'Y'
+									GROUP BY SUBJ
+								) LESSON
+						WHERE PROGRESS.SUBJ    = LESSON.SUBJ	
+			    ) JINDOTB INNER JOIN TZ_STUDENT APP
+				 ON JINDOTB.SUBJ    = APP.SUBJ
+				AND JINDOTB.[year]    = APP.[year]
+				AND JINDOTB.SUBJSEQ = APP.SUBJSEQ
+				AND JINDOTB.userid  = APP.userid
+			)
+	
+	SET TSTEP = RATE_OF_PROGRESS
+	
+	</update>
+
+	<!-- <update id="lcmsProgressDAO.updateNormalOldProgress">
+	    UPDATE /*+bypass_ujvc*/
+			(
+				
+				 SELECT  	
+						JINDOTB.RATE_OF_PROGRESS,
+						APP.TSTEP
+				FROM(
+					
+					
+						SELECT
+						        #subj# subj,
+								#year# year,
+						        #subjseq# subjseq,
+						        #userid# userid, 
+								ROUND((PROGRESS.COMPLETED_EDUCHECK_CNT / PROGRESS.TOTAL_CNT) * 100, 0) AS RATE_OF_PROGRESS 
+						
+						FROM  (
+						
+									SELECT 
+									       <isEqual property="subj" compareValue="PRF150017">
+									       <![CDATA[
+									       (
+									       	select case when 3<= cnt1+cnt2+cnt3
+											        then 3+cnt4
+											        else cnt1+cnt2+cnt3+cnt4
+											        end COMPLETED_EDUCHECK_CNT
+											from
+											(
+											    select *
+											    from(
+											    select 
+											    
+											    case when 3= (SELECT COUNT (0) as cnt
+											                    FROM TZ_PROGRESS
+											                    WHERE  SUBJ       = #subj#
+											                    AND    [year]          = #year#
+											                    AND    SUBJSEQ    = #subjseq#
+											                    AND    userid     = #userid#  
+											                    and lesson in ('0010', '0011', '0012')
+											                    AND        lessonstatus = 'Y'
+											                    )
+											    then 3
+											    else 0
+											    end cnt1
+											    ,
+											    case when 3= (SELECT COUNT (0) as cnt
+											                    FROM TZ_PROGRESS
+											                    WHERE  SUBJ       = #subj#
+											                    AND    [year]          = #year#
+											                    AND    SUBJSEQ    = #subjseq#
+											                    AND    userid     = #userid#
+											                    and lesson in ('0013', '0014', '0015')
+											                    AND        lessonstatus = 'Y'
+											                    )
+											    then 3
+											    else 0
+											    end cnt2    
+											    ,
+											    case when 3= (SELECT COUNT (0) as cnt
+											                    FROM TZ_PROGRESS
+											                    WHERE  SUBJ       = #subj#
+											                    AND    [year]          = #year#
+											                    AND    SUBJSEQ    = #subjseq#
+											                    AND    userid     = #userid#
+											                    and lesson in ('0016', '0017', '0018')
+											                    AND        lessonstatus = 'Y'
+											                    )
+											    then 3
+											    else 0
+											    end cnt3
+											    
+											    ,
+                                                (SELECT COUNT (0) as cnt
+                                                                FROM TZ_PROGRESS
+                                                                WHERE  SUBJ       = #subj#
+											                    AND    [year]          = #year#
+											                    AND    SUBJSEQ    = #subjseq#
+											                    AND    userid     = #userid#
+                                                                and lesson not in ('0010', '0011', '0012', '0013', '0014', '0015','0016', '0017', '0018')
+                                                                AND        lessonstatus = 'Y'
+                                                                ) cnt4  
+											    
+											    from DB_ROOT
+											    )
+											)
+											)as COMPLETED_EDUCHECK_CNT
+											]]>	
+											, 30 total_cnt
+									       </isEqual>
+									       
+									       <isNotEqual property="subj" compareValue="PRF150017">
+									       	(select count(*)
+											from tz_progress
+											where 
+											subj = #subj#
+											AND [year] = #year#
+											AND subjseq = #subjseq#
+											AND userid = #userid#
+											AND	lessonstatus = 'Y') completed_educheck_cnt
+											, 
+											(select count(*)
+											from tz_subjlesson 
+											where subj = #subj#) total_cnt
+									       </isNotEqual>
+									       
+									FROM DB_ROOT
+					   			) PROGRESS
+			    ) JINDOTB INNER JOIN TZ_STUDENT APP
+				 ON JINDOTB.SUBJ    = APP.SUBJ
+				AND JINDOTB.[year]    = APP.YEAR
+				AND JINDOTB.SUBJSEQ = APP.SUBJSEQ
+				AND JINDOTB.userid  = APP.userid
+			)
+	
+	SET TSTEP = RATE_OF_PROGRESS
+	</update> -->
+	
+	<update id="lcmsProgressDAO.updateNormalOldProgress">
+
+				
+				 MERGE INTO TZ_STUDENT ST
+				 	USING (
+					
+					
+						SELECT
+						        #subj# subj,
+								#year# [YEAR],
+						        #subjseq# subjseq,
+						        #userid# userid, 
+								ROUND((PROGRESS.COMPLETED_EDUCHECK_CNT * 100 / PROGRESS.TOTAL_CNT), 0) AS RATE_OF_PROGRESS 
+						
+						FROM  (
+						
+									SELECT 
+									       <isEqual property="subjOneThreeYn" compareValue="Y">
+									       <![CDATA[
+									       (
+									       	select case when 3<= cnt1+cnt2+cnt3
+											        then 3+cnt4
+											        else cnt1+cnt2+cnt3+cnt4
+											        end COMPLETED_EDUCHECK_CNT
+											from
+											(
+											    select *
+											    from(
+											    select 
+											    
+											    case when 3= (SELECT COUNT (0) as cnt
+											                    FROM TZ_PROGRESS
+											                    WHERE  SUBJ       = #subj#
+											                    AND    [year]          = #year#
+											                    AND    SUBJSEQ    = #subjseq#
+											                    AND    userid     = #userid#  
+											                    and lesson in ('0010', '0011', '0012')
+											                    AND        lessonstatus = 'Y'
+											                    )
+											    then 3
+											    else 0
+											    end cnt1
+											    ,
+											    case when 3= (SELECT COUNT (0) as cnt
+									                    FROM TZ_PROGRESS
+											                    WHERE  SUBJ       = #subj#
+											                    AND    [year]          = #year#
+											                    AND    SUBJSEQ    = #subjseq#
+											                    AND    userid     = #userid#
+											                    and lesson in ('0013', '0014', '0015')
+											                    AND        lessonstatus = 'Y'
+											                    )
+											    then 3
+											    else 0
+											    end cnt2    
+											    ,
+											    case when 3= (SELECT COUNT (0) as cnt
+											                    FROM TZ_PROGRESS
+											                    WHERE  SUBJ       = #subj#
+											                    AND    [year]          = #year#
+											                    AND    SUBJSEQ    = #subjseq#
+											                    AND    userid     = #userid#
+											                    and lesson in ('0016', '0017', '0018')
+											                    AND        lessonstatus = 'Y'
+											                    )
+											    then 3
+											    else 0
+											    end cnt3
+											    
+											    ,
+                                                (SELECT COUNT (0) as cnt
+                                                                FROM TZ_PROGRESS
+                                                                WHERE  SUBJ       = #subj#
+											                    AND    [year]          = #year#
+											                    AND    SUBJSEQ    = #subjseq#
+											                    AND    userid     = #userid#
+                                                                and lesson not in ('0010', '0011', '0012', '0013', '0014', '0015','0016', '0017', '0018')
+                                                                AND        lessonstatus = 'Y'
+                                                                ) cnt4  
+											    
+											    from DB_ROOT
+											    )
+											)
+											)as COMPLETED_EDUCHECK_CNT
+											]]>	
+											, 30 total_cnt
+									       </isEqual>
+									       
+									       <isNotEqual property="subjOneThreeYn" compareValue="Y">
+									       	(select count(*)
+											from tz_progress
+											where 
+											subj = #subj#
+											AND [year] = #year#
+											AND subjseq = #subjseq#
+											AND userid = #userid#
+											AND	lessonstatus = 'Y') completed_educheck_cnt
+											, 
+											(select count(*)
+											from tz_subjlesson 
+											where subj = #subj#) total_cnt
+									       </isNotEqual>
+									       
+									FROM DB_ROOT
+					   			) PROGRESS
+			    ) JINDOTB
+				ON (JINDOTB.SUBJ    = ST.SUBJ
+					AND JINDOTB.[year]    = ST.[YEAR]
+					AND JINDOTB.SUBJSEQ = ST.SUBJSEQ
+					AND JINDOTB.userid  = ST.userid
+				)
+				WHEN MATCHED THEN
+					UPDATE SET ST.TSTEP = JINDOTB.RATE_OF_PROGRESS
+	</update>
+	
+	
+	<update id="lcmsProgressDAO.updateEduUserProgress">
+		update /*+bypass_ujvc*/
+       (
+            select jindo.jindo_online_result, 
+                   jindo.jindo_online_rate,
+                   jindo.jindo_offline_result, 
+                   jindo.jindo_offline_rate,
+                   edu.total_result, 
+                   edu.online_result
+              from ec_ai_edu_user edu,
+                   (
+                        select nvl(e.total_result,0) as jindo_online_result,
+                         nvl(d.online_rate, 0) as jindo_online_rate,
+                         nvl(c.offline_result, 0) as jindo_offline_result, 
+                         nvl(d.offline_rate, 0) as jindo_offline_rate,
+                         c.crs_apply_code,
+                         c.userid
+                          from ec_crs_sq a, ec_at_edu_lect b, ec_ai_edu_user c, ec_at_curm d, ec_apply e
+                         where a.crs_sq_code = #crs_sq_code#
+                           and a.crs_sq_code = b.crs_sq_code
+                           and b.seq_curm    = c.seq_curm
+                           and c.seq_curm    = d.seq_curm
+                           and c.crs_apply_code = e.crs_apply_code
+                           and c.userid        = #userid#     
+                   ) jindo
+             where edu.crs_apply_code = jindo.crs_apply_code
+               and edu.userid        = #userid#
+       )
+   set online_result = jindo_online_result 
+       , total_result  = (jindo_online_result * jindo_online_rate / 100) + (jindo_offline_result * jindo_offline_rate / 100)
+	</update>
+	
+	<select id="lcmsProgressDAO.selectEndCommitYn" resultClass="String">
+		select case when (select TO_NUMBER((sum(total_time)))
+			               from tz_progress a
+			               where subj = #subj#
+			               and subjseq = #subjseq#
+			               and [year] = #year#
+			               and userid = #userid#
+			               and lesson in (select lesson 
+			                              from tz_subjlesson 
+			                              where subj = a.subj 
+			                              and [MODULE] = #p_module#
+			                              <isEqual property="contentLessonAllView" compareValue="Y">
+							               	and lesson = #lesson#
+							               </isEqual>
+	                              )) >= 
+			            (select TO_NUMBER(trunc(sum(lesson_time) *80 DIV 100))
+		               from tz_subjlesson
+		               where subj = #subj#
+		               and [MODULE] = #p_module#
+		               <isEqual property="contentLessonAllView" compareValue="Y">
+		               	and lesson = #lesson#
+		               </isEqual>
+		               ) 
+		            then 'Y'
+		            else 'N'
+		       end as endCommit
+		from DB_ROOT
+	</select>
+	
+	<insert id="lcmsProgressDAO.insertLcmsProgressComplete">
+		insert into tz_progress
+			     (   subj, 
+			         [year], 
+			         subjseq, 
+			         lesson, 
+			         oid, 
+			         userid,
+			         lessonstatus,
+			         session_time,
+			         total_time,
+			         ldate,
+			         final_status
+			      )                 
+			 select a.subj,
+                #year#, 
+                #subjseq#,
+                b.lesson,
+                '1',
+                #userid#,
+                'Y',
+                '0',
+                b.lesson_time,
+                to_char(sysdatetime, 'yyyymmddhh24miss'),
+                'Y'
+              from tz_subjmodule a, tz_subjlesson b
+              where  a.subj       = #subj#
+              and a.subj       = b.subj
+              and a.[MODULE]     = b.[MODULE]
+              and a.[MODULE] = #p_module#
+              <isEqual property="contentLessonAllView" compareValue="Y">
+               	and b.lesson = #lesson#
+               </isEqual>
+              and b.lesson not in  (select a.lesson
+                        from tz_progress a, tz_subjlesson b
+                        where a.subj = b.subj
+                        and a.lesson = b.lesson
+                        and a.[year] = #year#
+                        and a.subjseq = #subjseq#
+                        and a.userid  = #userid#
+                        and a.subj = #subj#
+                        and b.[MODULE] = #p_module#
+                        <isEqual property="contentLessonAllView" compareValue="Y">
+		               	and a.lesson = #lesson#
+		               </isEqual>
+                        )
+	
+	</insert>
+	
+	<update id="lcmsProgressDAO.updateLcmsProgressFinalStatus">
+		update tz_progress p set
+		final_status = 'Y'		
+		where subj = #subj#
+		and subjseq = #subjseq#
+		and [year] = #year#
+        and userid  = #userid#
+        <isEqual property="contentLessonAllView" compareValue="Y">
+        	and p.lesson = #lesson#
+        </isEqual>
+        and exists (select a.lesson
+                        from tz_progress a, tz_subjlesson b
+                        where a.subj = b.subj
+                        and a.lesson = b.lesson
+                        and a.[year] = #year#
+                        and a.subjseq = #subjseq#
+                        and a.userid  = #userid#
+                        and a.subj = #subj#
+                        and b.[MODULE] = #p_module#
+                        and p.lesson = a.lesson
+                        <isEqual property="contentLessonAllView" compareValue="Y">
+		               	and a.lesson = #lesson#
+		               </isEqual>
+                        )
+	</update>
+	
+	<update id="lcmsProgressDAO.updateLcmsProgressComplete">
+		update tz_progress p set
+		final_status = 'Y',
+		lessonstatus = 'Y'
+		where subj = #subj#
+		and subjseq = #subjseq#
+		and [year] = #year#
+        and userid  = #userid#
+        and (lessonstatus = 'N' or final_status = 'N')
+        <isEqual property="contentLessonAllView" compareValue="Y">
+       		and p.lesson = #lesson#
+        </isEqual>
+        and lesson in (
+        				select a.lesson
+                        from tz_progress a, tz_subjlesson b
+                        where a.subj = b.subj
+                        and a.lesson = b.lesson
+                        and a.[year] = #year#
+                        and a.subjseq = #subjseq#
+                        and a.userid  = #userid#
+                        and a.subj = #subj#
+                        and b.[MODULE] = #p_module#
+                        and p.lesson = a.lesson
+                        <isEqual property="contentLessonAllView" compareValue="Y">
+		               		and a.lesson = #lesson#
+		                </isEqual>
+		               
+                        )
+	</update>
+	
+	
+	<select id="lcmsProgressDAO.selectNormalProgressTotalTime" parameterClass="map" resultClass="int">
+		select TO_NUMBER(sum(nvl(a.total_time, 0)))
+        from tz_progress a, tz_subjlesson b
+        where a.subj = b.subj
+        and a.lesson = b.lesson
+        and a.[year] = #year#
+        and a.subjseq = #subjseq#
+        and a.userid  = #userid#
+        and a.subj = #subj#
+        and b.[MODULE] = #p_module#
+	</select>
+	
+	<select id="lcmsProgressDAO.selectMobileEndCommitYn" resultClass="String">
+		select case when (SELECT TO_NUMBER(sum(NVL(total_time, 0)))
+			               from tz_progress a
+			               where subj = #p_subj#
+			               and subjseq = #p_subjseq#
+			               and [year] = #p_year#
+			               and userid = #ID#
+			               and lesson in (select lesson 
+			                              from tz_subjlesson 
+			                              where subj = a.subj 
+			                              and [MODULE] = #p_module#)) >= 
+			           (select TO_NUMBER(trunc(sum(lesson_time) *80 DIV 100))
+		               from tz_subjlesson
+		               where subj = #p_subj#
+		               and [MODULE] = #p_module#) 
+		            then 'Y'
+		            else 'N'
+		       end as endCommit
+		from DB_ROOT
+	</select>
+	
+	<insert id="lcmsProgressDAO.insertMobileLcmsProgressComplete">
+		insert into tz_progress
+			     (   subj, 
+			         [year], 
+			         subjseq, 
+			         lesson, 
+			         oid, 
+			         userid,
+			         lessonstatus,
+			         session_time,
+			         total_time,
+			         type,
+			         ldate,
+			         final_status
+			      )                 
+			 select a.subj,
+                #p_year#, 
+                #p_subjseq#,
+                b.lesson,
+                '1',
+                #ID#,
+                'Y',
+                '0',
+                b.lesson_time,
+                'M',
+                to_char(sysdatetime, 'yyyymmddhh24miss'),
+                'Y'
+              from tz_subjmodule a, tz_subjlesson b
+              where  a.subj       = #p_subj#
+              and a.subj       = b.subj
+              and a.[MODULE]     = b.[MODULE]
+              and a.[MODULE] = #p_module#
+              and b.lesson not in  (select a.lesson
+                        from tz_progress a, tz_subjlesson b
+                        where a.subj = b.subj
+                        and a.lesson = b.lesson
+                        and a.[year] = #p_year#
+                        and a.subjseq = #p_subjseq#
+                        and a.userid  = #ID#
+                        and a.subj = #p_subj#
+                        and b.[MODULE] = #p_module#)
+	
+	</insert>
+	
+</sqlMap>
+

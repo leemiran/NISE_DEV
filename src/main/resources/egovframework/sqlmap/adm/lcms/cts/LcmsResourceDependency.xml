@@ -1,0 +1,122 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE sqlMap PUBLIC "-//iBATIS.com//DTD SQL Map 2.0//EN" "http://ibatis.apache.org/dtd/sql-map-2.dtd">
+
+<sqlMap namespace="LcmsResourceDependency">
+	<typeAlias  alias="egovMap" type="egovframework.rte.psl.dataaccess.util.EgovMap"/>
+
+    <select id="lcmsResourceDependencyDAO.selectLcmsResourceDependencyPageList" parameterClass="map" resultClass="egovMap">
+        SELECT * 
+        FROM
+               (
+                SELECT TEMP.*, 
+                <isNotEmpty property="rowsPerPage">
+                       CEIL(ROWNUM / #rowsPerPage#) AS PAGE 
+                </isNotEmpty>
+                <isEmpty property="rowsPerPage">
+                       CEIL(ROWNUM / 10) AS PAGE 
+                </isEmpty>
+                FROM
+                      (
+                       SELECT 
+	        	              SEQ,
+	        	              RSRC_ID_REF,
+	        	              RSRC_SEQ,
+	        	              userid,
+	        	               UPDATE_DT
+        		       FROM   TB_LCMS_RESOURCE_DEPENDENCY
+        		       <!--  APPEND WHERE CONDITION START  -->
+
+        		       <!--  APPEND WHERE CONDITION END    -->
+        		       <isNotEmpty property="orderBy">
+        			       $orderBy$
+        		       </isNotEmpty>
+        	          ) TEMP 
+               )
+        <isNotEmpty property="page">
+        WHERE PAGE = #page#
+        </isNotEmpty>
+        <isEmpty property="page">
+        WHERE PAGE = 1
+        </isEmpty>
+    </select>
+
+    <select id="lcmsResourceDependencyDAO.selectLcmsResourceDependencyList" parameterClass="map" resultClass="egovMap">
+        SELECT SEQ,
+               RSRC_ID_REF,
+               RSRC_SEQ,
+               userid,
+               UPDATE_DT
+        FROM   TB_LCMS_RESOURCE_DEPENDENCY
+    </select>
+
+    <select id="lcmsResourceDependencyDAO.selectLcmsResourceDependencyPageListTotCnt" parameterClass="map" resultClass="long">
+        SELECT COUNT(ROWNUM) AS [COUNT]
+        FROM   TB_LCMS_RESOURCE_DEPENDENCY
+    </select>
+
+    <select id="lcmsResourceDependencyDAO.selectLcmsResourceDependency" parameterClass="map" resultClass="egovMap">
+        SELECT SEQ,
+               RSRC_ID_REF,
+               RSRC_SEQ,
+               userid,
+               UPDATE_DT
+        FROM   TB_LCMS_RESOURCE_DEPENDENCY
+        WHERE  SEQ = #seq#
+    </select>
+
+    <insert id="lcmsResourceDependencyDAO.insertLcmsResourceDependency">
+        <selectKey resultClass="int" keyProperty="seq">
+            SELECT nvl(MAX(SEQ),0)+1 as seq FROM LCMS_RESOURCE_DEPENDENCY
+        </selectKey>
+        INSERT INTO TB_LCMS_RESOURCE_DEPENDENCY
+        (
+            SEQ,
+            RSRC_ID_REF,
+            RSRC_SEQ,
+            userid,
+            UPDATE_DT
+        )
+        VALUES
+        (
+            #seq#,
+            #rsrcIdRef#,
+            #rsrcSeq#,
+            #userid#,
+            sysdate
+        )
+    </insert>
+
+    <update id="lcmsResourceDependencyDAO.updateLcmsResourceDependency">
+        UPDATE TB_LCMS_RESOURCE_DEPENDENCY
+        SET    RSRC_ID_REF = #rsrcIdRef#,
+               RSRC_SEQ = #rsrcSeq#,
+               userid = #userId#,
+               UPDATE_DT = #updateDt#
+        WHERE  SEQ = #seq#
+    </update>
+
+    <delete id="lcmsResourceDependencyDAO.deleteLcmsResourceDependency">
+        delete tb_lcms_resource_dependency
+         where rsrc_seq in (
+                 select rsrc_seq from tb_lcms_item
+                  where org_seq in <iterate property="orgSeq" conjunction="," open="(" close=")">$orgSeq[]$</iterate>
+               )
+    </delete>
+
+    <delete id="lcmsResourceDependencyDAO.deleteLcmsResourceDependencyAll">
+        DELETE FROM TB_LCMS_RESOURCE_DEPENDENCY
+        <dynamic prepend="WHERE SEQ IN ">
+            <isNotEmpty property="seq">
+                <iterate property="seq" open="(" close=")" conjunction=",">
+                    #seq[]#
+                </iterate>
+            </isNotEmpty>
+            <isEmpty property="seq">
+                ('')
+            </isEmpty>
+        </dynamic>
+    </delete>
+
+
+</sqlMap>
+

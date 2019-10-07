@@ -1,0 +1,141 @@
+body {
+	text-align:center;
+}
+
+#header{
+	width: 800px;
+	height: 65px;
+	background: url(img/logo.gif) no-repeat 10px;
+	text-align: center;
+	margin-top:10px;
+	margin-bottom:10px;
+}
+#footer{
+	width:800px;
+	height:50px;
+	color:#FFFFFF;
+}
+#title{
+	width:800px;
+	text-align:center;
+	font-family:"±¼¸²", "µ¸¿ò", Seoul, "ÇÑ°­Ã¼";
+	font-size:20px;
+	font-weight:bold;
+	margin-top:10px;
+	margin-bottom:10px;
+}
+#container{
+	width:800px;
+	text-align:left;
+}
+
+#sidebar{
+	float:right;
+	width:250px;
+	background:url(img/pod-b-mid.png) repeat-y;
+}
+#sidebar #pod-a-header{
+	width:250px;
+	height:20px;
+	background:url(img/pod-a-header.png) no-repeat;
+}
+#sidebar #pod-a-mid{
+	background:url(img/pod-a-mid.png) repeat-y;
+	font-family:"±¼¸²", "µ¸¿ò", Seoul, "ÇÑ°­Ã¼";
+	font-size:12px;
+	font-weight:bold;
+	padding:0px 10px 5px 15px;
+}
+#sidebar #pod-b-footer{
+	background:url(img/pod-b-footer.png) no-repeat;
+	width:250px;
+	height:18px;
+}
+#sidebar #side-list{
+	padding:0px 8px 0px 15px;
+	margin: 0 0 0 0;
+	text-align:left;
+	margin:0px 0px 0px 0px;
+	font-family:"±¼¸²", "µ¸¿ò", Seoul, "ÇÑ°­Ã¼";
+	font-size:12px;
+	line-height:160%;
+}
+
+
+#content{
+	float:left;
+	width:550px;
+	background:url(img/content_pod_mid.png) repeat-y;
+}
+
+#content-pod-header{
+	background:url(img/content_pod_header.png) no-repeat;
+	height:20px;
+	margin-bottom:0px;
+}
+#content-pod-footer{
+	background:url(img/content_pod_footer.png) no-repeat;
+	height:20px;
+	margin-top:0px;
+}
+#content-pod-mid{
+	background:url(img/content_pod_mid.png) repeat-y;
+	padding:0px 20px 0px 20px;
+	margin-top:0px;
+	text-align:left;
+}
+
+#content-pod-mid #list{
+	list-style:none;
+	height:auto;
+	margin:5px 0 10px 10px;
+	font-family:"±¼¸²", "µ¸¿ò", Seoul, "ÇÑ°­Ã¼";
+	font-size:12px;
+	line-height:200%
+}
+
+
+#process{
+	padding:10px 20px 0px 20px;
+	margin:0px 0px 10px 0px;
+	font-family:"±¼¸²", "µ¸¿ò", Seoul, "ÇÑ°­Ã¼";
+	font-size:18px;
+	font-weight:bold;
+}
+
+#hr1{
+	color: #FF9900;
+	margin:0 11px 0 11px;
+}
+#hr_pod{
+	background:url(img/pod-line.png) no-repeat;
+	color:#FF0000;
+	height: 2px;
+}
+
+dt{
+	font-weight:bold;
+}
+dd{
+	margin-left:15px;
+	margin-right:15px;
+}
+
+#sidebar #side-list ul{
+	margin-left:10px;
+	list-style:none;
+}
+#sidebar #side-list li{
+	margin-left:0px;
+}
+
+A:LINK, A:VISITED {
+	color : #004477;
+	text-decoration:none;
+}
+
+A:HOVER {
+	background-color : #fff5c0;
+	color : #cc0000;
+	text-decoration : none;
+}

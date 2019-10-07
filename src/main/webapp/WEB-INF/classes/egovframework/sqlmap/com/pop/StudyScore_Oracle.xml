@@ -1,0 +1,66 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE sqlMap PUBLIC "-//iBATIS.com//DTD SQL Map 2.0//EN" "http://ibatis.apache.org/dtd/sql-map-2.dtd">
+
+<sqlMap namespace="StudyScore">
+<typeAlias  alias="egovMap" type="egovframework.rte.psl.dataaccess.util.EgovMap"/>
+
+
+	<select id="studyScoreDAO.selectEduScore" parameterClass="map" resultClass="egovMap">
+		select a.gradexam, a.gradftest, a.gradreport, a.wetc1,
+		       nvl(b.avmtest, 0) as mmtest,
+		       nvl(b.avftest, 0) as mftest,
+		       nvl(b.avreport, 0) as mreport,
+		       nvl(b.avetc2, 0) as metc2,
+		       nvl(b.avact, 0) as mact2,
+		       nvl(b.score, 0) as mscore,
+		       nvl(b.editscore, 0) as meditscore,
+		       a.wmtest, a.wftest, a.wreport, a.wetc1, a.wetc2,
+		       (select edutimes from tz_subj where subj = a.subj) as edutimes,
+		       b.tstep,
+		       (select count(0) from tu_projrep where ldate is not null and subj = a.subj and [year] = a.[year] and subjseq = a.subjseq and projid = #p_userid#) as mreport_count
+		  from tz_subjseq a, tz_student b
+		 where a.subj    = #p_subj#
+		   and a.[year]    = #p_year#
+		   and a.subjseq = #p_subjseq#
+		   and a.subj    = b.subj(+)
+		   and a.[year]    = b.[year](+)
+		   and a.subjseq = b.subjseq(+)
+		   and b.userid(+) = #p_userid#
+	</select>
+	
+	<select id="studyScoreDAO.selectExamData" parameterClass="map" resultClass="egovMap">
+		select a.examtype, count(0) as exam_count,
+		       (select count(0) from tz_examresult where subj = a.subj and [year] = a.[year] and subjseq = a.subjseq and examtype = a.examtype and userid = #p_userid# ) as result_count
+		  from tz_exampaper a
+		 where a.subj    = #p_subj#
+		   and a.[year]    = #p_year#
+		   and a.subjseq = #p_subjseq#
+		   and a.examtype in ( 'E',  'C')
+		 group by a.subj, a.[year], a.subjseq, a.examtype
+	</select>
+	
+	<select id="studyScoreDAO.selectProjData" parameterClass="map" resultClass="egovMap">
+		select proj_count, result_count, proj_count-result_count as nosubmit
+        from(    
+			select count(0) as proj_count,
+		  	<!---(select count(0) from tz_projrep where subj = a.subj and [year] = a.[year] and subjseq = a.subjseq and projid = #p_userid#) as result_count
+		  	from tz_projgrp a-->
+		   	(select count(0) from tu_projrep where ldate is not null and subj = a.subj and [year] = a.[year] and subjseq = a.subjseq and projid = #p_userid#) as result_count
+		 	 from tu_projord a
+			 where a.subj    = #p_subj#
+		   	and a.[year]    = #p_year#
+		   	and a.subjseq = #p_subjseq#
+		 	group by a.subj, a.[year], a.subjseq
+		 )
+	</select>
+	
+	<select id="studyScoreDAO.selectSulData" parameterClass="map" resultClass="egovMap">
+		select sum(decode(nvl(a.sulpapernum, 0), 0, 0, 1)) as sul_count,
+		       (select count(0) from tz_suleach where subj = a.subj and [year] = a.[year] and subjseq = a.subjseq and userid = #p_userid#) as result_count
+		  from tz_subjseq a
+		 where a.subj    = #p_subj#
+		   and a.[year]    = #p_year#
+		   and a.subjseq = #p_subjseq#
+		 group by a.subj, a.[year], a.subjseq
+	</select>
+</sqlMap>
