@@ -91,7 +91,7 @@ public class UserSubjController {
 		}
 		
 		
-		//commandMap.put("userid", "kbhg12");
+		commandMap.put("userid", "min5163");
 		
 		String userAreaCode = validService.validUserArea(String.valueOf(request.getSession().getAttribute("userid")));
 		if(3 != userAreaCode.length()) {

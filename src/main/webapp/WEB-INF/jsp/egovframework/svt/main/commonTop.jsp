@@ -66,7 +66,7 @@
 									<li><a href="javascript:;" onclick="changeMenu(3, 1);return false;">강의실</a></li>
 									<li><a href="javascript:;" onclick="changeMenu(3, 2);return false;">나의문의함</a></li>
 									<li><a href="javascript:;" onclick="changeMenu(3, 3);return false;">영수증/이수증</a></li>
-									<li><a href="javascript:;" onclick="changeMenu(3, 4);return false;">연수지명 번호 입력</a></li>
+									<!-- <li><a href="javascript:;" onclick="changeMenu(3, 4);return false;">연수지명 번호 입력</a></li> -->
 									<li><a href="javascript:;" onclick="changeMenu(3, 5);return false;">개인정보 수정</a></li>
 									<!-- <li class="last"><a href="javascript:;" onclick="changeMenu(3, 5);return false;">&nbsp;-&nbsp;개인정보 수정</a></li> -->
 									<!-- <li class="last"><a href="javascript:;" onclick="changeMenu(3, 2);return false;">&nbsp;-&nbsp;회원탈퇴</a></li> -->
